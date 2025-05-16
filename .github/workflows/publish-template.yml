@@ -16,6 +16,7 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+          source-url: https://pkgs.dev.azure.com/Atil-utvikling/Public/_packaging/AT.Public.NuGet/nuget/v3/index.json
 
       - name: Get package name and version from .csproj
         id: get_version
@@ -40,18 +41,22 @@ jobs:
       - name: Check if version is already published on NuGet
         id: check_nuget
         run: |
-          NAME="${{ steps.get_version.outputs.name }}"
-          VERSION="${{ steps.get_version.outputs.version }}"
-          URL="https://api.nuget.org/v3-flatcontainer/${NAME,,}/$VERSION/${NAME,,}.$VERSION.nupkg"
-          echo "Checking $URL"
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
-          if [ "$STATUS" = "200" ]; then
-            echo "This version is already published."
+            NAME="${{ steps.get_version.outputs.name }}"
+            VERSION="${{ steps.get_version.outputs.version }}"
+
+            SEARCH=$(dotnet package search "$NAME" --format json)
+            # Finn alle versjoner for pakken, og sjekk om ønsket versjon finnes
+            FOUND=$(echo "$SEARCH" | jq -r --arg VERSION "$VERSION" '
+            .searchResult[0].packages[0].versions[]? | select(.version == $VERSION) | .version
+            ')
+
+            if [ "$FOUND" = "$VERSION" ]; then
+            echo "Denne versjonen er allerede publisert."
             echo "published=true" >> $GITHUB_OUTPUT
-          else
-            echo "This version is NOT published."
+            else
+            echo "Denne versjonen er IKKE publisert."
             echo "published=false" >> $GITHUB_OUTPUT
-          fi
+            fi
 
       - name: Publish package if not already published
         if: steps.check_nuget.outputs.published == 'false'
