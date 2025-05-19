@@ -67,7 +67,7 @@ jobs:
         if: steps.check_nuget.outputs.published == 'false'
         run: |
           dotnet pack "${{ inputs.package-path }}" -c Release
-          dotnet nuget push "${{ inputs.package-path }}/bin/Release/*.nupkg"
+          dotnet nuget push "${{ inputs.package-path }}/bin/Release/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://pkgs.dev.azure.com/Atil-utvikling/Public/_packaging/AT.Public.NuGet/nuget/v3/index.json
           echo "Published ${{ steps.get_version.outputs.name }} version ${{ steps.get_version.outputs.version }}"
 
       - name: Stop if already published
