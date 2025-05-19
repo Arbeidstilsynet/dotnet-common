@@ -15,7 +15,7 @@ jobs:
 
       - uses: actions/setup-dotnet@v4
         env:
-          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}  
+          NUGET_AUTH_TOKEN: ${{secrets.AZURE_DEVOPS_PAT}}  
         with:
           dotnet-version: '8.0.x'
           source-url: https://pkgs.dev.azure.com/Atil-utvikling/Public/_packaging/AT.Public.NuGet/nuget/v3/index.json
@@ -67,7 +67,7 @@ jobs:
         if: steps.check_nuget.outputs.published == 'false'
         run: |
           dotnet pack "${{ inputs.package-path }}" -c Release
-          dotnet nuget push "${{ inputs.package-path }}/bin/Release/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source "AT.Public.NuGet"
+          dotnet nuget push "${{ inputs.package-path }}/bin/Release/*.nupkg"
           echo "Published ${{ steps.get_version.outputs.name }} version ${{ steps.get_version.outputs.version }}"
 
       - name: Stop if already published
