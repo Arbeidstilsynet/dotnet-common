@@ -1,0 +1,72 @@
+name: Publish NuGet Package (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      package-path:
+        required: true
+        type: string
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+          source-url: https://pkgs.dev.azure.com/Atil-utvikling/Public/_packaging/AT.Public.NuGet/nuget/v3/index.json
+
+      - name: Get package name and version from .csproj
+        id: get_version
+        run: |
+          CSPROJ=$(find "${{ inputs.package-path }}" -maxdepth 1 -name '*.csproj' | head -n 1)
+          if [ -z "$CSPROJ" ]; then
+            echo "No .csproj found in ${{ inputs.package-path }}"
+            exit 1
+          fi
+          NAME=$(xmllint --xpath "string(//Project/PropertyGroup/PackageId)" "$CSPROJ")
+          if [ -z "$NAME" ]; then
+            NAME=$(xmllint --xpath "string(//Project/PropertyGroup/AssemblyName)" "$CSPROJ")
+          fi
+          VERSION=$(xmllint --xpath "string(//Project/PropertyGroup/Version)" "$CSPROJ")
+          if [ -z "$NAME" ] || [ -z "$VERSION" ]; then
+            echo "Could not determine package name or version"
+            exit 1
+          fi
+          echo "name=$NAME" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check if version is already published on NuGet
+        id: check_nuget
+        run: |
+            NAME="${{ steps.get_version.outputs.name }}"
+            VERSION="${{ steps.get_version.outputs.version }}"
+
+            SEARCH=$(dotnet package search "$NAME" --format json)
+            # Finn alle versjoner for pakken, og sjekk om ønsket versjon finnes
+            FOUND=$(echo "$SEARCH" | jq -r --arg VERSION "$VERSION" '
+            .searchResult[0].packages[0].versions[]? | select(.version == $VERSION) | .version
+            ')
+
+            if [ "$FOUND" = "$VERSION" ]; then
+            echo "Denne versjonen er allerede publisert."
+            echo "published=true" >> $GITHUB_OUTPUT
+            else
+            echo "Denne versjonen er IKKE publisert."
+            echo "published=false" >> $GITHUB_OUTPUT
+            fi
+
+      - name: Publish package if not already published
+        if: steps.check_nuget.outputs.published == 'false'
+        run: |
+          dotnet pack "${{ inputs.package-path }}" -c Release
+          dotnet nuget push "${{ inputs.package-path }}/bin/Release/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json
+          echo "Published ${{ steps.get_version.outputs.name }} version ${{ steps.get_version.outputs.version }}"
+
+      - name: Stop if already published
+        if: steps.check_nuget.outputs.published == 'true'
+        run: |
+          echo "Package ${{ steps.get_version.outputs.name }} version ${{ steps.get_version.outputs.version }} is already published. Skipping."
+          exit 0
