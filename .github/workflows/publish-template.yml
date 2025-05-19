@@ -19,6 +19,9 @@ jobs:
         with:
           dotnet-version: '8.0.x'
           source-url: https://pkgs.dev.azure.com/Atil-utvikling/Public/_packaging/AT.Public.NuGet/nuget/v3/index.json
+      
+      - name: Setup xmllint
+        uses: Bpolitycki/setup-xmllint-action@1.0.1
 
       - name: Get package name and version from .csproj
         id: get_version
