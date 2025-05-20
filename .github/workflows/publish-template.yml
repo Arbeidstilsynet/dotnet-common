@@ -6,7 +6,6 @@ on:
       package-path:
         required: true
         type: string
-
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -16,7 +15,12 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+          config-file: ./nuget.config
           source-url: https://pkgs.dev.azure.com/Atil-utvikling/Public/_packaging/AT.Public.NuGet/nuget/v3/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT}}
+      - name: Setup xmllint
+        uses: Bpolitycki/setup-xmllint-action@1.0.1
 
       - name: Get package name and version from .csproj
         id: get_version
@@ -46,23 +50,22 @@ jobs:
 
             SEARCH=$(dotnet package search "$NAME" --format json)
             # Finn alle versjoner for pakken, og sjekk om ønsket versjon finnes
-            FOUND=$(echo "$SEARCH" | jq -r --arg VERSION "$VERSION" '
-            .searchResult[0].packages[0].versions[]? | select(.version == $VERSION) | .version
-            ')
-
+            echo $SEARCH
+            FOUND=$(echo "$SEARCH" | jq '.searchResult[] | select(.sourceName=="AT.Public.NuGet")' | jq --arg VERSION "$VERSION" '.packages[] | select(.latestVersion == $VERSION) | .latestVersion' | tr -d '"')
             if [ "$FOUND" = "$VERSION" ]; then
-            echo "Denne versjonen er allerede publisert."
+            echo "Denne versjonen ($FOUND) er likt somt den siste som ble allerede publisert."
             echo "published=true" >> $GITHUB_OUTPUT
             else
-            echo "Denne versjonen er IKKE publisert."
+            echo "Siste versjon som ble publisert var '$FOUND'. Versjon $VERSION er ulikt og vi prøver å publisere den."
             echo "published=false" >> $GITHUB_OUTPUT
             fi
 
       - name: Publish package if not already published
+        working-directory: "${{ inputs.package-path }}"
         if: steps.check_nuget.outputs.published == 'false'
         run: |
-          dotnet pack "${{ inputs.package-path }}" -c Release
-          dotnet nuget push "${{ inputs.package-path }}/bin/Release/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json
+          dotnet pack -c Release
+          dotnet nuget push "./bin/Release/*.nupkg" -k GithubDeployJob
           echo "Published ${{ steps.get_version.outputs.name }} version ${{ steps.get_version.outputs.version }}"
 
       - name: Stop if already published

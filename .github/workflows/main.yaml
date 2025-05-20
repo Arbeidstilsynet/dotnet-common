@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
 
+permissions:
+  packages: write
+  contents: read
+
 jobs:
   discover:
     runs-on: ubuntu-latest
@@ -23,5 +27,6 @@ jobs:
       matrix:
         package: ${{ fromJson(needs.discover.outputs.matrix) }}
     uses: ./.github/workflows/publish-template.yml
+    secrets: inherit
     with:
       package-path: ${{ matrix.package }}
