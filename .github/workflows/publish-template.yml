@@ -6,9 +6,6 @@ on:
       package-path:
         required: true
         type: string
-      azure-token:
-        required: true
-        type: string
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -66,7 +63,7 @@ jobs:
         if: steps.check_nuget.outputs.published == 'false'
         run: |
           dotnet pack -c Release
-          dotnet nuget push "./bin/Release/*.nupkg" -s "AT.Public.NuGet" -k ${{ inputs.azure-token }}
+          dotnet nuget push "./bin/Release/*.nupkg" -s "AT.Public.NuGet" -k ${{secrets.AZURE_DEVOPS_PUBLISH_PACKAGE}}
           echo "Published ${{ steps.get_version.outputs.name }} version ${{ steps.get_version.outputs.version }}"
 
       - name: Stop if already published
