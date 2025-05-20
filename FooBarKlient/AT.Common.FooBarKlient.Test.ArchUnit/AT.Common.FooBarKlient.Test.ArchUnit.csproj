@@ -17,7 +17,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="TngTech.ArchUnitNET" Version="0.11.4" />
-    <PackageReference Include="TngTech.ArchUnitNET.xUnit" Version="0.11.0" />
+    <PackageReference Include="TngTech.ArchUnitNET.xUnit" Version="0.11.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../AT.Common.FooBarKlient.Ports/AT.Common.FooBarKlient.Ports.csproj" />
