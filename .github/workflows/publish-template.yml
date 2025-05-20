@@ -52,7 +52,7 @@ jobs:
             SEARCH=$(dotnet package search "$NAME" --format json)
             # Finn alle versjoner for pakken, og sjekk om ønsket versjon finnes
             echo $SEARCH
-            FOUND=$(echo "$SEARCH" | jq '.searchResult[] | select(.sourceName=="Source")' | jq '.packages[] | select(.latestVersion=="$VERSION") | .latestVersion'))
+            FOUND=$(echo "$SEARCH" | jq '.searchResult[] | select(.sourceName=="Source")' | jq '.packages[] | select(.latestVersion=="$VERSION") | .latestVersion')
             if [ "$FOUND" = "$VERSION" ]; then
             echo "Denne versjonen ($FOUND) er likt somt den siste som ble allerede publisert."
             echo "published=true" >> $GITHUB_OUTPUT
