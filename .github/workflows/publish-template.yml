@@ -16,9 +16,8 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-          source-url: https://nuget.pkg.github.com/Arbeidstilsynet/index.json
         env:
-          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          NUGET_AUTH_TOKEN: ${{secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT}}
 
       - name: Setup xmllint
         uses: Bpolitycki/setup-xmllint-action@1.0.1
@@ -52,7 +51,7 @@ jobs:
             SEARCH=$(dotnet package search "$NAME" --format json)
             # Finn alle versjoner for pakken, og sjekk om ønsket versjon finnes
             echo $SEARCH
-            FOUND=$(echo "$SEARCH" | jq '.searchResult[] | select(.sourceName=="Source")' | jq --arg VERSION "$VERSION" '.packages[] | select(.latestVersion == $VERSION) | .latestVersion' | tr -d '"')
+            FOUND=$(echo "$SEARCH" | jq '.searchResult[] | select(.sourceName=="AT.Public.NuGet")' | jq --arg VERSION "$VERSION" '.packages[] | select(.latestVersion == $VERSION) | .latestVersion' | tr -d '"')
             if [ "$FOUND" = "$VERSION" ]; then
             echo "Denne versjonen ($FOUND) er likt somt den siste som ble allerede publisert."
             echo "published=true" >> $GITHUB_OUTPUT
