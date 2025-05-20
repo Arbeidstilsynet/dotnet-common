@@ -36,7 +36,7 @@ jobs:
           dotnet-version: '8.0.x'
           config-file: ./nuget.config
 
-      - uses: ./github/workflows/dotnet-build-template.yaml
+      - uses: ./.github/workflows/dotnet-build-template.yaml
         if: steps.check_changes.outputs.should-continue == 'true'
         with:
           working-directory: "${{ inputs.package-path }}/.."
