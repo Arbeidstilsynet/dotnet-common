@@ -51,6 +51,7 @@ jobs:
 
             SEARCH=$(dotnet package search "$NAME" --format json)
             # Finn alle versjoner for pakken, og sjekk om ønsket versjon finnes
+            echo $SEARCH
             FOUND=$(echo "$SEARCH" | jq -r --arg VERSION "$VERSION" '
             .searchResult[0].packages[0].versions[]? | select(.version == $VERSION) | .version
             ')
