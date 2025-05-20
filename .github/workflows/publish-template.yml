@@ -10,9 +10,9 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
         with:
           dotnet-version: '8.0.x'
           config-file: ./nuget.config
@@ -20,7 +20,7 @@ jobs:
         env:
           NUGET_AUTH_TOKEN: ${{secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT}}
       - name: Setup xmllint
-        uses: Bpolitycki/setup-xmllint-action@1.0.1
+        uses: Bpolitycki/setup-xmllint-action@f6f909cf660590f8e504cba968fb050e9aada8fc # 1.0.1
 
       - name: Get package name and version from .csproj
         id: get_version
