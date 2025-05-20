@@ -17,8 +17,6 @@ jobs:
         with:
           dotnet-version: '8.0.x'
           config-file: ./nuget.config
-        env:
-          NUGET_AUTH_TOKEN: ${{secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT}}
 
       - name: Setup xmllint
         uses: Bpolitycki/setup-xmllint-action@1.0.1
@@ -66,7 +64,7 @@ jobs:
         if: steps.check_nuget.outputs.published == 'false'
         run: |
           dotnet pack -c Release
-          dotnet nuget push "./bin/Release/*.nupkg" --source "AT.Public.NuGet"
+          dotnet nuget push "./bin/Release/*.nupkg" --source "AT.Public.NuGet" -k ${{secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT}}
           echo "Published ${{ steps.get_version.outputs.name }} version ${{ steps.get_version.outputs.version }}"
 
       - name: Stop if already published
