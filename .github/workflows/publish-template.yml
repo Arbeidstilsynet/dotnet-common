@@ -16,6 +16,7 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+          config-file: ./nuget.config
           source: https://pkgs.dev.azure.com/Atil-utvikling/Public/_packaging/AT.Public.NuGet/nuget/v3/index.json
         env:
           NUGET_AUTH_TOKEN: ${{secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT}}
@@ -65,7 +66,7 @@ jobs:
         working-directory: "${{ inputs.package-path }}"
         if: steps.check_nuget.outputs.published == 'false'
         run: |
-          dotnet pack -c Release --no-restore
+          dotnet pack -c Release
           dotnet nuget push "./bin/Release/*.nupkg"
           echo "Published ${{ steps.get_version.outputs.name }} version ${{ steps.get_version.outputs.version }}"
 
