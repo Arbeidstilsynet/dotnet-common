@@ -59,7 +59,7 @@ jobs:
 
       - name: Publish package if not already published
         env: 
-          NUGET_ACCESS_TOKEN: ${{secrets.AZURE_DEVOPS_PUBLISH_PACKAGE}}
+          NUGET_ACCESS_TOKEN: ${{secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT}}
         working-directory: "${{ inputs.package-path }}"
         if: steps.check_nuget.outputs.published == 'false'
         run: |
