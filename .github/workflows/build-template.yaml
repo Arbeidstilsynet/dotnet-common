@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       should-continue: ${{ steps.check_changes.outputs.should-continue }}
+      parent_dir: ${{ steps.get_parent_dir.outputs.parent_dir }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -30,13 +31,20 @@ jobs:
         with:
           dotnet-version: '8.0.x'
           config-file: ./nuget.config
-          
+      
+      - name: Get parent directory
+        id: get_parent_dir
+        run: 
+          rel_path="${{ inputs.package-path }}"
+          rel_path="${rel_path#./}"
+          echo "parent_dir=$(dirname '$rel_path')" >> $GITHUB_OUTPUT
+
   build-dotnet:
     needs: check-and-prepare
     if: needs.check-and-prepare.outputs.should-continue == 'true'
     uses: ./.github/workflows/dotnet-build-template.yaml
     with:
-      working-directory: "${{ inputs.package-path }}/.."
+      working-directory: ${{ needs.check-and-prepare.outputs.parent_dir }}
 
 
       
