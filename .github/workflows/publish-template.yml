@@ -65,7 +65,7 @@ jobs:
         if: steps.check_nuget.outputs.published == 'false'
         run: |
           dotnet pack -c Release
-          dotnet nuget push "./bin/Release/*.nupkg" -k dummyKey
+          dotnet nuget push "./bin/Release/*.nupkg" -k GithubDeployJob
           echo "Published ${{ steps.get_version.outputs.name }} version ${{ steps.get_version.outputs.version }}"
 
       - name: Stop if already published
