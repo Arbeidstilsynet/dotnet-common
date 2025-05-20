@@ -5,10 +5,13 @@ on:
         required: true
         type: string
 jobs:
-  publish:
+
+  check-and-prepare:
     runs-on: ubuntu-latest
+    outputs:
+      should-continue: ${{ steps.check_changes.outputs.should-continue }}
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -16,28 +19,28 @@ jobs:
         id: check_changes
         run: |
           rel_path="${{ inputs.package-path }}"
-          rel_path="${rel_path#./}" # Remove leading ./ if present
+          rel_path="${rel_path#./}"
           if git diff --name-only origin/main...HEAD | grep -q "$rel_path"; then
-            echo "Changes detected in ${{ inputs.package-path }}"
             echo "should-continue=true" >> $GITHUB_OUTPUT
           else
-            echo "No changes in ${{ inputs.package-path }}"
             echo "should-continue=false" >> $GITHUB_OUTPUT
           fi
-      - name: Stop if no changes detected
-        if: steps.check_changes.outputs.should-continue == 'false'
-        run: |
-          echo "No changes detected in ${{ inputs.package-path }}. Stopping the workflow."
-          exit 0
-
       - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
         if: steps.check_changes.outputs.should-continue == 'true'
         with:
           dotnet-version: '8.0.x'
           config-file: ./nuget.config
+          
+  build-dotnet:
+    needs: check-and-prepare
+    if: needs.check-and-prepare.outputs.should-continue == 'true'
+    uses: ./.github/workflows/dotnet-build-template.yaml
+    with:
+      working-directory: "${{ inputs.package-path }}/.."
 
-      - uses: ./.github/workflows/dotnet-build-template.yaml
-        if: steps.check_changes.outputs.should-continue == 'true'
-        with:
-          working-directory: "${{ inputs.package-path }}/.."
+
+      
+
+
+
     
