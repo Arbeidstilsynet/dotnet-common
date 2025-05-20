@@ -42,7 +42,7 @@ jobs:
     if: needs.check-and-prepare.outputs.should-continue == 'true'
     uses: ./.github/workflows/dotnet-build-template.yaml
     with:
-      working-directory: ${{ needs.check-and-prepare.outputs.parent_dir }}
+      working-directory: "FooBarKlient"
 
 
       
