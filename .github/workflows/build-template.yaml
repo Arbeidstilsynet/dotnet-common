@@ -35,9 +35,7 @@ jobs:
       - name: Get parent directory
         id: get_parent_dir
         run: 
-          rel_path="${{ inputs.package-path }}"
-          rel_path="${rel_path#./}"
-          echo "parent_dir=$(dirname '$rel_path')" >> $GITHUB_OUTPUT
+          echo "parent_dir=$(dirname '${{ inputs.package-path }}')" >> $GITHUB_OUTPUT
 
   build-dotnet:
     needs: check-and-prepare
