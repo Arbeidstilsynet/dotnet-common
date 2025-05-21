@@ -16,7 +16,7 @@ jobs:
       parent_dir: ${{ steps.get_parent_dir.outputs.parent_dir }}
       package_path: ${{ inputs.package-path }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           fetch-depth: 0
 
@@ -43,7 +43,7 @@ jobs:
     timeout-minutes: 10
     if: needs.check-and-prepare.outputs.should-continue == 'true'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: ./.github/actions/build-dotnet
         with:
           working-directory: ${{ needs.check-and-prepare.outputs.parent_dir }}
@@ -54,7 +54,7 @@ jobs:
     timeout-minutes: 10
     if: needs.check-and-prepare.outputs.should-continue == 'true'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           fetch-depth: 0
 
