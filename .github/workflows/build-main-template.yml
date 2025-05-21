@@ -6,6 +6,7 @@ on:
       package-path:
         required: true
         type: string
+
 jobs:
   publish:
     runs-on: ubuntu-latest
