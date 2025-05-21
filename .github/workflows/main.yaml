@@ -26,7 +26,7 @@ jobs:
     strategy:
       matrix:
         package: ${{ fromJson(needs.discover.outputs.matrix) }}
-    uses: ./.github/workflows/reusables/build-main-template.yml
+    uses: ./.github/workflows/build-main-template.yml
     with:
       package-path: ${{ matrix.package }}
 
@@ -35,7 +35,7 @@ jobs:
     strategy:
       matrix:
         package: ${{ fromJson(needs.discover.outputs.matrix) }}
-    uses: ./.github/workflows/reusables/publish-main-template.yml
+    uses: ./.github/workflows/publish-main-template.yml
     secrets: inherit
     with:
       package-path: ${{ matrix.package }}

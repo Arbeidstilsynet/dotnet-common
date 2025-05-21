@@ -22,6 +22,6 @@ jobs:
     strategy:
       matrix:
         package: ${{ fromJson(needs.discover.outputs.matrix) }}
-    uses: ./.github/workflows/reusables/build-change-request-template.yaml
+    uses: ./.github/workflows/build-change-request-template.yaml
     with:
       package-path: ${{ matrix.package }}
