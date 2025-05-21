@@ -26,7 +26,7 @@ jobs:
         with:
           package-path: ${{ inputs.package-path }}
     
-      - uses: ./.github/actions/check-nuget
+      - uses: ./.github/actions/nuget-version-check
         id: nuget_version_check
         with:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}

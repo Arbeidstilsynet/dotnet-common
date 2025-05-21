@@ -70,7 +70,7 @@ jobs:
         with:
           package-path: ${{ needs.check-and-prepare.outputs.package_path }}
     
-      - uses: ./.github/actions/check-nuget
+      - uses: ./.github/actions/nuget-version-check
         id: nuget_version_check
         with:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
