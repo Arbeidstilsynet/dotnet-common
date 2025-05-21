@@ -34,7 +34,7 @@ jobs:
         working-directory: "${{ inputs.working-directory }}"
 
       - name: Csharpier lint
-        run: dotnet csharpier --check .
+        run: dotnet csharpier check .
         working-directory: "${{ inputs.working-directory }}"
 
       - name: Dotnet format style
