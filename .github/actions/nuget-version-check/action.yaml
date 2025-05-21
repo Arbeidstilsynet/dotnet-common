@@ -31,7 +31,7 @@ runs:
         SEARCH=$(dotnet package search "$NAME" --format json)
         echo "$SEARCH"
         FOUND=$(echo "$SEARCH" | jq '.searchResult[] | select(.sourceName=="AT.Public.NuGet")' | jq --arg VERSION "$VERSION" '.packages[] | select(.latestVersion == $VERSION) | .latestVersion' | tr -d '"')
-        LAST_VERSION=$(echo "$LAST_VERSION" | jq '.searchResult[] | select(.sourceName=="AT.Public.NuGet")' | jq '.packages[] | .latestVersion' | tr -d '"')
+        LAST_VERSION=$(echo "$SEARCH" | jq '.searchResult[] | select(.sourceName=="AT.Public.NuGet")' | jq '.packages[] | .latestVersion' | tr -d '"' | head -n 1)
         echo "last_version=$LAST_VERSION" >> $GITHUB_OUTPUT
         if [ "$FOUND" = "$VERSION" ]; then
           echo "The version ($FOUND) for $NAME is already published in the AT.Public.NuGet feed."
