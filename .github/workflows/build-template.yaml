@@ -37,14 +37,16 @@ jobs:
         run: 
           rel_path="${{ inputs.package-path }}"
           rel_path="${rel_path#./}"
-          echo "parent_dir=$(dirname '$rel_path')" >> $GITHUB_OUTPUT
+          parent_dir=$(dirname '$rel_path')
+          echo $parent_dir
+          echo $parent_dir >> $GITHUB_OUTPUT
 
   build-dotnet:
     needs: check-and-prepare
     if: needs.check-and-prepare.outputs.should-continue == 'true'
     uses: ./.github/workflows/dotnet-build-template.yaml
     with:
-      working-directory: "FooBarKlient"
+      working-directory: ${{ needs.check-and-prepare.outputs.parent_dir }}
 
 
       

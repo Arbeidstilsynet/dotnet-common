@@ -30,7 +30,7 @@ jobs:
         working-directory: "${{ inputs.working-directory }}"
 
       - name: List packages
-        run: dotnet list
+        run: dotnet list package
         working-directory: "${{ inputs.working-directory }}"
 
       - name: Csharpier lint
