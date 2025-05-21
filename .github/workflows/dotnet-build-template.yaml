@@ -6,7 +6,7 @@ on:
         type: string
 
 jobs:
-  steps:
+  build-dotnet:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4   # <-- Add this line

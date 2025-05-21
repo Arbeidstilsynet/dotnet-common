@@ -73,6 +73,10 @@ jobs:
             echo "No .csproj found in ${{ inputs.package-path }}"
             exit 1
           fi
+          NAME=$(xmllint --xpath "string(//Project/PropertyGroup/PackageId)" "$CSPROJ")
+          if [ -z "$NAME" ]; then
+            NAME=$(xmllint --xpath "string(//Project/PropertyGroup/AssemblyName)" "$CSPROJ")
+          fi
           VERSION=$(xmllint --xpath "string(//Project/PropertyGroup/Version)" "$CSPROJ")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           SEARCH=$(dotnet package search "$NAME" --format json)
