@@ -50,7 +50,54 @@ jobs:
     with:
       working-directory: ${{ needs.check-and-prepare.outputs.parent_dir }}
 
+  post-build-checks:
+    needs: build-dotnet
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
+      - name: Setup xmllint
+        uses: Bpolitycki/setup-xmllint-action@f6f909cf660590f8e504cba968fb050e9aada8fc # 1.0.1
+
+      - name: Check if package version was updated
+        id: get_version
+        run: |
+          CSPROJ=$(find "${{ inputs.package-path }}" -maxdepth 1 -name '*.csproj' | head -n 1)
+          if [ -z "$CSPROJ" ]; then
+            echo "No .csproj found in ${{ inputs.package-path }}"
+            exit 1
+          fi
+          VERSION=$(xmllint --xpath "string(//Project/PropertyGroup/Version)" "$CSPROJ")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          SEARCH=$(dotnet package search "$NAME" --format json)
+          # Finn alle versjoner for pakken, og sjekk om ønsket versjon finnes
+          echo $SEARCH
+          FOUND=$(echo "$SEARCH" | jq '.searchResult[] | select(.sourceName=="AT.Public.NuGet")' | jq --arg VERSION "$VERSION" '.packages[] | select(.latestVersion == $VERSION) | .latestVersion' | tr -d '"')
+          if [ "$FOUND" = "$VERSION" ]; then
+            echo "You did not increase the version number. This version ($FOUND) is the same as the last published version."
+            exit 1
+          else
+            echo "You increased the version number. The last published version was '$FOUND'. The new version $VERSION is going to be published when merging into main."
+          fi
+
+      - name: Check for changelog
+        run: |
+          CHANGELOG=$(find "${{ inputs.package-path }}" -maxdepth 1 -name 'CHANGELOG.md' | head -n 1)
+          if [ -f "$CHANGELOG" ]; then
+            echo "Changelog found."
+            # Optionally, check if the changelog contains the version string
+            if grep -q "${{ steps.get_version.outputs.version }}" "$CHANGELOG"; then
+              echo "Changelog contains entry for version ${{ steps.get_version.outputs.version }}."
+            else
+              echo "WARNING: Changelog does not contain entry for version ${{ steps.get_version.outputs.version }}."
+              exit 1
+            fi
+          else
+            echo "ERROR: No changelog found. Please add a CHANGELOG.md file to the package path ${{ inputs.package-path }}."
+            exit 1
+          fi
 
 
 
