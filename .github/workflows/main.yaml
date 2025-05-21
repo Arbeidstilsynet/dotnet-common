@@ -4,9 +4,13 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 jobs:
   discover:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
@@ -17,12 +21,21 @@ jobs:
           folders="[${folders%,}]"
           echo "matrix=$folders" >> $GITHUB_OUTPUT
 
+  build:
+    needs: discover
+    strategy:
+      matrix:
+        package: ${{ fromJson(needs.discover.outputs.matrix) }}
+    uses: ./.github/workflows/reusables/build-main-template.yml
+    with:
+      package-path: ${{ matrix.package }}
+
   publish:
     needs: discover
     strategy:
       matrix:
         package: ${{ fromJson(needs.discover.outputs.matrix) }}
-    uses: ./.github/workflows/publish-template.yml
+    uses: ./.github/workflows/reusables/publish-main-template.yml
     secrets: inherit
     with:
       package-path: ${{ matrix.package }}
