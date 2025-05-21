@@ -1,4 +1,4 @@
-name: Publish NuGet Package (Reusable)
+name: Publish changed package (reusable)
 
 on:
   workflow_call:

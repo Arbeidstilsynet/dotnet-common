@@ -1,4 +1,4 @@
-name: Build all packages with detected changes and run necessary checks for publishing
+name: Build (PR)
 on:
   pull_request:
 

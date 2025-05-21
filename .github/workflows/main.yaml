@@ -1,4 +1,4 @@
-name: Build all packages and publish changed packages
+name: Build all & publish changed packages
 
 on:
   push:

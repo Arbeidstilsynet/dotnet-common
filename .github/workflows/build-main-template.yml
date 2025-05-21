@@ -1,4 +1,4 @@
-name: Publish NuGet Package (Reusable)
+name: Build (main, reusable
 
 on:
   workflow_call:
