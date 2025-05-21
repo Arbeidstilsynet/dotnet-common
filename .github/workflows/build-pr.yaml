@@ -1,12 +1,7 @@
-name: Build all & publish changed packages
+name: Build (PR)
 
 on:
-  push:
-    branches: [main]
-
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: false
+  pull_request:
 
 jobs:
   discover:
@@ -27,16 +22,6 @@ jobs:
     strategy:
       matrix:
         package: ${{ fromJson(needs.discover.outputs.matrix) }}
-    uses: ./.github/workflows/build-main-template.yml
-    with:
-      package-path: ${{ matrix.package }}
-
-  publish:
-    needs: discover
-    strategy:
-      matrix:
-        package: ${{ fromJson(needs.discover.outputs.matrix) }}
-    uses: ./.github/workflows/publish-template.yml
-    secrets: inherit
+    uses: ./.github/workflows/build-pr-template.yaml
     with:
       package-path: ${{ matrix.package }}

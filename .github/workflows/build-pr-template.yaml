@@ -1,0 +1,98 @@
+name: Build (PR, reusable)
+
+on:
+  workflow_call:
+    inputs:
+      package-path:
+        required: true
+        type: string
+
+jobs:
+  check-and-prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      should-continue: ${{ steps.check_changes.outputs.should-continue }}
+      parent_dir: ${{ steps.get_parent_dir.outputs.parent_dir }}
+      package_path: ${{ inputs.package-path }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check if changes are inside package path
+        id: check_changes
+        run: |
+          rel_path="${{ inputs.package-path }}"
+          rel_path="${rel_path#./}"
+          if git diff --name-only origin/main...HEAD | grep -q "$rel_path"; then
+            echo "should-continue=true" >> $GITHUB_OUTPUT
+          else
+            echo "should-continue=false" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: ./.github/actions/get-parent-dir
+        if: steps.check_changes.outputs.should-continue == 'true'
+        id: get_parent_dir
+        with:
+          package-path: ${{ inputs.package-path }}
+
+  build-dotnet:
+    needs: check-and-prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: needs.check-and-prepare.outputs.should-continue == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/build-dotnet
+        with:
+          working-directory: ${{ needs.check-and-prepare.outputs.parent_dir }}
+
+  post-build-checks:
+    needs: [check-and-prepare, build-dotnet]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: needs.check-and-prepare.outputs.should-continue == 'true'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: ./.github/actions/get-metadata-from-csprojectfile
+        id: get_metadata_from_csprojectfile
+        with:
+          package-path: ${{ needs.check-and-prepare.outputs.package_path }}
+
+      - uses: ./.github/actions/nuget-version-check
+        id: nuget_version_check
+        with:
+          name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
+          version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
+      - name: Check if package version was updated
+        id: get_version
+        run: |
+          VERSION="${{ steps.get_metadata_from_csprojectfile.outputs.version }}"
+          FOUND="${{ steps.nuget_version_check.outputs.last_version }}"
+          if [ "${{steps.nuget_version_check.outputs.published }}" = "true" ]; then
+            echo "You did not increase the version number. This version ($VERSION) is the same as the last published version."
+            exit 1
+          else
+            echo "You increased the version number. The last published version was '$FOUND'. The new version $VERSION is going to be published when merging into main."
+          fi
+
+      - name: Check for changelog
+        run: |
+          CHANGELOG=$(find "${{ needs.check-and-prepare.outputs.package_path }}" -maxdepth 1 -name 'CHANGELOG.md' | head -n 1)
+          if [ -f "$CHANGELOG" ]; then
+            echo "Changelog found."
+            # Optionally, check if the changelog contains the version string
+            if grep -q "${{ steps.get_metadata_from_csprojectfile.outputs.version }}" "$CHANGELOG"; then
+              echo "Changelog contains entry for version ${{ steps.get_metadata_from_csprojectfile.outputs.version }}."
+            else
+              echo "WARNING: Changelog does not contain entry for version ${{ steps.get_metadata_from_csprojectfile.outputs.version }}."
+              exit 1
+            fi
+          else
+            echo "ERROR: No changelog found. Please add a CHANGELOG.md file to the package path ${{ needs.check-and-prepare.outputs.package_path }}."
+            exit 1
+          fi

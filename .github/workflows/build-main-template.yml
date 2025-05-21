@@ -1,0 +1,23 @@
+name: Build (main, reusable)
+
+on:
+  workflow_call:
+    inputs:
+      package-path:
+        required: true
+        type: string
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: ./.github/actions/get-parent-dir
+        id: get_parent_dir
+        with:
+          package-path: ${{ inputs.package-path }}
+
+      - uses: ./.github/actions/build-dotnet
+        with:
+          working-directory: ${{ steps.get_parent_dir.outputs.parent_dir }}

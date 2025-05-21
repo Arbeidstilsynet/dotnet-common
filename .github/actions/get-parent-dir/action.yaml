@@ -1,0 +1,26 @@
+name: "Get Parent Directory"
+description: "Outputs the parent directory of a given path"
+
+inputs:
+  package-path:
+    description: "The path to get the parent directory for"
+    required: true
+
+outputs:
+  parent_dir:
+    description: "The parent directory of the input path"
+    value: ${{ steps.get_parent_dir.outputs.parent_dir }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get parent directory
+      id: get_parent_dir
+      shell: bash
+      run: |
+        rel_path="${{ inputs.package-path }}"
+        rel_path="${rel_path#./}"
+        echo "DEBUG: rel_path=$rel_path"
+        parent_dir=$(dirname "$rel_path")
+        echo "DEBUG: parent_dir=$parent_dir"
+        echo "parent_dir=$parent_dir" >> $GITHUB_OUTPUT
