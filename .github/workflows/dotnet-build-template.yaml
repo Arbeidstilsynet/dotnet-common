@@ -16,7 +16,7 @@ jobs:
         run: |
           echo "Current path: $(pwd)"
           echo "Working directory: ${{ inputs.working-directory }}"
-          ls -la "${{ inputs.working-directory }}"
+          ls -l
         shell: bash
       - name: Restore
         run: 
