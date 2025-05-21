@@ -61,10 +61,6 @@ jobs:
         with:
           dotnet-version: '8.0.x'
           config-file: ./nuget.config
-
-      - name: Setup xmllint
-        uses: Bpolitycki/setup-xmllint-action@f6f909cf660590f8e504cba968fb050e9aada8fc # 1.0.1
-
       - name: Check if package version was updated
         id: get_version
         run: |
@@ -73,14 +69,13 @@ jobs:
             echo "No .csproj found in ${{ inputs.package-path }}"
             exit 1
           fi
-          NAME=$(xmllint --xpath "string(//Project/PropertyGroup/PackageId)" "$CSPROJ")
+          NAME=$(grep -m1 '<PackageId>' "$CSPROJ" | sed -E 's/.*<PackageId>(.*)<\/PackageId>.*/\1/')
           if [ -z "$NAME" ]; then
-            NAME=$(xmllint --xpath "string(//Project/PropertyGroup/AssemblyName)" "$CSPROJ")
+            NAME=$(grep -m1 '<AssemblyName>' "$CSPROJ" | sed -E 's/.*<AssemblyName>(.*)<\/AssemblyName>.*/\1/')
           fi
-          VERSION=$(xmllint --xpath "string(//Project/PropertyGroup/Version)" "$CSPROJ")
+          VERSION=$(grep -m1 '<Version>' "$CSPROJ" | sed -E 's/.*<Version>(.*)<\/Version>.*/\1/')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           SEARCH=$(dotnet package search "$NAME" --format json)
-          # Finn alle versjoner for pakken, og sjekk om ønsket versjon finnes
           echo $SEARCH
           FOUND=$(echo "$SEARCH" | jq '.searchResult[] | select(.sourceName=="AT.Public.NuGet")' | jq --arg VERSION "$VERSION" '.packages[] | select(.latestVersion == $VERSION) | .latestVersion' | tr -d '"')
           if [ "$FOUND" = "$VERSION" ]; then

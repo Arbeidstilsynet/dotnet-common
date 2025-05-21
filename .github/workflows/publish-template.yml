@@ -19,8 +19,6 @@ jobs:
           source-url: https://pkgs.dev.azure.com/Atil-utvikling/Public/_packaging/AT.Public.NuGet/nuget/v3/index.json
         env:
           NUGET_AUTH_TOKEN: ${{secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT}}
-      - name: Setup xmllint
-        uses: Bpolitycki/setup-xmllint-action@f6f909cf660590f8e504cba968fb050e9aada8fc # 1.0.1
 
       - name: Get package name and version from .csproj
         id: get_version
@@ -30,11 +28,11 @@ jobs:
             echo "No .csproj found in ${{ inputs.package-path }}"
             exit 1
           fi
-          NAME=$(xmllint --xpath "string(//Project/PropertyGroup/PackageId)" "$CSPROJ")
+          NAME=$(grep -m1 '<PackageId>' "$CSPROJ" | sed -E 's/.*<PackageId>(.*)<\/PackageId>.*/\1/')
           if [ -z "$NAME" ]; then
-            NAME=$(xmllint --xpath "string(//Project/PropertyGroup/AssemblyName)" "$CSPROJ")
+            NAME=$(grep -m1 '<AssemblyName>' "$CSPROJ" | sed -E 's/.*<AssemblyName>(.*)<\/AssemblyName>.*/\1/')
           fi
-          VERSION=$(xmllint --xpath "string(//Project/PropertyGroup/Version)" "$CSPROJ")
+          VERSION=$(grep -m1 '<Version>' "$CSPROJ" | sed -E 's/.*<Version>(.*)<\/Version>.*/\1/')
           if [ -z "$NAME" ] || [ -z "$VERSION" ]; then
             echo "Could not determine package name or version"
             exit 1
