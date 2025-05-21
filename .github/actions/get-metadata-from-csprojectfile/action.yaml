@@ -1,5 +1,6 @@
 name: "Get Package Name and Version"
 description: "Extracts the package name and version from a .csproj file in the given path"
+
 inputs:
   package-path:
     description: "The path to the package directory"
@@ -11,6 +12,7 @@ outputs:
   version:
     description: "The package version"
     value: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
+
 runs:
   using: "composite"
   steps:

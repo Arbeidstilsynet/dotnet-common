@@ -1,5 +1,6 @@
 name: "Check if NuGet version is published"
 description: "Checks if the given package version is already published on AT.Public.NuGet."
+
 inputs:
   name:
     description: "The package name"
@@ -7,6 +8,7 @@ inputs:
   version:
     description: "The package version"
     required: true
+
 outputs:
   published:
     description: "true if the version is already published, false otherwise"
@@ -14,6 +16,7 @@ outputs:
   last_version:
     description: "The last version published"
     value: ${{ steps.nuget_version_check.outputs.last-version }}
+
 runs:
   using: "composite"
   steps:

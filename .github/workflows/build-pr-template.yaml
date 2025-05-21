@@ -1,4 +1,5 @@
 name: Build (PR, reusable)
+
 on:
   workflow_call:
     inputs:
@@ -29,8 +30,6 @@ jobs:
           else
             echo "should-continue=false" >> $GITHUB_OUTPUT
           fi
-
-
 
       - uses: ./.github/actions/get-parent-dir
         if: steps.check_changes.outputs.should-continue == 'true'
@@ -63,7 +62,7 @@ jobs:
         id: get_metadata_from_csprojectfile
         with:
           package-path: ${{ needs.check-and-prepare.outputs.package_path }}
-    
+
       - uses: ./.github/actions/nuget-version-check
         id: nuget_version_check
         with:
@@ -97,7 +96,3 @@ jobs:
             echo "ERROR: No changelog found. Please add a CHANGELOG.md file to the package path ${{ needs.check-and-prepare.outputs.package_path }}."
             exit 1
           fi
-
-
-
-

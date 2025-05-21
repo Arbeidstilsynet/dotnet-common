@@ -1,5 +1,6 @@
 name: "Build .NET Project"
 description: "Restores, lints, formats, builds, and tests a .NET project"
+
 inputs:
   working-directory:
     description: "The directory to run dotnet commands in"
