@@ -12,6 +12,7 @@ jobs:
     outputs:
       should-continue: ${{ steps.check_changes.outputs.should-continue }}
       parent_dir: ${{ steps.get_parent_dir.outputs.parent_dir }}
+      package_path: ${{ inputs.package-path }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -40,16 +41,20 @@ jobs:
           package-path: ${{ inputs.package-path }}
 
   build-dotnet:
+    needs: check-and-prepare
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    uses: ./.github/actions/build-dotnet
-    with:
-      working-directory: ${{ needs.check-and-prepare.outputs.parent_dir }}
+    if: needs.check-and-prepare.outputs.should-continue == 'true'
+    steps:
+      - uses: ./.github/actions/build-dotnet
+        with:
+          working-directory: ${{ needs.check-and-prepare.outputs.parent_dir }}
 
   post-build-checks:
-    needs: build-dotnet
+    needs: [check-and-prepare, build-dotnet]
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    if: needs.check-and-prepare.outputs.should-continue == 'true'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -61,9 +66,9 @@ jobs:
       - name: Check if package version was updated
         id: get_version
         run: |
-          CSPROJ=$(find "${{ inputs.package-path }}" -maxdepth 1 -name '*.csproj' | head -n 1)
+          CSPROJ=$(find "${{ needs.check-and-prepare.outputs.package_path }}" -maxdepth 1 -name '*.csproj' | head -n 1)
           if [ -z "$CSPROJ" ]; then
-            echo "No .csproj found in ${{ inputs.package-path }}"
+            echo "No .csproj found in ${{ needs.check-and-prepare.outputs.package_path }}"
             exit 1
           fi
           NAME=$(grep -m1 '<PackageId>' "$CSPROJ" | sed -E 's/.*<PackageId>(.*)<\/PackageId>.*/\1/')
@@ -84,7 +89,7 @@ jobs:
 
       - name: Check for changelog
         run: |
-          CHANGELOG=$(find "${{ inputs.package-path }}" -maxdepth 1 -name 'CHANGELOG.md' | head -n 1)
+          CHANGELOG=$(find "${{ needs.check-and-prepare.outputs.package_path }}" -maxdepth 1 -name 'CHANGELOG.md' | head -n 1)
           if [ -f "$CHANGELOG" ]; then
             echo "Changelog found."
             # Optionally, check if the changelog contains the version string
@@ -95,7 +100,7 @@ jobs:
               exit 1
             fi
           else
-            echo "ERROR: No changelog found. Please add a CHANGELOG.md file to the package path ${{ inputs.package-path }}."
+            echo "ERROR: No changelog found. Please add a CHANGELOG.md file to the package path ${{ needs.check-and-prepare.outputs.package_path }}."
             exit 1
           fi
 
