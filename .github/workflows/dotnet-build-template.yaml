@@ -12,9 +12,15 @@ jobs:
       - name: Restore tools (Csharpier)
         run: dotnet tool restore
         working-directory: "${{ inputs.working-directory }}"
-
+      - name: Debug working directory before restore
+        run: |
+          echo "Current path: $(pwd)"
+          echo "Working directory: ${{ inputs.working-directory }}"
+          ls -la "${{ inputs.working-directory }}"
+        shell: bash
       - name: Restore
-        run: dotnet restore FooBarKlient.sln
+        run: 
+          dotnet restore
         working-directory: "${{ inputs.working-directory }}"
 
       - name: Security check
