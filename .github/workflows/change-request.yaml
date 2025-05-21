@@ -1,3 +1,4 @@
+name: Build all packages with detected changes and run necessary checks for publishing
 on:
   push:
     branches-ignore:

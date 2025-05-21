@@ -78,8 +78,10 @@ jobs:
       - name: Check if package version was updated
         id: get_version
         run: |
+          VERSION="${{ steps.get_metadata_from_csprojectfile.outputs.version }}"
+          FOUND="${{ steps.nuget_version_check.outputs.last_version }}"
           if [ "${{steps.nuget_version_check.outputs.published }}" ]; then
-            echo "You did not increase the version number. This version ($FOUND) is the same as the last published version."
+            echo "You did not increase the version number. This version ($VERSION) is the same as the last published version."
             exit 1
           else
             echo "You increased the version number. The last published version was '$FOUND'. The new version $VERSION is going to be published when merging into main."
