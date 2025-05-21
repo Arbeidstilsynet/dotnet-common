@@ -37,9 +37,9 @@ jobs:
         run: 
           rel_path="${{ inputs.package-path }}"
           rel_path="${rel_path#./}"
-          parent_dir=$(dirname '$rel_path')
-          echo $parent_dir
-          echo $parent_dir >> $GITHUB_OUTPUT
+          parent_dir=$(dirname "$rel_path")
+          echo "$parent_dir"
+          echo "parent_dir=$parent_dir" >> $GITHUB_OUTPUT
 
   build-dotnet:
     needs: check-and-prepare
