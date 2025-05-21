@@ -1,15 +1,13 @@
-name: 'Build .NET Project'
-description: 'Restores, lints, formats, builds, and tests a .NET project'
+name: "Build .NET Project"
+description: "Restores, lints, formats, builds, and tests a .NET project"
 inputs:
   working-directory:
-    description: 'The directory to run dotnet commands in'
+    description: "The directory to run dotnet commands in"
     required: true
 
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v4
-
     - name: Restore tools (Csharpier)
       run: dotnet tool restore
       working-directory: ${{ inputs.working-directory }}

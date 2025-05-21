@@ -46,6 +46,7 @@ jobs:
     timeout-minutes: 10
     if: needs.check-and-prepare.outputs.should-continue == 'true'
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/build-dotnet
         with:
           working-directory: ${{ needs.check-and-prepare.outputs.parent_dir }}
