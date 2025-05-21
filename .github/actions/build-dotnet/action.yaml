@@ -8,6 +8,11 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: "8.0.x"
+        config-file: ./nuget.config
+
     - name: Restore tools (Csharpier)
       run: dotnet tool restore
       working-directory: ${{ inputs.working-directory }}

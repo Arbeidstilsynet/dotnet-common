@@ -17,6 +17,10 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: "8.0.x"
+        config-file: ./nuget.config
     - name: Check if version is already published on NuGet
       id: nuget_version_check
       shell: bash
