@@ -73,7 +73,7 @@ jobs:
         run: |
           VERSION="${{ steps.get_metadata_from_csprojectfile.outputs.version }}"
           FOUND="${{ steps.nuget_version_check.outputs.last_version }}"
-          if [ "${{steps.nuget_version_check.outputs.published }}" ]; then
+          if [ "${{steps.nuget_version_check.outputs.published }}" = "true" ]; then
             echo "You did not increase the version number. This version ($VERSION) is the same as the last published version."
             exit 1
           else

@@ -15,8 +15,7 @@ outputs:
     value: ${{ steps.nuget_version_check.outputs.published }}
   last_version:
     description: "The last version published"
-    value: ${{ steps.nuget_version_check.outputs.last-version }}
-
+    value: ${{ steps.nuget_version_check.outputs.last_version }}
 runs:
   using: "composite"
   steps:
@@ -32,11 +31,12 @@ runs:
         SEARCH=$(dotnet package search "$NAME" --format json)
         echo "$SEARCH"
         FOUND=$(echo "$SEARCH" | jq '.searchResult[] | select(.sourceName=="AT.Public.NuGet")' | jq --arg VERSION "$VERSION" '.packages[] | select(.latestVersion == $VERSION) | .latestVersion' | tr -d '"')
-        echo "last_version=$FOUND" >> $GITHUB_OUTPUT
+        LAST_VERSION=$(echo "$LAST_VERSION" | jq '.searchResult[] | select(.sourceName=="AT.Public.NuGet")' | jq '.packages[] | .latestVersion' | tr -d '"')
+        echo "last_version=$LAST_VERSION" >> $GITHUB_OUTPUT
         if [ "$FOUND" = "$VERSION" ]; then
           echo "The version ($FOUND) for $NAME is already published in the AT.Public.NuGet feed."
           echo "published=true" >> $GITHUB_OUTPUT
         else
-          echo "Last version published for $NAME in the AT.Public.NuGet feed was '$FOUND'. The given version $VERSION is not the same."
+          echo "Last version published for $NAME in the AT.Public.NuGet feed was '$LAST_VERSION'. The given version $VERSION is not the same."
           echo "published=false" >> $GITHUB_OUTPUT
         fi
