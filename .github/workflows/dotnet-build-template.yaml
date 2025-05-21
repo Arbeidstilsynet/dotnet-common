@@ -14,7 +14,7 @@ jobs:
         working-directory: "${{ inputs.working-directory }}"
 
       - name: Restore
-        run: dotnet restore
+        run: dotnet restore FooBarKlient.sln
         working-directory: "${{ inputs.working-directory }}"
 
       - name: Security check
