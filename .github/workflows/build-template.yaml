@@ -57,6 +57,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+          config-file: ./nuget.config
 
       - name: Setup xmllint
         uses: Bpolitycki/setup-xmllint-action@f6f909cf660590f8e504cba968fb050e9aada8fc # 1.0.1
