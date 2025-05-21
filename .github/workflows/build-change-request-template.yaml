@@ -64,24 +64,21 @@ jobs:
         with:
           dotnet-version: '8.0.x'
           config-file: ./nuget.config
+
+      - uses: ./.github/actions/get-metadata-from-csprojectfile
+        id: get_metadata_from_csprojectfile
+        with:
+          package-path: ${{ needs.check-and-prepare.outputs.package_path }}
+    
+      - uses: ./.github/actions/check-nuget
+        id: nuget_version_check
+        with:
+          name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
+          version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
       - name: Check if package version was updated
         id: get_version
         run: |
-          CSPROJ=$(find "${{ needs.check-and-prepare.outputs.package_path }}" -maxdepth 1 -name '*.csproj' | head -n 1)
-          if [ -z "$CSPROJ" ]; then
-            echo "No .csproj found in ${{ needs.check-and-prepare.outputs.package_path }}"
-            exit 1
-          fi
-          NAME=$(grep -m1 '<PackageId>' "$CSPROJ" | sed -E 's/.*<PackageId>(.*)<\/PackageId>.*/\1/')
-          if [ -z "$NAME" ]; then
-            NAME=$(grep -m1 '<AssemblyName>' "$CSPROJ" | sed -E 's/.*<AssemblyName>(.*)<\/AssemblyName>.*/\1/')
-          fi
-          VERSION=$(grep -m1 '<Version>' "$CSPROJ" | sed -E 's/.*<Version>(.*)<\/Version>.*/\1/')
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          SEARCH=$(dotnet package search "$NAME" --format json)
-          echo $SEARCH
-          FOUND=$(echo "$SEARCH" | jq '.searchResult[] | select(.sourceName=="AT.Public.NuGet")' | jq --arg VERSION "$VERSION" '.packages[] | select(.latestVersion == $VERSION) | .latestVersion' | tr -d '"')
-          if [ "$FOUND" = "$VERSION" ]; then
+          if [ "${{steps.nuget_version_check.outputs.published }}" ]; then
             echo "You did not increase the version number. This version ($FOUND) is the same as the last published version."
             exit 1
           else
@@ -94,10 +91,10 @@ jobs:
           if [ -f "$CHANGELOG" ]; then
             echo "Changelog found."
             # Optionally, check if the changelog contains the version string
-            if grep -q "${{ steps.get_version.outputs.version }}" "$CHANGELOG"; then
-              echo "Changelog contains entry for version ${{ steps.get_version.outputs.version }}."
+            if grep -q "${{ steps.get_metadata_from_csprojectfile.outputs.version }}" "$CHANGELOG"; then
+              echo "Changelog contains entry for version ${{ steps.get_metadata_from_csprojectfile.outputs.version }}."
             else
-              echo "WARNING: Changelog does not contain entry for version ${{ steps.get_version.outputs.version }}."
+              echo "WARNING: Changelog does not contain entry for version ${{ steps.get_metadata_from_csprojectfile.outputs.version }}."
               exit 1
             fi
           else
