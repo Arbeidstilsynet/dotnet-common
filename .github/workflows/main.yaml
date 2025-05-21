@@ -35,7 +35,7 @@ jobs:
     strategy:
       matrix:
         package: ${{ fromJson(needs.discover.outputs.matrix) }}
-    uses: ./.github/workflows/publish-main-template.yml
+    uses: ./.github/workflows/publish-template.yml
     secrets: inherit
     with:
       package-path: ${{ matrix.package }}

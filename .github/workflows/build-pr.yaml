@@ -1,8 +1,6 @@
 name: Build all packages with detected changes and run necessary checks for publishing
 on:
-  push:
-    branches-ignore:
-        - main
+  pull_request:
 
 jobs:
   discover:
@@ -23,6 +21,6 @@ jobs:
     strategy:
       matrix:
         package: ${{ fromJson(needs.discover.outputs.matrix) }}
-    uses: ./.github/workflows/build-change-request-template.yaml
+    uses: ./.github/workflows/build-pr-template.yaml
     with:
       package-path: ${{ matrix.package }}
