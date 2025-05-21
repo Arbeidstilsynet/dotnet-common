@@ -4,8 +4,8 @@ on:
       package-path:
         required: true
         type: string
-jobs:
 
+jobs:
   check-and-prepare:
     runs-on: ubuntu-latest
     outputs:
@@ -26,19 +26,21 @@ jobs:
           else
             echo "should-continue=false" >> $GITHUB_OUTPUT
           fi
-      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+
+      - uses: actions/setup-dotnet@v4
         if: steps.check_changes.outputs.should-continue == 'true'
         with:
           dotnet-version: '8.0.x'
           config-file: ./nuget.config
-      
+
       - name: Get parent directory
         id: get_parent_dir
-        run: 
+        run: |
           rel_path="${{ inputs.package-path }}"
           rel_path="${rel_path#./}"
+          echo "DEBUG: rel_path=$rel_path"
           parent_dir=$(dirname "$rel_path")
-          echo "$parent_dir"
+          echo "DEBUG: parent_dir=$parent_dir"
           echo "parent_dir=$parent_dir" >> $GITHUB_OUTPUT
 
   build-dotnet:
@@ -49,8 +51,7 @@ jobs:
       working-directory: ${{ needs.check-and-prepare.outputs.parent_dir }}
 
 
-      
 
 
 
-    
+
