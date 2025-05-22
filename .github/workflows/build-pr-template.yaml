@@ -66,17 +66,25 @@ jobs:
         id: get_metadata_from_csprojectfile
         with:
           package-path: ${{ needs.check-and-prepare.outputs.package_path }}
-
+      - name: Check if package version exists
+        uses: ./.github/actions/nuget-version-check
+        id: nuget_version_check
+        with:
+          name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
+          version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
       - name: Check if version is prerelease
         id: prerelease_check
         run: |
+          if [ "${{ steps.nuget_version_check.outputs.published }}" = "true" ]; then
+            echo "❌ This pre release version is already published. Either increase the pre-release version or switch to a release version if the branch is ready."
+            exit 1
+          fi
           VERSION="${{ steps.get_metadata_from_csprojectfile.outputs.version }}"
           if [[ "$VERSION" =~ -([aA]lpha|[bB]eta|[rR][cC]) ]]; then
             echo "is_prerelease=true" >> $GITHUB_OUTPUT
           else
             echo "is_prerelease=false" >> $GITHUB_OUTPUT
           fi
-
       - name: Publish prerelease package
         if: steps.prerelease_check.outputs.is_prerelease == 'true'
         uses: ./.github/actions/publish-dotnet
@@ -92,13 +100,6 @@ jobs:
           echo "✅ Prerelease package was published successfully."
           echo "❌ This branch cannot be merged until the prerelease version is removed from the .csproj file."
           exit 1
-
-      - name: Check if package version exists
-        uses: ./.github/actions/nuget-version-check
-        id: nuget_version_check
-        with:
-          name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
-          version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
       - name: Check if package version was updated
         id: get_version
         run: |
