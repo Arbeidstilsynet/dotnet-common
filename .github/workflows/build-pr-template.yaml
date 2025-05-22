@@ -20,23 +20,21 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check if changes are inside package path
-        id: check_changes
-        run: |
-          rel_path="${{ inputs.package-path }}"
-          rel_path="${rel_path#./}"
-          if git diff --name-only origin/main...HEAD | grep -q "$rel_path"; then
-            echo "should-continue=true" >> $GITHUB_OUTPUT
-          else
-            echo "should-continue=false" >> $GITHUB_OUTPUT
-          fi
-
       - uses: ./.github/actions/get-parent-dir
-        if: steps.check_changes.outputs.should-continue == 'true'
         id: get_parent_dir
         with:
           package-path: ${{ inputs.package-path }}
 
+      - name: Check if changes are inside package path
+        id: check_changes
+        run: |
+          parent_dir="${{ steps.get_parent_dir.outputs.parent_dir }}"
+          echo "DEBUG: parent_dir=$parent_dir"
+          if git diff --name-only origin/main...HEAD | grep -q "$parent_dir"; then
+            echo "should-continue=true" >> $GITHUB_OUTPUT
+          else
+            echo "should-continue=false" >> $GITHUB_OUTPUT
+          fi
   build-dotnet:
     needs: check-and-prepare
     runs-on: ubuntu-latest
