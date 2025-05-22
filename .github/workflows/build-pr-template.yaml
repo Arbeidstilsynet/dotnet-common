@@ -21,8 +21,8 @@ jobs:
           fetch-depth: 0
 
       - name: Get parent directory for input package path
-        uses: ./.github/actions/get-parent-dir
         id: get_parent_dir
+        uses: ./.github/actions/get-parent-dir
         with:
           package-path: ${{ inputs.package-path }}
 
