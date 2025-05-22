@@ -79,7 +79,7 @@ jobs:
 
       - name: Publish prerelease package
         if: steps.prerelease_check.outputs.is_prerelease == 'true'
-        uses: ./.github/actions/publish-dotnet-package
+        uses: ./.github/actions/publish-dotnet
         with:
           package-path: ${{ needs.check-and-prepare.outputs.package_path }}
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}

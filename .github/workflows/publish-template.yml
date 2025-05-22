@@ -32,7 +32,7 @@ jobs:
 
       - name: Publish package if not already published
         if: steps.nuget_version_check.outputs.published == 'false'
-        uses: ./.github/actions/publish-dotnet-package
+        uses: ./.github/actions/publish-dotnet
         with:
           package-path: ${{ inputs.package-path }}
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
