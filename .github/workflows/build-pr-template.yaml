@@ -20,8 +20,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: ./.github/actions/get-parent-dir
+      - name: Get parent directory for input package path
         id: get_parent_dir
+        uses: ./.github/actions/get-parent-dir
         with:
           package-path: ${{ inputs.package-path }}
 
@@ -42,7 +43,8 @@ jobs:
     if: needs.check-and-prepare.outputs.should-continue == 'true'
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-      - uses: ./.github/actions/build-dotnet
+      - name: Build and Test .NET solution
+        uses: ./.github/actions/build-dotnet
         with:
           working-directory: ${{ needs.check-and-prepare.outputs.parent_dir }}
 
@@ -56,12 +58,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: ./.github/actions/get-metadata-from-csprojectfile
+      - name: Get version and name from csproj file
+        uses: ./.github/actions/get-metadata-from-csprojectfile
         id: get_metadata_from_csprojectfile
         with:
           package-path: ${{ needs.check-and-prepare.outputs.package_path }}
 
-      - uses: ./.github/actions/nuget-version-check
+      - name: Check if package version exists
+        uses: ./.github/actions/nuget-version-check
         id: nuget_version_check
         with:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}

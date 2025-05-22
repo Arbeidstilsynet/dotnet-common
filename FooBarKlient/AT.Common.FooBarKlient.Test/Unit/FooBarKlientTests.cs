@@ -21,6 +21,6 @@ public class FooBarKlientTests
         //act
         var result = await _sut.Get();
         //assert
-        result.Foo.ShouldBe("Bar");
+        result.Foo.ShouldBe("Bar Bar");
     }
 }
