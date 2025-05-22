@@ -11,6 +11,9 @@ inputs:
   version:
     description: "The package version"
     required: true
+  nuget-pat:
+    description: "The NuGet/Azure DevOps Personal Access Token"
+    required: true
 
 runs:
   using: "composite"
@@ -21,7 +24,7 @@ runs:
         dotnet-version: "8.0.x"
         source-url: https://pkgs.dev.azure.com/Atil-utvikling/Public/_packaging/AT.Public.NuGet/nuget/v3/index.json
       env:
-        NUGET_AUTH_TOKEN: ${{secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT}}
+        NUGET_AUTH_TOKEN: ${{ inputs.nuget-pat }}
 
     - name: Pack and publish NuGet package
       shell: bash

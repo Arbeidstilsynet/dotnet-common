@@ -84,6 +84,7 @@ jobs:
           package-path: ${{ needs.check-and-prepare.outputs.package_path }}
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
           version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
+          nuget-pat: ${{ secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT }}
 
       - name: Fail if prerelease was published
         if: steps.prerelease_check.outputs.is_prerelease == 'true'
