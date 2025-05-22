@@ -21,12 +21,14 @@ jobs:
         env:
           NUGET_AUTH_TOKEN: ${{secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT}}
 
-      - uses: ./.github/actions/get-metadata-from-csprojectfile
+      - name: Get version and name from csproj file
+        uses: ./.github/actions/get-metadata-from-csprojectfile
         id: get_metadata_from_csprojectfile
         with:
           package-path: ${{ inputs.package-path }}
 
-      - uses: ./.github/actions/nuget-version-check
+      - name: Check if package version exists
+        uses: ./.github/actions/nuget-version-check
         id: nuget_version_check
         with:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
@@ -39,9 +41,38 @@ jobs:
           dotnet pack -c Release
           dotnet nuget push "./bin/Release/*.nupkg" -k GithubDeployJob
           echo "Published ${{ steps.get_metadata_from_csprojectfile.outputs.name }} version ${{ steps.get_metadata_from_csprojectfile.outputs.version }}"
-
+            
+      - name: Extract changelog section for current version
+        id: changelog
+        working-directory: "${{ inputs.package-path }}"
+        run: |
+          VERSION="${{ steps.get_metadata_from_csprojectfile.outputs.version }}"
+          if [ -f CHANGELOG.md ]; then
+            awk -v ver="$VERSION" '
+              BEGIN {found=0}
+              # Match headings like ## 1.2.3 or ## [1.2.3]
+              $0 ~ "^##[[:space:]]*\\[?"ver"\\]?" {found=1; print; next}
+              found && /^##[[:space:]]*\[?[0-9]+\.[0-9]+\.[0-9]+/ {exit}
+              found {print}
+            ' CHANGELOG.md > section.txt
+            echo 'changelog<<EOF' >> $GITHUB_OUTPUT
+            cat section.txt >> $GITHUB_OUTPUT
+            echo 'EOF' >> $GITHUB_OUTPUT
+          else
+            echo 'changelog=No changelog found.' >> $GITHUB_OUTPUT
+          fi
+      - name: Create GitHub Release 
+        if: steps.nuget_version_check.outputs.published == 'false'
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}-${{ steps.get_metadata_from_csprojectfile.outputs.version }}
+          release_name: "Released ${{ steps.get_metadata_from_csprojectfile.outputs.name }} v${{ steps.get_metadata_from_csprojectfile.outputs.version }}"
+          body: ${{ steps.changelog.outputs.changelog }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Stop if already published
         if: steps.nuget_version_check.outputs.published == 'true'
         run: |
           echo "Package ${{ steps.get_metadata_from_csprojectfile.outputs.name }} version ${{ steps.get_metadata_from_csprojectfile.outputs.version }} is already published. Skipping."
           exit 0
+
