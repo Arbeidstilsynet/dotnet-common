@@ -28,7 +28,7 @@ runs:
       run: |
         NAME="${{ inputs.name }}"
         VERSION="${{ inputs.version }}"
-        SEARCH=$(dotnet package search "$NAME" --format json)
+        SEARCH=$(dotnet package search "$NAME" --prerelease --format json)
         echo "$SEARCH"
         FOUND=$(echo "$SEARCH" | jq '.searchResult[] | select(.sourceName=="AT.Public.NuGet")' | jq --arg VERSION "$VERSION" '.packages[] | select(.latestVersion == $VERSION) | .latestVersion' | tr -d '"')
         LAST_VERSION=$(echo "$SEARCH" | jq '.searchResult[] | select(.sourceName=="AT.Public.NuGet")' | jq '.packages[] | .latestVersion' | tr -d '"' | head -n 1)
