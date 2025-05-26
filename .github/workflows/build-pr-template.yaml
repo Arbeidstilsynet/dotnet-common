@@ -46,7 +46,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - name: Build and Test .NET solution
-        uses: ./.github/actions/build-dotnet
+        uses: Arbeidstilsynet/action-dotnet-build@v1
         with:
           working-directory: ${{ needs.check-and-prepare.outputs.parent_dir }}
 
