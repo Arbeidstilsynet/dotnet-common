@@ -12,35 +12,32 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-
-      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
-        with:
-          dotnet-version: "8.0.x"
-          source-url: https://pkgs.dev.azure.com/Atil-utvikling/Public/_packaging/AT.Public.NuGet/nuget/v3/index.json
-        env:
-          NUGET_AUTH_TOKEN: ${{secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT}}
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
       - name: Get version and name from csproj file
-        uses: ./.github/actions/get-metadata-from-csprojectfile
         id: get_metadata_from_csprojectfile
+        uses: ./.github/actions/get-metadata-from-csprojectfile
+    
         with:
           package-path: ${{ inputs.package-path }}
 
       - name: Check if package version exists
-        uses: ./.github/actions/nuget-version-check
         id: nuget_version_check
+        uses: ./.github/actions/nuget-version-check
+
         with:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
           version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
 
       - name: Publish package if not already published
-        working-directory: "${{ inputs.package-path }}"
         if: steps.nuget_version_check.outputs.published == 'false'
-        run: |
-          dotnet pack -c Release
-          dotnet nuget push "./bin/Release/*.nupkg" -k GithubDeployJob
-          echo "Published ${{ steps.get_metadata_from_csprojectfile.outputs.name }} version ${{ steps.get_metadata_from_csprojectfile.outputs.version }}"
+        uses: ./.github/actions/publish-dotnet
+        with:
+          package-path: ${{ inputs.package-path }}
+          name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
+          version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
+          nuget-pat: ${{ secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT }}
             
       - name: Extract changelog section for current version
         id: changelog
