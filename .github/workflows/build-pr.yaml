@@ -26,3 +26,10 @@ jobs:
     secrets: inherit
     with:
       package-path: ${{ matrix.package }}
+
+  check:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: All builds passed
+        run: echo "All matrix builds have completed successfully."
