@@ -29,3 +29,7 @@ Hvis du vil teste dine endringer ved å importere det i en annen prosjekt, så k
 ## 🚀 Publish
 
 Lag en ny branch og pull request. Husk å inkrementere versjon i `AT.Common.NewFancyClient.Adapters.csproj`. Når pull requesten er merged, vil en ny release pipeline starte automatisk.
+
+## 🛠️ Oppdater avhengigheter
+
+Renovate er konfigurert til å grupperer alle non-major versjoner sammen. Sjekk Renovate sin PR, oppdater versjon og endringslogg for de påvirkede pakkene i tråd med oppdateringene, commit & merge.
