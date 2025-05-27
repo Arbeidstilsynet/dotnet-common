@@ -30,6 +30,7 @@ jobs:
   check:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: All builds passed
         run: echo "All matrix builds have completed successfully."
