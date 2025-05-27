@@ -16,13 +16,13 @@ jobs:
 
       - name: Get version and name from csproj file
         id: get_metadata_from_csprojectfile
-        uses: Arbeidstilsynet/action-dotnet-get-csproj-metadata@v1
+        uses: Arbeidstilsynet/action-dotnet-get-csproj-metadata@1ce26ff56a71e150145f2f95c235a0d18c899bb7 # v1
         with:
           working-directory: ${{ inputs.package-path }}
 
       - name: Check if package version exists
         id: nuget_version_check
-        uses: Arbeidstilsynet/action-nuget-check-published@v1
+        uses: Arbeidstilsynet/action-nuget-check-published@97b57b112fc62aca0288e93154469eccc728232e # v1
         with:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
           version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
@@ -70,7 +70,7 @@ jobs:
 
       - name: Create GitHub Release
         if: steps.nuget_version_check.outputs.published == 'false' && steps.prerelease_check.outputs.is_prerelease == 'false'
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631 # v2
         with:
           tag_name: "${{ steps.get_metadata_from_csprojectfile.outputs.name }}@${{ steps.get_metadata_from_csprojectfile.outputs.version }}"
           name: "${{ steps.get_metadata_from_csprojectfile.outputs.name }} v${{ steps.get_metadata_from_csprojectfile.outputs.version }}"

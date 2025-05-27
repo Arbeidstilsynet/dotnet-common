@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
       - name: Get parent directory for input package path
-        uses: Arbeidstilsynet/action-parent-dir@v1
+        uses: Arbeidstilsynet/action-parent-dir@46af696cd79a18e2392d809e820bc31d9b6e345b # v1
         id: get_parent_dir
         with:
           path: ${{ inputs.package-path }}

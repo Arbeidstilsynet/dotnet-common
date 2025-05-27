@@ -22,7 +22,7 @@ jobs:
 
       - name: Get parent directory for input package path
         id: get_parent_dir
-        uses: Arbeidstilsynet/action-parent-dir@v1
+        uses: Arbeidstilsynet/action-parent-dir@46af696cd79a18e2392d809e820bc31d9b6e345b # v1
         with:
           path: ${{ inputs.package-path }}
 
@@ -60,13 +60,13 @@ jobs:
           fetch-depth: 0
 
       - name: Get version and name from csproj file
-        uses: Arbeidstilsynet/action-dotnet-get-csproj-metadata@v1
+        uses: Arbeidstilsynet/action-dotnet-get-csproj-metadata@1ce26ff56a71e150145f2f95c235a0d18c899bb7 # v1
         id: get_metadata_from_csprojectfile
         with:
           working-directory: ${{ needs.check-and-prepare.outputs.package_path }}
 
       - name: Check if package version exists
-        uses: Arbeidstilsynet/action-nuget-check-published@v1
+        uses: Arbeidstilsynet/action-nuget-check-published@97b57b112fc62aca0288e93154469eccc728232e # v1
         id: nuget_version_check
         with:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
