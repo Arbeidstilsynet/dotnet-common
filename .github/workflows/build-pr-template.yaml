@@ -67,11 +67,12 @@ jobs:
         with:
           working-directory: ${{ needs.check-and-prepare.outputs.package_path }}
       - name: Check if package version exists
-        uses: ./.github/actions/nuget-version-check
+        uses: Arbeidstilsynet/action-nuget-check-published@v1
         id: nuget_version_check
         with:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
           version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
+          source-feed: AT.Public.NuGet
       - name: Check if version is prerelease
         id: prerelease_check
         run: |
