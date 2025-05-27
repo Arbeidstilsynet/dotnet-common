@@ -2,26 +2,15 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:best-practices",
-    "mergeConfidence:all-badges"
+    ":automergeDigest",
+    "mergeConfidence:all-badges",
+    "group:allNonMajor"
   ],
   "packageRules": [
     {
-      "matchUpdateTypes": [
-        "pinDigest"
-      ],
+      "matchUpdateTypes": ["pinDigest"],
       "automerge": true,
       "description": "Automerge pinDigest PRs (e.g., GitHub Actions)"
-    },
-    {
-      "groupName": "all non-major dependencies",
-      "groupSlug": "all-minor-patch",
-      "matchPackageNames": [
-        "*"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ]
     }
   ]
 }
