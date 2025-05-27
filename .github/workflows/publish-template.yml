@@ -30,12 +30,10 @@ jobs:
 
       - name: Publish package if not already published
         if: steps.nuget_version_check.outputs.published == 'false'
-        uses: ./.github/actions/publish-dotnet
+        uses: Arbeidstilsynet/action-dotnet-publish@v1
         with:
-          package-path: ${{ inputs.package-path }}
-          name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
-          version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
-          nuget-pat: ${{ secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT }}
+          working-directory: ${{ inputs.package-path }}
+          nuget-auth-token: ${{ secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT }}
 
       # we don't want to create github prereleases to keep the release page clean
       - name: Check if version is prerelease

@@ -90,12 +90,10 @@ jobs:
 
       - name: Publish prerelease package
         if: steps.prerelease_check.outputs.is_prerelease == 'true'
-        uses: ./.github/actions/publish-dotnet
+        uses: Arbeidstilsynet/action-dotnet-publish@feat/add-action # temp branch ref
         with:
-          package-path: ${{ needs.check-and-prepare.outputs.package_path }}
-          name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
-          version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
-          nuget-pat: ${{ secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT }}
+          working-directory: ${{ needs.check-and-prepare.outputs.package_path }}
+          nuget-auth-token: ${{ secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT }}
 
       - name: Fail if prerelease was published
         if: steps.prerelease_check.outputs.is_prerelease == 'true'
