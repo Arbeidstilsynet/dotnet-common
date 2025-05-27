@@ -23,9 +23,9 @@ jobs:
 
       - name: Get parent directory for input package path
         id: get_parent_dir
-        uses: ./.github/actions/get-parent-dir
+        uses: Arbeidstilsynet/action-parent-dir@v1
         with:
-          package-path: ${{ inputs.package-path }}
+          path: ${{ inputs.package-path }}
 
       - name: Check if changes are inside package path
         id: check_changes

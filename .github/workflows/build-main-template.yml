@@ -14,11 +14,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+
       - name: Get parent directory for input package path
-        uses: ./.github/actions/get-parent-dir
+        uses: Arbeidstilsynet/action-parent-dir@v1
         id: get_parent_dir
         with:
-          package-path: ${{ inputs.package-path }}
+          path: ${{ inputs.package-path }}
 
       - name: Build and Test .NET solution
         uses: Arbeidstilsynet/action-dotnet-build@51403325a6c4ccdc45545112d125177e0f0f4969 # v1
