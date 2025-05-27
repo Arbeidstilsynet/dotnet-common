@@ -32,4 +32,4 @@ Lag en ny branch og pull request. Husk å inkrementere versjon i `AT.Common.NewF
 
 ## 🛠️ Oppdater avhengigheter
 
-Renovate er konfigurert til å grupperer alle non-major versjoner sammen. Sjekk Renovate sin PR, oppdater versjon og endringslogg for de påvirkede pakkene i tråd med oppdateringene, commit & merge.
+Renovate er konfigurert til å gruppere alle non-major versjoner sammen. Sjekk Renovate sin PR, oppdater versjon og endringslogg for de påvirkede pakkene i tråd med oppdateringene, commit & merge.
