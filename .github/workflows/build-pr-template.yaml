@@ -62,10 +62,10 @@ jobs:
           fetch-depth: 0
 
       - name: Get version and name from csproj file
-        uses: ./.github/actions/get-metadata-from-csprojectfile
+        uses: Arbeidstilsynet/action-dotnet-get-csproj-metadata@v1
         id: get_metadata_from_csprojectfile
         with:
-          package-path: ${{ needs.check-and-prepare.outputs.package_path }}
+          working-directory: ${{ needs.check-and-prepare.outputs.package_path }}
       - name: Check if package version exists
         uses: ./.github/actions/nuget-version-check
         id: nuget_version_check

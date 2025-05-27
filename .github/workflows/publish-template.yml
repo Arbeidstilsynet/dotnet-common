@@ -17,10 +17,9 @@ jobs:
 
       - name: Get version and name from csproj file
         id: get_metadata_from_csprojectfile
-        uses: ./.github/actions/get-metadata-from-csprojectfile
-    
+        uses: Arbeidstilsynet/action-dotnet-get-csproj-metadata@v1
         with:
-          package-path: ${{ inputs.package-path }}
+          working-directory: ${{ inputs.package-path }}
 
       - name: Check if package version exists
         id: nuget_version_check
@@ -38,7 +37,7 @@ jobs:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
           version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
           nuget-pat: ${{ secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT }}
-            
+
       - name: Extract changelog section for current version
         id: changelog
         working-directory: "${{ inputs.package-path }}"
@@ -58,7 +57,7 @@ jobs:
           else
             echo 'changelog=No changelog found.' >> $GITHUB_OUTPUT
           fi
-      - name: Create GitHub Release 
+      - name: Create GitHub Release
         if: steps.nuget_version_check.outputs.published == 'false'
         uses: actions/create-release@c9ba6969f07ed90fae07e2e66100dd03f9b1a50e # v1.1.0
         with:
@@ -72,4 +71,3 @@ jobs:
         run: |
           echo "Package ${{ steps.get_metadata_from_csprojectfile.outputs.name }} version ${{ steps.get_metadata_from_csprojectfile.outputs.version }} is already published. Skipping."
           exit 0
-
