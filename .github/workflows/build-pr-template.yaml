@@ -77,12 +77,12 @@ jobs:
         id: prerelease_check
         run: |
           if [ "${{ steps.nuget_version_check.outputs.published }}" = "true" ]; then
-            echo "❌ This pre release version is already published. Either increase the pre-release version or switch to a release version if the branch is ready."
+            echo "❌ This version is already published. Either increase the version or switch to a release version if the branch is ready."
             exit 1
           fi
           VERSION="${{ steps.get_metadata_from_csprojectfile.outputs.version }}"
-          # Check if the version string contains a prerelease identifier (e.g., alpha, beta, rc)
-          if [[ "$VERSION" =~ -([aA]lpha|[bB]eta|[rR][cC]) ]]; then
+          # Check if the version string contains a hyphen (prerelease in SemVer)
+          if [[ "$VERSION" == *-* ]]; then
             echo "is_prerelease=true" >> $GITHUB_OUTPUT
           else
             echo "is_prerelease=false" >> $GITHUB_OUTPUT
