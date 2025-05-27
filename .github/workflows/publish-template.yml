@@ -38,6 +38,16 @@ jobs:
           version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
           nuget-pat: ${{ secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT }}
 
+      - name: Check if version is prerelease
+        id: prerelease_check
+        run: |
+          VERSION="${{ steps.get_metadata_from_csprojectfile.outputs.version }}"
+          if [[ "$VERSION" == *-* ]]; then
+            echo "is_prerelease=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_prerelease=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Extract changelog section for current version
         id: changelog
         working-directory: "${{ inputs.package-path }}"
@@ -57,8 +67,9 @@ jobs:
           else
             echo 'changelog=No changelog found.' >> $GITHUB_OUTPUT
           fi
+
       - name: Create GitHub Release
-        if: steps.nuget_version_check.outputs.published == 'false'
+        if: steps.nuget_version_check.outputs.published == 'false' && steps.prerelease_check.outputs.is_prerelease == 'false'
         uses: actions/create-release@c9ba6969f07ed90fae07e2e66100dd03f9b1a50e # v1.1.0
         with:
           tag_name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}/${{ steps.get_metadata_from_csprojectfile.outputs.version }}
