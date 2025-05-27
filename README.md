@@ -1,6 +1,6 @@
 # 🌈 dotnet-common
 
-Monorepository for felles pakker som skal publiseres og som skal bli brukt på tvers av prosjekter.
+Monorepository for felles C#-pakker som skal publiseres offentlig.
 
 ## 📦 Add new package
 
