@@ -12,23 +12,21 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
       - name: Get version and name from csproj file
         id: get_metadata_from_csprojectfile
-        uses: ./.github/actions/get-metadata-from-csprojectfile
-    
+        uses: Arbeidstilsynet/action-dotnet-get-csproj-metadata@v1
         with:
-          package-path: ${{ inputs.package-path }}
+          working-directory: ${{ inputs.package-path }}
 
       - name: Check if package version exists
         id: nuget_version_check
-        uses: ./.github/actions/nuget-version-check
-
+        uses: Arbeidstilsynet/action-nuget-check-published@v1
         with:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
           version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
+          source-feed: AT.Public.NuGet
 
       - name: Publish package if not already published
         if: steps.nuget_version_check.outputs.published == 'false'
@@ -38,7 +36,18 @@ jobs:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
           version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
           nuget-pat: ${{ secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT }}
-            
+
+      # we don't want to create github prereleases to keep the release page clean
+      - name: Check if version is prerelease
+        id: prerelease_check
+        run: |
+          VERSION="${{ steps.get_metadata_from_csprojectfile.outputs.version }}"
+          if [[ "$VERSION" == *-* ]]; then
+            echo "is_prerelease=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_prerelease=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Extract changelog section for current version
         id: changelog
         working-directory: "${{ inputs.package-path }}"
@@ -58,12 +67,13 @@ jobs:
           else
             echo 'changelog=No changelog found.' >> $GITHUB_OUTPUT
           fi
-      - name: Create GitHub Release 
-        if: steps.nuget_version_check.outputs.published == 'false'
-        uses: actions/create-release@c9ba6969f07ed90fae07e2e66100dd03f9b1a50e # v1.1.0
+
+      - name: Create GitHub Release
+        if: steps.nuget_version_check.outputs.published == 'false' && steps.prerelease_check.outputs.is_prerelease == 'false'
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}/${{ steps.get_metadata_from_csprojectfile.outputs.version }}
-          release_name: "${{ steps.get_metadata_from_csprojectfile.outputs.name }} v${{ steps.get_metadata_from_csprojectfile.outputs.version }}"
+          tag_name: "${{ steps.get_metadata_from_csprojectfile.outputs.name }}@${{ steps.get_metadata_from_csprojectfile.outputs.version }}"
+          name: "${{ steps.get_metadata_from_csprojectfile.outputs.name }} v${{ steps.get_metadata_from_csprojectfile.outputs.version }}"
           body: ${{ steps.changelog.outputs.changelog }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -72,4 +82,3 @@ jobs:
         run: |
           echo "Package ${{ steps.get_metadata_from_csprojectfile.outputs.name }} version ${{ steps.get_metadata_from_csprojectfile.outputs.version }} is already published. Skipping."
           exit 0
-

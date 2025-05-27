@@ -7,6 +7,6 @@ internal class FooBarKlientImplementation : IFooBarKlient
 {
     public Task<FooBarKlientDto> Get()
     {
-        return Task.FromResult(new FooBarKlientDto { Foo = "Bar Bar" });
+        return Task.FromResult(new FooBarKlientDto { Foo = "Foo Bar Baz" });
     }
 }
