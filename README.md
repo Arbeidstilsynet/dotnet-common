@@ -1,7 +1,8 @@
 # 🌈 dotnet-common
+
 Monorepository for felles pakker som skal publiseres og som skal bli brukt på tvers av prosjekter.
 
-# 📦 Add new package
+## 📦 Add new package
 
 ```cmd
 dotnet new install Arbeidstilsynet.Templates.CommonPackage
@@ -10,6 +11,7 @@ dotnet new common-package -n NewFancyClient
 
 Begynn med å implemtere det du vil i den nye `NewFancyClient` mappen.
 Per konvensjon får du tre nye prosjekter:
+
 * AT.Common.NewFancyClient.Adapters
 * AT.Common.NewFancyClient.Ports
 * AT.Common.NewFancyClient.Test
@@ -20,10 +22,10 @@ Per konvensjon får du tre nye prosjekter:
 
 ``Test`` skal inneholder tester som kvalitetssikre integriteten av hele pakken.
 
-# 🚧 Pre-Release
+## 🚧 Pre-Release
 
 Hvis du vil teste dine endringer ved å importere det i en annen prosjekt, så kan du bruke [Prerelease Packages](https://learn.microsoft.com/en-us/nuget/create-packages/prerelease-packages). For å få det til må du bare oppdatere versjonsnummer med en `alpha`, `beta` eller `rc` suffix. Om du vil f.eks. release en ny version `0.0.2` er en gyldig prerelease versjon  `0.0.2-alpha`. Det nåværende versjonsnummeret finner du i `AT.Common.NewFancyClient.Adapters.csproj`.
 
-# 🚀 Publish
+## 🚀 Publish
 
 Lag en ny branch og pull request. Husk å inkrementere versjon i `AT.Common.NewFancyClient.Adapters.csproj`. Når pull requesten er merged, vil en ny release pipeline starte automatisk.
