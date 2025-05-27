@@ -70,10 +70,10 @@ jobs:
 
       - name: Create GitHub Release
         if: steps.nuget_version_check.outputs.published == 'false' && steps.prerelease_check.outputs.is_prerelease == 'false'
-        uses: actions/create-release@c9ba6969f07ed90fae07e2e66100dd03f9b1a50e # v1.1.0
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}/${{ steps.get_metadata_from_csprojectfile.outputs.version }}
-          release_name: "${{ steps.get_metadata_from_csprojectfile.outputs.name }} v${{ steps.get_metadata_from_csprojectfile.outputs.version }}"
+          tag_name: "${{ steps.get_metadata_from_csprojectfile.outputs.name }}@${{ steps.get_metadata_from_csprojectfile.outputs.version }}"
+          name: "${{ steps.get_metadata_from_csprojectfile.outputs.name }} v${{ steps.get_metadata_from_csprojectfile.outputs.version }}"
           body: ${{ steps.changelog.outputs.changelog }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
