@@ -38,6 +38,7 @@ jobs:
           version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
           nuget-pat: ${{ secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT }}
 
+      # we don't want to create github prereleases to keep the release page clean
       - name: Check if version is prerelease
         id: prerelease_check
         run: |
