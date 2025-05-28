@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Arbeidstilsynet.Common.Extensions;
+namespace Arbeidstilsynet.Common.AspNetCore.Extensions;
 
 /// <summary>
 /// Options for configuring exception handling in the API.
@@ -42,7 +42,7 @@ public record ExceptionHandlingOptions
     }
 }
 
-internal static class ApiExceptionHandler
+public static class ApiExceptionHandler
 {
     public static RequestDelegate CreateExceptionHandler(ExceptionHandlingOptions options)
     {

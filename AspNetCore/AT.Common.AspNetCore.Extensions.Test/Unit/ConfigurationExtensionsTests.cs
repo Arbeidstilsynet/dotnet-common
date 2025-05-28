@@ -1,9 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using Arbeidstilsynet.Common.AspNetCore.Extensions;
 using Microsoft.Extensions.Configuration;
 using Shouldly;
 using Xunit;
 
-namespace Arbeidstilsynet.Common.Extensions.Extensions.Test.Unit;
+namespace AT.Common.AspNetCore.Extensions.Test.Unit;
 
 public class ConfigurationExtensionsTests
 {

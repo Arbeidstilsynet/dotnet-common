@@ -12,7 +12,7 @@ using OpenTelemetry.Trace;
 using Scalar.AspNetCore;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Arbeidstilsynet.Common.Extensions;
+namespace Arbeidstilsynet.Common.AspNetCore.Extensions;
 
 /// <summary>
 /// Extensions configuring an ASP.NET Core application.

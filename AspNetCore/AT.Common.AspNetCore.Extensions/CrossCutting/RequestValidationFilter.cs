@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Arbeidstilsynet.Common.Extensions;
+namespace Arbeidstilsynet.Common.AspNetCore.Extensions;
 
 internal class RequestValidationFilter : IActionFilter
 {

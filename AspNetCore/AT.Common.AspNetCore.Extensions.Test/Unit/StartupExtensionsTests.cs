@@ -1,8 +1,8 @@
-using Arbeidstilsynet.Common.Extensions;
+using Arbeidstilsynet.Common.AspNetCore.Extensions;
 using Shouldly;
 using Xunit;
 
-namespace AT.Common.Extensions.Test.Unit;
+namespace AT.Common.AspNetCore.Extensions.Test.Unit;
 
 public class StartupExtensionsTests
 {
