@@ -81,7 +81,10 @@ public static partial class StartupExtensions
     /// <param name="services"></param>
     /// <param name="configureSwaggerGen"></param>
     /// <returns></returns>
-    public static IServiceCollection ConfigureSwagger(this IServiceCollection services, Action<SwaggerGenOptions>? configureSwaggerGen)
+    public static IServiceCollection ConfigureSwagger(
+        this IServiceCollection services,
+        Action<SwaggerGenOptions>? configureSwaggerGen
+    )
     {
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(configureSwaggerGen);
@@ -123,13 +126,18 @@ public static partial class StartupExtensions
     /// <param name="app"></param>
     /// <param name="configureExceptionHandling"></param>
     /// <returns></returns>
-    public static WebApplication AddApi(this WebApplication app, Action<ExceptionHandlingOptions>? configureExceptionHandling)
+    public static WebApplication AddApi(
+        this WebApplication app,
+        Action<ExceptionHandlingOptions>? configureExceptionHandling
+    )
     {
         var exceptionHandlingOptions = new ExceptionHandlingOptions();
         configureExceptionHandling?.Invoke(exceptionHandlingOptions);
-        
+
         app.UseExceptionHandler(exceptionHandlerApp =>
-            exceptionHandlerApp.Run(ApiExceptionHandler.CreateExceptionHandler(exceptionHandlingOptions))
+            exceptionHandlerApp.Run(
+                ApiExceptionHandler.CreateExceptionHandler(exceptionHandlingOptions)
+            )
         );
 
         app.UseHttpsRedirection();
