@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - id: set-matrix
         run: |
-          folders=$(find . -mindepth 1 -maxdepth 10 -type d -name 'AT.Common.*.Adapters' -printf '"%p",')
+          folders=$(find . -mindepth 1 -maxdepth 10 -type d \( -name 'AT.Common.*.Adapters' -o -name 'AT.Common.*.Extensions' \) -printf '"%p",')
           folders="[${folders%,}]"
           echo "matrix=$folders" >> $GITHUB_OUTPUT
 
