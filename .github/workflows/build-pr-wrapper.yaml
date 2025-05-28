@@ -1,0 +1,19 @@
+# This wrapper workflow exists to group the 3 jobs from build-pr-template.yaml
+# under a single matrix entry in the GitHub Actions UI, rather than showing all 3 jobs
+# separately for each package in the matrix build.
+
+name: Build Package (PR, reusable wrapper)
+
+on:
+  workflow_call:
+    inputs:
+      package-path:
+        required: true
+        type: string
+
+jobs:
+  build-package:
+    uses: ./.github/workflows/build-pr-template.yaml
+    secrets: inherit
+    with:
+      package-path: ${{ inputs.package-path }}

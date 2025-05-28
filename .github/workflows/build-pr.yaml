@@ -22,7 +22,7 @@ jobs:
     strategy:
       matrix:
         package: ${{ fromJson(needs.discover.outputs.matrix) }}
-    uses: ./.github/workflows/build-pr-template.yaml
+    uses: ./.github/workflows/build-pr-wrapper.yaml
     secrets: inherit
     with:
       package-path: ${{ matrix.package }}
