@@ -5,13 +5,13 @@ namespace Extensions.ArchUnit.Tests
 {
     internal static class Constants
     {
-        internal static string NameSpacePrefix = $"Arbeidstilsynet\\.Common\\.Extensions";
+        internal static string NameSpacePrefix = $"Arbeidstilsynet\\.Common\\.AspNetCore";
     }
 
     internal static class Layers
     {
         internal static readonly System.Reflection.Assembly ExtensionsAssembly =
-            typeof(Arbeidstilsynet.Common.Extensions.IAssemblyInfo).Assembly;
+            typeof(Arbeidstilsynet.Common.AspNetCore.Extensions.IAssemblyInfo).Assembly;
 
         internal static readonly IObjectProvider<IType> ExtensionsLayer = Types()
             .That()

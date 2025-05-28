@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AT.Common.Extensions.Test", "AT.Common.Extensions.Test\AT.Common.Extensions.Test.csproj", "{666FC51B-55A8-4F6E-84ED-84EA44D86B69}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AT.Common.AspNetCore.Extensions.Test", "AT.Common.AspNetCore.Extensions.Test\AT.Common.AspNetCore.Extensions.Test.csproj", "{666FC51B-55A8-4F6E-84ED-84EA44D86B69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AT.Common.Extensions.Extensions", "AT.Common.Extensions.Extensions\AT.Common.Extensions.Extensions.csproj", "{F72B4BEF-D49D-425D-BD8A-1E1352DFD890}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AT.Common.AspNetCore.Extensions", "AT.Common.AspNetCore.Extensions\AT.Common.AspNetCore.Extensions.csproj", "{F72B4BEF-D49D-425D-BD8A-1E1352DFD890}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AT.Common.SamplePackage.Test.ArchUnit", "AT.Common.Extensions.Test.ArchUnit\AT.Common.SamplePackage.Test.ArchUnit.csproj", "{F02AE585-E1F2-43B8-ABF9-553BB44D7B83}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AT.Common.AspNetCore.Test.ArchUnit", "AT.Common.AspNetCore.Extensions.Test.ArchUnit\AT.Common.AspNetCore.Test.ArchUnit.csproj", "{1F27637F-CDFF-4757-91DE-F922716BD0F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{F72B4BEF-D49D-425D-BD8A-1E1352DFD890}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F72B4BEF-D49D-425D-BD8A-1E1352DFD890}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F72B4BEF-D49D-425D-BD8A-1E1352DFD890}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F02AE585-E1F2-43B8-ABF9-553BB44D7B83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F02AE585-E1F2-43B8-ABF9-553BB44D7B83}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F02AE585-E1F2-43B8-ABF9-553BB44D7B83}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F02AE585-E1F2-43B8-ABF9-553BB44D7B83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F27637F-CDFF-4757-91DE-F922716BD0F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F27637F-CDFF-4757-91DE-F922716BD0F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F27637F-CDFF-4757-91DE-F922716BD0F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F27637F-CDFF-4757-91DE-F922716BD0F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

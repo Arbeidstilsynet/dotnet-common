@@ -7,7 +7,7 @@ Collection of extension methods.
 Bruk via import.
 
 ```csharp
-using Arbeidstilsynet.Common.Extensions.Extensions;
+using Arbeidstilsynet.Common.AspNetCore.Extensions;
 ///
 "test".WordCount();
 ///
