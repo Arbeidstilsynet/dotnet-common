@@ -6,8 +6,21 @@ using Microsoft.Extensions.Configuration;
 
 namespace Arbeidstilsynet.Common.Extensions;
 
-internal static class ValidationExtensions
+/// <summary>
+/// Extensions of the IConfiguration abstraction
+/// </summary>
+public static class ConfigurationExtensions
 {
+    /// <summary>
+    /// Tries to get an object of type T from the top level of the configuration.
+    /// The object is validated using the System.ComponentModel.DataAnnotations attributes.
+    ///
+    /// Throws an exception if the object cannot be found in the configuration, or if validation of the object fails.
+    /// </summary>
+    /// <param name="configuration"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public static T GetRequired<T>(this IConfiguration configuration)
     {
         var config =

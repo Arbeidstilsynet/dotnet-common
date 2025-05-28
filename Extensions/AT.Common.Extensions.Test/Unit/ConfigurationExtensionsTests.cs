@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Arbeidstilsynet.Common.Extensions.Extensions.Test.Unit;
 
-public class ValidationExtensionsTests
+public class ConfigurationExtensionsTests
 {
     [Fact]
     public void GetRequired_ValidConfiguration_ShouldNotThrow()
