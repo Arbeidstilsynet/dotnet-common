@@ -1,23 +1,29 @@
 using System.Text.RegularExpressions;
-using Arbeidstilsynet.Common.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
-using Npgsql;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Scalar.AspNetCore;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Arbeidstilsynet.Common.Extensions;
 
-internal static partial class StartupExtensions
+/// <summary>
+/// Extensions configuring an ASP.NET Core application.
+/// </summary>
+public static partial class StartupExtensions
 {
+    /// <summary>
+    /// Adds Controllers, and adds an action filter which does general model validation.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
     public static IServiceCollection ConfigureApi(this IServiceCollection services)
     {
         services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
@@ -31,6 +37,12 @@ internal static partial class StartupExtensions
         return services;
     }
 
+    /// <summary>
+    /// Configures OpenTelemetry for the application, including metrics, tracing, and logging.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="serviceName"></param>
+    /// <returns></returns>
     public static IServiceCollection ConfigureOpenTelemetry(
         this IServiceCollection services,
         string serviceName
@@ -54,8 +66,6 @@ internal static partial class StartupExtensions
             {
                 options.AddAspNetCoreInstrumentation();
                 options.AddHttpClientInstrumentation();
-                options.AddEntityFrameworkCoreInstrumentation();
-                options.AddNpgsql();
                 options.AddOtlpExporter();
             })
             .WithLogging(
@@ -65,17 +75,26 @@ internal static partial class StartupExtensions
         return services;
     }
 
-    public static IServiceCollection ConfigureSwagger(this IServiceCollection services)
+    /// <summary>
+    /// Configures Swagger for the application, allowing customization of the Swagger generation options.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configureSwaggerGen"></param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureSwagger(this IServiceCollection services, Action<SwaggerGenOptions>? configureSwaggerGen)
     {
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen(c =>
-        {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "Sak API", Version = "v1" });
-        });
+        services.AddSwaggerGen(configureSwaggerGen);
 
         return services;
     }
 
+    /// <summary>
+    /// Configures logging for the application, setting up console logging in development and JSON console logging in production.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="env"></param>
+    /// <returns></returns>
     public static IServiceCollection ConfigureLogging(
         this IServiceCollection services,
         IWebHostEnvironment env
@@ -98,6 +117,12 @@ internal static partial class StartupExtensions
         return services;
     }
 
+    /// <summary>
+    /// Adds API middleware to the application, including exception handling, HTTPS redirection, routing, authorization, and health checks ("/healthz").
+    /// </summary>
+    /// <param name="app"></param>
+    /// <param name="configureExceptionHandling"></param>
+    /// <returns></returns>
     public static WebApplication AddApi(this WebApplication app, Action<ExceptionHandlingOptions>? configureExceptionHandling)
     {
         var exceptionHandlingOptions = new ExceptionHandlingOptions();
@@ -118,6 +143,11 @@ internal static partial class StartupExtensions
         return app;
     }
 
+    /// <summary>
+    /// Adds Scalar API reference endpoints to the application and configures Swagger to serve the OpenAPI document at a specific route.
+    /// </summary>
+    /// <param name="app"></param>
+    /// <returns></returns>
     public static IApplicationBuilder AddScalar(this WebApplication app)
     {
         app.MapScalarApiReference();
@@ -129,7 +159,7 @@ internal static partial class StartupExtensions
         return app;
     }
 
-    public static string ConvertToOtelServiceName(this string serviceName)
+    internal static string ConvertToOtelServiceName(this string serviceName)
     {
         var serviceNameAsCamelCase = System.Text.Json.JsonNamingPolicy.CamelCase.ConvertName(
             serviceName
