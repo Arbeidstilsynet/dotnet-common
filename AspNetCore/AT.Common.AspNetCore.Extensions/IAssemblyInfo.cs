@@ -4,4 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Arbeidstilsynet.Common.AspNetCore.Extensions;
 
+/// <summary>
+/// Marker interface for assembly information.
+/// </summary>
 public interface IAssemblyInfo { }
