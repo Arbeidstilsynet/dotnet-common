@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,17 +21,20 @@ namespace Arbeidstilsynet.Common.AspNetCore.Extensions;
 public static partial class StartupExtensions
 {
     /// <summary>
-    /// Adds Controllers, and adds an action filter which does general model validation.
+    /// Adds Controllers, adds model validation based on DataAnnotations attributes, and configures health checks.
     /// </summary>
     /// <param name="services"></param>
+    /// <param name="configureAction">Action which configures MvcOptions. Default is </param>
     /// <returns></returns>
-    public static IServiceCollection ConfigureApi(this IServiceCollection services)
+    public static IServiceCollection ConfigureApi(
+        this IServiceCollection services,
+        Action<MvcOptions>? configureAction = null
+    )
     {
+        configureAction ??= options => options.Filters.Add<RequestValidationFilter>();
+
         services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
-        services.AddControllers(options =>
-        {
-            options.Filters.Add<RequestValidationFilter>();
-        });
+        services.AddControllers(configureAction);
         services.AddProblemDetails();
         services.AddHealthChecks();
 

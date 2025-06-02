@@ -1,10 +1,8 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("AT.Common.AspNetCore.Extensions.Test")]
+[assembly: InternalsVisibleTo("AT.Common.AspNetCore.Extensions.Test.ArchUnit")]
 
 namespace Arbeidstilsynet.Common.AspNetCore.Extensions;
 
-/// <summary>
-/// Marker interface for assembly information.
-/// </summary>
-public interface IAssemblyInfo { }
+internal interface IAssemblyInfo { }

@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AT.Common.AspNetCore.Extens
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AT.Common.AspNetCore.Extensions", "AT.Common.AspNetCore.Extensions\AT.Common.AspNetCore.Extensions.csproj", "{F72B4BEF-D49D-425D-BD8A-1E1352DFD890}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AT.Common.AspNetCore.Test.ArchUnit", "AT.Common.AspNetCore.Extensions.Test.ArchUnit\AT.Common.AspNetCore.Test.ArchUnit.csproj", "{1F27637F-CDFF-4757-91DE-F922716BD0F3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AT.Common.AspNetCore.Extensions.Test.ArchUnit", "AT.Common.AspNetCore.Extensions.Test.ArchUnit\AT.Common.AspNetCore.Extensions.Test.ArchUnit.csproj", "{1F27637F-CDFF-4757-91DE-F922716BD0F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
