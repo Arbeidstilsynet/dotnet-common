@@ -60,7 +60,7 @@ public static partial class StartupExtensions
     /// <returns></returns>
     public static WebApplication AddApi(
         this WebApplication app,
-        Action<ExceptionHandlingOptions>? configureExceptionHandling=null
+        Action<ExceptionHandlingOptions>? configureExceptionHandling = null
     )
     {
         var exceptionHandlingOptions = new ExceptionHandlingOptions();
