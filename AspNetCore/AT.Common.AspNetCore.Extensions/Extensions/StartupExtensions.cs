@@ -24,21 +24,65 @@ public static partial class StartupExtensions
     /// Adds Controllers, adds model validation based on DataAnnotations attributes, and configures health checks.
     /// </summary>
     /// <param name="services"></param>
-    /// <param name="configureAction">Action which configures MvcOptions. Default is </param>
+    /// <param name="appName">This will be converted to kebab-case and used as the OTEL service name</param>
+    /// <param name="env"></param>
+    /// <param name="configureMvcAction">Action which configures MvcOptions.</param>
+    /// <param name="configureSwaggerGen">Configure Swagger </param>
     /// <returns></returns>
     public static IServiceCollection ConfigureApi(
         this IServiceCollection services,
-        Action<MvcOptions>? configureAction = null
+        string appName,
+        IWebHostEnvironment env,
+        Action<MvcOptions>? configureMvcAction = null,
+        Action<SwaggerGenOptions>? configureSwaggerGen = null
     )
     {
-        configureAction ??= options => options.Filters.Add<RequestValidationFilter>();
+        configureMvcAction ??= options => options.Filters.Add<RequestValidationFilter>();
 
         services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
-        services.AddControllers(configureAction);
+        services.AddControllers(configureMvcAction);
         services.AddProblemDetails();
         services.AddHealthChecks();
 
+        services.ConfigureSwagger(configureSwaggerGen);
+        services.ConfigureOpenTelemetry(appName);
+        services.ConfigureLogging(env);
+
         return services;
+    }
+
+    /// <summary>
+    /// Adds API middleware to the application, including exception handling, HTTPS redirection, routing, authorization, and health checks ("/healthz").
+    /// Also adds the Scalar API reference endpoint.
+    /// </summary>
+    /// <param name="app"></param>
+    /// <param name="configureExceptionHandling">Determines mapping from Exceptions to HTTP Status codes.</param>
+    /// <returns></returns>
+    public static WebApplication AddApi(
+        this WebApplication app,
+        Action<ExceptionHandlingOptions>? configureExceptionHandling
+    )
+    {
+        var exceptionHandlingOptions = new ExceptionHandlingOptions();
+        configureExceptionHandling?.Invoke(exceptionHandlingOptions);
+
+        app.UseExceptionHandler(exceptionHandlerApp =>
+            exceptionHandlerApp.Run(
+                ApiExceptionHandler.CreateExceptionHandler(exceptionHandlingOptions)
+            )
+        );
+
+        app.UseHttpsRedirection();
+        app.UseRouting();
+        app.UseAuthorization();
+
+        app.MapControllers();
+
+        app.UseHealthChecks("/healthz");
+
+        app.AddScalar();
+
+        return app;
     }
 
     /// <summary>
@@ -47,7 +91,7 @@ public static partial class StartupExtensions
     /// <param name="services"></param>
     /// <param name="serviceName"></param>
     /// <returns></returns>
-    public static IServiceCollection ConfigureOpenTelemetry(
+    private static IServiceCollection ConfigureOpenTelemetry(
         this IServiceCollection services,
         string serviceName
     )
@@ -79,13 +123,7 @@ public static partial class StartupExtensions
         return services;
     }
 
-    /// <summary>
-    /// Configures Swagger for the application, allowing customization of the Swagger generation options.
-    /// </summary>
-    /// <param name="services"></param>
-    /// <param name="configureSwaggerGen"></param>
-    /// <returns></returns>
-    public static IServiceCollection ConfigureSwagger(
+    private static IServiceCollection ConfigureSwagger(
         this IServiceCollection services,
         Action<SwaggerGenOptions>? configureSwaggerGen
     )
@@ -96,13 +134,7 @@ public static partial class StartupExtensions
         return services;
     }
 
-    /// <summary>
-    /// Configures logging for the application, setting up console logging in development and JSON console logging in production.
-    /// </summary>
-    /// <param name="services"></param>
-    /// <param name="env"></param>
-    /// <returns></returns>
-    public static IServiceCollection ConfigureLogging(
+    private static IServiceCollection ConfigureLogging(
         this IServiceCollection services,
         IWebHostEnvironment env
     )
@@ -124,43 +156,7 @@ public static partial class StartupExtensions
         return services;
     }
 
-    /// <summary>
-    /// Adds API middleware to the application, including exception handling, HTTPS redirection, routing, authorization, and health checks ("/healthz").
-    /// </summary>
-    /// <param name="app"></param>
-    /// <param name="configureExceptionHandling"></param>
-    /// <returns></returns>
-    public static WebApplication AddApi(
-        this WebApplication app,
-        Action<ExceptionHandlingOptions>? configureExceptionHandling
-    )
-    {
-        var exceptionHandlingOptions = new ExceptionHandlingOptions();
-        configureExceptionHandling?.Invoke(exceptionHandlingOptions);
-
-        app.UseExceptionHandler(exceptionHandlerApp =>
-            exceptionHandlerApp.Run(
-                ApiExceptionHandler.CreateExceptionHandler(exceptionHandlingOptions)
-            )
-        );
-
-        app.UseHttpsRedirection();
-        app.UseRouting();
-        app.UseAuthorization();
-
-        app.MapControllers();
-
-        app.UseHealthChecks("/healthz");
-
-        return app;
-    }
-
-    /// <summary>
-    /// Adds Scalar API reference endpoints to the application and configures Swagger to serve the OpenAPI document at a specific route.
-    /// </summary>
-    /// <param name="app"></param>
-    /// <returns></returns>
-    public static IApplicationBuilder AddScalar(this WebApplication app)
+    private static IApplicationBuilder AddScalar(this WebApplication app)
     {
         app.MapScalarApiReference();
         app.UseSwagger(options =>
