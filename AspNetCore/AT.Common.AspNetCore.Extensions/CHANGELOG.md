@@ -21,7 +21,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 0.0.1
 
-Adds a preview version of startup extensions to consolidate ASP.NET configuration and new helpers for IConfiguration.
+Adds extension methods to consolidate ASP.NET configuration and new helpers for IConfiguration.
+
+Cross cutting concerns are handled in a single place, including API setup, 
+
+- OpenTelemetry 
+- Swagger 
+- Logging
+- Model validation
+- Exception handling (mapping exceptions to HTTP responses)
+- Scalar
 
 ### Added
 
