@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Http;
 
 namespace Arbeidstilsynet.Common.AspNetCore.Extensions;
@@ -7,11 +8,11 @@ namespace Arbeidstilsynet.Common.AspNetCore.Extensions;
 /// </summary>
 public record ExceptionHandlingOptions
 {
-    private readonly Dictionary<Type, int> _exceptionToStatusCodeMapping = new()
+    private readonly Dictionary<Type, HttpStatusCode> _exceptionToStatusCodeMapping = new()
     {
-        { typeof(ArgumentException), StatusCodes.Status400BadRequest },
-        { typeof(FormatException), StatusCodes.Status400BadRequest },
-        { typeof(BadHttpRequestException), StatusCodes.Status400BadRequest },
+        { typeof(ArgumentException), HttpStatusCode.BadRequest },
+        { typeof(FormatException), HttpStatusCode.BadRequest },
+        { typeof(BadHttpRequestException), HttpStatusCode.BadRequest },
     };
 
     /// <summary>
@@ -23,7 +24,7 @@ public record ExceptionHandlingOptions
     /// - BadHttpRequestException: 400 Bad Request
     /// - Default to 500 Internal Server Error for any unmapped exceptions.
     /// </summary>
-    public IReadOnlyDictionary<Type, int> ExceptionToStatusCodeMapping =>
+    public IReadOnlyDictionary<Type, HttpStatusCode> ExceptionToStatusCodeMapping =>
         _exceptionToStatusCodeMapping;
 
     /// <summary>
@@ -32,7 +33,7 @@ public record ExceptionHandlingOptions
     /// <param name="statusCode"></param>
     /// <typeparam name="TException"></typeparam>
     /// <returns></returns>
-    public ExceptionHandlingOptions AddExceptionMapping<TException>(int statusCode)
+    public ExceptionHandlingOptions AddExceptionMapping<TException>(HttpStatusCode statusCode)
         where TException : Exception
     {
         _exceptionToStatusCodeMapping[typeof(TException)] = statusCode;

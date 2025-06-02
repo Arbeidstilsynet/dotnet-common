@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,16 +24,15 @@ internal static class ApiExceptionHandler
     }
 
     private static int GetStatusCode(
-        this IReadOnlyDictionary<Type, int> mapping,
+        this IReadOnlyDictionary<Type, HttpStatusCode> mapping,
         Exception? exception
     )
     {
-        return exception is null
-            ? StatusCodes.Status500InternalServerError
-            : mapping.GetValueOrDefault(
-                exception.GetType(),
-                StatusCodes.Status500InternalServerError
-            );
+        var statusCode = exception is null
+            ? HttpStatusCode.InternalServerError
+            : mapping.GetValueOrDefault(exception.GetType(), HttpStatusCode.InternalServerError);
+
+        return (int)statusCode;
     }
 
     private static ProblemDetails GetProblemDetails(this Exception? exception, int statusCode)

@@ -1,3 +1,4 @@
+using System.Net;
 using Arbeidstilsynet.Common.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
@@ -66,10 +67,11 @@ public class ApiExceptionHandlerTests
     }
 
     [Theory]
-    [InlineData(StatusCodes.Status404NotFound)]
-    [InlineData(StatusCodes.Status400BadRequest)]
+    [InlineData(HttpStatusCode.NotFound, 404)]
+    [InlineData(HttpStatusCode.BadRequest, 400)]
     public async Task CreateExceptionHandler_CustomMapping_CustomExceptionProducesConfiguredStatus(
-        int statusCode
+        HttpStatusCode statusCode,
+        int expectedValue
     )
     {
         // Arrange
@@ -83,14 +85,15 @@ public class ApiExceptionHandlerTests
         await handler(context);
 
         // Assert
-        context.Response.StatusCode.ShouldBe(statusCode);
+        context.Response.StatusCode.ShouldBe(expectedValue);
     }
 
     [Theory]
-    [InlineData(StatusCodes.Status404NotFound)]
-    [InlineData(StatusCodes.Status410Gone)]
+    [InlineData(HttpStatusCode.NotFound, 404)]
+    [InlineData(HttpStatusCode.Gone, 410)]
     public async Task CreateExceptionHandler_OverwriteMapping_ProducesConfiguredStatus(
-        int statusCode
+        HttpStatusCode statusCode,
+        int expectedValue
     )
     {
         // Arrange
@@ -104,7 +107,7 @@ public class ApiExceptionHandlerTests
         await handler(context);
 
         // Assert
-        context.Response.StatusCode.ShouldBe(statusCode);
+        context.Response.StatusCode.ShouldBe(expectedValue);
     }
 
     private static HttpContext SetupContext<TException>(TException exception)
