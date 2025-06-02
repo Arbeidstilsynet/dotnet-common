@@ -8,14 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added <!-- for new features. -->
+
 ### Changed <!--  for changes in existing functionality. -->
+
 ### Deprecated <!--  for soon-to-be removed features. -->
+
 ### Removed <!-- for now removed features. -->
+
 ### Fixed <!-- for any bug fixes. -->
+
 ### Security <!-- in case of vulnerabilities. -->
 
 ## 0.0.1
 
+Adds a preview version of startup extensions to consolidate ASP.NET configuration and new helpers for IConfiguration.
+
 ### Added
 
-- Word count extension
+- Introduces StartupExtensions with methods for API setup, OpenTelemetry, Swagger, logging, exception handling, and Scalar endpoints.
+- Adds ConfigurationExtensions to bind and validate configuration sections with detailed error reporting.
+- Supplies unit tests for service name conversion, configuration binding, exception mapping, and architecture rules; includes initial README and changelog entries.

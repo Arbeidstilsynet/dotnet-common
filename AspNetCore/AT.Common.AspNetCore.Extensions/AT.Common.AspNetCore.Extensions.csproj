@@ -32,7 +32,8 @@
     Condition="Exists('CHANGELOG.md')"
   >
     <PropertyGroup>
-      <PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/CHANGELOG.md"))</PackageReleaseNotes>
+      <PackageReleaseNotes>
+        $([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/CHANGELOG.md"))</PackageReleaseNotes>
     </PropertyGroup>
   </Target>
 </Project>
