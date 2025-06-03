@@ -42,12 +42,12 @@ public static partial class StartupExtensions
         services.AddControllers(configureMvcAction);
         services.AddProblemDetails(configureProblemDetailsAction);
         var healthChecksBuilder = services.AddHealthChecks();
-        
+
         buildHealthChecksAction?.Invoke(healthChecksBuilder);
 
         return services;
     }
-    
+
     /// <summary>
     /// Adds OpenTelemetry, including metrics, tracing, and logging.
     /// Adds instrumentation for ASP.NET Core and HTTP client, and exports data to an OpenTelemetry Protocol (OTLP) endpoint.
@@ -86,9 +86,10 @@ public static partial class StartupExtensions
                     logging.AddOtlpExporter();
                 },
                 options =>
-                {                    
+                {
                     options.IncludeFormattedMessage = true;
-                });
+                }
+            );
         return services;
     }
 

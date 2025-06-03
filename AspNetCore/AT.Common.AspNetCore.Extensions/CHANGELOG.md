@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 0.0.2
+
+### Changed
+
+- Made the extension methods more granular, instead of having a single `ConfigureApi` method, we now have separate methods for OpenTelemetry, Swagger, Logging, and Exception Handling.
+
 ## 0.0.1
 
 Adds extension methods to consolidate ASP.NET configuration and new helpers for IConfiguration.
