@@ -22,7 +22,7 @@ jobs:
 
       - name: Check if package version exists
         id: nuget_version_check
-        uses: Arbeidstilsynet/action-nuget-check-published@85fe50bf850ade8798348a4f768922f6ea918f1d # v1
+        uses: Arbeidstilsynet/action-nuget-check-published@2d56ea14816f152c6fa7086a7632f0db19e3cef9 # v1
         with:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
           version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
