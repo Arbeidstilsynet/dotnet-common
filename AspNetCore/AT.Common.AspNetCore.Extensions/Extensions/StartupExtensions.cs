@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,32 +22,118 @@ namespace Arbeidstilsynet.Common.AspNetCore.Extensions;
 public static partial class StartupExtensions
 {
     /// <summary>
-    /// Adds Controllers, adds model validation based on DataAnnotations attributes, and configures health checks.
+    /// Adds Controllers, model validation, problem details, and health checks.
     /// </summary>
     /// <param name="services"></param>
-    /// <param name="appName">This will be converted to kebab-case and used as the OTEL service name</param>
-    /// <param name="env"></param>
-    /// <param name="configureMvcAction">Action which configures MvcOptions.</param>
-    /// <param name="configureSwaggerGen">Configure Swagger </param>
+    /// <param name="configureMvcAction">Configures the AddControllers() call</param>
+    /// <param name="configureProblemDetailsAction">Configures the AddProblemDetails() call</param>
+    /// <param name="buildHealthChecksAction">Configures the IHealthCheckBuilder</param>
     /// <returns></returns>
     public static IServiceCollection ConfigureApi(
         this IServiceCollection services,
-        string appName,
-        IWebHostEnvironment env,
         Action<MvcOptions>? configureMvcAction = null,
-        Action<SwaggerGenOptions>? configureSwaggerGen = null
+        Action<ProblemDetailsOptions>? configureProblemDetailsAction = null,
+        Action<IHealthChecksBuilder>? buildHealthChecksAction = null
     )
     {
         configureMvcAction ??= options => options.Filters.Add<RequestValidationFilter>();
 
         services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
         services.AddControllers(configureMvcAction);
-        services.AddProblemDetails();
-        services.AddHealthChecks();
+        services.AddProblemDetails(configureProblemDetailsAction);
+        var healthChecksBuilder = services.AddHealthChecks();
 
-        services.ConfigureSwagger(configureSwaggerGen);
-        services.ConfigureOpenTelemetry(appName);
-        services.ConfigureLogging(env);
+        buildHealthChecksAction?.Invoke(healthChecksBuilder);
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adds OpenTelemetry, including metrics, tracing, and logging.
+    /// Adds instrumentation for ASP.NET Core and HTTP client, and exports data to an OpenTelemetry Protocol (OTLP) endpoint.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="appName">Will be converted to kebab case and used as serviceName</param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureOpenTelemetry(
+        this IServiceCollection services,
+        string appName
+    )
+    {
+        services
+            .AddOpenTelemetry()
+            .ConfigureResource(r =>
+                r.AddService(
+                    serviceName: appName.ConvertToOtelServiceName(),
+                    autoGenerateServiceInstanceId: true
+                )
+            )
+            .WithMetrics(options =>
+            {
+                options.AddAspNetCoreInstrumentation();
+                options.AddHttpClientInstrumentation();
+                options.AddOtlpExporter();
+            })
+            .WithTracing(options =>
+            {
+                options.AddAspNetCoreInstrumentation();
+                options.AddHttpClientInstrumentation();
+                options.AddOtlpExporter();
+            })
+            .WithLogging(
+                logging =>
+                {
+                    logging.AddOtlpExporter();
+                },
+                options =>
+                {
+                    options.IncludeFormattedMessage = true;
+                }
+            );
+        return services;
+    }
+
+    /// <summary>
+    /// Adds Swagger, allowing for API documentation generation.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configureSwaggerGen">Configures the AddSwaggerGen() call</param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureSwagger(
+        this IServiceCollection services,
+        Action<SwaggerGenOptions>? configureSwaggerGen = null
+    )
+    {
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen(configureSwaggerGen);
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adds logging, setting the minimum log level and adding console or JSON console logging based on the environment.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="env"></param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureLogging(
+        this IServiceCollection services,
+        IWebHostEnvironment env
+    )
+    {
+        services.AddLogging(configure =>
+        {
+            configure.ClearProviders();
+            configure.SetMinimumLevel(LogLevel.Information);
+            if (env.EnvironmentName == Environments.Development)
+            {
+                configure.AddConsole();
+            }
+            else
+            {
+                configure.AddJsonConsole();
+            }
+        });
 
         return services;
     }
@@ -80,83 +167,15 @@ public static partial class StartupExtensions
 
         app.UseHealthChecks("/healthz");
 
-        app.AddScalar();
-
         return app;
     }
 
     /// <summary>
-    /// Configures OpenTelemetry for the application, including metrics, tracing, and logging.
+    /// Adds the Scalar API reference endpoint and configures Swagger to serve the OpenAPI document at "/openapi/{documentName}.json".
     /// </summary>
-    /// <param name="services"></param>
-    /// <param name="serviceName"></param>
+    /// <param name="app"></param>
     /// <returns></returns>
-    private static IServiceCollection ConfigureOpenTelemetry(
-        this IServiceCollection services,
-        string serviceName
-    )
-    {
-        services
-            .AddOpenTelemetry()
-            .ConfigureResource(r =>
-                r.AddService(
-                    serviceName: serviceName.ConvertToOtelServiceName(),
-                    autoGenerateServiceInstanceId: true
-                )
-            )
-            .WithMetrics(options =>
-            {
-                options.AddAspNetCoreInstrumentation();
-                options.AddHttpClientInstrumentation();
-                options.AddOtlpExporter();
-            })
-            .WithTracing(options =>
-            {
-                options.AddAspNetCoreInstrumentation();
-                options.AddHttpClientInstrumentation();
-                options.AddOtlpExporter();
-            })
-            .WithLogging(
-                logging => logging.AddOtlpExporter(),
-                options => options.IncludeFormattedMessage = true
-            );
-        return services;
-    }
-
-    private static IServiceCollection ConfigureSwagger(
-        this IServiceCollection services,
-        Action<SwaggerGenOptions>? configureSwaggerGen
-    )
-    {
-        services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen(configureSwaggerGen);
-
-        return services;
-    }
-
-    private static IServiceCollection ConfigureLogging(
-        this IServiceCollection services,
-        IWebHostEnvironment env
-    )
-    {
-        services.AddLogging(configure =>
-        {
-            configure.ClearProviders();
-            configure.SetMinimumLevel(LogLevel.Information);
-            if (env.EnvironmentName == Environments.Development)
-            {
-                configure.AddConsole();
-            }
-            else
-            {
-                configure.AddJsonConsole();
-            }
-        });
-
-        return services;
-    }
-
-    private static IApplicationBuilder AddScalar(this WebApplication app)
+    public static WebApplication AddScalar(this WebApplication app)
     {
         app.MapScalarApiReference();
         app.UseSwagger(options =>

@@ -1,4 +1,7 @@
 using Arbeidstilsynet.Common.AspNetCore.Extensions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Shouldly;
 using Xunit;
 
