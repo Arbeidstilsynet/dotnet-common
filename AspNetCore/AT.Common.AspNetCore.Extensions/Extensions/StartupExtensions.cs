@@ -175,7 +175,7 @@ public static partial class StartupExtensions
     /// </summary>
     /// <param name="app"></param>
     /// <returns></returns>
-    public static IApplicationBuilder AddScalar(this WebApplication app)
+    public static WebApplication AddScalar(this WebApplication app)
     {
         app.MapScalarApiReference();
         app.UseSwagger(options =>
