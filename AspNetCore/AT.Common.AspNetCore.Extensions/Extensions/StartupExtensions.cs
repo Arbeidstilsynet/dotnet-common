@@ -101,7 +101,7 @@ public static partial class StartupExtensions
     /// <returns></returns>
     public static IServiceCollection ConfigureSwagger(
         this IServiceCollection services,
-        Action<SwaggerGenOptions>? configureSwaggerGen
+        Action<SwaggerGenOptions>? configureSwaggerGen = null
     )
     {
         services.AddEndpointsApiExplorer();
