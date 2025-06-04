@@ -27,7 +27,7 @@ internal class AuthenticationClient : IAuthenticationClient
         };
 
         var response = await _authenticationHttpClient.PostAsync(
-            (string?)null,
+            string.Empty,
             new FormUrlEncodedContent(dict)
         );
         response.EnsureSuccessStatusCode();
