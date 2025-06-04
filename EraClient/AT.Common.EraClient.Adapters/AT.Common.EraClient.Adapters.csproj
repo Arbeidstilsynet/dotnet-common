@@ -23,10 +23,7 @@
     <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.10.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../AT.Common.EraClient.Ports/AT.Common.EraClient.Ports.csproj">
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-      <IncludeAssets>AT.Common.EraClient.Ports.dll</IncludeAssets>
-    </ProjectReference>
+    <ProjectReference Include="../AT.Common.EraClient.Ports/AT.Common.EraClient.Ports.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
