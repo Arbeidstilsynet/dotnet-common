@@ -1,6 +1,7 @@
 using Arbeidstilsynet.Common.EraClient.Ports;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Polly;
 
 namespace Arbeidstilsynet.Common.EraClient.Adapters.DependencyInjection;
@@ -16,16 +17,32 @@ public static class DependencyInjectionExtensions
     internal const string ASBESTCLIENT_KEY = "EraAsbestClient";
 
     /// <summary>
-    /// Registrerer en implementasjon av IEnhetsregisteret i den spesifiserte <see cref="IServiceCollection"/>.
+    /// Register all EraClients for the provided <see cref="IServiceCollection"/>.
     /// </summary>
-    /// <param name="services"><see cref="IServiceCollection"/> som tjenesten skal legges til i.</param>
-    /// <param name="hostEnvironment">Host environment from the program starting the app. Hvis det ikke finnes noe BaseUrls i konfigurasjon, så bruker vi defaults basert på HostEnvironment.</param>
+    /// <param name="services">The <see cref="IServiceCollection"/> to be extended.</param>
+    /// <param name="hostEnvironment">Host environment from the program starting the app.</param>
     /// <param name="configure">Konfigurer klienten.</param>
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
     public static IServiceCollection AddEraAdapter(
         this IServiceCollection services,
+        IHostEnvironment hostEnvironment
+    )
+    {
+        services.AddServices(hostEnvironment, new EraClientConfiguration());
+        return services;
+    }
+
+    /// <summary>
+    /// Register all EraClients for the provided <see cref="IServiceCollection"/>.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> to be extended.</param>
+    /// <param name="hostEnvironment">Host environment from the program starting the app.</param>
+    /// <param name="configure">Configure action for the appropriate Configuration.</param>
+    /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
+    public static IServiceCollection AddEraAdapter(
+        this IServiceCollection services,
         IHostEnvironment hostEnvironment,
-        Action<EraClientConfiguration>? configure = null
+        Action<EraClientConfiguration>? configure
     )
     {
         var config = new EraClientConfiguration();
@@ -38,16 +55,16 @@ public static class DependencyInjectionExtensions
     }
 
     /// <summary>
-    /// Registrerer en implementasjon av IEnhetsregisteret i den spesifiserte <see cref="IServiceCollection"/>.
+    /// Register all EraClients for the provided <see cref="IServiceCollection"/>.
     /// </summary>
-    /// <param name="services"><see cref="IServiceCollection"/> som tjenesten skal legges til i.</param>
-    /// <param name="hostEnvironment">Host environment from the program starting the app. Hvis det ikke finnes noe BaseUrls i konfigurasjon, så bruker vi defaults basert på HostEnvironment.</param>
-    /// <param name="config">Konfigurasjon for klienten. Hvis null, brukes en standardkonfigurasjon.</param>
+    /// <param name="services">The <see cref="IServiceCollection"/> to be extended.</param>
+    /// <param name="hostEnvironment">Host environment from the program starting the app.</param>
+    /// <param name="config">Config for all clients. If null, the default configuration is used.</param>
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
     public static IServiceCollection AddEraAdapter(
         this IServiceCollection services,
         IHostEnvironment hostEnvironment,
-        EraClientConfiguration? config = null
+        EraClientConfiguration? config
     )
     {
         config ??= new EraClientConfiguration();
