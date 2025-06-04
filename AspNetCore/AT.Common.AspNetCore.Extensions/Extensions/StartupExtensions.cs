@@ -112,7 +112,6 @@ public static partial class StartupExtensions
 
     /// <summary>
     /// Adds API middleware to the application, including exception handling, HTTPS redirection, routing, authorization, and health checks ("/healthz").
-    /// Also adds the Scalar API reference endpoint.
     /// </summary>
     /// <param name="app"></param>
     /// <param name="configureExceptionHandling">Determines mapping from Exceptions to HTTP Status codes.</param>
