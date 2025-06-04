@@ -111,34 +111,6 @@ public static partial class StartupExtensions
     }
 
     /// <summary>
-    /// Adds logging, setting the minimum log level and adding console or JSON console logging based on the environment.
-    /// </summary>
-    /// <param name="services"></param>
-    /// <param name="env"></param>
-    /// <returns></returns>
-    public static IServiceCollection ConfigureLogging(
-        this IServiceCollection services,
-        IWebHostEnvironment env
-    )
-    {
-        services.AddLogging(configure =>
-        {
-            configure.ClearProviders();
-            configure.SetMinimumLevel(LogLevel.Information);
-            if (env.EnvironmentName == Environments.Development)
-            {
-                configure.AddConsole();
-            }
-            else
-            {
-                configure.AddJsonConsole();
-            }
-        });
-
-        return services;
-    }
-
-    /// <summary>
     /// Adds API middleware to the application, including exception handling, HTTPS redirection, routing, authorization, and health checks ("/healthz").
     /// Also adds the Scalar API reference endpoint.
     /// </summary>
