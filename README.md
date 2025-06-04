@@ -8,6 +8,12 @@ Monorepository for felles C#-pakker som skal publiseres offentlig.
 dotnet new install Arbeidstilsynet.Templates
 ```
 
+or (if already installed):
+
+```cmd
+dotnet new update
+```
+
 ## 📦 Add new package
 
 For å finne ut kordan pakke type passer til din use case, går gjennom tilsvarende dokumentasjon i [dotnet-templates](https://github.com/Arbeidstilsynet/dotnet-templates/blob/main/README.md#common-package-felles-pakke).

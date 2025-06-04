@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Arbeidstilsynet.Common.EraClient</RootNamespace>
+    <PackageId>Arbeidstilsynet.Common.EraClient</PackageId>
+    <Product>Arbeidstilsynet.Common.EraClient</Product>
+    <Authors>Digital Samhandling</Authors>
+    <Company>Arbeidstilsynet</Company>
+    <Description></Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Version>0.0.1</Version>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference
+      Include="Microsoft.Extensions.DependencyInjection.Abstractions"
+      Version="8.0.2"
+    />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.10.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference
+      Include="../AT.Common.EraClient.Ports/AT.Common.EraClient.Ports.csproj"
+      PrivateAssets="All"
+    />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+  <Target
+    Name="InjectPackageReleaseNotesFromFile"
+    BeforeTargets="GenerateNuspec"
+    Condition="Exists('CHANGELOG.md')"
+  >
+    <PropertyGroup>
+      <PackageReleaseNotes>
+        $([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/CHANGELOG.md"))</PackageReleaseNotes>
+    </PropertyGroup>
+  </Target>
+  <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
+    <ItemGroup>
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))" />
+    </ItemGroup>
+  </Target>
+</Project>
