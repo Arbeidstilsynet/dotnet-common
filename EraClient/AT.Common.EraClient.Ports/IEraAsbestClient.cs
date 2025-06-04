@@ -1,4 +1,5 @@
 using Arbeidstilsynet.Common.EraClient.Ports.Model;
+using Arbeidstilsynet.Common.EraClient.Ports.Model.Asbest;
 
 namespace Arbeidstilsynet.Common.EraClient.Ports;
 
@@ -8,6 +9,11 @@ namespace Arbeidstilsynet.Common.EraClient.Ports;
 public interface IEraAsbestClient
 {
     Task<List<Model.Asbest.Melding>> GetMeldingerByOrg(
+        AuthenticationResponseDto authenticationResponse,
+        string orgNumber
+    );
+
+    Task<SøknadStatusResponse?> GetStatusForExistingSøknad(
         AuthenticationResponseDto authenticationResponse,
         string orgNumber
     );

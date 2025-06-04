@@ -13,7 +13,7 @@ using Xunit.Microsoft.DependencyInjection.Abstracts;
 
 namespace Arbeidstilsynet.Common.EraClient.Test;
 
-public class EraAsbestClientIntegrationTests : TestBed<EraClientFixture>
+public class EraAsbestClientTests : TestBed<EraClientFixture>
 {
     private readonly IEraAsbestClient _sut;
 
@@ -26,14 +26,16 @@ public class EraAsbestClientIntegrationTests : TestBed<EraClientFixture>
         ExpiresIn = 3600,
     };
 
-    private static List<Melding> SampleResponse = new Faker<Melding>().UseSeed(9008).Generate(5);
+    private static List<Melding> SampleMeldingerResponse = new Faker<Melding>()
+        .UseSeed(9008)
+        .Generate(5);
+
+    private static SøknadStatusResponse SampleSøknadStatusResponse =
+        new Faker<SøknadStatusResponse>().UseSeed(9008).Generate(1)[0];
 
     private new readonly EraClientFixture _fixture;
 
-    public EraAsbestClientIntegrationTests(
-        ITestOutputHelper testOutputHelper,
-        EraClientFixture fixture
-    )
+    public EraAsbestClientTests(ITestOutputHelper testOutputHelper, EraClientFixture fixture)
         : base(testOutputHelper, fixture)
     {
         _sut = fixture.GetService<IEraAsbestClient>(testOutputHelper)!;
@@ -55,11 +57,13 @@ public class EraAsbestClientIntegrationTests : TestBed<EraClientFixture>
                     .WithHeader("Authorization", $"Bearer {SampleAuth.AccessToken}")
                     .WithPath($"/{SampleOrgNr}/meldinger")
             )
-            .RespondWith(Response.Create().WithStatusCode(200).WithBodyAsJson(SampleResponse));
+            .RespondWith(
+                Response.Create().WithStatusCode(200).WithBodyAsJson(SampleMeldingerResponse)
+            );
         //act
         var result = await _sut.GetMeldingerByOrg(SampleAuth, SampleOrgNr);
         //assert
-        result.ShouldBeEquivalentTo(SampleResponse);
+        result.ShouldBeEquivalentTo(SampleMeldingerResponse);
     }
 
     [Fact]
@@ -68,6 +72,45 @@ public class EraAsbestClientIntegrationTests : TestBed<EraClientFixture>
         //act
         var action = () =>
             _sut.GetMeldingerByOrg(
+                new AuthenticationResponseDto
+                {
+                    AccessToken = "",
+                    ExpiresIn = 0,
+                    TokenType = "Bearer",
+                },
+                SampleOrgNr
+            );
+        //assert
+        await action.ShouldThrowAsync<HttpRequestException>();
+    }
+
+    [Fact]
+    public async Task GetStatusForExistingSøknad_WhenCalledWithValidCredentials_ReturnsAccessToken()
+    {
+        //arrange
+        _fixture
+            .WireMockServer.Given(
+                Request
+                    .Create()
+                    .UsingGet()
+                    .WithHeader("Authorization", $"Bearer {SampleAuth.AccessToken}")
+                    .WithPath($"/soknad/{SampleOrgNr}")
+            )
+            .RespondWith(
+                Response.Create().WithStatusCode(200).WithBodyAsJson(SampleSøknadStatusResponse)
+            );
+        //act
+        var result = await _sut.GetStatusForExistingSøknad(SampleAuth, SampleOrgNr);
+        //assert
+        result.ShouldBeEquivalentTo(SampleSøknadStatusResponse);
+    }
+
+    [Fact]
+    public async Task GetStatusForExistingSøknad_WhenCalledWithInvalidCredentials_ThrowsException()
+    {
+        //act
+        var action = () =>
+            _sut.GetStatusForExistingSøknad(
                 new AuthenticationResponseDto
                 {
                     AccessToken = "",

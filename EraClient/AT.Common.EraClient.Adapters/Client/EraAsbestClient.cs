@@ -30,4 +30,18 @@ internal class EraAsbestClient : IEraAsbestClient
                 new Uri(orgNumber + "/meldinger", UriKind.Relative)
             ) ?? [];
     }
+
+    public async Task<SøknadStatusResponse?> GetStatusForExistingSøknad(
+        AuthenticationResponseDto authenticationResponse,
+        string orgNumber
+    )
+    {
+        _httpClient.DefaultRequestHeaders.Add(
+            "Authorization",
+            $"Bearer {authenticationResponse.AccessToken}"
+        );
+        return await _httpClient.GetFromJsonAsync<SøknadStatusResponse>(
+            new Uri($"soknad/{orgNumber}", UriKind.Relative)
+        );
+    }
 }

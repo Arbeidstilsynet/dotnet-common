@@ -11,7 +11,7 @@ using Xunit.Microsoft.DependencyInjection.Abstracts;
 
 namespace Arbeidstilsynet.Common.EraClient.Test;
 
-public class AuthenticationClientIntegrationTests : TestBed<EraClientFixture>
+public class AuthenticationClientTests : TestBed<EraClientFixture>
 {
     private readonly IAuthenticationClient _sut;
 
@@ -30,10 +30,7 @@ public class AuthenticationClientIntegrationTests : TestBed<EraClientFixture>
 
     private new readonly EraClientFixture _fixture;
 
-    public AuthenticationClientIntegrationTests(
-        ITestOutputHelper testOutputHelper,
-        EraClientFixture fixture
-    )
+    public AuthenticationClientTests(ITestOutputHelper testOutputHelper, EraClientFixture fixture)
         : base(testOutputHelper, fixture)
     {
         _sut = fixture.GetService<IAuthenticationClient>(testOutputHelper)!;
