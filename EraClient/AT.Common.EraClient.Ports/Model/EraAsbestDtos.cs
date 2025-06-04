@@ -5,32 +5,32 @@ namespace Arbeidstilsynet.Common.EraClient.Ports.Model.Asbest;
 public record Melding
 {
     [property: JsonPropertyName("Arkivreferanse")]
-    Arkivreferanse Arkivreferanse { get; init; }
+    public Arkivreferanse Arkivreferanse { get; init; }
 
     [property: JsonPropertyName("StartDato")]
-    DateTime StartDato { get; init; }
+    public DateTime StartDato { get; init; }
 
     [property: JsonPropertyName("SluttDato")]
-    DateTime SluttDato { get; init; }
+    public DateTime SluttDato { get; init; }
 
     [property: JsonPropertyName("OppdragGateadresse")]
-    string OppdragGateadresse { get; init; }
+    public string OppdragGateadresse { get; init; }
 
     [property: JsonPropertyName("OppdragPostnummer")]
-    string OppdragPostnummer { get; init; }
+    public string OppdragPostnummer { get; init; }
 
     [property: JsonPropertyName("OppdragPoststed")]
-    string OppdragPoststed { get; init; }
+    public string OppdragPoststed { get; init; }
 };
 
 public record Arkivreferanse
 {
     [property: JsonPropertyName("SaksId")]
-    string SaksId { get; init; }
+    public string SaksId { get; init; }
 
     [property: JsonPropertyName("Saksnummer")]
-    string Saksnummer { get; init; }
+    public string Saksnummer { get; init; }
 
     [property: JsonPropertyName("JournalpostId")]
-    string JournalpostId { get; init; }
+    public string JournalpostId { get; init; }
 };
