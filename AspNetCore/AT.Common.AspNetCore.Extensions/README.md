@@ -21,13 +21,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Resolve and validate your appsettings from configuration
 var appSettings = builder.Configuration.GetRequired<AppSettings>();
 
-// Configure AspNetCore API (Mvc, Swagger, OpenTelemetry, Logging, Health Check)
-builder.Services.ConfigureApi("MyFancyApp", builder.Environment);
+// Configure AspNetCore API
+builder.Services.ConfigureApi();
+builder.Services.ConfigureOpenTelemetry("MyFancyApp");
+builder.Services.ConfigureSwagger();
 
 var app = builder.Build();
 
 // Add middleware (Controllers, Exception handling, Scalar)
-app.AddApi(options => options.AddExceptionMapping<SakNotFoundException>(HttpStatusCode.NotFound));
+app.AddApi(options =>
+            options.AddExceptionMapping<SakNotFoundException>(HttpStatusCode.NotFound)
+        );
+        app.AddScalar();
 
 app.Run();
 ```

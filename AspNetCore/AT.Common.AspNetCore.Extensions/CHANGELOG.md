@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+### 0.0.3
+
+### Removed
+
+- Removed the ConfigureLogging method from StartupExtensions, as it was just wrapping services.AddLogging(). 
+
 ## 0.0.2
 
 ### Changed
