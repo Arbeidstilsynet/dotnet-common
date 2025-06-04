@@ -23,7 +23,11 @@ public class EraClientFixture : TestBedFixture
     {
         services.AddEraAdapter(
             Substitute.For<IHostEnvironment>(),
-            options => options.AuthenticationUrl = WireMockServer.Urls[0]
+            options =>
+            {
+                options.AuthenticationUrl = WireMockServer.Urls[0];
+                options.EraAsbestUrl = WireMockServer.Urls[0];
+            }
         );
     }
 

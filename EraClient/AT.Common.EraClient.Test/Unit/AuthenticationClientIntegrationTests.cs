@@ -59,7 +59,9 @@ public class AuthenticationClientIntegrationTests : TestBed<EraClientFixture>
                                 "grant_type=client_credentials",
                                 $"client_id={SampleRequest.ClientId}",
                                 $"client_secret={SampleRequest.ClientSecret}",
-                            ]
+                            ],
+                            false,
+                            MatchOperator.And
                         )
                     )
             )
@@ -86,6 +88,8 @@ public class AuthenticationClientIntegrationTests : TestBed<EraClientFixture>
     [Fact]
     public async Task Authenticate_WhenCalledWithInvalidCredentials_ThrowsException()
     {
+        //arrage
+
         //act
         var action = () =>
             _sut.Authenticate(

@@ -14,6 +14,7 @@ public class DependencyInjectionTests
     private static List<ServiceDescriptor> ExpectedServices =
     [
         ServiceDescriptor.Transient<IAuthenticationClient, AuthenticationClient>(),
+        ServiceDescriptor.Transient<IEraAsbestClient, EraAsbestClient>(),
     ];
 
     [Fact]

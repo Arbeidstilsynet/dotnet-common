@@ -11,11 +11,9 @@ public class EraClientConfiguration
     /// <summary>
     /// Default constructur. Does not require any parameters, but all parameters can be overwritten.
     /// </summary>
-    /// <param name="authenticationUrl">The base URL for authentication. Per today, all EraClients share the same auth provider. If not set, the default will be selected based on the host environment.</param>
     /// <param name="timeoutInSeconds">Timeout in seconds for resilience pipeline.</param>
     /// <param name="retryStrategy">Retry strategy for resilience pipeline.</param>
     public EraClientConfiguration(
-        string? authenticationUrl = null,
         int timeoutInSeconds = 30,
         RetryStrategyOptions? retryStrategy = null
     )
@@ -37,8 +35,16 @@ public class EraClientConfiguration
     }
 
     /// <summary>
+    /// Base Url for authentication. This assumes that all era endpoints share the same auth provider.
+    /// If not set, the value is retrieved by the host environment.
     /// </summary>
     public string? AuthenticationUrl { get; set; }
+
+    /// <summary>
+    /// Base Url for all asbest endpoints.
+    /// If not set, the value is retrieved by the host environment.
+    /// </summary>
+    public string? EraAsbestUrl { get; set; }
 
     /// <summary>
     /// Resilience pipeline for API-kall.

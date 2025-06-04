@@ -13,6 +13,8 @@ public static class DependencyInjectionExtensions
     internal const string RESILIENCE_PIPELINE_CONFIGKEY = "EraClientResiliencePipeline";
     internal const string AUTHCLIENT_KEY = "EraAuthenticationClient";
 
+    internal const string ASBESTCLIENT_KEY = "EraAsbestClient";
+
     /// <summary>
     /// Registrerer en implementasjon av IEnhetsregisteret i den spesifiserte <see cref="IServiceCollection"/>.
     /// </summary>
@@ -78,6 +80,28 @@ public static class DependencyInjectionExtensions
         return "https://prod-altinn-bemanning.auth.eu-west-1.amazoncognito.com/oauth2/token";
     }
 
+    private static string GetAsbestUrl(
+        IHostEnvironment hostEnvironment,
+        EraClientConfiguration config
+    )
+    {
+        if (config.EraAsbestUrl != null)
+        {
+            return config.EraAsbestUrl;
+        }
+        if (hostEnvironment.IsDevelopment())
+        {
+            return "https://data-verifi.arbeidstilsynet.no/asbest/api/virksomheter/";
+        }
+
+        if (hostEnvironment.IsStaging())
+        {
+            return "https://data-valid.arbeidstilsynet.no/asbest/api/virksomheter/";
+        }
+
+        return "https://data.arbeidstilsynet.no/asbest/api/virksomheter/";
+    }
+
     private static void AddServices(
         this IServiceCollection services,
         IHostEnvironment hostEnvironment,
@@ -100,7 +124,24 @@ public static class DependencyInjectionExtensions
                 }
             );
 
+        services
+            .AddHttpClient(
+                ASBESTCLIENT_KEY,
+                httpClient =>
+                {
+                    httpClient.BaseAddress = new Uri(GetAsbestUrl(hostEnvironment, config));
+                }
+            )
+            .AddResilienceHandler(
+                RESILIENCE_PIPELINE_CONFIGKEY,
+                builder =>
+                {
+                    builder.AddPipeline(config.ResiliencePipeline);
+                }
+            );
+
         services.AddSingleton(config!);
         services.AddTransient<IAuthenticationClient, AuthenticationClient>();
+        services.AddTransient<IEraAsbestClient, EraAsbestClient>();
     }
 }
