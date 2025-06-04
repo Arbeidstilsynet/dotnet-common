@@ -18,4 +18,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- First implementation: the client returns 'bar' whenever it is called.
+- feat: Implemented AuthenticationClient which can be used to retrive an access token by providing client credentials (oauth2). The access token works for all EraClients. 
+- feat: Implemented EraAsbestClient to send requests to our internal asbest endpoints. Currently we support to retrieve `meldinger` for an organization as well as the status of an application (søknad).

@@ -21,7 +21,6 @@ public static class DependencyInjectionExtensions
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to be extended.</param>
     /// <param name="hostEnvironment">Host environment from the program starting the app.</param>
-    /// <param name="configure">Konfigurer klienten.</param>
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
     public static IServiceCollection AddEraAdapter(
         this IServiceCollection services,
