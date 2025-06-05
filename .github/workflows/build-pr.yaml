@@ -20,6 +20,7 @@ jobs:
   build:
     needs: discover
     strategy:
+      fail-fast: false
       matrix:
         package: ${{ fromJson(needs.discover.outputs.matrix) }}
     uses: ./.github/workflows/build-pr-template.yaml
