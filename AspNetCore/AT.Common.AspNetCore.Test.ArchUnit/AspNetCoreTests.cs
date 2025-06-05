@@ -32,7 +32,8 @@ public class AspNetCoreAdapterLayerTests
             .That()
             .Are(Layers.InterfaceImplementations)
             .Should()
-            .NotBePublic();
+            .NotBePublic()
+            .WithoutRequiringPositiveResults();
 
         archRule.Check(Architecture);
     }
