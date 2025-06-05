@@ -24,7 +24,7 @@ internal class EraAsbestClient : IEraAsbestClient
     )
     {
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-            "Bearer",
+            authenticationResponse.TokenType,
             authenticationResponse.AccessToken
         );
         return await _httpClient.GetFromJsonAsync<List<Model.Asbest.Melding>>(
@@ -38,7 +38,7 @@ internal class EraAsbestClient : IEraAsbestClient
     )
     {
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-            "Bearer",
+            authenticationResponse.TokenType,
             authenticationResponse.AccessToken
         );
         return await _httpClient.GetFromJsonAsync<SøknadStatusResponse>(
