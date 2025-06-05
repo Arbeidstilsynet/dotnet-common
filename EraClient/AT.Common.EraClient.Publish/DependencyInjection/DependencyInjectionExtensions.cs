@@ -1,4 +1,5 @@
 using Arbeidstilsynet.Common.EraClient;
+using Arbeidstilsynet.Common.EraClient.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -82,18 +83,16 @@ public static class DependencyInjectionExtensions
         {
             return config.AuthenticationUrl;
         }
-
-        if (hostEnvironment.IsDevelopment())
+        return hostEnvironment.GetRespectiveEraEnvironment() switch
         {
-            return "https://dev-altinn-bemanning.auth.eu-west-1.amazoncognito.com/oauth2/token";
-        }
-
-        if (hostEnvironment.IsStaging())
-        {
-            return "https://test-altinn-bemanning.auth.eu-west-1.amazoncognito.com/oauth2/token";
-        }
-
-        return "https://prod-altinn-bemanning.auth.eu-west-1.amazoncognito.com/oauth2/token";
+            Model.EraEnvironment.Verifi =>
+                "https://dev-altinn-bemanning.auth.eu-west-1.amazoncognito.com/oauth2/token",
+            Model.EraEnvironment.Valid =>
+                "https://test-altinn-bemanning.auth.eu-west-1.amazoncognito.com/oauth2/token",
+            Model.EraEnvironment.Prod =>
+                "https://prod-altinn-bemanning.auth.eu-west-1.amazoncognito.com/oauth2/token",
+            _ => throw new InvalidOperationException(),
+        };
     }
 
     private static string GetAsbestUrl(
@@ -105,17 +104,15 @@ public static class DependencyInjectionExtensions
         {
             return config.EraAsbestUrl;
         }
-        if (hostEnvironment.IsDevelopment())
+        return hostEnvironment.GetRespectiveEraEnvironment() switch
         {
-            return "https://data-verifi.arbeidstilsynet.no/asbest/api/virksomheter/";
-        }
-
-        if (hostEnvironment.IsStaging())
-        {
-            return "https://data-valid.arbeidstilsynet.no/asbest/api/virksomheter/";
-        }
-
-        return "https://data.arbeidstilsynet.no/asbest/api/virksomheter/";
+            Model.EraEnvironment.Verifi =>
+                "https://data-verifi.arbeidstilsynet.no/asbest/api/virksomheter/",
+            Model.EraEnvironment.Valid =>
+                "https://data-valid.arbeidstilsynet.no/asbest/api/virksomheter/",
+            Model.EraEnvironment.Prod => "https://data.arbeidstilsynet.no/asbest/api/virksomheter/",
+            _ => throw new InvalidOperationException(),
+        };
     }
 
     private static void AddServices(
@@ -156,7 +153,6 @@ public static class DependencyInjectionExtensions
                     builder.AddPipeline(config.ResiliencePipeline);
                 }
             );
-
         services.AddSingleton(config!);
         services.AddTransient<IAuthenticationClient, AuthenticationClient>();
         services.AddTransient<IEraAsbestClient, EraAsbestClient>();
