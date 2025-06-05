@@ -1,6 +1,6 @@
-using Arbeidstilsynet.Common.EraClient.Ports;
-using Arbeidstilsynet.Common.EraClient.Ports.Model;
-using Arbeidstilsynet.Common.EraClient.Ports.Model.Asbest;
+using Arbeidstilsynet.Common.EraClient;
+using Arbeidstilsynet.Common.EraClient.Model;
+using Arbeidstilsynet.Common.EraClient.Model.Asbest;
 using Arbeidstilsynet.Common.EraClient.Test.Fixtures;
 using Bogus;
 using Shouldly;

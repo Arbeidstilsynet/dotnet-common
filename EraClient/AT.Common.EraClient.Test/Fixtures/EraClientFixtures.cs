@@ -1,5 +1,5 @@
-using Arbeidstilsynet.Common.EraClient.Adapters.DependencyInjection;
-using Arbeidstilsynet.Common.EraClient.Adapters.DependencyInjection;
+using Arbeidstilsynet.Common.EraClient.DependencyInjection;
+using Arbeidstilsynet.Common.EraClient.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;

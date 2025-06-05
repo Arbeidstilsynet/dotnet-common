@@ -1,6 +1,4 @@
-using Arbeidstilsynet.Common.EraClient.Adapters;
-using Arbeidstilsynet.Common.EraClient.Adapters.DependencyInjection;
-using Arbeidstilsynet.Common.EraClient.Ports;
+using Arbeidstilsynet.Common.EraClient.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NSubstitute;
@@ -41,7 +39,7 @@ public class DependencyInjectionTests
         // act
         services.AddEraAdapter(
             Substitute.For<IHostEnvironment>(),
-            new Adapters.DependencyInjection.EraClientConfiguration
+            new DependencyInjection.EraClientConfiguration
             {
                 AuthenticationUrl = "https://test-auth-url.com",
             }

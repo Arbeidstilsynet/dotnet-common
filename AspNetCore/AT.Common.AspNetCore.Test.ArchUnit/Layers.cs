@@ -1,11 +1,11 @@
 using ArchUnitNET.Domain;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 
-namespace EraClient.ArchUnit.Tests
+namespace AspNetCore.ArchUnit.Tests
 {
     internal static class Constants
     {
-        internal static string NameSpacePrefix = @"Arbeidstilsynet\.Common\.EraClient";
+        internal static string NameSpacePrefix = @"Arbeidstilsynet\.Common\.AspNetCore";
         internal static string RootNamespace = $"^({NameSpacePrefix}|{NameSpacePrefix}\\..*)$";
         internal static string ExtensionsNamespace = CreateNamespaceRegex("Extensions");
         internal static string DependencyInjectionNamespace = CreateNamespaceRegex(
@@ -21,26 +21,26 @@ namespace EraClient.ArchUnit.Tests
 
     internal static class Layers
     {
-        internal static readonly System.Reflection.Assembly EraClientAssembly =
-            typeof(Arbeidstilsynet.Common.EraClient.IAssemblyInfo).Assembly;
+        internal static readonly System.Reflection.Assembly AspNetCoreAssembly =
+            typeof(Arbeidstilsynet.Common.AspNetCore.IAssemblyInfo).Assembly;
 
-        internal static readonly IObjectProvider<IType> EraClientLayer = Types()
+        internal static readonly IObjectProvider<IType> AspNetCoreLayer = Types()
             .That()
-            .ResideInAssembly(EraClientAssembly)
+            .ResideInAssembly(AspNetCoreAssembly)
             .And()
             .DoNotResideInNamespace("Coverlet.Core.Instrumentation.Tracker")
-            .As("EraClient Layer");
+            .As("AspNetCore Layer");
 
         internal static readonly IObjectProvider<IType> PublicInterfaces = Interfaces()
             .That()
-            .Are(EraClientLayer)
+            .Are(AspNetCoreLayer)
             .And()
             .ArePublic()
             .As("public interfaces");
 
         internal static readonly IObjectProvider<IType> InterfaceImplementations = Classes()
             .That()
-            .Are(EraClientLayer)
+            .Are(AspNetCoreLayer)
             .And()
             .AreAssignableTo(PublicInterfaces)
             .And()
@@ -58,7 +58,7 @@ namespace EraClient.ArchUnit.Tests
 
         internal static readonly IObjectProvider<IType> TypesInInternalNamespaces = Types()
             .That()
-            .Are(EraClientLayer)
+            .Are(AspNetCoreLayer)
             .And()
             .AreNot(ExportableTypes)
             .As("outside exportable namespaces");

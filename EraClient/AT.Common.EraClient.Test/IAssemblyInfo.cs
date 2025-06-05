@@ -1,3 +1,3 @@
-namespace Arbeidstilsynet.Common.EraClient.Adapters.Test;
+namespace Arbeidstilsynet.Common.EraClient.Test;
 
 public interface IAssemblyInfo { }
