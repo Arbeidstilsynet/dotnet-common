@@ -28,7 +28,7 @@ internal class EraAsbestClient : IEraAsbestClient
             authenticationResponse.AccessToken
         );
         return await _httpClient.GetFromJsonAsync<List<Model.Asbest.Melding>>(
-                new Uri(orgNumber + "/meldinger", UriKind.Relative)
+                new Uri($"{orgNumber}/meldinger", UriKind.Relative)
             ) ?? [];
     }
 

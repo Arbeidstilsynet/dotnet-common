@@ -146,6 +146,7 @@ public static class DependencyInjectionExtensions
                 httpClient =>
                 {
                     httpClient.BaseAddress = new Uri(GetAsbestUrl(hostEnvironment, config));
+                    httpClient.DefaultRequestHeaders.Add("User-Agent", ASBESTCLIENT_KEY);
                 }
             )
             .AddResilienceHandler(
