@@ -41,7 +41,7 @@ internal class EraAsbestClient : IEraAsbestClient
         // we need to update the base adress before each request because the determination of the base url is not defined at compile time
         _httpClient.BaseAddress = new Uri(GetAsbestUrl(_hostEnvironment, _eraClientConfiguration));
         return await _httpClient.GetFromJsonAsync<List<Model.Asbest.Melding>>(
-                new Uri($"{orgNumber}/meldinger", UriKind.Relative)
+                new Uri($"virksomheter/{orgNumber}/meldinger", UriKind.Relative)
             ) ?? [];
     }
 
@@ -72,11 +72,9 @@ internal class EraAsbestClient : IEraAsbestClient
         }
         return hostEnvironment.GetRespectiveEraEnvironment() switch
         {
-            Model.EraEnvironment.Verifi =>
-                "https://data-verifi.arbeidstilsynet.no/asbest/api/virksomheter/",
-            Model.EraEnvironment.Valid =>
-                "https://data-valid.arbeidstilsynet.no/asbest/api/virksomheter/",
-            Model.EraEnvironment.Prod => "https://data.arbeidstilsynet.no/asbest/api/virksomheter/",
+            Model.EraEnvironment.Verifi => "https://data-verifi.arbeidstilsynet.no/asbest/api/",
+            Model.EraEnvironment.Valid => "https://data-valid.arbeidstilsynet.no/asbest/api/",
+            Model.EraEnvironment.Prod => "https://data.arbeidstilsynet.no/asbest/api/",
             _ => throw new InvalidOperationException(),
         };
     }

@@ -55,7 +55,7 @@ public class EraAsbestClientTests : TestBed<EraClientFixture>
                     .Create()
                     .UsingGet()
                     .WithHeader("Authorization", $"Bearer {SampleAuth.AccessToken}")
-                    .WithPath($"/{SampleOrgNr}/meldinger")
+                    .WithPath($"/virksomheter/{SampleOrgNr}/meldinger")
             )
             .RespondWith(
                 Response.Create().WithStatusCode(200).WithBodyAsJson(SampleMeldingerResponse)
