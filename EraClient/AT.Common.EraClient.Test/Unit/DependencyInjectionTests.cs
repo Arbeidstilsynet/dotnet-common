@@ -13,6 +13,11 @@ public class DependencyInjectionTests
     [
         ServiceDescriptor.Transient<IAuthenticationClient, AuthenticationClient>(),
         ServiceDescriptor.Transient<IEraAsbestClient, EraAsbestClient>(),
+        new ServiceDescriptor(
+            typeof(EraClientConfiguration),
+            (object?)null,
+            ServiceLifetime.Singleton
+        ),
     ];
 
     [Fact]
@@ -22,10 +27,7 @@ public class DependencyInjectionTests
         var services = new ServiceCollection();
 
         // act
-        services.AddEraAdapter(
-            Substitute.For<IHostEnvironment>(),
-            options => options.AuthenticationUrl = "https://test-auth-url.com"
-        );
+        services.AddEraAdapter(options => options.AuthenticationUrl = "https://test-auth-url.com");
         // assert
         services.AssertContains(ExpectedServices);
     }
@@ -38,7 +40,6 @@ public class DependencyInjectionTests
 
         // act
         services.AddEraAdapter(
-            Substitute.For<IHostEnvironment>(),
             new DependencyInjection.EraClientConfiguration
             {
                 AuthenticationUrl = "https://test-auth-url.com",

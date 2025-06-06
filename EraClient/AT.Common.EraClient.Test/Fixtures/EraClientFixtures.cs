@@ -19,20 +19,16 @@ public class EraClientFixture : TestBedFixture
 {
     internal WireMockServer WireMockServer = WireMockServer.Start();
 
-    private IHostEnvironment _hostEnvironment = Substitute.For<IHostEnvironment>();
+    private readonly IHostEnvironment _hostEnvironment = Substitute.For<IHostEnvironment>();
 
     protected override void AddServices(IServiceCollection services, IConfiguration? configuration)
     {
-        _hostEnvironment.EnvironmentName.Returns("Development");
         services.AddSingleton(_hostEnvironment);
-        services.AddEraAdapter(
-            _hostEnvironment,
-            options =>
-            {
-                options.AuthenticationUrl = WireMockServer.Urls[0];
-                options.EraAsbestUrl = WireMockServer.Urls[0];
-            }
-        );
+        services.AddEraAdapter(options =>
+        {
+            options.AuthenticationUrl = WireMockServer.Urls[0];
+            options.EraAsbestUrl = WireMockServer.Urls[0];
+        });
     }
 
     protected override ValueTask DisposeAsyncCore() => new();

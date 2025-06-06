@@ -21,14 +21,10 @@ public static class DependencyInjectionExtensions
     /// Register all EraClients for the provided <see cref="IServiceCollection"/>.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to be extended.</param>
-    /// <param name="hostEnvironment">Host environment from the program starting the app.</param>
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
-    public static IServiceCollection AddEraAdapter(
-        this IServiceCollection services,
-        IHostEnvironment hostEnvironment
-    )
+    public static IServiceCollection AddEraAdapter(this IServiceCollection services)
     {
-        services.AddServices(hostEnvironment, new EraClientConfiguration());
+        services.AddServices(new EraClientConfiguration());
         return services;
     }
 
@@ -36,12 +32,10 @@ public static class DependencyInjectionExtensions
     /// Register all EraClients for the provided <see cref="IServiceCollection"/>.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to be extended.</param>
-    /// <param name="hostEnvironment">Host environment from the program starting the app.</param>
     /// <param name="configure">Configure action for the appropriate Configuration.</param>
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
     public static IServiceCollection AddEraAdapter(
         this IServiceCollection services,
-        IHostEnvironment hostEnvironment,
         Action<EraClientConfiguration>? configure
     )
     {
@@ -49,7 +43,7 @@ public static class DependencyInjectionExtensions
 
         configure?.Invoke(config);
 
-        services.AddServices(hostEnvironment, config);
+        services.AddServices(config);
 
         return services;
     }
@@ -58,75 +52,28 @@ public static class DependencyInjectionExtensions
     /// Register all EraClients for the provided <see cref="IServiceCollection"/>.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to be extended.</param>
-    /// <param name="hostEnvironment">Host environment from the program starting the app.</param>
     /// <param name="config">Config for all clients. If null, the default configuration is used.</param>
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
     public static IServiceCollection AddEraAdapter(
         this IServiceCollection services,
-        IHostEnvironment hostEnvironment,
         EraClientConfiguration? config
     )
     {
         config ??= new EraClientConfiguration();
 
-        services.AddServices(hostEnvironment, config);
+        services.AddServices(config);
 
         return services;
     }
 
-    private static string GetAuthenticationUrl(
-        IHostEnvironment hostEnvironment,
-        EraClientConfiguration config
-    )
-    {
-        if (config.AuthenticationUrl != null)
-        {
-            return config.AuthenticationUrl;
-        }
-        return hostEnvironment.GetRespectiveEraEnvironment() switch
-        {
-            Model.EraEnvironment.Verifi =>
-                "https://dev-altinn-bemanning.auth.eu-west-1.amazoncognito.com/oauth2/token",
-            Model.EraEnvironment.Valid =>
-                "https://test-altinn-bemanning.auth.eu-west-1.amazoncognito.com/oauth2/token",
-            Model.EraEnvironment.Prod =>
-                "https://prod-altinn-bemanning.auth.eu-west-1.amazoncognito.com/oauth2/token",
-            _ => throw new InvalidOperationException(),
-        };
-    }
-
-    private static string GetAsbestUrl(
-        IHostEnvironment hostEnvironment,
-        EraClientConfiguration config
-    )
-    {
-        if (config.EraAsbestUrl != null)
-        {
-            return config.EraAsbestUrl;
-        }
-        return hostEnvironment.GetRespectiveEraEnvironment() switch
-        {
-            Model.EraEnvironment.Verifi =>
-                "https://data-verifi.arbeidstilsynet.no/asbest/api/virksomheter/",
-            Model.EraEnvironment.Valid =>
-                "https://data-valid.arbeidstilsynet.no/asbest/api/virksomheter/",
-            Model.EraEnvironment.Prod => "https://data.arbeidstilsynet.no/asbest/api/virksomheter/",
-            _ => throw new InvalidOperationException(),
-        };
-    }
-
-    private static void AddServices(
-        this IServiceCollection services,
-        IHostEnvironment hostEnvironment,
-        EraClientConfiguration config
-    )
+    private static void AddServices(this IServiceCollection services, EraClientConfiguration config)
     {
         services
             .AddHttpClient(
                 AUTHCLIENT_KEY,
                 httpClient =>
                 {
-                    httpClient.BaseAddress = new Uri(GetAuthenticationUrl(hostEnvironment, config));
+                    httpClient.DefaultRequestHeaders.Add("User-Agent", AUTHCLIENT_KEY);
                 }
             )
             .AddResilienceHandler(
@@ -142,7 +89,6 @@ public static class DependencyInjectionExtensions
                 ASBESTCLIENT_KEY,
                 httpClient =>
                 {
-                    httpClient.BaseAddress = new Uri(GetAsbestUrl(hostEnvironment, config));
                     httpClient.DefaultRequestHeaders.Add("User-Agent", ASBESTCLIENT_KEY);
                 }
             )
