@@ -1,5 +1,5 @@
-using Arbeidstilsynet.Common.EraClient.Adapters.DependencyInjection;
-using Arbeidstilsynet.Common.EraClient.Adapters.DependencyInjection;
+using Arbeidstilsynet.Common.EraClient.DependencyInjection;
+using Arbeidstilsynet.Common.EraClient.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -19,16 +19,16 @@ public class EraClientFixture : TestBedFixture
 {
     internal WireMockServer WireMockServer = WireMockServer.Start();
 
+    private readonly IHostEnvironment _hostEnvironment = Substitute.For<IHostEnvironment>();
+
     protected override void AddServices(IServiceCollection services, IConfiguration? configuration)
     {
-        services.AddEraAdapter(
-            Substitute.For<IHostEnvironment>(),
-            options =>
-            {
-                options.AuthenticationUrl = WireMockServer.Urls[0];
-                options.EraAsbestUrl = WireMockServer.Urls[0];
-            }
-        );
+        services.AddSingleton(_hostEnvironment);
+        services.AddEraAdapter(options =>
+        {
+            options.AuthenticationUrl = WireMockServer.Urls[0];
+            options.EraAsbestUrl = WireMockServer.Urls[0];
+        });
     }
 
     protected override ValueTask DisposeAsyncCore() => new();

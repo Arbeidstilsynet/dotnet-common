@@ -24,7 +24,6 @@
     <PackageReference Include="Bogus" Version="35.6.3" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../AT.Common.EraClient.Adapters/AT.Common.EraClient.Adapters.csproj" />
-    <ProjectReference Include="../AT.Common.EraClient.Ports/AT.Common.EraClient.Ports.csproj" />
+    <ProjectReference Include="..\AT.Common.EraClient.Publish\AT.Common.EraClient.Publish.csproj" />
   </ItemGroup>
 </Project>

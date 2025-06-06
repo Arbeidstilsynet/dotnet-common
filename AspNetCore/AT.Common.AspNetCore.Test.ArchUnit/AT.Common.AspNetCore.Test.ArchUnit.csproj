@@ -20,6 +20,6 @@
     <PackageReference Include="TngTech.ArchUnitNET.xUnit" Version="0.11.4" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AT.Common.EraClient.Publish\AT.Common.EraClient.Publish.csproj" />
+    <ProjectReference Include="..\AT.Common.AspNetCore.Publish\AT.Common.AspNetCore.Publish.csproj" />
   </ItemGroup>
 </Project>
