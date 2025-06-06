@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 1.0.0
 
+### Added
+
+- feat: Altinn extensions methods which can be used to reduce code duplication in our altinn projects
+
 ### Changed
 
 - refactor: applied updated project structure to project (based on `dotnet new common-package` v1.0.0)
