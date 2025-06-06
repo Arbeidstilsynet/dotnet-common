@@ -14,6 +14,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed <!-- for any bug fixes. -->
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.0.0
+
+### Changed
+
+- refactor: applied updated project structure to project (based on `dotnet new common-package` v1.0.0)
+
+### Fixed
+
+- fix: ERA endpoints require a `User-Agent` header by convention (WAF)
+- fix: Updated asbest BaseURL
+- fix: Retrieve the base url in runtime, since we are using a "cookie hack" to determine if we should talk to our verifi or valid environment.
+
 ## 0.0.1
 
 ### Added

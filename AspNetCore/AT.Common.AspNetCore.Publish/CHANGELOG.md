@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.0.0
+
+### Changed
+
+- refactor: applied updated project structure to project (based on `dotnet new common-package` v1.0.0)
+
 ### 0.0.3
 
 ### Removed
