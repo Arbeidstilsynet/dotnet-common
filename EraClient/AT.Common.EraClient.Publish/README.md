@@ -14,7 +14,7 @@ Add service extension in your `Program.cs` file:
 var builder = WebApplication.CreateBuilder(args);
 var appSettings = builder.Configuration.GetRequired<AppSettings>();
 var services = builder.Services;
-services.AddEraClient();
+services.AddEraAdapter();
 ```
 
 Use the need Client via DependencyInjection, available Clients are:
