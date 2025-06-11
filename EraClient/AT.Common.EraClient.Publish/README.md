@@ -1,6 +1,6 @@
 # 📖 Description
 
-Client to interact with our external ERA APIs (OAuth protected). This client is intended to be used in all projects, where we do not have access to our internal ERA APIs, e.g. at Altinn. In order to get access to client credentials, take contact with ``#team-godkjenning``. 
+Client to interact with our external ERA APIs (OAuth protected). This client is intended to be used in all projects, where we do not have access to our internal ERA APIs, e.g. at Altinn. In order to get access to client credentials, contact ``#team-godkjenning``. 
 
 Why did we create this package?
 
