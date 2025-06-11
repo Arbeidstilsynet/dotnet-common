@@ -1,0 +1,17 @@
+AspNetCore:
+  - changed-files:
+      - any-glob-to-any-file: "AspNetCore/**"
+
+EraClient:
+  - changed-files:
+      - any-glob-to-any-file: "EraClient/**"
+
+documentation:
+  - changed-files:
+      - all-globs-to-any-file:
+          - "**/*.md"
+          - "!**/CHANGELOG.md"
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file: ".github/**"
