@@ -56,3 +56,6 @@ nunit-*.xml
 # Rider
 .idea/
 *.sln.iml
+
+# Visual Studio
+.vs
