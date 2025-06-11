@@ -4,7 +4,7 @@ Client to interact with our external ERA APIs (OAuth protected). This client is 
 
 Why did we create this package?
 
-In many altinn applications (10) we were talking to our ERA systems. In all of them we have duplicated code, especially in the way we did authentication. By changing all applications to use this client, we increase maintainability and make (future) migrations easier.
+In many altinn applications (10) we were integrating with our ERA systems. In all of them we have duplicated code, especially in the way we did authentication. By changing all applications to use this client, we increase maintainability and make (future) migrations easier.
 
 # 🧑‍💻 Usage
 
