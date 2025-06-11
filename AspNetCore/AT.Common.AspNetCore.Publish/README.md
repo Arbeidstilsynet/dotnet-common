@@ -11,7 +11,7 @@ This package contains ASP.NET Core extension methods that provide standardized c
 ## 📦 Installation
 
 ```bash
-dotnet add package AT.Common.AspNetCore
+dotnet add package Arbeidstilsynet.Common.AspNetCore.Extensions
 ```
 
 ## 🧑‍💻 Usage
