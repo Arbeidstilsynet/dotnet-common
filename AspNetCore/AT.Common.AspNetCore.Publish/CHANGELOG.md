@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.1.0
+
+### Added
+
+- Adds extension method ConfigureCors to StartupExtensions
+
 ## 1.0.0
 
 ### Changed
@@ -29,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- Removed the ConfigureLogging method from StartupExtensions, as it was just wrapping services.AddLogging(). 
+- Removed the ConfigureLogging method from StartupExtensions, as it was just wrapping services.AddLogging().
 
 ## 0.0.2
 
@@ -41,10 +47,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Adds extension methods to consolidate ASP.NET configuration and new helpers for IConfiguration.
 
-Cross cutting concerns are handled in a single place, including API setup, 
+Cross cutting concerns are handled in a single place, including API setup,
 
-- OpenTelemetry 
-- Swagger 
+- OpenTelemetry
+- Swagger
 - Logging
 - Model validation
 - Exception handling (mapping exceptions to HTTP responses)

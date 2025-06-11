@@ -167,4 +167,45 @@ public static partial class StartupExtensions
 
     [GeneratedRegex("([A-Z])")]
     private static partial Regex CapitalLetterRegex();
+
+    /// <summary>
+    /// Configures CORS with the specified origins.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="allowedOrigins">Array of allowed origins. If empty or null, CORS will allow any origin in development.</param>
+    /// <param name="allowCredentials">Whether to allow credentials in CORS requests.</param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureCors(
+        this IServiceCollection services,
+        string[]? allowedOrigins = null,
+        bool allowCredentials = false
+    )
+    {
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                var serviceProvider = services.BuildServiceProvider();
+                var env = serviceProvider.GetRequiredService<IWebHostEnvironment>();
+
+                if (env.IsDevelopment() && (allowedOrigins == null || allowedOrigins.Length == 0))
+                {
+                    policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                }
+                else if (allowedOrigins != null && allowedOrigins.Length > 0)
+                {
+                    policy.WithOrigins(allowedOrigins).AllowAnyMethod().AllowAnyHeader();
+
+                    if (allowCredentials)
+                    {
+                        policy.AllowCredentials();
+                    }
+                }
+
+                // No fallback else needed - if no origins specified in production, CORS won't work
+            });
+        });
+
+        return services;
+    }
 }
