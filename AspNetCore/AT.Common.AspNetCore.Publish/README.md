@@ -32,8 +32,8 @@ var env = builder.Environment;
 services.ConfigureStandardApi(IAssemblyInfo.AppName);
 
 // Add your domain and infrastructure services (optional)
-services.AddDomain();
-services.AddInfrastructureServices(appSettings.DatabaseConfiguration);
+services.AddDomain(appSettings.DomainConfiguration);
+services.AddInfrastructure(appSettings.InfrastructureConfiguration);
 
 var app = builder.Build();
 
