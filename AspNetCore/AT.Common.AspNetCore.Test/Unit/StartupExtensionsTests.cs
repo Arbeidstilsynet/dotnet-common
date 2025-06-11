@@ -37,7 +37,7 @@ public class StartupExtensionsTests
         var services = CreateTestServiceCollection(isDevelopment: false);
 
         // Act
-        services.ConfigureCors();
+        services.ConfigureCors(isDevelopment: false);
 
         // Assert
         var serviceProvider = services.BuildServiceProvider();
@@ -51,7 +51,7 @@ public class StartupExtensionsTests
         var services = CreateTestServiceCollection(isDevelopment: true);
 
         // Act
-        var result = services.ConfigureCors(allowedOrigins: []);
+        var result = services.ConfigureCors(allowedOrigins: [], isDevelopment: true);
 
         // Assert
         result.ShouldBe(services);
@@ -183,7 +183,7 @@ public class StartupExtensionsTests
         var services = CreateTestServiceCollection(isDevelopment: true);
 
         // Act
-        var result = services.ConfigureCors(allowedOrigins: null);
+        var result = services.ConfigureCors(allowedOrigins: null, isDevelopment: true);
 
         // Assert
         result.ShouldBe(services);

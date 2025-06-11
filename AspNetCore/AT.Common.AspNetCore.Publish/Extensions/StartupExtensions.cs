@@ -174,21 +174,20 @@ public static partial class StartupExtensions
     /// <param name="services"></param>
     /// <param name="allowedOrigins">Array of allowed origins. If empty or null, CORS will allow any origin in development.</param>
     /// <param name="allowCredentials">Whether to allow credentials in CORS requests.</param>
+    /// <param name="isDevelopment">Whether the application is running in development mode</param>
     /// <returns></returns>
     public static IServiceCollection ConfigureCors(
         this IServiceCollection services,
         string[]? allowedOrigins = null,
-        bool allowCredentials = false
+        bool allowCredentials = false,
+        bool isDevelopment = false
     )
     {
         services.AddCors(options =>
         {
             options.AddDefaultPolicy(policy =>
             {
-                var serviceProvider = services.BuildServiceProvider();
-                var env = serviceProvider.GetRequiredService<IWebHostEnvironment>();
-
-                if (env.IsDevelopment() && (allowedOrigins == null || allowedOrigins.Length == 0))
+                if (isDevelopment && (allowedOrigins == null || allowedOrigins.Length == 0))
                 {
                     policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
                 }
