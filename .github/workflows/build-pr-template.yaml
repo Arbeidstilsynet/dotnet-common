@@ -31,11 +31,24 @@ jobs:
         run: |
           parent_dir="${{ steps.get_parent_dir.outputs.parent_dir }}"
           echo "DEBUG: parent_dir=$parent_dir"
-          if git --no-pager diff --name-only origin/main...HEAD | grep -q "$parent_dir"; then
-            echo "should-continue=true" >> $GITHUB_OUTPUT
-          else
+          changed_files=$(git --no-pager diff --name-only origin/main...HEAD | grep "$parent_dir" || true)
+          # If empty, do not continue
+            if [ -z "$changed_files" ]; then
             echo "should-continue=false" >> $GITHUB_OUTPUT
+            echo "No changes detected which require a version update. Exiting workflow gracefully."
+            exit 1
           fi
+          # Check if all changed files are markdown files
+          non_md_files=$(echo "$changed_files" | grep -vE '\.md$' || true)
+          # If empty, do not continue
+          if [ -z "$non_md_files" ]; then
+            echo "should-continue=false" >> $GITHUB_OUTPUT
+            echo "No changes detected which require a version update. Exiting workflow gracefully."
+          else
+            echo "should-continue=true" >> $GITHUB_OUTPUT
+            echo "Changes detected which require a version update. The workflow will continue..."
+          fi
+          exit 1
 
   build-dotnet:
     needs: check-and-prepare
