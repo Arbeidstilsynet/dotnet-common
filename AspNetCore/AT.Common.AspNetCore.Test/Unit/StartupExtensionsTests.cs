@@ -127,7 +127,7 @@ public class StartupExtensionsTests
     }
 
     [Fact]
-    public void ConfigureCors_InProductionWithNoOrigins_ShouldConfigureRestrictiveCors()
+    public void ConfigureCors_InProductionWithDefaultParameters_ShouldConfigureRestrictiveCors()
     {
         // Arrange
         var services = CreateTestServiceCollection(isDevelopment: false);
