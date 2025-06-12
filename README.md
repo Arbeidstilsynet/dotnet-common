@@ -1,6 +1,14 @@
 # 🌈 dotnet-common
 
-Monorepository for all common (nuget) packages published by Arbeidstilsynet.
+Monorepository for all common (NuGet) packages published by Arbeidstilsynet.
+
+The main purpose of common packages at Arbeidstilsynet is to share code between projects and hence reduce code duplication. Additional advantages of using common packages include:
+
+- **Consistency:** Ensures a uniform approach to solving common problems across multiple projects.
+- **Maintainability:** Centralizes updates and bug fixes, making it easier to maintain and improve shared functionality.
+- **Faster Development:** Reduces the need to reinvent solutions, allowing teams to focus on project-specific features.
+- **Quality Assurance:** Promotes reuse of well-tested components, improving overall code quality.
+- **Simplified Dependency Management:** Makes it easier to track and update shared dependencies across projects.
 
 ## 🔧 Prerequisites
 
