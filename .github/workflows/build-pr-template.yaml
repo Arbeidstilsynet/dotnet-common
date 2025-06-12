@@ -36,7 +36,7 @@ jobs:
             if [ -z "$changed_files" ]; then
             echo "should-continue=false" >> $GITHUB_OUTPUT
             echo "No changes detected which require a version update. Exiting workflow gracefully."
-            exit 1
+            exit 0
           fi
           # Check if all changed files are markdown files
           non_md_files=$(echo "$changed_files" | grep -vE '\.md$' || true)
@@ -48,7 +48,7 @@ jobs:
             echo "should-continue=true" >> $GITHUB_OUTPUT
             echo "Changes detected which require a version update. The workflow will continue..."
           fi
-          exit 1
+          exit 0
 
   build-dotnet:
     needs: check-and-prepare
