@@ -1,4 +1,5 @@
 using Arbeidstilsynet.Common.EraClient.DependencyInjection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NSubstitute;
@@ -13,6 +14,7 @@ public class DependencyInjectionTests
     [
         ServiceDescriptor.Transient<IAuthenticationClient, AuthenticationClient>(),
         ServiceDescriptor.Transient<IEraAsbestClient, EraAsbestClient>(),
+        ServiceDescriptor.Singleton<IHttpContextAccessor, HttpContextAccessor>(),
         new ServiceDescriptor(
             typeof(EraClientConfiguration),
             (object?)null,
