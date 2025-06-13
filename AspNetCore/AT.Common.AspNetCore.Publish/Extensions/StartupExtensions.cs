@@ -157,17 +157,6 @@ public static partial class StartupExtensions
         return app;
     }
 
-    internal static string ConvertToOtelServiceName(this string serviceName)
-    {
-        var serviceNameAsCamelCase = System.Text.Json.JsonNamingPolicy.CamelCase.ConvertName(
-            serviceName
-        );
-        return CapitalLetterRegex().Replace(serviceNameAsCamelCase, "-$1").ToLower();
-    }
-
-    [GeneratedRegex("([A-Z])")]
-    private static partial Regex CapitalLetterRegex();
-
     /// <summary>
     /// Configures CORS with the specified origins.
     /// </summary>
@@ -207,4 +196,15 @@ public static partial class StartupExtensions
 
         return services;
     }
+
+    internal static string ConvertToOtelServiceName(this string serviceName)
+    {
+        var serviceNameAsCamelCase = System.Text.Json.JsonNamingPolicy.CamelCase.ConvertName(
+            serviceName
+        );
+        return CapitalLetterRegex().Replace(serviceNameAsCamelCase, "-$1").ToLower();
+    }
+
+    [GeneratedRegex("([A-Z])")]
+    private static partial Regex CapitalLetterRegex();
 }
