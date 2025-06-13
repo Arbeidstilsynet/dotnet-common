@@ -31,7 +31,19 @@ jobs:
   check:
     needs: build
     runs-on: ubuntu-latest
+    if: always()
     timeout-minutes: 10
     steps:
-      - name: All builds passed
-        run: echo "All matrix builds have completed successfully."
+      - name: Evaluate results
+        run: |
+          echo "Build: ${{ needs.build.result }}"
+
+          # Pass if all succeeded
+          if [[ "${{ needs.build.result }}" == "success" ]]; then
+            echo "✅ All checks passed"
+            exit 0
+          fi
+
+          # Fail otherwise
+          echo "❌ Checks failed"
+          exit 1
