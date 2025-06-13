@@ -2,12 +2,6 @@
 
 This package contains ASP.NET Core extension methods that provide standardized configuration and setup for web applications. It simplifies the process of configuring common middleware, services, and API conventions.
 
-## 🚀 Features
-
-- **`ConfigureStandardApi(string appName)`**: Configures standard API services including logging, CORS, authentication, and other common services
-- **`AddStandardApi()`**: Sets up the standard middleware pipeline for API applications
-- **`GetRequired<T>()`**: Extension for configuration binding with validation
-
 ## 📦 Installation
 
 ```bash
@@ -25,26 +19,33 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Load your appsettings from configuration
 var appSettings = builder.Configuration.GetRequired<MyAppSettings>();
-var services = builder.Services;
-var env = builder.Environment;
 
 // Configure standard API services
-services.ConfigureStandardApi(IAssemblyInfo.AppName);
+var services = builder.Services;
+services.ConfigureApi();
+services.ConfigureOpenTelemetry("MyAppName");
+services.ConfigureSwagger();
+services.AddLogging(configure =>
+{
+    configure.ClearProviders();
+    configure.SetMinimumLevel(LogLevel.Information);
+});
+services.ConfigureCors(
+    appSettings.API.Cors.AllowedOrigins,
+    appSettings.API.Cors.AllowCredentials,
+    env.IsDevelopment()
+);
 
-// Add your domain and infrastructure services (optional)
-services.AddDomain(appSettings.DomainConfiguration);
-services.AddInfrastructure(appSettings.InfrastructureConfiguration);
+// Do the rest of your dependency injection here ...
 
 var app = builder.Build();
 
-// Configure development-specific middleware
-if (env.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-}
-
 // Apply standard API middleware pipeline
-app.AddStandardApi();
+app.AddApi(options =>
+            options.AddExceptionMapping<MyCustomException>(HttpStatusCode.NotFound)
+        );
+app.UseCors();
+app.AddScalar();
 
 await app.RunAsync();
 ```
