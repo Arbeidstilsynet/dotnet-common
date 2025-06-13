@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.1.2
+
+### Changed
+
+- chore(deps): update dependency swashbuckle.aspnetcore to v8
+
 ## 1.1.1
 
 ### Changed
