@@ -6,6 +6,7 @@ using Arbeidstilsynet.Common.EraClient.DependencyInjection;
 using Arbeidstilsynet.Common.EraClient.Extensions;
 using Arbeidstilsynet.Common.EraClient.Model;
 using Arbeidstilsynet.Common.EraClient.Model.Asbest;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 
 namespace Arbeidstilsynet.Common.EraClient;
@@ -13,11 +14,13 @@ namespace Arbeidstilsynet.Common.EraClient;
 internal class EraAsbestClient : IEraAsbestClient
 {
     private readonly HttpClient _httpClient;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IHostEnvironment _hostEnvironment;
     private readonly EraClientConfiguration _eraClientConfiguration;
 
     public EraAsbestClient(
         IHttpClientFactory httpClientFactory,
+        IHttpContextAccessor httpContextAccessor,
         IHostEnvironment hostEnvironment,
         EraClientConfiguration eraClientConfiguration
     )
@@ -25,6 +28,7 @@ internal class EraAsbestClient : IEraAsbestClient
         _httpClient = httpClientFactory.CreateClient(
             DependencyInjection.DependencyInjectionExtensions.ASBESTCLIENT_KEY
         );
+        this._httpContextAccessor = httpContextAccessor;
         _hostEnvironment = hostEnvironment;
         _eraClientConfiguration = eraClientConfiguration;
     }
@@ -39,7 +43,12 @@ internal class EraAsbestClient : IEraAsbestClient
             authenticationResponse.AccessToken
         );
         // we need to update the base adress before each request because the determination of the base url is not defined at compile time
-        _httpClient.BaseAddress = new Uri(GetAsbestUrl(_hostEnvironment, _eraClientConfiguration));
+        _httpClient.BaseAddress = new Uri(
+            GetAsbestUrl(
+                _hostEnvironment.GetRespectiveEraEnvironment(_httpContextAccessor.HttpContext),
+                _eraClientConfiguration
+            )
+        );
         return await _httpClient.GetFromJsonAsync<List<Model.Asbest.Melding>>(
                 new Uri($"virksomheter/{orgNumber}/meldinger", UriKind.Relative)
             ) ?? [];
@@ -55,14 +64,19 @@ internal class EraAsbestClient : IEraAsbestClient
             authenticationResponse.AccessToken
         );
         // we need to update the base adress before each request because the determination of the base url is not defined at compile time
-        _httpClient.BaseAddress = new Uri(GetAsbestUrl(_hostEnvironment, _eraClientConfiguration));
+        _httpClient.BaseAddress = new Uri(
+            GetAsbestUrl(
+                _hostEnvironment.GetRespectiveEraEnvironment(_httpContextAccessor.HttpContext),
+                _eraClientConfiguration
+            )
+        );
         return await _httpClient.GetFromJsonAsync<SøknadStatusResponse>(
             new Uri($"soknad/{orgNumber}", UriKind.Relative)
         );
     }
 
     private static string GetAsbestUrl(
-        IHostEnvironment hostEnvironment,
+        Model.EraEnvironment eraEnvironment,
         EraClientConfiguration config
     )
     {
@@ -70,7 +84,7 @@ internal class EraAsbestClient : IEraAsbestClient
         {
             return config.EraAsbestUrl;
         }
-        return hostEnvironment.GetRespectiveEraEnvironment() switch
+        return eraEnvironment switch
         {
             Model.EraEnvironment.Verifi => "https://data-verifi.arbeidstilsynet.no/asbest/api/",
             Model.EraEnvironment.Valid => "https://data-valid.arbeidstilsynet.no/asbest/api/",

@@ -8,7 +8,7 @@ public static class AltinnExtensions
 {
     public static EraEnvironment GetRespectiveEraEnvironment(
         this IHostEnvironment hostEnvironment,
-        HttpContext? httpContext = null
+        HttpContext httpContext
     )
     {
         if (hostEnvironment.IsProduction())
@@ -17,7 +17,7 @@ public static class AltinnExtensions
         }
         else
         {
-            if (httpContext != null && hostEnvironment.IsFeatureEnabled("valid", httpContext))
+            if (hostEnvironment.IsFeatureEnabled("valid", httpContext))
             {
                 return EraEnvironment.Valid;
             }
@@ -31,12 +31,12 @@ public static class AltinnExtensions
     public static bool IsFeatureEnabled(
         this IHostEnvironment env,
         string name,
-        HttpContext httpContext
+        HttpContext? httpContext
     )
     {
         bool isNotProduction = !env.IsProduction();
 
-        var testFlagString = httpContext.Request.Cookies["TEST_FLAGG"];
+        var testFlagString = httpContext?.Request?.Cookies["TEST_FLAGG"];
         bool containsFeatureFlag =
             testFlagString != null && testFlagString.Split('&').Any(a => a == name);
 

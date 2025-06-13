@@ -99,6 +99,7 @@ public static class DependencyInjectionExtensions
                     builder.AddPipeline(config.ResiliencePipeline);
                 }
             );
+        services.AddHttpContextAccessor();
         services.AddSingleton(config!);
         services.AddTransient<IAuthenticationClient, AuthenticationClient>();
         services.AddTransient<IEraAsbestClient, EraAsbestClient>();
