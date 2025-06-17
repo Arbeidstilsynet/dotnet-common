@@ -61,26 +61,32 @@ public class EnhetsregisteretExtensionsTests
     public async Task GetUnderenheter_Organisasjonsnummer_IsEmpty()
     {
         // Arrange
-        var orgnummer = new List<string>();
+        var orgnummer = Enumerable.Empty<string>();
 
         // Act
         var result = await _enhetsregisteret.GetUnderenheter(orgnummer);
 
         // Assert
         result.ShouldBeEmpty();
+        await _enhetsregisteret
+            .DidNotReceive()
+            .SearchUnderenheter(Arg.Any<SearchEnheterQuery>(), Arg.Any<Pagination>());
     }
     
     [Fact]
     public async Task GetEnheter_Organisasjonsnummer_IsEmpty()
     {
         // Arrange
-        var orgnummer = new List<string>();
+        var orgnummer = Enumerable.Empty<string>();
 
         // Act
         var result = await _enhetsregisteret.GetEnheter(orgnummer);
 
         // Assert
         result.ShouldBeEmpty();
+        await _enhetsregisteret
+            .DidNotReceive()
+            .SearchEnheter(Arg.Any<SearchEnheterQuery>(), Arg.Any<Pagination>());
     }
     
     [Theory]
