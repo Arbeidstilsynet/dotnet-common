@@ -25,6 +25,8 @@ public static class AltinnExtensions
         }
     }
 
+    public static string GetDummyData(this string value) => value + "blub";
+
     public static string MapToString(this EraEnvironment eraEnvironment) =>
         eraEnvironment.ToString().ToLower();
 
