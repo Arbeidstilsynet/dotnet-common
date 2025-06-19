@@ -1,3 +1,4 @@
+using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
 using Arbeidstilsynet.Common.Enhetsregisteret.Test.Integration.Setup;
 using Xunit;
@@ -9,10 +10,13 @@ namespace Arbeidstilsynet.Common.Enhetsregisteret.Test.Integration;
 public class EnhetsregisteretClientIntegrationTests : TestBed<EnhetsregisteretTestFixture>
 {
     private readonly IEnhetsregisteret _sut;
+    private readonly VerifySettings _verifySettings = new();
     
     public EnhetsregisteretClientIntegrationTests(ITestOutputHelper testOutputHelper, EnhetsregisteretTestFixture fixture) : base(testOutputHelper, fixture)
     {
         _sut = fixture.GetService<IEnhetsregisteret>(testOutputHelper)!;
+
+        _verifySettings.UseDirectory("TestData/Snapshots");
     }
     
     
@@ -20,13 +24,36 @@ public class EnhetsregisteretClientIntegrationTests : TestBed<EnhetsregisteretTe
     public async Task GetEnhet_ValidOrganisasjonsnummer_ReturnsEnhet()
     {
         // Arrange
-        var organisasjonsnummer = "112233445";
+        var organisasjonsnummer = "112233445"; // From OpenApi spec example data
 
         // Act
         var enhet = await _sut.GetEnhet(organisasjonsnummer);
 
         // Assert
-        Assert.NotNull(enhet); // Replace with Verify
+        await Verify(enhet, _verifySettings);
+    }
+    
+    [Fact]
+    public async Task GetUnderenhet_ValidOrganisasjonsnummer_ReturnsUnderenhet()
+    {
+        // Arrange
+        var organisasjonsnummer = "112233445"; // From OpenApi spec example data
+
+        // Act
+        var underenhet = await _sut.GetUnderenhet(organisasjonsnummer);
+
+        // Assert
+        await Verify(underenhet, _verifySettings);
+    }
+    
+    [Fact]
+    public async Task SearchEnheter_ValidRequest_ReturnsEnheter()
+    {
+        // Act
+        var enheter = await _sut.SearchEnheter(new SearchEnheterQuery(), new Pagination());
+        
+        // Assert
+        await Verify(enheter, _verifySettings);
     }
 
 }

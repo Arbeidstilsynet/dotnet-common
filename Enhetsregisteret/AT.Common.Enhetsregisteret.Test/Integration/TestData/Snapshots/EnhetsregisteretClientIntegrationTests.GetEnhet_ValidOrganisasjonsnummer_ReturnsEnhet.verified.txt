@@ -1,0 +1,101 @@
+﻿{
+  Organisasjonsnummer: 509100675,
+  Navn: Sesam stasjon,
+  Organisasjonsform: {
+    Links: {
+      self: {
+        Href: "https://data.brreg.no/enhetsregisteret/api/organisasjonsformer/ASA"
+      }
+    },
+    Kode: ASA,
+    Utgaatt: 2024-01-04,
+    Beskrivelse: Allmennaksjeselskap
+  },
+  Postadresse: {
+    Kommune: Oslo,
+    Landkode: NO,
+    Postnummer: 0010,
+    Gateadresse: [
+      example-string,
+      example-string,
+      example-string
+    ],
+    Land: Norge,
+    Kommunenummer: 0301,
+    Poststed: Oslo
+  },
+  Forretningsadresse: {
+    Kommune: Oslo,
+    Landkode: NO,
+    Postnummer: 0010,
+    Gateadresse: [
+      example-string,
+      example-string,
+      example-string
+    ],
+    Land: Norge,
+    Kommunenummer: 0301,
+    Poststed: Oslo
+  },
+  RegistrertIMvaregisteret: true,
+  Maalform: Bokmål,
+  Naeringskode1: {
+    Kode: 41.109,
+    Beskrivelse: Utvikling og salg av egen fast eiendom ellers
+  },
+  Naeringskode2: {
+    Kode: 41.109,
+    Beskrivelse: Utvikling og salg av egen fast eiendom ellers
+  },
+  Naeringskode3: {
+    Kode: 41.109,
+    Beskrivelse: Utvikling og salg av egen fast eiendom ellers
+  },
+  Hjelpeenhetskode: {
+    Kode: 70.100,
+    Beskrivelse: Hovedkontortjenester
+  },
+  UnderAvvikling: true,
+  UnderAvviklingDato: 2024-01-04,
+  RegistrertIStiftelsesregisteret: true,
+  Konkurs: true,
+  Konkursdato: 2024-01-04,
+  TvangsavvikletPgaManglendeSlettingDato: 2024-01-04,
+  TvangsopplostPgaManglendeDagligLederDato: 2024-01-04,
+  TvangsopplostPgaManglendeRevisorDato: 2024-01-04,
+  TvangsopplostPgaManglendeRegnskapDato: 2024-01-04,
+  TvangsopplostPgaMangelfulltStyreDato: 2024-01-04,
+  Vedtektsdato: 2024-01-04,
+  VedtektsfestetFormaal: [
+    Telekommunikasjonsvirksomhet,
+    Telekommunikasjonsvirksomhet,
+    Telekommunikasjonsvirksomhet
+  ],
+  Aktivitet: [
+    Telekommunikasjonsvirksomhet,
+    Telekommunikasjonsvirksomhet,
+    Telekommunikasjonsvirksomhet
+  ],
+  RegistrertIFrivillighetsregisteret: true,
+  Stiftelsesdato: 2024-01-04,
+  InstitusjonellSektorkode: {
+    Kode: 8200,
+    Beskrivelse: Personlig næringsdrivende
+  },
+  RegistrertIForetaksregisteret: true,
+  RegistreringsdatoEnhetsregisteret: 2024-01-04,
+  Hjemmeside: www.brreg.no,
+  SisteInnsendteAarsregnskap: 2024,
+  FrivilligMvaRegistrertBeskrivelser: [
+    example-string,
+    example-string,
+    example-string
+  ],
+  UnderTvangsavviklingEllerTvangsopplosning: true,
+  AntallAnsatte: 50,
+  HarRegistrertAntallAnsatte: true,
+  OverordnetEnhet: 376181782,
+  Epostadresse: epost@epost.com,
+  Telefon: 91504800,
+  Mobil: 91504800
+}
