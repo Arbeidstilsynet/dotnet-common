@@ -58,7 +58,7 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
     {
         organisasjonsnummer.ValidateOrgnummerOrThrow(nameof(organisasjonsnummer));
 
-        var uri = new Uri($"underenheter/{organisasjonsnummer}", UriKind.Relative);
+        var uri = new Uri($"enhetsregisteret/api/underenheter/{organisasjonsnummer}", UriKind.Relative);
 
         return await GetOrCache<Underenhet>(uri);
     }
@@ -67,7 +67,7 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
     {
         organisasjonsnummer.ValidateOrgnummerOrThrow(nameof(organisasjonsnummer));
 
-        var uri = new Uri($"enheter/{organisasjonsnummer}", UriKind.Relative);
+        var uri = new Uri($"enhetsregisteret/api/enheter/{organisasjonsnummer}", UriKind.Relative);
 
         return await GetOrCache<Enhet>(uri);
     }
@@ -77,7 +77,7 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
         Pagination pagination
     )
     {
-        var uri = new Uri("underenheter", UriKind.Relative)
+        var uri = new Uri("enhetsregisteret/api/underenheter", UriKind.Relative)
             .AddQueryParameters(searchParameters.ToMap())
             .AddQueryParameters(pagination.ToMap());
 
@@ -91,7 +91,7 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
         Pagination pagination
     )
     {
-        var uri = new Uri("enheter", UriKind.Relative)
+        var uri = new Uri("enhetsregisteret/api/enheter", UriKind.Relative)
             .AddQueryParameters(searchParameters.ToMap())
             .AddQueryParameters(pagination.ToMap());
 
@@ -105,7 +105,7 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
         Pagination pagination
     )
     {
-        var uri = new Uri("oppdateringer/underenheter", UriKind.Relative)
+        var uri = new Uri("enhetsregisteret/api/oppdateringer/underenheter", UriKind.Relative)
             .AddQueryParameters(query.ToMap())
             .AddQueryParameters(pagination.ToMap());
 
@@ -119,7 +119,7 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
         Pagination pagination
     )
     {
-        var uri = new Uri("oppdateringer/enheter", UriKind.Relative)
+        var uri = new Uri("enhetsregisteret/api/oppdateringer/enheter", UriKind.Relative)
             .AddQueryParameters(query.ToMap())
             .AddQueryParameters(pagination.ToMap());
 

@@ -658,14 +658,7 @@
                       "SlettetEnhet": "#/components/schemas/SlettetEnhet"
                     }
                   },
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Enhet"
-                    },
-                    {
-                      "$ref": "#/components/schemas/SlettetEnhet"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Enhet"
                 }
               },
               "application/json": {
@@ -677,14 +670,7 @@
                       "SlettetEnhet": "#/components/schemas/SlettetEnhet"
                     }
                   },
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Enhet"
-                    },
-                    {
-                      "$ref": "#/components/schemas/SlettetEnhet"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Enhet"
                 }
               }
             }
@@ -1174,14 +1160,7 @@
                       "SlettetEnhet": "#/components/schemas/SlettetUnderenhet"
                     }
                   },
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Underenhet"
-                    },
-                    {
-                      "$ref": "#/components/schemas/SlettetUnderenhet"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Underenhet"
                 }
               },
               "application/json": {
@@ -1193,14 +1172,7 @@
                       "SlettetEnhet": "#/components/schemas/SlettetUnderenhet"
                     }
                   },
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Underenhet"
-                    },
-                    {
-                      "$ref": "#/components/schemas/SlettetUnderenhet"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Underenhet"
                 }
               }
             }

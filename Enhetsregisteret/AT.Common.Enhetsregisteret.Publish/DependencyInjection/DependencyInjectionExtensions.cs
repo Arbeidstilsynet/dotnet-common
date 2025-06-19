@@ -36,7 +36,7 @@ public class EnhetsregisteretConfig
     {
         ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(timeoutInSeconds, 0);
 
-        BrregApiBaseUrl = brregApiBaseUrl ?? "https://data.brreg.no/enhetsregisteret/api/";
+        BrregApiBaseUrl = brregApiBaseUrl ?? "https://data.brreg.no/";
         CacheOptions = new CacheOptions
         {
             Disabled = cacheOptions?.Disabled ?? false,
