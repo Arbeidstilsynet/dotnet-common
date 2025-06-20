@@ -59,3 +59,7 @@ nunit-*.xml
 
 # Visual Studio
 .vs
+
+# Verify (Snapshot Testing)
+*.received.*
+*.received/

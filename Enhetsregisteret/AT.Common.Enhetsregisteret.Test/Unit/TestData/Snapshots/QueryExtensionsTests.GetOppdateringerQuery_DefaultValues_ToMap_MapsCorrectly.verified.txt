@@ -1,0 +1,4 @@
+﻿{
+  dato: DateTimeOffset_1,
+  oppdateringsid: 1
+}

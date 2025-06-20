@@ -1,0 +1,40 @@
+﻿{
+  TotalElements: 100,
+  PageSize: 20,
+  PageIndex: 1,
+  Elements: [
+    {
+      Oppdateringsid: 1,
+      Dato: DateTime_1,
+      Organisasjonsnummer: 913189892,
+      Endringstype: Ukjent,
+      Links: {
+        underenhet: {
+          Href: https://data.brreg.no/enhetsregisteret/api/undereenheter/913189892
+        }
+      }
+    },
+    {
+      Oppdateringsid: 1,
+      Dato: DateTime_1,
+      Organisasjonsnummer: 913189892,
+      Endringstype: Ukjent,
+      Links: {
+        underenhet: {
+          Href: https://data.brreg.no/enhetsregisteret/api/undereenheter/913189892
+        }
+      }
+    },
+    {
+      Oppdateringsid: 1,
+      Dato: DateTime_1,
+      Organisasjonsnummer: 913189892,
+      Endringstype: Ukjent,
+      Links: {
+        underenhet: {
+          Href: https://data.brreg.no/enhetsregisteret/api/undereenheter/913189892
+        }
+      }
+    }
+  ]
+}
