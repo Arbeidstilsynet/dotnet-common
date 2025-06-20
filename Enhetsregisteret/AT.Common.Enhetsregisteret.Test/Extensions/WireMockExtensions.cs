@@ -19,22 +19,26 @@ public static class WireMockExtensions
     /// <param name="openApiSpecStream"></param>
     /// <param name="mappingVisitor"></param>
     /// <param name="parserSettings"></param>
-    public static void AddOpenApiMappings(this WireMockServer server, Stream openApiSpecStream, Func<MappingModel, MappingModel>? mappingVisitor=null, WireMockOpenApiParserSettings? parserSettings=null)
+    public static void AddOpenApiMappings(
+        this WireMockServer server,
+        Stream openApiSpecStream,
+        Func<MappingModel, MappingModel>? mappingVisitor = null,
+        WireMockOpenApiParserSettings? parserSettings = null
+    )
     {
         mappingVisitor ??= m => m;
-        
-        var settings = parserSettings ?? new WireMockOpenApiParserSettings
-        {
-            // Generate example responses based on schema
-            ExampleValues = new WireMockOpenApiParserExampleValues(),
-        };
-        
+
+        var settings =
+            parserSettings
+            ?? new WireMockOpenApiParserSettings
+            {
+                // Generate example responses based on schema
+                ExampleValues = new WireMockOpenApiParserExampleValues(),
+            };
+
         var parser = new WireMockOpenApiParser();
         var mappings = parser.FromStream(openApiSpecStream, settings, out _);
-        
-        server.WithMapping(
-            mappings
-                .Select(mappingVisitor)
-                .ToArray());
+
+        server.WithMapping(mappings.Select(mappingVisitor).ToArray());
     }
 }

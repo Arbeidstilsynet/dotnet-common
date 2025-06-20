@@ -11,15 +11,18 @@ public class EnhetsregisteretClientIntegrationTests : TestBed<EnhetsregisteretTe
 {
     private readonly IEnhetsregisteret _sut;
     private readonly VerifySettings _verifySettings = new();
-    
-    public EnhetsregisteretClientIntegrationTests(ITestOutputHelper testOutputHelper, EnhetsregisteretTestFixture fixture) : base(testOutputHelper, fixture)
+
+    public EnhetsregisteretClientIntegrationTests(
+        ITestOutputHelper testOutputHelper,
+        EnhetsregisteretTestFixture fixture
+    )
+        : base(testOutputHelper, fixture)
     {
         _sut = fixture.GetService<IEnhetsregisteret>(testOutputHelper)!;
 
         _verifySettings.UseDirectory("TestData/Snapshots");
     }
-    
-    
+
     [Fact]
     public async Task GetEnhet_ValidOrganisasjonsnummer_ReturnsEnhet()
     {
@@ -32,7 +35,7 @@ public class EnhetsregisteretClientIntegrationTests : TestBed<EnhetsregisteretTe
         // Assert
         await Verify(enhet, _verifySettings);
     }
-    
+
     [Fact]
     public async Task GetUnderenhet_ValidOrganisasjonsnummer_ReturnsUnderenhet()
     {
@@ -45,41 +48,40 @@ public class EnhetsregisteretClientIntegrationTests : TestBed<EnhetsregisteretTe
         // Assert
         await Verify(underenhet, _verifySettings);
     }
-    
+
     [Fact]
     public async Task SearchEnheter_ValidRequest_ReturnsEnheter()
     {
         // Act
         var enheter = await _sut.SearchEnheter(new SearchEnheterQuery(), new Pagination());
-        
+
         // Assert
         await Verify(enheter, _verifySettings);
     }
-    
+
     [Fact]
     public async Task GetOppdateringerUnderenheter_ValidRequest_ReturnsOppdateringer()
     {
         // Act
-        var oppdateringer = await _sut.GetOppdateringerUnderenheter(new GetOppdateringerQuery()
-        {
-            Dato = DateTime.Now
-        }, new Pagination());
-        
-        // Assert
-        await Verify(oppdateringer, _verifySettings);
-    }
-    
-    [Fact]
-    public async Task GetOppdateringerEnheter_ValidRequest_ReturnsOppdateringer()
-    {
-        // Act
-        var oppdateringer = await _sut.GetOppdateringerEnheter(new GetOppdateringerQuery()
-        {
-            Dato = DateTime.Now
-        }, new Pagination());
-        
+        var oppdateringer = await _sut.GetOppdateringerUnderenheter(
+            new GetOppdateringerQuery() { Dato = DateTime.Now },
+            new Pagination()
+        );
+
         // Assert
         await Verify(oppdateringer, _verifySettings);
     }
 
+    [Fact]
+    public async Task GetOppdateringerEnheter_ValidRequest_ReturnsOppdateringer()
+    {
+        // Act
+        var oppdateringer = await _sut.GetOppdateringerEnheter(
+            new GetOppdateringerQuery() { Dato = DateTime.Now },
+            new Pagination()
+        );
+
+        // Assert
+        await Verify(oppdateringer, _verifySettings);
+    }
 }

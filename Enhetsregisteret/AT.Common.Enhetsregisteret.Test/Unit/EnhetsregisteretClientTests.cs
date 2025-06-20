@@ -35,14 +35,14 @@ public class EnhetsregisteretClientUnitTests
         );
     }
 
-    
-
     [Theory]
     [InlineData("")]
     [InlineData(null)]
     [InlineData("69")]
     [InlineData("bokstaver")]
-    public async Task GetEnhet_InvalidOrganisasjonsnummer_ThrowsArgumentException(string? organisasjonsnummer)
+    public async Task GetEnhet_InvalidOrganisasjonsnummer_ThrowsArgumentException(
+        string? organisasjonsnummer
+    )
     {
         // Act
         var act = () => _sut.GetEnhet(organisasjonsnummer!);
@@ -71,13 +71,16 @@ public class EnhetsregisteretClientUnitTests
         // Assert
         result.ShouldBe(enhet);
     }
-    
 
     [Fact]
     public async Task GetUndernhet_ReturnsCachedUnderenhet()
     {
         // Arrange
-        var underenhet = new Underenhet { Organisasjonsnummer = "123456789", Navn = "Test Underenhet" };
+        var underenhet = new Underenhet
+        {
+            Organisasjonsnummer = "123456789",
+            Navn = "Test Underenhet",
+        };
 
         _memoryCache
             .TryGetValue(Arg.Any<string>(), out Arg.Any<Underenhet?>())
@@ -104,7 +107,11 @@ public class EnhetsregisteretClientUnitTests
             Organisasjonsform = ["AS"],
         };
 
-        var underenhet = new Underenhet { Organisasjonsnummer = "123456789", Navn = "Test Underenhet" };
+        var underenhet = new Underenhet
+        {
+            Organisasjonsnummer = "123456789",
+            Navn = "Test Underenhet",
+        };
 
         _memoryCache
             .TryGetValue(Arg.Any<string>(), out Arg.Any<UnderenheterResponse?>())
@@ -112,7 +119,10 @@ public class EnhetsregisteretClientUnitTests
             {
                 x[1] = new UnderenheterResponse()
                 {
-                    Embedded = new UnderenhetEmbeddedWrapper { Underenheter = new List<Underenhet> { underenhet } },
+                    Embedded = new UnderenhetEmbeddedWrapper
+                    {
+                        Underenheter = new List<Underenhet> { underenhet },
+                    },
                 }; // Set the out parameter to the underenhet
                 return true;
             });

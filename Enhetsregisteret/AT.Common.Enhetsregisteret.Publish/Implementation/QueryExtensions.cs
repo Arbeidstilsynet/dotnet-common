@@ -16,7 +16,10 @@ internal static partial class QueryExtensions
         }
     }
 
-    public static Uri AddQueryParameters(this Uri uri, IReadOnlyDictionary<string, string> parameterMap)
+    public static Uri AddQueryParameters(
+        this Uri uri,
+        IReadOnlyDictionary<string, string> parameterMap
+    )
     {
         if (parameterMap.Count == 0)
         {
@@ -121,6 +124,9 @@ internal static partial class QueryExtensions
         return sb.ToString();
     }
 
-    [GeneratedRegex(@"^\d{9}$", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant)]
+    [GeneratedRegex(
+        @"^\d{9}$",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant
+    )]
     private static partial Regex OrgnummerRegex();
 }

@@ -14,25 +14,27 @@ namespace Arbeidstilsynet.Common.Enhetsregisteret.Test.Integration.Setup;
 public class EnhetsregisteretTestFixture : TestBedFixture
 {
     private readonly WireMockServer _server;
-    
+
     public EnhetsregisteretTestFixture()
     {
-        _server = WireMockServer.Start(new WireMockServerSettings
-        {
-            Logger = new WireMockConsoleLogger()
-        });
-        
-        var fileStream = File.Open("Integration/TestData/openapi.json", FileMode.Open, FileAccess.Read);
-        
+        _server = WireMockServer.Start(
+            new WireMockServerSettings { Logger = new WireMockConsoleLogger() }
+        );
+
+        var fileStream = File.Open(
+            "Integration/TestData/openapi.json",
+            FileMode.Open,
+            FileAccess.Read
+        );
+
         _server.AddOpenApiMappings(fileStream);
     }
-    
+
     protected override void AddServices(IServiceCollection services, IConfiguration? configuration)
     {
-        services.AddEnhetsregisteret(new EnhetsregisteretConfig()
-        {
-            BrregApiBaseUrl = _server.Urls[0],
-        });
+        services.AddEnhetsregisteret(
+            new EnhetsregisteretConfig() { BrregApiBaseUrl = _server.Urls[0] }
+        );
     }
 
     protected override IEnumerable<TestAppSettings> GetTestAppSettings() => [];

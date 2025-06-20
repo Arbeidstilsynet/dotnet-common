@@ -17,17 +17,23 @@ public static class EnhetsregisteretExtensions
     /// <param name="enhetsregisteret"></param>
     /// <param name="organisasjonsnummerForOverordnetEnhet">Identifies the hovedenhet</param>
     /// <returns></returns>
-    public static Task<IEnumerable<Underenhet>> GetUnderenheterByHovedenhet(this IEnhetsregisteret enhetsregisteret,
-        string organisasjonsnummerForOverordnetEnhet)
+    public static Task<IEnumerable<Underenhet>> GetUnderenheterByHovedenhet(
+        this IEnhetsregisteret enhetsregisteret,
+        string organisasjonsnummerForOverordnetEnhet
+    )
     {
-        organisasjonsnummerForOverordnetEnhet.ValidateOrgnummerOrThrow(nameof(organisasjonsnummerForOverordnetEnhet));
-        
+        organisasjonsnummerForOverordnetEnhet.ValidateOrgnummerOrThrow(
+            nameof(organisasjonsnummerForOverordnetEnhet)
+        );
+
         var query = new SearchEnheterQuery
         {
-            OverordnetEnhetOrganisasjonsnummer = organisasjonsnummerForOverordnetEnhet
+            OverordnetEnhetOrganisasjonsnummer = organisasjonsnummerForOverordnetEnhet,
         };
 
-        return EnumeratePaginatedElements(pagination => enhetsregisteret.SearchUnderenheter(query, pagination))
+        return EnumeratePaginatedElements(pagination =>
+                enhetsregisteret.SearchUnderenheter(query, pagination)
+            )
             .ToListAsync();
     }
 
@@ -42,19 +48,20 @@ public static class EnhetsregisteretExtensions
         IEnumerable<string> organisasjonsnumre
     )
     {
-        var validOrganisasjonsnummer = organisasjonsnumre.Where(orgnummer => orgnummer.IsValidOrgnummer()).ToArray();
+        var validOrganisasjonsnummer = organisasjonsnumre
+            .Where(orgnummer => orgnummer.IsValidOrgnummer())
+            .ToArray();
 
         if (validOrganisasjonsnummer.Length == 0)
         {
             return Task.FromResult<IEnumerable<Underenhet>>([]);
         }
-        
-        var query = new SearchEnheterQuery
-        {
-            Organisasjonsnummer = validOrganisasjonsnummer
-        };
 
-        return EnumeratePaginatedElements(pagination => enhetsregisteret.SearchUnderenheter(query, pagination))
+        var query = new SearchEnheterQuery { Organisasjonsnummer = validOrganisasjonsnummer };
+
+        return EnumeratePaginatedElements(pagination =>
+                enhetsregisteret.SearchUnderenheter(query, pagination)
+            )
             .ToListAsync();
     }
 
@@ -64,24 +71,28 @@ public static class EnhetsregisteretExtensions
     /// <param name="enhetsregisteret"></param>
     /// <param name="organisasjonsnumre"></param>
     /// <returns><see cref="Enhet"/>s matching <see cref="organisasjonsnumre"/></returns>
-    public static Task<IEnumerable<Enhet>> GetEnheter(this IEnhetsregisteret enhetsregisteret, IEnumerable<string> organisasjonsnumre)
+    public static Task<IEnumerable<Enhet>> GetEnheter(
+        this IEnhetsregisteret enhetsregisteret,
+        IEnumerable<string> organisasjonsnumre
+    )
     {
-        var validOrganisasjonsnummer = organisasjonsnumre.Where(orgnummer => orgnummer.IsValidOrgnummer()).ToArray();
+        var validOrganisasjonsnummer = organisasjonsnumre
+            .Where(orgnummer => orgnummer.IsValidOrgnummer())
+            .ToArray();
 
         if (validOrganisasjonsnummer.Length == 0)
         {
             return Task.FromResult<IEnumerable<Enhet>>([]);
         }
 
-        var query = new SearchEnheterQuery
-        {
-            Organisasjonsnummer = validOrganisasjonsnummer
-        };
+        var query = new SearchEnheterQuery { Organisasjonsnummer = validOrganisasjonsnummer };
 
-        return EnumeratePaginatedElements(pagination => enhetsregisteret.SearchEnheter(query, pagination))
+        return EnumeratePaginatedElements(pagination =>
+                enhetsregisteret.SearchEnheter(query, pagination)
+            )
             .ToListAsync();
     }
-    
+
     /// <summary>
     /// Gets <see cref="Enhet"/> based on the <see cref="SearchEnheterQuery"/>.
     /// </summary>
@@ -93,7 +104,9 @@ public static class EnhetsregisteretExtensions
         SearchEnheterQuery query
     )
     {
-        return EnumeratePaginatedElements(pagination => enhetsregisteret.SearchUnderenheter(query, pagination));
+        return EnumeratePaginatedElements(pagination =>
+            enhetsregisteret.SearchUnderenheter(query, pagination)
+        );
     }
 
     /// <summary>
@@ -107,7 +120,9 @@ public static class EnhetsregisteretExtensions
         SearchEnheterQuery query
     )
     {
-        return EnumeratePaginatedElements(pagination => enhetsregisteret.SearchEnheter(query, pagination));
+        return EnumeratePaginatedElements(pagination =>
+            enhetsregisteret.SearchEnheter(query, pagination)
+        );
     }
 
     /// <summary>
@@ -137,7 +152,9 @@ public static class EnhetsregisteretExtensions
         GetOppdateringerQuery query
     )
     {
-        return EnumeratePaginatedElements(pagination => enhetsregisteret.GetOppdateringerEnheter(query, pagination));
+        return EnumeratePaginatedElements(pagination =>
+            enhetsregisteret.GetOppdateringerEnheter(query, pagination)
+        );
     }
 
     internal static async IAsyncEnumerable<T> EnumeratePaginatedElements<T>(
@@ -176,16 +193,18 @@ public static class EnhetsregisteretExtensions
             }
         }
     }
-    
-    private static async Task<IEnumerable<T>> ToListAsync<T>(this IAsyncEnumerable<T> asyncEnumerable)
+
+    private static async Task<IEnumerable<T>> ToListAsync<T>(
+        this IAsyncEnumerable<T> asyncEnumerable
+    )
     {
         var list = new List<T>();
-        
-        await foreach(var item in asyncEnumerable)
+
+        await foreach (var item in asyncEnumerable)
         {
             list.Add(item);
         }
-        
+
         return list;
     }
 
