@@ -1,53 +1,53 @@
 namespace Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 
 /// <summary>
-/// Representerer en søkespørring for å finne enheter i Enhetsregisteret. Brukes både på /underenheter og /enheter
+/// Represents a search query for finding <see cref="Enhet"/> and <see cref="Underenhet"/> in the Enhetsregisteret.
 /// </summary>
 public record SearchEnheterQuery
 {
     /// <summary>
-    /// Sorteringsrekkefølge for resultatene.
+    /// Sort order for the results.
     /// </summary>
     public enum Sort
     {
         /// <summary>
-        /// Sorter resultatene i stigende rekkefølge.
+        /// Sort the results in ascending order.
         /// </summary>
         Asc,
 
         /// <summary>
-        /// Sorter resultatene i synkende rekkefølge.
+        /// Sort the results in descending order.
         /// </summary>
         Desc,
     }
 
     /// <summary>
-    /// Søketekst for å finne enheter basert på navn.
+    /// Search text for finding <see cref="Enhet"/> and <see cref="Underenhet"/> based on name.
     /// </summary>
     public string? Navn { get; set; }
 
     /// <summary>
-    /// Organisasjonsnumre for enheter.
+    /// Only return <see cref="Enhet"/>/<see cref="Underenhet"/> with these organizational numbers. If none are specified, any <see cref="Enhet"/>/<see cref="Underenhet"/> will be returned.
     /// </summary>
     public string[] Organisasjonsnummer { get; set; } = [];
 
     /// <summary>
-    /// Organisasjonsnummeret til hovedenheten.
+    /// Only return <see cref="Enhet"/>/<see cref="Underenhet"/> where the "hovedenhet" has this organizational number.
     /// </summary>
     public string? OverordnetEnhetOrganisasjonsnummer { get; set; }
 
     /// <summary>
-    /// Organisasjonsformen til enheten.
+    /// Organizational form of the <see cref="Enhet"/>/<see cref="Underenhet"/>.
     /// </summary>
     public string[] Organisasjonsform { get; set; } = [];
 
     /// <summary>
-    /// Sorteringsrekkefølge for resultatene.
+    /// Sort order for the results.
     /// </summary>
     public Sort SortDirection { get; set; } = Sort.Asc;
 
     /// <summary>
-    /// Feltet som resultatene skal sorteres etter. Dokumentasjon for mulige verdier finnes i API-dokumentasjonen. https://data.brreg.no/enhetsregisteret/api/dokumentasjon/no/index.html#tag/Enheter
+    /// Field to sort the results by. Documentation for possible values can be found in the API documentation. https://data.brreg.no/enhetsregisteret/api/dokumentasjon/no/index.html#tag/Enheter
     /// </summary>
     public string? SortBy { get; set; }
 }

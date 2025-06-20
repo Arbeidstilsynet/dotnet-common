@@ -1,28 +1,28 @@
 namespace Arbeidstilsynet.Common.Enhetsregisteret.Model.Response;
 
 /// <summary>
-/// Resultat av paginert spørring.
+/// Result of a paginated query.
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public record PaginationResult<T>
 {
     /// <summary>
-    /// Total antall elementer i alle sidene.
+    /// Total number of elements in the result set, regardless of pagination.
     /// </summary>
     public long TotalElements { get; init; }
 
     /// <summary>
-    /// Antall elementer per side.
+    /// Number of elements per page.
     /// </summary>
     public long PageSize { get; init; }
 
     /// <summary>
-    /// 0-basert sideindeks.
+    /// 0-based page index.
     /// </summary>
     public long PageIndex { get; init; }
 
     /// <summary>
-    /// Elementene på denne siden.
+    /// Elements on this page.
     /// </summary>
     public IEnumerable<T> Elements { get; init; } = [];
 }

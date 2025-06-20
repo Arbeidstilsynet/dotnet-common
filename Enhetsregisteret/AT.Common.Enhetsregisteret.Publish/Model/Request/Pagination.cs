@@ -1,17 +1,17 @@
 namespace Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 
 /// <summary>
-/// Representerer paginering og sortering for søk i Enhetsregisteret.
+/// Represents pagination and sorting for searches in the Enhetsregisteret.
 /// </summary>
 public record Pagination
 {
     /// <summary>
-    /// Antall resultater som skal hentes. Standard er 1000.
+    /// Number of elements to return per page. Default is 1000.
     /// </summary>
     public long Size { get; set; } = 1000;
 
     /// <summary>
-    /// 0-basert sideindeks for paginering.
+    /// 0-based page index for pagination.
     /// </summary>
     public long Page { get; set; } = 0;
 }

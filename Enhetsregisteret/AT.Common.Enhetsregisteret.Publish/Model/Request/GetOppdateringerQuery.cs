@@ -1,22 +1,22 @@
 namespace Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 
 /// <summary>
-/// Representerer en søkespørring for å hente oppdateringer fra Enhetsregisteret. Brukes både for oppdateringer på enheter og underenheter.
+/// Represents a query for retrieving updates from Enhetsregisteret. Used for <see cref="Oppdatering"/> on both <see cref="Enhet"/> and <see cref="Underenhet"/>.
 /// </summary>
 public record GetOppdateringerQuery
 {
     /// <summary>
-    /// Vis bare oppdateringer fra og med dette tidsstempelet. Tidsstempelet indikerer når oppdateringen ble offentliggjort i Enhetsregisteret.
+    /// Show only <see cref="Oppdatering"/> from and including this timestamp. The timestamp indicates when the <see cref="Oppdatering"/> was published in the Enhetsregisteret.
     /// </summary>
     public required DateTime Dato { get; set; }
 
     /// <summary>
-    /// Vis bare oppdateringer fra og med denne oppdateringsid-en. Oppdateringsid-en er sekvensiell og øker med hver oppdatering i Enhetsregisteret.
+    /// Show only <see cref="Oppdatering"/> from and including this <see cref="Oppdatering.Oppdateringsid"/>. <see cref="Oppdatering.Oppdateringsid"/> is sequential and increases with each <see cref="Oppdatering"/> in the Enhetsregisteret.
     /// </summary>
     public long Oppdateringsid { get; set; } = 1;
 
     /// <summary>
-    /// Vis bare oppdateringer for disse organisasjonsnumrene. Hvis ingen organisasjonsnumre er spesifisert, vil alle oppdateringer bli returnert.
+    /// Show only <see cref="Oppdatering"/> for this <see cref="Enhet"/>/<see cref="Underenhet"/>. If none are specified, all updates will be returned.
     /// </summary>
     public string[] Organisasjonsnummer { get; set; } = [];
 }

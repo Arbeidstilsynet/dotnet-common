@@ -9,23 +9,23 @@ using Polly.Retry;
 namespace Arbeidstilsynet.Common.Enhetsregisteret.DependencyInjection;
 
 /// <summary>
-/// Konfigurerer HttpClient for Enhetsregisteret API.
+/// Configures the <see cref="HttpClient"/> for the Enhetsregisteret API.
 /// </summary>
 public class EnhetsregisteretConfig
 {
     /// <summary>
-    /// Initialiserer en ny instans av <see cref="EnhetsregisteretConfig"/> klassen.
+    /// Initializes a new instance of the <see cref="EnhetsregisteretConfig"/> class.
     /// </summary>
-    /// <param name="brregApiBaseUrl">Basis-URL for Enhetsregisteret API. Default: "https://data.brreg.no/enhetsregisteret/api/".</param>
-    /// <param name="timeoutInSeconds">Maksimal ventetid for hver request i sekunder. Default: 30 sekunder.</param>
-    /// <param name="retryStrategy">Retry-strategi for API-kall. Default retry-strategi:
+    /// <param name="brregApiBaseUrl">BaseUrl for Enhetsregisteret API. Default: "https://data.brreg.no/".</param>
+    /// <param name="timeoutInSeconds">Timeout for API requests. Default: 30 seconds.</param>
+    /// <param name="retryStrategy">Retry strategy for API calls. Default retry strategy:
     /// <br/>
-    /// <br/>- Forsøker opptil 5 ganger med eksponentiell backoff og jitter.
+    /// <br/>- Tries up to 5 times with exponential backoff and jitter.
     /// <br/>
-    /// <br/>Denne strategien er designet for å håndtere midlertidige feil,
-    /// og sikre mer pålitelige API-kall til Enhetsregisteret.
+    /// <br/>This strategy is designed to handle temporary errors,
+    /// and ensure more reliable API calls to Enhetsregisteret.
     /// </param>
-    /// <param name="cacheOptions">Cache-instillinger for Enhetsregisteret.
+    /// <param name="cacheOptions">Cache settings for Enhetsregisteret.
     /// </param>
     public EnhetsregisteretConfig(
         string? brregApiBaseUrl = null,
@@ -60,26 +60,26 @@ public class EnhetsregisteretConfig
     }
 
     /// <summary>
-    /// Basis-URL for Enhetsregisteret API.
+    /// BaseUrl for Enhetsregisteret API.
     /// </summary>
     public string BrregApiBaseUrl { get; set; }
 
     /// <summary>
-    /// Settings for caching-mechanismen.
+    /// Settings for caching mechanism.
     /// </summary>
     public CacheOptions CacheOptions { get; set; }
 
     /// <summary>
-    /// Resilience pipeline for API-kall.
+    /// Resilience pipeline for API calls.
     /// </summary>
     public ResiliencePipeline ResiliencePipeline { get; set; }
 }
 
 /// <summary>
-/// Cache-instillinger for Enhetsregisteret.
+/// Cache settings for Enhetsregisteret.
 /// </summary>
-/// <param name="Disabled">Hvis true, inaktiveres cache-mekanismen. Default: false.</param>
-/// <param name="ExpirationTime">Hvis cachen er aktivert, angir denne tiden hvor lenge cache-verdien skal beholdes. Default: 1 dag.</param>
+/// <param name="Disabled">If true, disables the caching mechanism. Default: false.</param>
+/// <param name="ExpirationTime">If caching is enabled, this specifies how long the cache value should be retained. Default: 1 day.</param>
 public record CacheOptions(bool Disabled = false, TimeSpan? ExpirationTime = null);
 
 /// <summary>
@@ -91,10 +91,10 @@ public static class DependencyInjectionExtensions
     internal const string CLIENTKEY = "EnhetsregisteretClient";
 
     /// <summary>
-    /// Registrerer en implementasjon av IEnhetsregisteret i den spesifiserte <see cref="IServiceCollection"/>.
+    /// Registers an implementation of IEnhetsregisteret in the specified <see cref="IServiceCollection"/>.
     /// </summary>
-    /// <param name="services"><see cref="IServiceCollection"/> som tjenesten skal legges til i.</param>
-    /// <param name="configure">Konfigurer klienten.</param>
+    /// <param name="services"><see cref="IServiceCollection"/> to add the service to.</param>
+    /// <param name="configure">Configure the client.</param>
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
     public static IServiceCollection AddEnhetsregisteret(
         this IServiceCollection services,
@@ -111,10 +111,10 @@ public static class DependencyInjectionExtensions
     }
 
     /// <summary>
-    /// Registrerer en implementasjon av IEnhetsregisteret i den spesifiserte <see cref="IServiceCollection"/>.
+    /// Registers an implementation of IEnhetsregisteret in the specified <see cref="IServiceCollection"/>.
     /// </summary>
-    /// <param name="services"><see cref="IServiceCollection"/> som tjenesten skal legges til i.</param>
-    /// <param name="config">Konfigurasjon for klienten. Hvis null, brukes en standardkonfigurasjon.</param>
+    /// <param name="services"><see cref="IServiceCollection"/> to add the service to.</param>
+    /// <param name="config">Configuration for the client. If null, a default configuration is used.</param>
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
     public static IServiceCollection AddEnhetsregisteret(
         this IServiceCollection services,

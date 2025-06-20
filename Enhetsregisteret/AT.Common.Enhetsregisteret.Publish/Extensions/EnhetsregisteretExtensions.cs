@@ -83,7 +83,7 @@ public static class EnhetsregisteretExtensions
     }
     
     /// <summary>
-    /// Henter alle underenheter basert på queryen.
+    /// Gets <see cref="Enhet"/> based on the <see cref="SearchEnheterQuery"/>.
     /// </summary>
     /// <param name="enhetsregisteret"></param>
     /// <param name="query"></param>
@@ -97,7 +97,7 @@ public static class EnhetsregisteretExtensions
     }
 
     /// <summary>
-    /// Henter alle enheter basert på queryen.
+    /// Gets <see cref="Enhet"/> based on the <see cref="SearchEnheterQuery"/>.
     /// </summary>
     /// <param name="enhetsregisteret"></param>
     /// <param name="query"></param>
@@ -111,7 +111,7 @@ public static class EnhetsregisteretExtensions
     }
 
     /// <summary>
-    /// Henter alle oppdateringer på underenheter basert på queryen.
+    /// Gets all <see cref="Oppdatering"/> on <see cref="Underenhet"/> based on the query.
     /// </summary>
     /// <param name="enhetsregisteret"></param>
     /// <param name="query"></param>
@@ -127,7 +127,7 @@ public static class EnhetsregisteretExtensions
     }
 
     /// <summary>
-    /// Henter alle oppdateringer på enheter basert på queryen.
+    /// Gets all <see cref="Oppdatering"/> on <see cref="Enhet"/> based on the <see cref="GetOppdateringerQuery"/>.
     /// </summary>
     /// <param name="enhetsregisteret"></param>
     /// <param name="query"></param>
