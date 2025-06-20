@@ -102,7 +102,15 @@
       OverordnetEnhet: 376181782,
       Epostadresse: epost@epost.com,
       Telefon: 91504800,
-      Mobil: 91504800
+      Mobil: 91504800,
+      Links: {
+        overordnetEnhet: {
+          Href: https://data.brreg.no/enhetsregisteret/api/enheter/509100675
+        },
+        self: {
+          Href: https://data.brreg.no/enhetsregisteret/api/enheter/509100675
+        }
+      }
     },
     {
       Organisasjonsnummer: 509100675,
@@ -203,7 +211,15 @@
       OverordnetEnhet: 376181782,
       Epostadresse: epost@epost.com,
       Telefon: 91504800,
-      Mobil: 91504800
+      Mobil: 91504800,
+      Links: {
+        overordnetEnhet: {
+          Href: https://data.brreg.no/enhetsregisteret/api/enheter/509100675
+        },
+        self: {
+          Href: https://data.brreg.no/enhetsregisteret/api/enheter/509100675
+        }
+      }
     },
     {
       Organisasjonsnummer: 509100675,
@@ -304,7 +320,15 @@
       OverordnetEnhet: 376181782,
       Epostadresse: epost@epost.com,
       Telefon: 91504800,
-      Mobil: 91504800
+      Mobil: 91504800,
+      Links: {
+        overordnetEnhet: {
+          Href: https://data.brreg.no/enhetsregisteret/api/enheter/509100675
+        },
+        self: {
+          Href: https://data.brreg.no/enhetsregisteret/api/enheter/509100675
+        }
+      }
     }
   ]
 }

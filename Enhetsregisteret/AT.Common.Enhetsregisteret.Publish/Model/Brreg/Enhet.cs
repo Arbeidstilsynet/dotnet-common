@@ -253,7 +253,7 @@ public class Enhet
     /// <summary>
     /// Lenker relatert til enheten.
     /// </summary>
-    [JsonPropertyName("links")]
+    [JsonPropertyName("_links")]
     public Dictionary<string, Link>? Links { get; set; }
 }
 

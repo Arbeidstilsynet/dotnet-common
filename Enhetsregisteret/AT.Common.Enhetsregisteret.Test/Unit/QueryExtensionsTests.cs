@@ -68,6 +68,18 @@ public class QueryExtensionsTests
     }
     
     [Fact]
+    public async Task SearchParameters_DefaultValues_ToMap_MapsCorrectly()
+    {
+        // Arrange
+        var query = new SearchEnheterQuery();
+
+        // Act & Assert
+        var parameterMap = query.ToMap();
+
+        await Verify(parameterMap, _verifySettings);
+    }
+    
+    [Fact]
     public async Task Pagination_ToMap_MapsCorrectly()
     {
         // Arrange
@@ -84,6 +96,18 @@ public class QueryExtensionsTests
     }
     
     [Fact]
+    public async Task Pagination_DefaultValues_ToMap_MapsCorrectly()
+    {
+        // Arrange
+        var pagination = new Pagination();
+
+        // Act & Assert
+        var parameterMap = pagination.ToMap();
+
+        await Verify(parameterMap, _verifySettings);
+    }
+    
+    [Fact]
     public async Task GetOppdateringerQuery_ToMap_MapsCorrectly()
     {
         // Arrange
@@ -92,6 +116,21 @@ public class QueryExtensionsTests
             Dato = DateTime.Now,
             Organisasjonsnummer =  ["123456789", "987654321"],
             Oppdateringsid = 69
+        };
+
+        // Act & Assert
+        var parameterMap = query.ToMap();
+
+        await Verify(parameterMap, _verifySettings);
+    }
+    
+    [Fact]
+    public async Task GetOppdateringerQuery_DefaultValues_ToMap_MapsCorrectly()
+    {
+        // Arrange
+        var query = new GetOppdateringerQuery()
+        {
+            Dato = DateTime.Now
         };
 
         // Act & Assert
