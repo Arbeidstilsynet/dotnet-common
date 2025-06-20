@@ -99,7 +99,7 @@ internal static partial class QueryExtensions
         }
 
         parameterMap.Add("oppdateringsid", query.Oppdateringsid.ToString());
-        parameterMap.Add("dato", query.Dato.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+        parameterMap.Add("dato", query.Dato.ToUniversalTime().ToString("o"));
 
         return parameterMap;
     }
