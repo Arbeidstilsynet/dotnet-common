@@ -55,5 +55,31 @@ public class EnhetsregisteretClientIntegrationTests : TestBed<EnhetsregisteretTe
         // Assert
         await Verify(enheter, _verifySettings);
     }
+    
+    [Fact]
+    public async Task GetOppdateringerUnderenheter_ValidRequest_ReturnsOppdateringer()
+    {
+        // Act
+        var oppdateringer = await _sut.GetOppdateringerUnderenheter(new GetOppdateringerQuery()
+        {
+            Dato = DateTime.Now
+        }, new Pagination());
+        
+        // Assert
+        await Verify(oppdateringer, _verifySettings);
+    }
+    
+    [Fact]
+    public async Task GetOppdateringerEnheter_ValidRequest_ReturnsOppdateringer()
+    {
+        // Act
+        var oppdateringer = await _sut.GetOppdateringerEnheter(new GetOppdateringerQuery()
+        {
+            Dato = DateTime.Now
+        }, new Pagination());
+        
+        // Assert
+        await Verify(oppdateringer, _verifySettings);
+    }
 
 }

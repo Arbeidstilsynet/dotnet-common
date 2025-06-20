@@ -10,9 +10,9 @@ namespace Arbeidstilsynet.Common.Enhetsregisteret.Ports;
 public interface IEnhetsregisteret
 {
     /// <summary>
-    /// Hent en <see cref="Underenhet"/> basert på organisasjonsnummeret.
+    /// Get the <see cref="Underenhet"/> with <see cref="organisasjonsnummer"/>.
     /// </summary>
-    /// <param name="organisasjonsnummer">Organisasjonsnummeret til underenheten</param>
+    /// <param name="organisasjonsnummer"></param>
     /// <returns>En <see cref="Underenhet"/>. Null hvis enheten ikke finnes, eller hvis det oppstår en feil under henting.</returns>
     Task<Underenhet?> GetUnderenhet(string organisasjonsnummer);
 

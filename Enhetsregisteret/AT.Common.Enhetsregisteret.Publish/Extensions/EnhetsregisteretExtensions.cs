@@ -7,57 +7,46 @@ using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
 namespace Arbeidstilsynet.Common.Enhetsregisteret.Extensions;
 
 /// <summary>
-/// Utvidelser for å forenkle APIet mot enhetsregisteret.
+/// Extensions for simplifying common access patterns to Enhetsregisteret.
 /// </summary>
 public static class EnhetsregisteretExtensions
 {
     /// <summary>
-    /// Hent alle underenheter basert på organisasjonsnummeret til overordnet enhet.
+    /// Gets <see cref="Underenhet"/>s that are under the given hovedenhet.
     /// </summary>
     /// <param name="enhetsregisteret"></param>
-    /// <param name="organisasjonsnummerForOverordnetEnhet">Organisasjonsnummeret til overordnet enhet.</param>
-    /// <param name="antallUnderenheter">Antall underenheter som skal hentes. Standard er 1000.</param>
-    /// <returns>Alle <see cref="Underenhet"/> som er underordnet hovedenheten med det gitte orgnummeret.</returns>
-    public static async Task<IEnumerable<Underenhet>> GetUnderenheter(this IEnhetsregisteret enhetsregisteret,
-        string organisasjonsnummerForOverordnetEnhet, int antallUnderenheter = 1000)
+    /// <param name="organisasjonsnummerForOverordnetEnhet">Identifies the hovedenhet</param>
+    /// <returns></returns>
+    public static Task<IEnumerable<Underenhet>> GetUnderenheterByHovedenhet(this IEnhetsregisteret enhetsregisteret,
+        string organisasjonsnummerForOverordnetEnhet)
     {
         organisasjonsnummerForOverordnetEnhet.ValidateOrgnummerOrThrow(nameof(organisasjonsnummerForOverordnetEnhet));
-        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(antallUnderenheter, 0);
         
         var query = new SearchEnheterQuery
         {
             OverordnetEnhetOrganisasjonsnummer = organisasjonsnummerForOverordnetEnhet
         };
 
-        var pagination = new Pagination
-        {
-            Size = antallUnderenheter
-        };
-        
-        var paginatedResult = await enhetsregisteret.SearchUnderenheter(query, pagination);
-        
-        return paginatedResult?.Elements ?? [];
+        return EnumeratePaginatedElements(pagination => enhetsregisteret.SearchUnderenheter(query, pagination))
+            .ToListAsync();
     }
 
     /// <summary>
-    /// Hent opp til flere underenheter basert på en liste med organisasjonsnumre.
+    /// Gets <see cref="Underenhet"/>s based on a list of organizational numbers.
     /// </summary>
-    /// <param name="organisasjonsnumre">Organisasjonsnumrene til underenhetene.</param>
-    /// <param name="antallUnderenheter">Antall underenheter som skal hentes. Standard er 1000.</param>
-    /// <returns><see cref="Underenhet"/> som matcher orgnumre.</returns>
-    public static async Task<IEnumerable<Underenhet>> GetUnderenheter(
+    /// <param name="enhetsregisteret"></param>
+    /// <param name="organisasjonsnumre"></param>
+    /// <returns><see cref="Underenhet"/> matching <see cref="organisasjonsnumre"/>.</returns>
+    public static Task<IEnumerable<Underenhet>> GetUnderenheter(
         this IEnhetsregisteret enhetsregisteret,
-        IEnumerable<string> organisasjonsnumre,
-        int antallUnderenheter = 1000
+        IEnumerable<string> organisasjonsnumre
     )
     {
-        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(antallUnderenheter, 0);
-
         var validOrganisasjonsnummer = organisasjonsnumre.Where(orgnummer => orgnummer.IsValidOrgnummer()).ToArray();
 
         if (validOrganisasjonsnummer.Length == 0)
         {
-            return [];
+            return Task.FromResult<IEnumerable<Underenhet>>([]);
         }
         
         var query = new SearchEnheterQuery
@@ -65,31 +54,23 @@ public static class EnhetsregisteretExtensions
             Organisasjonsnummer = validOrganisasjonsnummer
         };
 
-        var pagination = new Pagination
-        {
-            Size = antallUnderenheter
-        };
-
-        var paginatedResult = await enhetsregisteret.SearchUnderenheter(query, pagination);
-        
-        return paginatedResult?.Elements ?? [];
+        return EnumeratePaginatedElements(pagination => enhetsregisteret.SearchUnderenheter(query, pagination))
+            .ToListAsync();
     }
 
     /// <summary>
-    /// Hent opp til flere enheter basert på en liste med organisasjonsnumre.
+    /// Gets <see cref="Enhet"/>s based on the organizational number.
     /// </summary>
-    /// <param name="organisasjonsnumre">Organisasjonsnumrene til enhetene.</param>
-    /// <param name="antallEnheter">Antall enheter som skal hentes. Standard er 1000.</param>
-    /// <returns><see cref="Enhet"/> som matcher orgnumrene.</returns>
-    public static async Task<IEnumerable<Enhet>> GetEnheter(this IEnhetsregisteret enhetsregisteret, IEnumerable<string> organisasjonsnumre, int antallEnheter = 1000)
+    /// <param name="enhetsregisteret"></param>
+    /// <param name="organisasjonsnumre"></param>
+    /// <returns><see cref="Enhet"/>s matching <see cref="organisasjonsnumre"/></returns>
+    public static Task<IEnumerable<Enhet>> GetEnheter(this IEnhetsregisteret enhetsregisteret, IEnumerable<string> organisasjonsnumre)
     {
-        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(antallEnheter, 0);
-
         var validOrganisasjonsnummer = organisasjonsnumre.Where(orgnummer => orgnummer.IsValidOrgnummer()).ToArray();
 
         if (validOrganisasjonsnummer.Length == 0)
         {
-            return [];
+            return Task.FromResult<IEnumerable<Enhet>>([]);
         }
 
         var query = new SearchEnheterQuery
@@ -97,14 +78,8 @@ public static class EnhetsregisteretExtensions
             Organisasjonsnummer = validOrganisasjonsnummer
         };
 
-        var pagination = new Pagination
-        {
-            Size = antallEnheter
-        };
-
-        var paginatedResult = await enhetsregisteret.SearchEnheter(query, pagination);
-        
-        return paginatedResult?.Elements ?? [];
+        return EnumeratePaginatedElements(pagination => enhetsregisteret.SearchEnheter(query, pagination))
+            .ToListAsync();
     }
     
     /// <summary>
@@ -200,6 +175,18 @@ public static class EnhetsregisteretExtensions
                 yield return element;
             }
         }
+    }
+    
+    private static async Task<IEnumerable<T>> ToListAsync<T>(this IAsyncEnumerable<T> asyncEnumerable)
+    {
+        var list = new List<T>();
+        
+        await foreach(var item in asyncEnumerable)
+        {
+            list.Add(item);
+        }
+        
+        return list;
     }
 
     private static long TotalPages<T>(this PaginationResult<T> paginationResult)

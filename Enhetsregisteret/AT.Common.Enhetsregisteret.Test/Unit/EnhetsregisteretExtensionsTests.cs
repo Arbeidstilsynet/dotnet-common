@@ -14,17 +14,6 @@ public class EnhetsregisteretExtensionsTests
 {
     private readonly IEnhetsregisteret _enhetsregisteret = Substitute.For<IEnhetsregisteret>();
 
-    [Theory]
-    [InlineData(0)]
-    [InlineData(-1)]
-    public async Task GetUnderenheter_InvalidAntall_ThrowsArgumentException(int antallUnderenheter)
-    {
-        // Act
-        var act = () => _enhetsregisteret.GetUnderenheter("123456789", antallUnderenheter);
-
-        // Assert
-        await act.ShouldThrowAsync<ArgumentOutOfRangeException>();
-    }
 
     [Theory]
     [InlineData("")]
@@ -34,26 +23,24 @@ public class EnhetsregisteretExtensionsTests
     public async Task GetUnderenheter_InvalidOverordnetEnhet_ThrowsArgumentException(string? organisasjonsnummer)
     {
         // Act
-        var act = () => _enhetsregisteret.GetUnderenheter(organisasjonsnummer!);
+        var act = () => _enhetsregisteret.GetUnderenheterByHovedenhet(organisasjonsnummer!);
 
         // Assert
         await act.ShouldThrowAsync<ArgumentException>();
     }
     
-    [Theory]
-    [InlineData(1)]
-    [InlineData(1000)]
-    public async Task GetUnderenheter_ValidAntall_CallsSearchUnderenhteterCorrectly(int antallUnderenheter)
+    [Fact]
+    public async Task GetUnderenheter_ValidAntall_CallsSearchUnderenhteterCorrectly()
     {
         // Act
-        _ = await _enhetsregisteret.GetUnderenheter("123456789", antallUnderenheter);
+        _ = await _enhetsregisteret.GetUnderenheterByHovedenhet("123456789");
         
         // Assert
         await _enhetsregisteret
             .Received(1)
             .SearchUnderenheter(
                 Arg.Is<SearchEnheterQuery>(q => q.OverordnetEnhetOrganisasjonsnummer == "123456789"),
-                Arg.Is<Pagination>(p => p.Size == antallUnderenheter && p.Page == 0)
+                Arg.Any<Pagination>()
             );
     }
     
@@ -89,20 +76,18 @@ public class EnhetsregisteretExtensionsTests
             .SearchEnheter(Arg.Any<SearchEnheterQuery>(), Arg.Any<Pagination>());
     }
     
-    [Theory]
-    [InlineData(1)]
-    [InlineData(1000)]
-    public async Task GetEnheter_ValidAntall_CallsSearchEnheterCorrectly(int antallEnheter)
+    [Fact]
+    public async Task GetEnheter_ValidAntall_CallsSearchEnheterCorrectly()
     {
         // Act
-        _ = await _enhetsregisteret.GetEnheter(["123456789", "987654321"], antallEnheter);
+        _ = await _enhetsregisteret.GetEnheter(["123456789", "987654321"]);
         
         // Assert
         await _enhetsregisteret
             .Received(1)
             .SearchEnheter(
                 Arg.Is<SearchEnheterQuery>(q => q.Organisasjonsnummer.SequenceEqual(new List<string>(){"123456789", "987654321"})),
-                Arg.Is<Pagination>(p => p.Size == antallEnheter && p.Page == 0)
+                Arg.Any<Pagination>()
             );
     }
     

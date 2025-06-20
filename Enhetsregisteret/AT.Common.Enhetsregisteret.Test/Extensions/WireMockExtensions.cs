@@ -13,7 +13,7 @@ public static class WireMockExtensions
     /// By default it will generate example responses based on the schema definitions in the OpenAPI specification.
     ///
     /// Known limitations:
-    /// - If an endpoints returns "oneOf" in the response schema, it will not generate example responses for those.
+    /// - If an endpoint returns "oneOf" in the response schema, it will not generate mappings for the return values on those endpoints.
     /// </summary>
     /// <param name="server"></param>
     /// <param name="openApiSpecStream"></param>
@@ -27,7 +27,6 @@ public static class WireMockExtensions
         {
             // Generate example responses based on schema
             ExampleValues = new WireMockOpenApiParserExampleValues(),
-            
         };
         
         var parser = new WireMockOpenApiParser();
