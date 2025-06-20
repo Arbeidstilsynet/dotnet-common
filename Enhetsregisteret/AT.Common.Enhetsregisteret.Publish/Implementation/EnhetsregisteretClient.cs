@@ -53,12 +53,15 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
         _memoryCache = new MemoryCache(optionsAccessor: new MemoryCacheOptions { });
         _cacheOptions = config.CacheOptions;
     }
-    
+
     public async Task<Underenhet?> GetUnderenhet(string organisasjonsnummer)
     {
         organisasjonsnummer.ValidateOrgnummerOrThrow(nameof(organisasjonsnummer));
 
-        var uri = new Uri($"enhetsregisteret/api/underenheter/{organisasjonsnummer}", UriKind.Relative);
+        var uri = new Uri(
+            $"enhetsregisteret/api/underenheter/{organisasjonsnummer}",
+            UriKind.Relative
+        );
 
         return await GetOrCache<Underenhet>(uri);
     }
@@ -71,7 +74,7 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
 
         return await GetOrCache<Enhet>(uri);
     }
-    
+
     public async Task<PaginationResult<Underenhet>?> SearchUnderenheter(
         SearchEnheterQuery searchParameters,
         Pagination pagination
@@ -133,7 +136,11 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
     {
         var cacheKey = requestUri.ToString();
 
-        if (!_cacheOptions.Disabled && _memoryCache.TryGetValue(cacheKey, out T? cacheHit) && cacheHit != null)
+        if (
+            !_cacheOptions.Disabled
+            && _memoryCache.TryGetValue(cacheKey, out T? cacheHit)
+            && cacheHit != null
+        )
         {
             return cacheHit;
         }
@@ -155,15 +162,22 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
                 throw;
             }
 
-            _logger.LogWarning(e, "Request for resource failed({StatusCode}): {Query}", e.StatusCode, cacheKey);
+            _logger.LogWarning(
+                e,
+                "Request for resource failed({StatusCode}): {Query}",
+                e.StatusCode,
+                cacheKey
+            );
             return null;
         }
     }
 }
 
-internal class OppdateringerEnheterResponse : EmbeddedResponse<OppdateringEnheterEmbeddedWrapper> { }
+internal class OppdateringerEnheterResponse
+    : EmbeddedResponse<OppdateringEnheterEmbeddedWrapper> { }
 
-internal class OppdateringerUnderenheterResponse : EmbeddedResponse<OppdateringUnderenheterEmbeddedWrapper> { }
+internal class OppdateringerUnderenheterResponse
+    : EmbeddedResponse<OppdateringUnderenheterEmbeddedWrapper> { }
 
 internal class EnheterResponse : EmbeddedResponse<EnhetEmbeddedWrapper> { }
 
@@ -238,7 +252,9 @@ file static class Extensions
         };
     }
 
-    private static PaginationResult<TElements> EmptyPagination<TElements>(IEnumerable<TElements>? elements = null)
+    private static PaginationResult<TElements> EmptyPagination<TElements>(
+        IEnumerable<TElements>? elements = null
+    )
     {
         return new PaginationResult<TElements>
         {

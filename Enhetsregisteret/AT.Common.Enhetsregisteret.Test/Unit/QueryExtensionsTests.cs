@@ -6,13 +6,13 @@ namespace Arbeidstilsynet.Common.Enhetsregisteret.Test;
 
 public class QueryExtensionsTests
 {
-    private VerifySettings _verifySettings = new ();
+    private VerifySettings _verifySettings = new();
 
     public QueryExtensionsTests()
     {
         _verifySettings.UseDirectory("TestData/Snapshots");
     }
-    
+
     [Theory]
     [InlineData("123456789", true)]
     [InlineData("987654321", true)]
@@ -28,10 +28,12 @@ public class QueryExtensionsTests
         }
         else
         {
-            Assert.Throws<ArgumentException>(() => orgnummer.ValidateOrgnummerOrThrow(nameof(orgnummer)));
+            Assert.Throws<ArgumentException>(() =>
+                orgnummer.ValidateOrgnummerOrThrow(nameof(orgnummer))
+            );
         }
     }
-    
+
     [Theory]
     [InlineData("123456789", true)]
     [InlineData("987654321", true)]
@@ -58,7 +60,7 @@ public class QueryExtensionsTests
             Organisasjonsform = ["AS", "ENK"],
             OverordnetEnhetOrganisasjonsnummer = "123456789",
             SortBy = "navn",
-            SortDirection = SearchEnheterQuery.Sort.Asc
+            SortDirection = SearchEnheterQuery.Sort.Asc,
         };
 
         // Act & Assert
@@ -66,7 +68,7 @@ public class QueryExtensionsTests
 
         await Verify(parameterMap, _verifySettings);
     }
-    
+
     [Fact]
     public async Task SearchParameters_DefaultValues_ToMap_MapsCorrectly()
     {
@@ -78,23 +80,19 @@ public class QueryExtensionsTests
 
         await Verify(parameterMap, _verifySettings);
     }
-    
+
     [Fact]
     public async Task Pagination_ToMap_MapsCorrectly()
     {
         // Arrange
-        var pagination = new Pagination
-        {
-            Page = 1,
-            Size = 20
-        };
+        var pagination = new Pagination { Page = 1, Size = 20 };
 
         // Act & Assert
         var parameterMap = pagination.ToMap();
 
         await Verify(parameterMap, _verifySettings);
     }
-    
+
     [Fact]
     public async Task Pagination_DefaultValues_ToMap_MapsCorrectly()
     {
@@ -106,7 +104,7 @@ public class QueryExtensionsTests
 
         await Verify(parameterMap, _verifySettings);
     }
-    
+
     [Fact]
     public async Task GetOppdateringerQuery_ToMap_MapsCorrectly()
     {
@@ -114,8 +112,8 @@ public class QueryExtensionsTests
         var query = new GetOppdateringerQuery
         {
             Dato = DateTime.Now,
-            Organisasjonsnummer =  ["123456789", "987654321"],
-            Oppdateringsid = 69
+            Organisasjonsnummer = ["123456789", "987654321"],
+            Oppdateringsid = 69,
         };
 
         // Act & Assert
@@ -123,15 +121,12 @@ public class QueryExtensionsTests
 
         await Verify(parameterMap, _verifySettings);
     }
-    
+
     [Fact]
     public async Task GetOppdateringerQuery_DefaultValues_ToMap_MapsCorrectly()
     {
         // Arrange
-        var query = new GetOppdateringerQuery()
-        {
-            Dato = DateTime.Now
-        };
+        var query = new GetOppdateringerQuery() { Dato = DateTime.Now };
 
         // Act & Assert
         var parameterMap = query.ToMap();
