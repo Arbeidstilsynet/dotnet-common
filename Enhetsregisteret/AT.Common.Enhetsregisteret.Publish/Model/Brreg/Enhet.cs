@@ -256,4 +256,3 @@ public record Enhet
     [JsonPropertyName("_links")]
     public Dictionary<string, Link>? Links { get; init; }
 }
-
