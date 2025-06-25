@@ -1,7 +1,6 @@
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
 using Arbeidstilsynet.Common.Enhetsregisteret.Test.Integration.Setup;
-using Xunit;
 using Xunit.Abstractions;
 using Xunit.Microsoft.DependencyInjection.Abstracts;
 

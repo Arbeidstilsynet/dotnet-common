@@ -15,13 +15,13 @@
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.6" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="[9,10)" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="[9,10)" />
     <PackageReference
       Include="Microsoft.Extensions.DependencyInjection.Abstractions"
-      Version="9.0.6"
+      Version="[9,10)"
     />
-    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="9.6.0" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="[9,10)" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />

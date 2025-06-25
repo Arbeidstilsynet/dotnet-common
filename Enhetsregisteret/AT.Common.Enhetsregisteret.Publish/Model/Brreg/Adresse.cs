@@ -5,47 +5,47 @@ namespace Arbeidstilsynet.Common.Enhetsregisteret.Model.Brreg;
 /// <summary>
 /// Representerer en adresse i Enhetsregisteret.
 /// </summary>
-public class Adresse
+public record Adresse
 {
     /// <summary>
     /// Kommunen adressen tilhører.
     /// </summary>
     [JsonPropertyName("kommune")]
-    public string? Kommune { get; set; }
+    public string? Kommune { get; init; }
 
     /// <summary>
     /// Landkoden for adressen.
     /// </summary>
     [JsonPropertyName("landkode")]
-    public string? Landkode { get; set; }
+    public string? Landkode { get; init; }
 
     /// <summary>
     /// Postnummeret for adressen.
     /// </summary>
     [JsonPropertyName("postnummer")]
-    public string? Postnummer { get; set; }
+    public string? Postnummer { get; init; }
 
     /// <summary>
     /// Gateadressen, kan inneholde flere linjer.
     /// </summary>
     [JsonPropertyName("adresse")]
-    public string[]? Gateadresse { get; set; }
+    public string[]? Gateadresse { get; init; }
 
     /// <summary>
     /// Landet adressen tilhører.
     /// </summary>
     [JsonPropertyName("land")]
-    public string? Land { get; set; }
+    public string? Land { get; init; }
 
     /// <summary>
     /// Kommunenummeret for adressen.
     /// </summary>
     [JsonPropertyName("kommunenummer")]
-    public string? Kommunenummer { get; set; }
+    public string? Kommunenummer { get; init; }
 
     /// <summary>
     /// Poststedet for adressen.
     /// </summary>
     [JsonPropertyName("poststed")]
-    public string? Poststed { get; set; }
+    public string? Poststed { get; init; }
 }
