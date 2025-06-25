@@ -173,62 +173,62 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
     }
 }
 
-internal class OppdateringerEnheterResponse
+internal record OppdateringerEnheterResponse
     : EmbeddedResponse<OppdateringEnheterEmbeddedWrapper> { }
 
-internal class OppdateringerUnderenheterResponse
+internal record OppdateringerUnderenheterResponse
     : EmbeddedResponse<OppdateringUnderenheterEmbeddedWrapper> { }
 
-internal class EnheterResponse : EmbeddedResponse<EnhetEmbeddedWrapper> { }
+internal record EnheterResponse : EmbeddedResponse<EnhetEmbeddedWrapper> { }
 
-internal class UnderenheterResponse : EmbeddedResponse<UnderenhetEmbeddedWrapper> { }
+internal record UnderenheterResponse : EmbeddedResponse<UnderenhetEmbeddedWrapper> { }
 
-internal class EmbeddedResponse<T>
+internal record EmbeddedResponse<T>
 {
     [JsonPropertyName("_embedded")]
-    public T? Embedded { get; set; }
+    public T? Embedded { get; init; }
 
     [JsonPropertyName("page")]
-    public Page? Page { get; set; }
+    public Page? Page { get; init; }
 }
 
-internal class EnhetEmbeddedWrapper
+internal record EnhetEmbeddedWrapper
 {
     [JsonPropertyName("enheter")]
-    public List<Enhet>? Enheter { get; set; }
+    public List<Enhet>? Enheter { get; init; }
 }
 
-internal class UnderenhetEmbeddedWrapper
+internal record UnderenhetEmbeddedWrapper
 {
     [JsonPropertyName("underenheter")]
-    public List<Underenhet>? Underenheter { get; set; }
+    public List<Underenhet>? Underenheter { get; init; }
 }
 
-internal class OppdateringUnderenheterEmbeddedWrapper
+internal record OppdateringUnderenheterEmbeddedWrapper
 {
     [JsonPropertyName("oppdaterteUnderenheter")]
-    public List<Oppdatering>? OppdaterteUnderenheter { get; set; }
+    public List<Oppdatering>? OppdaterteUnderenheter { get; init; }
 }
 
-internal class OppdateringEnheterEmbeddedWrapper
+internal record OppdateringEnheterEmbeddedWrapper
 {
     [JsonPropertyName("oppdaterteEnheter")]
-    public List<Oppdatering>? OppdaterteEnheter { get; set; }
+    public List<Oppdatering>? OppdaterteEnheter { get; init; }
 }
 
-internal class Page
+internal record Page
 {
     [JsonPropertyName("size")]
-    public int Size { get; set; }
+    public int Size { get; init; }
 
     [JsonPropertyName("totalElements")]
-    public int TotalElements { get; set; }
+    public int TotalElements { get; init; }
 
     [JsonPropertyName("totalPages")]
-    public int TotalPages { get; set; }
+    public int TotalPages { get; init; }
 
     [JsonPropertyName("number")]
-    public int Number { get; set; }
+    public int Number { get; init; }
 }
 
 file static class Extensions
