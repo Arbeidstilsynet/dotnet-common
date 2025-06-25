@@ -1,0 +1,81 @@
+﻿{
+  Organisasjonsnummer: 509100675,
+  Navn: Sesam stasjon,
+  Organisasjonsform: {
+    Links: {
+      self: {
+        Href: https://data.brreg.no/enhetsregisteret/api/organisasjonsformer/BEDR
+      }
+    },
+    Kode: BEDR,
+    Utgaatt: 2024-01-04,
+    Beskrivelse: Underenhet til næringsdrivende og offentlig forvaltning
+  },
+  Postadresse: {
+    Kommune: Oslo,
+    Landkode: NO,
+    Postnummer: 0010,
+    Gateadresse: [
+      example-string,
+      example-string,
+      example-string
+    ],
+    Land: Norge,
+    Kommunenummer: 0301,
+    Poststed: Oslo
+  },
+  Beliggenhetsadresse: {
+    Kommune: Oslo,
+    Landkode: NO,
+    Postnummer: 0010,
+    Gateadresse: [
+      example-string,
+      example-string,
+      example-string
+    ],
+    Land: Norge,
+    Kommunenummer: 0301,
+    Poststed: Oslo
+  },
+  RegistrertIMvaregisteret: true,
+  Naeringskode1: {
+    Kode: 41.109,
+    Beskrivelse: Utvikling og salg av egen fast eiendom ellers
+  },
+  Naeringskode2: {
+    Kode: 41.109,
+    Beskrivelse: Utvikling og salg av egen fast eiendom ellers
+  },
+  Naeringskode3: {
+    Kode: 41.109,
+    Beskrivelse: Utvikling og salg av egen fast eiendom ellers
+  },
+  Hjelpeenhetskode: {
+    Kode: 70.100,
+    Beskrivelse: Hovedkontortjenester
+  },
+  RegistreringsdatoEnhetsregisteret: 2024-01-04,
+  Hjemmeside: www.brreg.no,
+  FrivilligMvaRegistrertBeskrivelser: [
+    example-string,
+    example-string,
+    example-string
+  ],
+  AntallAnsatte: 50,
+  HarRegistrertAntallAnsatte: true,
+  OverordnetEnhet: 376181782,
+  Oppstartsdato: 2024-01-04,
+  DatoEierskifte: 2024-01-04,
+  Nedleggelsesdato: 2024-01-04,
+  Epostadresse: epost@epost.com,
+  Telefon: 91504800,
+  Mobil: 91504800,
+  Links: {
+    overordnetEnhet: {
+      Href: https://data.brreg.no/enhetsregisteret/api/enheter/376181782
+    },
+    self: {
+      Href: https://data.brreg.no/enhetsregisteret/api/underenheter/509100675
+    }
+  }
+}
