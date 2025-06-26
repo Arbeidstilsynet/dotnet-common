@@ -1,0 +1,613 @@
+{
+    "info": {
+        "description": "API for oppslag av adresser i matrikkelen.\n            Det er ikke n\u00f8dvendig med innlogging/autorisasjon for \u00e5 bruke API-et.\n            St\u00f8rre funksjonalitets\u00f8deleggende endringer i API-et vil bli annonsert minst 3 m\u00e5neder i forveien p\u00e5 https://geonorge.no/aktuelt/varsler/Tjenestevarsler/\n            API-et returnerer kun de f\u00f8rste 10 000 resultatene. Hvis man \u00f8nsker \u00e5 hente ned st\u00f8rre datasett s\u00e5 anbefales det \u00e5 laste ned filene som er tilgjengelige fra https://geonorge.no .\n        ",
+        "title": "\u00c5pent adresse-API fra Kartverket",
+        "version": "1.2.0"
+    },
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "host": "ws.geonorge.no",
+    "basePath": "/adresser/v1",
+    "schemes": [
+        "https"
+    ],
+    "paths": {
+        "/sok": {
+            "get": {
+                "summary": "Standard s\u00f8k.",
+                "description": "S\u00f8k etter adresser. Minst ett s\u00f8keparameter m\u00e5 benyttes. For generelle s\u00f8k s\u00e5 anbefales det \u00e5 benytte s\u00f8keparameteret \"sok\", og s\u00e5 eventuelt snevre inn resultatet ved \u00e5 bruke de andre parameterene. For eksempel sok?sok=munkegata&kommunenummer=5001",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "sok",
+                        "required": false,
+                        "type": "string",
+                        "description": "Generelt adresses\u00f8k over nesten alle feltene. Wildcard-s\u00f8k med \"*\" er st\u00f8ttet (OBS: mellomrom kan ikke erstattes med wildcard). Flere detaljer vil gi mer n\u00f8yaktige s\u00f8k. Bare legg til ekstra opplysninger adskilt med mellomrom. F.eks.: ?sok=munkegata 1 trondheim  "
+                    },
+                    {
+                        "in": "query",
+                        "name": "fuzzy",
+                        "required": false,
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Utf\u00f8rer et fuzzys\u00f8k som finner adresser som ligner p\u00e5 det som det s\u00f8kes etter. Modifiserer kun feltet \"sok\". Ikke kompatibelt med bruk av wildcard."
+                    },
+                    {
+                        "in": "query",
+                        "name": "sokemodus",
+                        "required": false,
+                        "type": "string",
+                        "enum": [
+                            "AND",
+                            "OR"
+                        ],
+                        "description": "Modifiserer \"sok\"-feltet, standardverdi er \"AND\". Velg om s\u00f8ket skal kreve at hver eneste s\u00f8keparameter finnes i treffet, eller om det holder med treff p\u00e5 kun ett parameter. F.eks. vil \"?sok=munkegata 1 trondheim&sokemodus=OR\" returnere alt som inneholder \"munkegata\" OG/ELLER tallet \"1\" OG/ELLER \"trondheim\"."
+                    },
+                    {
+                        "in": "query",
+                        "name": "adressenavn",
+                        "required": false,
+                        "type": "string",
+                        "description": "Navn p\u00e5 gate, veg, sti, plass eller omr\u00e5de som er f\u00f8rt i matrikkelen (eksempel S\u00f8rumvegen)."
+                    },
+                    {
+                        "in": "query",
+                        "name": "adressetekst",
+                        "required": false,
+                        "type": "string",
+                        "description": "Offisiell adresse som tekststreng (eksempel \u00abVen, S\u00f8rumvegen 45\u00bb), men uten eventuelt bruksenhetsnummer for leiligheter"
+                    },
+                    {
+                        "in": "query",
+                        "name": "adressetilleggsnavn",
+                        "required": false,
+                        "type": "string",
+                        "description": "Nedarvet bruksnavn, navn p\u00e5 en institusjon eller bygning eller grend brukt som del av den offisielle adressen"
+                    },
+                    {
+                        "in": "query",
+                        "name": "adressekode",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Nummer som entydig identifiserer adresserbare gater, veger, stier, plasser og omr\u00e5der som er f\u00f8rt i matrikkelen innen kommunen"
+                    },
+                    {
+                        "in": "query",
+                        "name": "nummer",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Del av adressenummer (husnummer) som er et nummer og eventuelt en bokstav, f.eks 23B"
+                    },
+                    {
+                        "in": "query",
+                        "name": "bokstav",
+                        "required": false,
+                        "type": "string",
+                        "description": "Del av adressenummer (husnummer) som er et nummer og en eventuelt en bokstav, f.eks 23B. For \u00e5 kun s\u00f8ke p\u00e5 adresser uten noen bokstav s\u00e5 inkluderer man \"bokstav=\" i s\u00f8kestrengen uten \u00e5 fylle inn noen verdi."
+                    },
+                    {
+                        "in": "query",
+                        "name": "kommunenummer",
+                        "required": false,
+                        "type": "string",
+                        "description": "Nummerering av kommunen i henhold til Statistisk sentralbyr\u00e5 sin offisielle liste. Tekstverdi som m\u00e5 best\u00e5 av 4 tall. 0301 er for eksempel gyldig, mens 301 er ikke gyldig."
+                    },
+                    {
+                        "in": "query",
+                        "name": "kommunenavn",
+                        "required": false,
+                        "type": "string",
+                        "description": "Navn (norsk) p\u00e5 en kommune"
+                    },
+                    {
+                        "in": "query",
+                        "name": "gardsnummer",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Del av en matrikkeladresse der vegadresse ikke er innf\u00f8rt, - eller vegadressens knytning til matrikkelenhet (grunneiendom eller feste, - gir her ikke knyting mot seksjon)"
+                    },
+                    {
+                        "in": "query",
+                        "name": "bruksnummer",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Del av en matrikkeladresse der vegadresse ikke er innf\u00f8rt, - eller vegadressens knytning til matrikkelenhet (grunneiendom eller feste, - gir her ikke knyting mot seksjon)"
+                    },
+                    {
+                        "in": "query",
+                        "name": "festenummer",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Del av en matrikkeladresse der vegadresse ikke er innf\u00f8rt, - eller vegadressens knytning til matrikkelenhet (grunneiendom eller feste, - gir her ikke knytning mot seksjon)"
+                    },
+                    {
+                        "in": "query",
+                        "name": "undernummer",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Fortl\u00f8pende nummerering av matrikkeladresser med samme g\u00e5rds-, bruks- og festenummer."
+                    },
+                    {
+                        "in": "query",
+                        "name": "bruksenhetsnummer",
+                        "required": false,
+                        "type": "string",
+                        "description": "Del av offisiell adresse (bruksenhetsnummer) til f.eks en leilighet i flerboligbygg. Bokstaven og de to f\u00f8rste tallene angir etasje, de to siste angir leilighetens nummer i etasjen, regnet fra venstre mot h\u00f8yre. Eksempel: \"H0102\", \"K0101\""
+                    },
+                    {
+                        "in": "query",
+                        "name": "objtype",
+                        "required": false,
+                        "type": "string",
+                        "enum": [
+                            "Vegadresse",
+                            "Matrikkeladresse"
+                        ],
+                        "description": "Vegadresse er offisiell adresse i form av et adressenavn og et adressenummer (Storgata 10). Der kommunen ikke har g\u00e5tt over til vegadresser, vil det finnes matrikkeladresse p\u00e5 formen: g\u00e5rdsnummer/ bruksnummer/ev festenummer-ev undernummer (10/2) Begge adressetypene kan ha bruksenhetsnummer (leiligheter) og adressetilleggsnavn. Begge adressetypene vises som standard, hvis man kun \u00f8nsker \u00e5 se en av de kan man spesifisere adressetypen via dette parameteret."
+                    },
+                    {
+                        "in": "query",
+                        "name": "poststed",
+                        "required": false,
+                        "type": "string",
+                        "description": "Navn p\u00e5 poststed i henhold til Postens egne lister"
+                    },
+                    {
+                        "in": "query",
+                        "name": "postnummer",
+                        "required": false,
+                        "type": "string",
+                        "description": "Unik identifikasjon av et postnummeromr\u00e5de. Tekstverdi som m\u00e5 best\u00e5 av 4 tall. 0340 er for eksempel gyldig, mens 340 er ikke gyldig. Postnummer som identifiserer postboksanlegg er ikke med og vil ikke gi treff."
+                    },
+                    {
+                        "in": "query",
+                        "name": "filtrer",
+                        "required": false,
+                        "type": "string",
+                        "description": "Kommaseparert liste med objekter du ikke \u00f8nsker \u00e5 filtrere ut. For \u00e5 hente ut underobjekter bruk \".\"-notasjon, f.eks.: &filtrer=adresser.kommunenummer,adresser.representasjonspunkt"
+                    },
+                    {
+                        "in": "query",
+                        "name": "utkoordsys",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int32",
+                        "default": 4258,
+                        "description": "Koordinatsystem som adressegeometrien skal returneres i. Oppgis som srid, f.eks. 25833 eller 3857. Standardinnstilling er 4258"
+                    },
+                    {
+                        "in": "query",
+                        "name": "treffPerSide",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int32",
+                        "default": 10,
+                        "description": "Antall treff per side.",
+                        "maximum": 1000
+                    },
+                    {
+                        "in": "query",
+                        "name": "side",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int32",
+                        "default": 0,
+                        "description": "Sidenummeret som vises. F\u00f8rste side = 0"
+                    },
+                    {
+                        "in": "query",
+                        "name": "asciiKompatibel",
+                        "required": false,
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Garanterer at dataene som returneres er ascii-kompatible."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/OutputAdresseList"
+                        }
+                    }
+                }
+            }
+        },
+        "/punktsok": {
+            "get": {
+                "summary": "Geografisk punkts\u00f8k.",
+                "description": "S\u00f8k etter adresser innen en viss radius. Sortert etter distanse fra punkt. Respons inkluderer distansen fra punktet i meter. <p>F.eks. punktsok?lat=60&lon=11&radius=1000</p>",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "lat",
+                        "required": true,
+                        "type": "number",
+                        "format": "float",
+                        "description": "Geografiske latitude/breddegrad/nordlige koordinater, med mindre annet er spesifisert."
+                    },
+                    {
+                        "in": "query",
+                        "name": "lon",
+                        "required": true,
+                        "type": "number",
+                        "format": "float",
+                        "description": "Geografiske longitude/lengdegrad/\u00f8stlige koordinater, med mindre annet er spesifisert."
+                    },
+                    {
+                        "in": "query",
+                        "name": "radius",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Radius for s\u00f8ket i hele meter"
+                    },
+                    {
+                        "in": "query",
+                        "name": "koordsys",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int32",
+                        "default": 4258,
+                        "description": "Koordinatsystem for punktet du s\u00f8ker etter. Oppgis som srid, f.eks. 25833 eller 3857. Standardinnstilling er 4258"
+                    },
+                    {
+                        "in": "query",
+                        "name": "utkoordsys",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int32",
+                        "default": 4258,
+                        "description": "Koordinatsystem som adressegeometrien skal returneres i. Oppgis som srid, f.eks. 25833 eller 3857. Standardinnstilling er 4258"
+                    },
+                    {
+                        "in": "query",
+                        "name": "filtrer",
+                        "required": false,
+                        "type": "string",
+                        "description": "Kommaseparert liste med objekter du ikke \u00f8nsker \u00e5 filtrere ut. For \u00e5 hente ut underobjekter bruk \".\"-notasjon, f.eks.: &filtrer=adresser.kommunenummer,adresser.representasjonspunkt"
+                    },
+                    {
+                        "in": "query",
+                        "name": "treffPerSide",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int32",
+                        "default": 10,
+                        "description": "Antall treff per side.",
+                        "maximum": 1000
+                    },
+                    {
+                        "in": "query",
+                        "name": "side",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int32",
+                        "default": 0,
+                        "description": "Sidenummeret som vises. F\u00f8rste side = 0"
+                    },
+                    {
+                        "in": "query",
+                        "name": "asciiKompatibel",
+                        "required": false,
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Garanterer at dataene som returneres er ascii-kompatible."
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/OutputGeoPointList"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "swagger": "2.0",
+    "definitions": {
+        "HitMetadata": {
+            "type": "object",
+            "properties": {
+                "asciiKompatibel": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Garanterer at dataene som returneres er ascii-kompatible."
+                },
+                "sokeStreng": {
+                    "type": "string",
+                    "description": "S\u00f8kestrengen som ble sendt inn til API-et."
+                },
+                "treffPerSide": {
+                    "type": "integer",
+                    "format": "int32",
+                    "default": 10,
+                    "description": "Antall treff per side.",
+                    "maximum": 1000
+                },
+                "side": {
+                    "type": "integer",
+                    "format": "int32",
+                    "default": 0,
+                    "description": "Sidenummeret som vises. F\u00f8rste side = 0"
+                },
+                "totaltAntallTreff": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Antall treff som s\u00f8ket returnerte."
+                },
+                "viserTil": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Hvilket resultatnummer det siste objektet du ser har."
+                },
+                "viserFra": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Hvilket resultatnummer det f\u00f8rste objektet du ser har."
+                }
+            }
+        },
+        "GeomPoint": {
+            "type": "object",
+            "properties": {
+                "epsg": {
+                    "type": "string",
+                    "description": "Koordinatsystem til punktet. Angitt vha EPSG-kode."
+                },
+                "lat": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "Geografiske latitude/breddegrad/nordlige koordinater, med mindre annet er spesifisert."
+                },
+                "lon": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "Geografiske longitude/lengdegrad/\u00f8stlige koordinater, med mindre annet er spesifisert."
+                }
+            },
+            "required": [
+                "lat",
+                "lon"
+            ]
+        },
+        "OutputAdresse": {
+            "type": "object",
+            "properties": {
+                "adressenavn": {
+                    "type": "string",
+                    "description": "Navn p\u00e5 gate, veg, sti, plass eller omr\u00e5de som er f\u00f8rt i matrikkelen (eksempel S\u00f8rumvegen)."
+                },
+                "adressetekst": {
+                    "type": "string",
+                    "description": "Del av offisiell adresse, men uten bruksenhetsnummer som ligger til bruksenheter/boliger (ligger her som egenskap til vegadressen) Eksempel: \"Storgata 2B\" eller \"123/4-2\" Der det i tillegg er adressetilleggsnavn: \"Haugen, Storgata 2B\" eller \"Midtgard, 123/4-2\""
+                },
+                "adressetilleggsnavn": {
+                    "type": "string",
+                    "description": "Nedarvet bruksnavn, navn p\u00e5 en institusjon eller bygning eller grend brukt som del av den offisielle adressen"
+                },
+                "adressekode": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Nummer som entydig identifiserer adresserbare gater, veger, stier, plasser og omr\u00e5der som er f\u00f8rt i matrikkelen innen kommunen"
+                },
+                "nummer": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Del av adressenummer (husnummer) som er et nummer og eventuelt en bokstav, f.eks 23B"
+                },
+                "bokstav": {
+                    "type": "string",
+                    "description": "Del av adressenummer (husnummer) som er et nummer og en eventuelt en bokstav, f.eks 23B. For \u00e5 kun s\u00f8ke p\u00e5 adresser uten noen bokstav s\u00e5 inkluderer man \"bokstav=\" i s\u00f8kestrengen uten \u00e5 fylle inn noen verdi."
+                },
+                "kommunenummer": {
+                    "type": "string",
+                    "description": "Nummerering av kommunen i henhold til Statistisk sentralbyr\u00e5 sin offisielle liste. Tekstverdi som m\u00e5 best\u00e5 av 4 tall. 0301 er for eksempel gyldig, mens 301 er ikke gyldig."
+                },
+                "kommunenavn": {
+                    "type": "string",
+                    "description": "Navn (norsk) p\u00e5 en kommune"
+                },
+                "gardsnummer": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Del av en matrikkeladresse der vegadresse ikke er innf\u00f8rt, - eller vegadressens knytning til matrikkelenhet (grunneiendom eller feste, - gir her ikke knyting mot seksjon)"
+                },
+                "bruksnummer": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Del av en matrikkeladresse der vegadresse ikke er innf\u00f8rt, - eller vegadressens knytning til matrikkelenhet (grunneiendom eller feste, - gir her ikke knyting mot seksjon)"
+                },
+                "festenummer": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Del av en matrikkeladresse der vegadresse ikke er innf\u00f8rt, - eller vegadressens knytning til matrikkelenhet (grunneiendom eller feste, - gir her ikke knytning mot seksjon)"
+                },
+                "undernummer": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Fortl\u00f8pende nummerering av matrikkeladresser med samme g\u00e5rds-, bruks- og festenummer."
+                },
+                "bruksenhetsnummer": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "objtype": {
+                    "type": "string",
+                    "enum": [
+                        "Vegadresse",
+                        "Matrikkeladresse"
+                    ],
+                    "description": "Vegadresse er offisiell adresse i form av et adressenavn og et adressenummer (Storgata 10). Der kommunen ikke har g\u00e5tt over til vegadresser, vil det finnes matrikkeladresse p\u00e5 formen: g\u00e5rdsnummer/ bruksnummer/ev festenummer-ev undernummer (10/2) Begge adressetypene kan ha bruksenhetsnummer (leiligheter) og adressetilleggsnavn. Begge adressetypene vises som standard, hvis man kun \u00f8nsker \u00e5 se en av de kan man spesifisere adressetypen via dette parameteret."
+                },
+                "poststed": {
+                    "type": "string",
+                    "description": "Navn p\u00e5 poststed i henhold til Postens egne lister"
+                },
+                "postnummer": {
+                    "type": "string",
+                    "description": "Unik identifikasjon av et postnummeromr\u00e5de. Tekstverdi som m\u00e5 best\u00e5 av 4 tall. 0340 er for eksempel gyldig, mens 340 er ikke gyldig. Postnummer som identifiserer postboksanlegg er ikke med og vil ikke gi treff."
+                },
+                "adressetekstutenadressetilleggsnavn": {
+                    "type": "string",
+                    "description": "Del av offisiell adresse, men uten bruksenhetsnummer som ligger til bruksenheter/boliger og adressetilleggsnavn Eksempel: \"Storgata 2B\" eller \"123/4-2\""
+                },
+                "stedfestingverifisert": {
+                    "type": "boolean",
+                    "description": "Angivelse om stedfestingen (koordinatene) er kontrollert og funnet i orden (verifisert)"
+                },
+                "representasjonspunkt": {
+                    "$ref": "#/definitions/GeomPoint"
+                },
+                "oppdateringsdato": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Dato for siste endring p\u00e5 objektdataene"
+                }
+            }
+        },
+        "OutputAdresseList": {
+            "type": "object",
+            "properties": {
+                "metadata": {
+                    "$ref": "#/definitions/HitMetadata"
+                },
+                "adresser": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/OutputAdresse"
+                    }
+                }
+            }
+        },
+        "OutputGeoPoint": {
+            "type": "object",
+            "properties": {
+                "adressenavn": {
+                    "type": "string",
+                    "description": "Navn p\u00e5 gate, veg, sti, plass eller omr\u00e5de som er f\u00f8rt i matrikkelen (eksempel S\u00f8rumvegen)."
+                },
+                "adressetekst": {
+                    "type": "string",
+                    "description": "Del av offisiell adresse, men uten bruksenhetsnummer som ligger til bruksenheter/boliger (ligger her som egenskap til vegadressen) Eksempel: \"Storgata 2B\" eller \"123/4-2\" Der det i tillegg er adressetilleggsnavn: \"Haugen, Storgata 2B\" eller \"Midtgard, 123/4-2\""
+                },
+                "adressetilleggsnavn": {
+                    "type": "string",
+                    "description": "Nedarvet bruksnavn, navn p\u00e5 en institusjon eller bygning eller grend brukt som del av den offisielle adressen"
+                },
+                "adressekode": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Nummer som entydig identifiserer adresserbare gater, veger, stier, plasser og omr\u00e5der som er f\u00f8rt i matrikkelen innen kommunen"
+                },
+                "nummer": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Del av adressenummer (husnummer) som er et nummer og eventuelt en bokstav, f.eks 23B"
+                },
+                "bokstav": {
+                    "type": "string",
+                    "description": "Del av adressenummer (husnummer) som er et nummer og en eventuelt en bokstav, f.eks 23B. For \u00e5 kun s\u00f8ke p\u00e5 adresser uten noen bokstav s\u00e5 inkluderer man \"bokstav=\" i s\u00f8kestrengen uten \u00e5 fylle inn noen verdi."
+                },
+                "kommunenummer": {
+                    "type": "string",
+                    "description": "Nummerering av kommunen i henhold til Statistisk sentralbyr\u00e5 sin offisielle liste. Tekstverdi som m\u00e5 best\u00e5 av 4 tall. 0301 er for eksempel gyldig, mens 301 er ikke gyldig."
+                },
+                "kommunenavn": {
+                    "type": "string",
+                    "description": "Navn (norsk) p\u00e5 en kommune"
+                },
+                "gardsnummer": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Del av en matrikkeladresse der vegadresse ikke er innf\u00f8rt, - eller vegadressens knytning til matrikkelenhet (grunneiendom eller feste, - gir her ikke knyting mot seksjon)"
+                },
+                "bruksnummer": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Del av en matrikkeladresse der vegadresse ikke er innf\u00f8rt, - eller vegadressens knytning til matrikkelenhet (grunneiendom eller feste, - gir her ikke knyting mot seksjon)"
+                },
+                "festenummer": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Del av en matrikkeladresse der vegadresse ikke er innf\u00f8rt, - eller vegadressens knytning til matrikkelenhet (grunneiendom eller feste, - gir her ikke knytning mot seksjon)"
+                },
+                "undernummer": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Fortl\u00f8pende nummerering av matrikkeladresser med samme g\u00e5rds-, bruks- og festenummer."
+                },
+                "bruksenhetsnummer": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "objtype": {
+                    "type": "string",
+                    "enum": [
+                        "Vegadresse",
+                        "Matrikkeladresse"
+                    ],
+                    "description": "Vegadresse er offisiell adresse i form av et adressenavn og et adressenummer (Storgata 10). Der kommunen ikke har g\u00e5tt over til vegadresser, vil det finnes matrikkeladresse p\u00e5 formen: g\u00e5rdsnummer/ bruksnummer/ev festenummer-ev undernummer (10/2) Begge adressetypene kan ha bruksenhetsnummer (leiligheter) og adressetilleggsnavn. Begge adressetypene vises som standard, hvis man kun \u00f8nsker \u00e5 se en av de kan man spesifisere adressetypen via dette parameteret."
+                },
+                "poststed": {
+                    "type": "string",
+                    "description": "Navn p\u00e5 poststed i henhold til Postens egne lister"
+                },
+                "postnummer": {
+                    "type": "string",
+                    "description": "Unik identifikasjon av et postnummeromr\u00e5de. Tekstverdi som m\u00e5 best\u00e5 av 4 tall. 0340 er for eksempel gyldig, mens 340 er ikke gyldig. Postnummer som identifiserer postboksanlegg er ikke med og vil ikke gi treff."
+                },
+                "adressetekstutenadressetilleggsnavn": {
+                    "type": "string",
+                    "description": "Del av offisiell adresse, men uten bruksenhetsnummer som ligger til bruksenheter/boliger og adressetilleggsnavn Eksempel: \"Storgata 2B\" eller \"123/4-2\""
+                },
+                "stedfestingverifisert": {
+                    "type": "boolean",
+                    "description": "Angivelse om stedfestingen (koordinatene) er kontrollert og funnet i orden (verifisert)"
+                },
+                "representasjonspunkt": {
+                    "$ref": "#/definitions/GeomPoint"
+                },
+                "oppdateringsdato": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Dato for siste endring p\u00e5 objektdataene"
+                },
+                "meterDistanseTilPunkt": {
+                    "type": "number",
+                    "format": "float"
+                }
+            }
+        },
+        "OutputGeoPointList": {
+            "type": "object",
+            "properties": {
+                "metadata": {
+                    "$ref": "#/definitions/HitMetadata"
+                },
+                "adresser": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/OutputGeoPoint"
+                    }
+                }
+            }
+        }
+    }
+}
