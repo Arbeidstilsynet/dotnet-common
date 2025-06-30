@@ -15,19 +15,18 @@ public static class GeoNorgeExtensions
     /// <param name="geoNorge"></param>
     /// <param name="query"></param>
     /// <returns></returns>
-    public static async Task<Address?> GetClosestAddress(this IGeoNorge geoNorge, PointSearchQuery query)
+    public static async Task<Address?> GetClosestAddress(
+        this IGeoNorge geoNorge,
+        PointSearchQuery query
+    )
     {
-        var pagination = new Pagination
-        {
-            PageIndex = 0,
-            PageSize = 1
-        };
-        
+        var pagination = new Pagination { PageIndex = 0, PageSize = 1 };
+
         var result = await geoNorge.SearchAddressesByPoint(query, pagination);
 
         return result?.Elements.FirstOrDefault();
     }
-    
+
     /// <summary>
     /// Searches for a location based on a text query defined by <see cref="TextSearchQuery"/>.
     /// </summary>
@@ -41,11 +40,7 @@ public static class GeoNorgeExtensions
         Pagination? pagination = null
     )
     {
-        pagination ??= new Pagination
-        {
-            PageIndex = 0,
-            PageSize = 1
-        };
+        pagination ??= new Pagination { PageIndex = 0, PageSize = 1 };
 
         var result = await geoNorge.SearchAddresses(query, pagination);
 
