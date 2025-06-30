@@ -50,6 +50,11 @@ internal class GeoNorgeClient : IGeoNorge
         Pagination? pagination = default
     )
     {
+        if (query.RadiusInMeters == 0)
+        {
+            throw new ArgumentException("RadiusInMeters must be greater than 0.", nameof(query.RadiusInMeters));
+        }
+        
         pagination ??= new Pagination();
 
         var parameterizedUri = new Uri("adresser/v1/punktsok", UriKind.Relative)

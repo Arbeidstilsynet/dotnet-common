@@ -26,9 +26,6 @@
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Extensions\" />
-  </ItemGroup>
   <Target
     Name="InjectPackageReleaseNotesFromFile"
     BeforeTargets="GenerateNuspec"
