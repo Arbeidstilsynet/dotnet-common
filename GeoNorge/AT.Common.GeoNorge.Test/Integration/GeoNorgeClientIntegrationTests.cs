@@ -1,4 +1,5 @@
 using Arbeidstilsynet.Common.GeoNorge.Model.Request;
+using Arbeidstilsynet.Common.GeoNorge.Ports;
 using Arbeidstilsynet.Common.GeoNorge.Test.Integration.Setup;
 using WireMock.Pact.Models.V2;
 using Xunit.Abstractions;
@@ -37,16 +38,12 @@ public class GeoNorgeClientIntegrationTests : TestBed<GeoNorgeTestFixture>
         // Act
         var result = await _sut.SearchAddressesByPoint(new PointSearchQuery()
         {
-            Point = new Location()
-            {
-                Latitude = 4.2,
-                Longitude = 4.2
-            },
+            Latitude = 4.2,
+            Longitude = 4.2,
             RadiusInMeters = 42
         });
 
         // Assert
         await Verify(result, _verifySettings);
     }
-    
 }

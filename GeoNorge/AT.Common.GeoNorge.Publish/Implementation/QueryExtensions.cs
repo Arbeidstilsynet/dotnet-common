@@ -94,8 +94,8 @@ internal static class QueryExtensions
     {
         var parameterMap = new Dictionary<string, string>();
 
-        parameterMap.Add("lat", query.Point.Latitude.ToString("F6", System.Globalization.CultureInfo.InvariantCulture));
-        parameterMap.Add("lon", query.Point.Longitude.ToString("F6", System.Globalization.CultureInfo.InvariantCulture));
+        parameterMap.Add("lat", query.Latitude.ToString("F6", System.Globalization.CultureInfo.InvariantCulture));
+        parameterMap.Add("lon", query.Longitude.ToString("F6", System.Globalization.CultureInfo.InvariantCulture));
         parameterMap.Add("radius", query.RadiusInMeters.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
         return parameterMap;

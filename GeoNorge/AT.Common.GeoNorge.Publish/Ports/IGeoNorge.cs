@@ -1,7 +1,7 @@
-using Arbeidstilsynet.Common.GeoNorge.Model;
 using Arbeidstilsynet.Common.GeoNorge.Model.Request;
+using Arbeidstilsynet.Common.GeoNorge.Model.Response;
 
-namespace Arbeidstilsynet.Common.GeoNorge;
+namespace Arbeidstilsynet.Common.GeoNorge.Ports;
 
 /// <summary>
 /// Implements the GeoNorge API for address and location searches.

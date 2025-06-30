@@ -1,4 +1,5 @@
 using Arbeidstilsynet.Common.GeoNorge.Implementation;
+using Arbeidstilsynet.Common.GeoNorge.Ports;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Arbeidstilsynet.Common.GeoNorge.DependencyInjection;

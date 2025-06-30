@@ -1,4 +1,4 @@
-namespace Arbeidstilsynet.Common.GeoNorge;
+namespace Arbeidstilsynet.Common.GeoNorge.Model.Response;
 
 /// <summary>
 /// Result of a paginated query.

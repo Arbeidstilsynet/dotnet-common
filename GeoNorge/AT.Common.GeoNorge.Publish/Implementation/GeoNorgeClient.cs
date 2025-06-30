@@ -3,6 +3,8 @@ using System.Text.Json.Serialization;
 using Arbeidstilsynet.Common.GeoNorge.DependencyInjection;
 using Arbeidstilsynet.Common.GeoNorge.Model;
 using Arbeidstilsynet.Common.GeoNorge.Model.Request;
+using Arbeidstilsynet.Common.GeoNorge.Model.Response;
+using Arbeidstilsynet.Common.GeoNorge.Ports;
 using Microsoft.Extensions.Logging;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Implementation;
