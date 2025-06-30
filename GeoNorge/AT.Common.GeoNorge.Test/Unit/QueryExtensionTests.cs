@@ -6,12 +6,12 @@ namespace Arbeidstilsynet.Common.GeoNorge.Adapters.Test.Unit;
 public class QueryExtensionTests
 {
     private readonly VerifySettings _verifySettings = new VerifySettings();
-    
+
     public QueryExtensionTests()
     {
         _verifySettings.UseDirectory("TestData/Snapshots");
     }
-    
+
     [Fact]
     public async Task TextSearchQuery_ToMap_MapsCorrectly()
     {
@@ -36,10 +36,7 @@ public class QueryExtensionTests
     public async Task TextSearchQuery_DefaultValues_ToMap_MapsCorrectly()
     {
         // Arrange
-        var query = new TextSearchQuery()
-        {
-            SearchTerm = "SearchTerm",
-        };
+        var query = new TextSearchQuery() { SearchTerm = "SearchTerm" };
 
         // Act & Assert
         var parameterMap = query.ToMap();
@@ -55,7 +52,7 @@ public class QueryExtensionTests
         {
             Latitude = 4.200069,
             Longitude = 4.200000404,
-            RadiusInMeters = 42
+            RadiusInMeters = 42,
         };
 
         // Act & Assert
@@ -63,23 +60,19 @@ public class QueryExtensionTests
 
         await Verify(parameterMap, _verifySettings);
     }
-    
+
     [Fact]
     public async Task Pagination_ToMap_MapsCorrectly()
     {
         // Arrange
-        var pagination = new Pagination()
-        {
-            PageIndex = 1,
-            PageSize = 20
-        };
+        var pagination = new Pagination() { PageIndex = 1, PageSize = 20 };
 
         // Act & Assert
         var parameterMap = pagination.ToMap();
 
         await Verify(parameterMap, _verifySettings);
     }
-    
+
     [Fact]
     public async Task Pagination_DefaultValues_ToMap_MapsCorrectly()
     {

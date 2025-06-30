@@ -11,37 +11,42 @@ public class GeoNorgeClientIntegrationTests : TestBed<GeoNorgeTestFixture>
 {
     private readonly IGeoNorge _sut;
     private readonly VerifySettings _verifySettings = new VerifySettings();
-    
-    public GeoNorgeClientIntegrationTests(ITestOutputHelper testOutputHelper, GeoNorgeTestFixture fixture) : base(testOutputHelper, fixture)
+
+    public GeoNorgeClientIntegrationTests(
+        ITestOutputHelper testOutputHelper,
+        GeoNorgeTestFixture fixture
+    )
+        : base(testOutputHelper, fixture)
     {
         _sut = fixture.GetService<IGeoNorge>(testOutputHelper)!;
 
         _verifySettings.UseDirectory("TestData/Snapshots");
     }
-    
+
     [Fact]
     public async Task SearchAddresses_ValidRequest_DeserializesResult()
     {
         // Act
-        var result = await _sut.SearchAddresses(new TextSearchQuery()
-        {
-            SearchTerm = "Storgata 1, Oslo",
-        });
+        var result = await _sut.SearchAddresses(
+            new TextSearchQuery() { SearchTerm = "Storgata 1, Oslo" }
+        );
 
         // Assert
         await Verify(result, _verifySettings);
     }
-    
+
     [Fact]
     public async Task SearchAddressesByPoint_ValidRequest_DeserializesResult()
     {
         // Act
-        var result = await _sut.SearchAddressesByPoint(new PointSearchQuery()
-        {
-            Latitude = 4.2,
-            Longitude = 4.2,
-            RadiusInMeters = 42
-        });
+        var result = await _sut.SearchAddressesByPoint(
+            new PointSearchQuery()
+            {
+                Latitude = 4.2,
+                Longitude = 4.2,
+                RadiusInMeters = 42,
+            }
+        );
 
         // Assert
         await Verify(result, _verifySettings);

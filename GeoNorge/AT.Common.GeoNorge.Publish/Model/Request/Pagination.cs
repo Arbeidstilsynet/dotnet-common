@@ -9,7 +9,7 @@ public record Pagination
     /// 0-based page index.
     /// </summary>
     public long PageIndex { get; init; } = 0;
-    
+
     /// <summary>
     /// Number of elements per page. Default is 10.
     /// </summary>

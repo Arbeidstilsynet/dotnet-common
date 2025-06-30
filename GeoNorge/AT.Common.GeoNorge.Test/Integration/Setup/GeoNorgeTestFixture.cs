@@ -26,19 +26,18 @@ public class GeoNorgeTestFixture : TestBedFixture
             FileAccess.Read
         );
 
-        _server.AddOpenApiMappings(fileStream, m =>
-        {
-            
-            
-            return m;
-        });
+        _server.AddOpenApiMappings(
+            fileStream,
+            m =>
+            {
+                return m;
+            }
+        );
     }
 
     protected override void AddServices(IServiceCollection services, IConfiguration? configuration)
     {
-        services.AddGeoNorge(
-            new GeoNorgeConfig() { BaseUrl = _server.Urls[0] }
-        );
+        services.AddGeoNorge(new GeoNorgeConfig() { BaseUrl = _server.Urls[0] });
     }
 
     protected override IEnumerable<TestAppSettings> GetTestAppSettings() => [];

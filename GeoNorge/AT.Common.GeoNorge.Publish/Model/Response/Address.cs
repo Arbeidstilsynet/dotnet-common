@@ -6,7 +6,7 @@ namespace Arbeidstilsynet.Common.GeoNorge.Model.Response;
 /// Represents an address in Norway, including street name, postal code, municipality number, and location.
 /// </summary>
 public record Address
-{    
+{
     /// <summary>
     /// Street name.
     /// </summary>

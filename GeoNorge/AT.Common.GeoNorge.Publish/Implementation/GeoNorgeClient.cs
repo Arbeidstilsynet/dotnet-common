@@ -19,15 +19,18 @@ internal class GeoNorgeClient : IGeoNorge
         _logger = logger;
         _httpClient = httpClientFactory.CreateClient(DependencyInjectionExtensions.ClientKey);
     }
-    
-    public async Task<PaginationResult<Address>?> SearchAddresses(TextSearchQuery query, Pagination? pagination = default)
+
+    public async Task<PaginationResult<Address>?> SearchAddresses(
+        TextSearchQuery query,
+        Pagination? pagination = default
+    )
     {
         pagination ??= new Pagination();
 
         var parameterizedUri = new Uri("adresser/v1/sok", UriKind.Relative)
             .AddQueryParameters(query.ToMap())
             .AddQueryParameters(pagination.ToMap());
-        
+
         try
         {
             var response = await _httpClient.GetFromJsonAsync<SearchResponse>(parameterizedUri);
@@ -38,18 +41,21 @@ internal class GeoNorgeClient : IGeoNorge
         {
             _logger.LogWarning(e, "Failed to get address location for query: {Query}", query);
         }
-        
+
         return null;
     }
 
-    public async Task<PaginationResult<Address>?> SearchAddressesByPoint(PointSearchQuery query, Pagination? pagination = default)
+    public async Task<PaginationResult<Address>?> SearchAddressesByPoint(
+        PointSearchQuery query,
+        Pagination? pagination = default
+    )
     {
         pagination ??= new Pagination();
-        
+
         var parameterizedUri = new Uri("adresser/v1/punktsok", UriKind.Relative)
             .AddQueryParameters(query.ToMap())
             .AddQueryParameters(pagination.ToMap());
-        
+
         try
         {
             var response = await _httpClient.GetFromJsonAsync<SearchResponse>(parameterizedUri);
@@ -60,7 +66,7 @@ internal class GeoNorgeClient : IGeoNorge
         {
             _logger.LogWarning(e, "Failed to get address location for query: {Query}", query);
         }
-        
+
         return null;
     }
 }
@@ -68,18 +74,20 @@ internal class GeoNorgeClient : IGeoNorge
 internal record SearchResponse
 {
     [JsonPropertyName("metadata")]
-    public Metadata Metadata { get; set; } = new ();
-    
+    public Metadata Metadata { get; set; } = new();
+
     [JsonPropertyName("adresser")]
-    public List<Address> Addresses { get; set; } 
+    public List<Address> Addresses { get; set; }
 }
 
 internal record Metadata
 {
     [JsonPropertyName("treffPerSide")]
     public int TreffPerSide { get; set; }
+
     [JsonPropertyName("totaltAntallTreff")]
     public long TotaltAntallTreff { get; set; }
+
     [JsonPropertyName("side")]
     public int Side { get; set; }
 }

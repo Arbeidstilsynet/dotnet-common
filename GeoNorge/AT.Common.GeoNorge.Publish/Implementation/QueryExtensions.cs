@@ -19,7 +19,7 @@ internal static class QueryExtensions
         var sb = new StringBuilder();
 
         sb.Append(uri);
-        
+
         if (uri.ToString().Contains('?'))
         {
             sb.Append('&');
@@ -32,7 +32,7 @@ internal static class QueryExtensions
         sb.Append(parameterMap.ToQueryParameters());
 
         var paremeterizedUri = sb.ToString();
-        
+
         return new Uri(paremeterizedUri, uri.IsAbsoluteUri ? UriKind.Absolute : UriKind.Relative);
     }
 
@@ -44,12 +44,12 @@ internal static class QueryExtensions
         {
             parameterMap.Add("sok", searchTerm);
         }
-        
+
         if (query.FuzzySearch)
         {
             parameterMap.Add("fuzzy", "true");
         }
-        
+
         if (query.Adressenavn is { Length: > 0 } adressenavn)
         {
             parameterMap.Add("adressenavn", adressenavn);
@@ -59,32 +59,38 @@ internal static class QueryExtensions
         {
             parameterMap.Add("poststed", poststed);
         }
-        
+
         if (query.Postnummer is { Length: > 0 } postnummer)
         {
             parameterMap.Add("postnummer", postnummer);
         }
-        
-        if (query.Kommunenummer is {Length: > 0 } kommunenummer)
+
+        if (query.Kommunenummer is { Length: > 0 } kommunenummer)
         {
             parameterMap.Add("kommunenummer", kommunenummer);
         }
 
         return parameterMap;
     }
-    
+
     public static IReadOnlyDictionary<string, string> ToMap(this Pagination pagination)
     {
         var parameterMap = new Dictionary<string, string>();
 
         if (pagination.PageIndex >= 0)
         {
-            parameterMap.Add("side", pagination.PageIndex.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            parameterMap.Add(
+                "side",
+                pagination.PageIndex.ToString(System.Globalization.CultureInfo.InvariantCulture)
+            );
         }
-        
+
         if (pagination.PageSize > 0)
         {
-            parameterMap.Add("treffPerSide", pagination.PageSize.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            parameterMap.Add(
+                "treffPerSide",
+                pagination.PageSize.ToString(System.Globalization.CultureInfo.InvariantCulture)
+            );
         }
 
         return parameterMap;
@@ -96,11 +102,14 @@ internal static class QueryExtensions
 
         parameterMap.Add("lat", query.Latitude.ToFormattedString());
         parameterMap.Add("lon", query.Longitude.ToFormattedString());
-        parameterMap.Add("radius", query.RadiusInMeters.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        parameterMap.Add(
+            "radius",
+            query.RadiusInMeters.ToString(System.Globalization.CultureInfo.InvariantCulture)
+        );
 
         return parameterMap;
     }
-    
+
     private static string ToFormattedString(this double value)
     {
         return value.ToString("F6", System.Globalization.CultureInfo.InvariantCulture).Trim('0');
