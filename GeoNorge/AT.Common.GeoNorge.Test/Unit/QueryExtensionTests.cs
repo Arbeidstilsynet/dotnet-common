@@ -53,8 +53,8 @@ public class QueryExtensionTests
         // Arrange
         var query = new PointSearchQuery()
         {
-            Latitude = 4.2,
-            Longitude = 4.2,
+            Latitude = 4.200069,
+            Longitude = 4.200000404,
             RadiusInMeters = 42
         };
 

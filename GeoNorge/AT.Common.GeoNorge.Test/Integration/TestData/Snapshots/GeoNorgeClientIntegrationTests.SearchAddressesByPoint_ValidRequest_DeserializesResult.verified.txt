@@ -1,0 +1,100 @@
+﻿{
+  TotalElements: 42,
+  PageSize: 42,
+  PageIndex: 42,
+  Elements: [
+    {
+      Adressenavn: example-string,
+      Adressetekst: example-string,
+      Adressetilleggsnavn: example-string,
+      Adressekode: 42,
+      Nummer: 42,
+      Bokstav: example-string,
+      Kommunenummer: example-string,
+      Kommunenavn: example-string,
+      Gardsnummer: 42,
+      Bruksnummer: 42,
+      Festenummer: 42,
+      Undernummer: 42,
+      Bruksenhetsnummer: [
+        example-string,
+        example-string,
+        example-string
+      ],
+      Objtype: Vegadresse,
+      Poststed: example-string,
+      Postnummer: example-string,
+      AdressetekstUtenAdressetilleggsnavn: example-string,
+      StedfestingVerifisert: true,
+      Location: {
+        Latitude: 4.2,
+        Longitude: 4.2,
+        Epsg: example-string
+      },
+      Oppdateringsdato: DateTimeOffset_1,
+      MeterDistanseTilPunkt: 4.2
+    },
+    {
+      Adressenavn: example-string,
+      Adressetekst: example-string,
+      Adressetilleggsnavn: example-string,
+      Adressekode: 42,
+      Nummer: 42,
+      Bokstav: example-string,
+      Kommunenummer: example-string,
+      Kommunenavn: example-string,
+      Gardsnummer: 42,
+      Bruksnummer: 42,
+      Festenummer: 42,
+      Undernummer: 42,
+      Bruksenhetsnummer: [
+        example-string,
+        example-string,
+        example-string
+      ],
+      Objtype: Vegadresse,
+      Poststed: example-string,
+      Postnummer: example-string,
+      AdressetekstUtenAdressetilleggsnavn: example-string,
+      StedfestingVerifisert: true,
+      Location: {
+        Latitude: 4.2,
+        Longitude: 4.2,
+        Epsg: example-string
+      },
+      Oppdateringsdato: DateTimeOffset_2,
+      MeterDistanseTilPunkt: 4.2
+    },
+    {
+      Adressenavn: example-string,
+      Adressetekst: example-string,
+      Adressetilleggsnavn: example-string,
+      Adressekode: 42,
+      Nummer: 42,
+      Bokstav: example-string,
+      Kommunenummer: example-string,
+      Kommunenavn: example-string,
+      Gardsnummer: 42,
+      Bruksnummer: 42,
+      Festenummer: 42,
+      Undernummer: 42,
+      Bruksenhetsnummer: [
+        example-string,
+        example-string,
+        example-string
+      ],
+      Objtype: Vegadresse,
+      Poststed: example-string,
+      Postnummer: example-string,
+      AdressetekstUtenAdressetilleggsnavn: example-string,
+      StedfestingVerifisert: true,
+      Location: {
+        Latitude: 4.2,
+        Longitude: 4.2,
+        Epsg: example-string
+      },
+      Oppdateringsdato: DateTimeOffset_2,
+      MeterDistanseTilPunkt: 4.2
+    }
+  ]
+}

@@ -20,7 +20,7 @@ public class GeoNorgeClientIntegrationTests : TestBed<GeoNorgeTestFixture>
     }
     
     [Fact]
-    public async Task SearchAddresses_ValidRequest_ReturnsLocation()
+    public async Task SearchAddresses_ValidRequest_DeserializesResult()
     {
         // Act
         var result = await _sut.SearchAddresses(new TextSearchQuery()
@@ -33,7 +33,7 @@ public class GeoNorgeClientIntegrationTests : TestBed<GeoNorgeTestFixture>
     }
     
     [Fact]
-    public async Task SearchAddressesByPoint_ValidRequest_ReturnsAddress()
+    public async Task SearchAddressesByPoint_ValidRequest_DeserializesResult()
     {
         // Act
         var result = await _sut.SearchAddressesByPoint(new PointSearchQuery()
