@@ -35,7 +35,7 @@ internal class GeoNorgeClient : IGeoNorge
         {
             var response = await _httpClient.GetFromJsonAsync<SearchResponse>(parameterizedUri);
 
-            return response?.Metadata.ToPaginationResult(response.Addresses ?? []);
+            return response?.Metadata.ToPaginationResult(response.Addresses);
         }
         catch (HttpRequestException e)
         {
@@ -68,7 +68,7 @@ internal class GeoNorgeClient : IGeoNorge
         {
             var response = await _httpClient.GetFromJsonAsync<SearchResponse>(parameterizedUri);
 
-            return response?.Metadata.ToPaginationResult(response.Addresses ?? []);
+            return response?.Metadata.ToPaginationResult(response.Addresses);
         }
         catch (HttpRequestException e)
         {
@@ -85,7 +85,7 @@ internal record SearchResponse
     public Metadata Metadata { get; set; } = new();
 
     [JsonPropertyName("adresser")]
-    public List<Address> Addresses { get; set; }
+    public List<Address> Addresses { get; set; } = [];
 }
 
 internal record Metadata

@@ -10,23 +10,11 @@ namespace Arbeidstilsynet.Common.GeoNorge.DependencyInjection;
 public record GeoNorgeConfig
 {
     /// <summary>
-    /// Base URL for GeoNorge API. Default is "https://ws.geonorge.no/adresser/v1/".
+    /// Base URL for GeoNorge API. Default is "https://ws.geonorge.no/".
     /// </summary>
-    public required string BaseUrl { get; init; } = "https://ws.geonorge.no/adresser/v1/";
-
-    /// <summary>
-    /// Cache settings for GeoNorge API. Default is to enable caching with a 1-day expiration time.
-    /// </summary>
-    public CacheOptions Cache { get; init; } =
-        new CacheOptions(ExpirationTime: TimeSpan.FromDays(1));
+    public required string BaseUrl { get; init; } = "https://ws.geonorge.no/";
 }
 
-/// <summary>
-/// Cache settings for Enhetsregisteret.
-/// </summary>
-/// <param name="Disabled">If true, disables the caching mechanism. Default: false.</param>
-/// <param name="ExpirationTime">If caching is enabled, this specifies how long the cache value should be retained. Default: 1 day.</param>
-public record CacheOptions(bool Disabled = false, TimeSpan? ExpirationTime = null);
 
 /// <summary>
 /// Extensions for Dependency Injection.
@@ -56,7 +44,6 @@ public static class DependencyInjectionExtensions
             )
             .AddStandardResilienceHandler();
 
-        services.AddMemoryCache();
         services.AddSingleton<IGeoNorge, GeoNorgeClient>();
 
         return services;
