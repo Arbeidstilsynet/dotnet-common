@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Arbeidstilsynet.Common.GeoNorge.Test</RootNamespace>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
@@ -9,6 +10,9 @@
   <ItemGroup>
     <PackageReference Include="Shouldly" Version="4.3.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
+    <PackageReference Include="WireMock.Net" Version="1.8.13" />
+    <PackageReference Include="Verify" Version="30.4.0" />
+    <PackageReference Include="Verify.Xunit" Version="30.4.0" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="Xunit.Microsoft.DependencyInjection" Version="8.2.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.0">
@@ -24,7 +28,12 @@
     <ProjectReference Include="..\AT.Common.GeoNorge.Publish\AT.Common.GeoNorge.Publish.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Integration\Setup\" />
     <Folder Include="Integration\TestData\Snapshots\" />
+    <Folder Include="Unit\TestData\Snapshots\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="**\TestData\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
