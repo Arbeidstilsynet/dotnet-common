@@ -18,4 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- First implementation: the client returns 'bar' whenever it is called.
+- Added implementation of the [GeoNorge API](https://ws.geonorge.no/adresser/v1).
+  - `/sok` with pagination
+  - `/punktsok` with pagination
+- Added extension methods for common access patterns
+  - `GetClosestAddress` for getting the closest address returned from `/punktsok`
+  - `QuickSearchLocation` for getting the first hit returned from `/sok`
