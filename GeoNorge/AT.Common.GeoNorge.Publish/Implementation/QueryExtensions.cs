@@ -100,19 +100,20 @@ internal static class QueryExtensions
     {
         var parameterMap = new Dictionary<string, string>();
 
-        parameterMap.Add("lat", query.Latitude.ToFormattedString());
-        parameterMap.Add("lon", query.Longitude.ToFormattedString());
+        parameterMap.Add(
+            "lat",
+            query.Latitude.ToString(System.Globalization.CultureInfo.InvariantCulture)
+        );
+        parameterMap.Add(
+            "lon",
+            query.Longitude.ToString(System.Globalization.CultureInfo.InvariantCulture)
+        );
         parameterMap.Add(
             "radius",
             query.RadiusInMeters.ToString(System.Globalization.CultureInfo.InvariantCulture)
         );
 
         return parameterMap;
-    }
-
-    private static string ToFormattedString(this double value)
-    {
-        return value.ToString("F6", System.Globalization.CultureInfo.InvariantCulture).Trim('0');
     }
 
     private static string ToQueryParameters(this IReadOnlyDictionary<string, string> parameterMap)

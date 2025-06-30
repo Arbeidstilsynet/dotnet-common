@@ -15,7 +15,6 @@ public record GeoNorgeConfig
     public required string BaseUrl { get; init; } = "https://ws.geonorge.no/";
 }
 
-
 /// <summary>
 /// Extensions for Dependency Injection.
 /// </summary>
