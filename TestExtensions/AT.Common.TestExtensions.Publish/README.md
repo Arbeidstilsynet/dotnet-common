@@ -13,5 +13,13 @@ dotnet add package Arbeidstilsynet.Common.TestExtensions
 ## 🧑‍💻 Usage
 
 ```csharp
+_server = WireMockServer.Start();
 
+using var fileStream = File.Open(
+    "path/to/your/local/openapi.json"),
+    FileMode.Open,
+    FileAccess.Read
+);
+
+_server.AddOpenApiMappings(fileStream);
 ```
