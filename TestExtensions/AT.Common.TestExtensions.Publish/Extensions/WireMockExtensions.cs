@@ -32,7 +32,7 @@ public static class WireMockExtensions
     {
         mappingVisitor ??= m => m;
 
-        parserSettings ??= new WireMockOpenApiParserSettings 
+        parserSettings ??= new WireMockOpenApiParserSettings
         {
             ExampleValues = new ExampleValuesGenerator(),
         };
