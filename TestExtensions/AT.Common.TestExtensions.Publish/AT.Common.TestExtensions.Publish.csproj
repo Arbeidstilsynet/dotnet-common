@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Arbeidstilsynet.Common.TestExtensions</RootNamespace>
+    <PackageId>Arbeidstilsynet.Common.TestExtensions</PackageId>
+    <Product>Arbeidstilsynet.Common.TestExtensions</Product>
+    <Authors>Digital Samhandling</Authors>
+    <Company>Arbeidstilsynet</Company>
+    <Description>A collection of useful patterns and extensions for unit testing in .NET.</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Version>0.0.1</Version>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="WireMock.Net" Version="[1.8.13,2.0.0)" />
+    <PackageReference Include="Verify" Version="[30.4.0,31.0.0)" />
+    <PackageReference Include="Verify.Xunit" Version="[30.4.0,31.0.0)" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+  <Target
+    Name="InjectPackageReleaseNotesFromFile"
+    BeforeTargets="GenerateNuspec"
+    Condition="Exists('CHANGELOG.md')"
+  >
+    <PropertyGroup>
+      <PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/CHANGELOG.md"))</PackageReleaseNotes>
+    </PropertyGroup>
+  </Target>
+</Project>
