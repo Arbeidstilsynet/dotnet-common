@@ -1,6 +1,9 @@
 # Introduction
 
-Give a brief introduction to GeoNorge, and explain its purpose.
+This package provides an abstraction for the [GeoNorge API](https://ws.geonorge.no/adresser/v1/), and some useful extension methods if you need to:
+
+- find the closest address to a given coordinate
+- find the location of a specific address.
 
 ## 📖 Installation
 
@@ -25,22 +28,49 @@ public static IServiceCollection AddServices
     }
 ```
 
-Inject into your class:
+Code examples:
 
 ```csharp
 public class MyService
 {
-    private readonly IGeoNorge _samplePackage;
+    private readonly IGeoNorge _geoNorge;
 
-    public MyService(IGeoNorge samplePackage)
+    // Inject the IGeoNorge interface into your service
+    public MyService(IGeoNorge geoNorge)
     {
-        _samplePackage = samplePackage;
+        _geoNorge = geoNorge;
     }
 
-    public async Task DoSomething()
+    public async Task Examples()
     {
-        var result = await _samplePackage.Get();
-        // Use result...
+        // Find the closest address to a given coordinate:
+        var address = await _geoNorge.GetClosestAddress(new PointSearchQuery{
+            Latitude = 59.9139,
+            Longitude = 10.7522,
+            RadiusInMeters = 1000
+        });
+
+        // If you want to find all addresses within a certain radius of a point:
+        var paginatedResult = await _geoNorge.SearchAddressesByPoint(new PointSearchQuery
+        {
+            Latitude = 59.9139,
+            Longitude = 10.7522,
+            RadiusInMeters = 1000
+        });
+        
+        // Search for addresses by a text query:
+        var paginatedResult = await _geoNorge.SearchAddresses(new TextSearchQuery
+        {
+            SearchTerm = "Karl Johans gate 1, Oslo"
+        });
+
+        // If you only want the first result, you can use the QuickSearchLocation extension method:
+        var location = await _geoNorge.QuickSearchLocation(new TextSearchQuery
+        {
+            SearchTerm = "Karl Johans gate 1, Oslo"
+        });
+
+        
     }
 }
 ```

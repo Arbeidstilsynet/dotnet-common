@@ -36,11 +36,10 @@ public static class GeoNorgeExtensions
     /// <returns></returns>
     public static async Task<Location?> QuickSearchLocation(
         this IGeoNorge geoNorge,
-        TextSearchQuery query,
-        Pagination? pagination = null
+        TextSearchQuery query
     )
     {
-        pagination ??= new Pagination { PageIndex = 0, PageSize = 1 };
+        var pagination = new Pagination { PageIndex = 0, PageSize = 1 };
 
         var result = await geoNorge.SearchAddresses(query, pagination);
 

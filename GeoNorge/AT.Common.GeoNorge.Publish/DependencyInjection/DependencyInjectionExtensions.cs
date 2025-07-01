@@ -30,9 +30,11 @@ public static class DependencyInjectionExtensions
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
     public static IServiceCollection AddGeoNorge(
         this IServiceCollection services,
-        GeoNorgeConfig geoNorgeConfig
+        GeoNorgeConfig? geoNorgeConfig=null
     )
     {
+        geoNorgeConfig ??= new GeoNorgeConfig();
+        
         services
             .AddHttpClient(
                 ClientKey,
