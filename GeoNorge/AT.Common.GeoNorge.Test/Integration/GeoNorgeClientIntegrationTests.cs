@@ -1,6 +1,7 @@
 using Arbeidstilsynet.Common.GeoNorge.Model.Request;
 using Arbeidstilsynet.Common.GeoNorge.Ports;
 using Arbeidstilsynet.Common.GeoNorge.Test.Integration.Setup;
+using Shouldly;
 using WireMock.Pact.Models.V2;
 using Xunit.Abstractions;
 using Xunit.Microsoft.DependencyInjection.Abstracts;
@@ -32,6 +33,7 @@ public class GeoNorgeClientIntegrationTests : TestBed<GeoNorgeTestFixture>
         );
 
         // Assert
+        result.ShouldNotBeNull();
         await Verify(result, _verifySettings);
     }
 
@@ -49,6 +51,7 @@ public class GeoNorgeClientIntegrationTests : TestBed<GeoNorgeTestFixture>
         );
 
         // Assert
+        result.ShouldNotBeNull();
         await Verify(result, _verifySettings);
     }
 }

@@ -120,13 +120,15 @@ internal static class QueryExtensions
     {
         var sb = new StringBuilder();
 
-        foreach (var kvp in parameterMap)
+        foreach (var (key, value) in parameterMap)
         {
             if (sb.Length > 0)
             {
                 sb.Append('&');
             }
-            sb.Append($"{kvp.Key}={kvp.Value}");
+            var escapedValue = Uri.EscapeDataString(value);
+            
+            sb.Append($"{key}={escapedValue}");
         }
         return sb.ToString();
     }
