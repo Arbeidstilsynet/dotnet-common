@@ -18,4 +18,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- First implementation: the client returns 'bar' whenever it is called.
+- An extension method for adding mappings to a wiremock server based on an OpenAPI spec.
