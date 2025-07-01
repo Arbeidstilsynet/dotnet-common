@@ -25,15 +25,12 @@ public class UriExtensionTests
         var uri = new Uri("https://example.com/");
 
         // Act
-        var result = uri.AddQueryParameters(new Dictionary<string, string>()
-        {
-            {"key", value }
-        });
+        var result = uri.AddQueryParameters(new Dictionary<string, string>() { { "key", value } });
 
         // Assert
         result.AbsoluteUri.ShouldBe($"https://example.com/?key={expectedEscapedValue}");
     }
-    
+
     [Theory]
     [InlineData("")]
     [InlineData(null)]
@@ -44,16 +41,18 @@ public class UriExtensionTests
         var uri = new Uri("https://example.com/");
 
         // Act
-        var result = uri.AddQueryParameters(new Dictionary<string, string>()
-        {
-            {"key", emptyValue! },
-            {"anotherKey", "anotherValue" }
-        });
+        var result = uri.AddQueryParameters(
+            new Dictionary<string, string>()
+            {
+                { "key", emptyValue! },
+                { "anotherKey", "anotherValue" },
+            }
+        );
 
         // Assert
         result.AbsoluteUri.ShouldBe("https://example.com/?anotherKey=anotherValue");
     }
-    
+
     [Fact]
     public void AddQueryParameters_WithNoValidValues_ShouldReturnTheInputUri()
     {
@@ -61,15 +60,14 @@ public class UriExtensionTests
         var uri = new Uri("https://example.com/");
 
         // Act
-        var result = uri.AddQueryParameters(new Dictionary<string, string>()
-        {
-            {"invalid", " " }
-        });
+        var result = uri.AddQueryParameters(
+            new Dictionary<string, string>() { { "invalid", " " } }
+        );
 
         // Assert
         result.ShouldBe(uri);
     }
-    
+
     [Fact]
     public void AddQueryParameter_OnAbsoluteUri_ShouldReturnAbsoluteUri()
     {
@@ -77,17 +75,16 @@ public class UriExtensionTests
         var uri = new Uri("https://example.com/test");
 
         // Act
-        var result = uri.AddQueryParameters(new Dictionary<string, string>()
-        {
-            {"key", "value" }
-        });
+        var result = uri.AddQueryParameters(
+            new Dictionary<string, string>() { { "key", "value" } }
+        );
 
         // Assert
         result.ShouldNotBe(uri);
         result.AbsoluteUri.ShouldBe("https://example.com/test?key=value");
         result.IsAbsoluteUri.ShouldBeTrue();
     }
-    
+
     [Fact]
     public void AddQueryParameter_OnRelativeUri_ShouldReturnRelativeUri()
     {
@@ -95,10 +92,9 @@ public class UriExtensionTests
         var uri = new Uri("test", UriKind.Relative);
 
         // Act
-        var result = uri.AddQueryParameters(new Dictionary<string, string>()
-        {
-            {"key", "value" }
-        });
+        var result = uri.AddQueryParameters(
+            new Dictionary<string, string>() { { "key", "value" } }
+        );
 
         // Assert
         result.ShouldNotBe(uri);

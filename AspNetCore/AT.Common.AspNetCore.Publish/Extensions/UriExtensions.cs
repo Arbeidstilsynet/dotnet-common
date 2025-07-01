@@ -23,8 +23,10 @@ public static class UriExtensions
         IEnumerable<KeyValuePair<string, string>> queryParameters
     )
     {
-        var validQueryParameters = queryParameters.Where(kvPair => !string.IsNullOrWhiteSpace(kvPair.Value)).ToList();
-        
+        var validQueryParameters = queryParameters
+            .Where(kvPair => !string.IsNullOrWhiteSpace(kvPair.Value))
+            .ToList();
+
         if (validQueryParameters.Count == 0)
         {
             return uri;
@@ -49,8 +51,10 @@ public static class UriExtensions
 
         return new Uri(parameterizedUri, uri.IsAbsoluteUri ? UriKind.Absolute : UriKind.Relative);
     }
-    
-    private static string ToQueryParameters(this IEnumerable<KeyValuePair<string, string>> parameterMap)
+
+    private static string ToQueryParameters(
+        this IEnumerable<KeyValuePair<string, string>> parameterMap
+    )
     {
         var sb = new StringBuilder();
 
@@ -61,7 +65,7 @@ public static class UriExtensions
                 sb.Append('&');
             }
             var escapedValue = Uri.EscapeDataString(value);
-            
+
             sb.Append($"{key}={escapedValue}");
         }
         return sb.ToString();
