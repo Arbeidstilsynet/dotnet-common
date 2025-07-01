@@ -12,7 +12,7 @@ public record GeoNorgeConfig
     /// <summary>
     /// Base URL for GeoNorge API. Default is "https://ws.geonorge.no/".
     /// </summary>
-    public required string BaseUrl { get; init; } = "https://ws.geonorge.no/";
+    public string BaseUrl { get; init; } = "https://ws.geonorge.no/";
 }
 
 /// <summary>
