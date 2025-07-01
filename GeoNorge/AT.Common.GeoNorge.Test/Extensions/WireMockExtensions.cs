@@ -44,10 +44,9 @@ public static class WireMockExtensions
     }
 }
 
-
-internal class ExampleValuesGenerator : WireMockOpenApiParserExampleValues
+file class ExampleValuesGenerator : WireMockOpenApiParserExampleValues
 {
     private readonly DateTime _dateTime = System.DateTime.UtcNow;
     public override Func<DateTime> Date => () => _dateTime.Date;
     public override Func<DateTime> DateTime => () => _dateTime;
-} 
+}
