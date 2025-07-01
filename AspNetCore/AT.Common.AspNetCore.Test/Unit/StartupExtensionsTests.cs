@@ -1,4 +1,5 @@
 using Arbeidstilsynet.Common.AspNetCore.Extensions;
+using Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
