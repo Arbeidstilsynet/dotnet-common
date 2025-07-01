@@ -32,7 +32,6 @@ public static class GeoNorgeExtensions
     /// </summary>
     /// <param name="geoNorge"></param>
     /// <param name="query"></param>
-    /// <param name="pagination"></param>
     /// <returns></returns>
     public static async Task<Location?> QuickSearchLocation(
         this IGeoNorge geoNorge,

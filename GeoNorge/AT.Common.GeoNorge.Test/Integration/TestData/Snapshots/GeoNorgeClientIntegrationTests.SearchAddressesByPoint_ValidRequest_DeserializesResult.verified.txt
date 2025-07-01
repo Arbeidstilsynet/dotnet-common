@@ -62,7 +62,7 @@
         Longitude: 4.2,
         Epsg: example-string
       },
-      Oppdateringsdato: DateTimeOffset_2,
+      Oppdateringsdato: DateTimeOffset_1,
       MeterDistanseTilPunkt: 4.2
     },
     {
@@ -93,7 +93,7 @@
         Longitude: 4.2,
         Epsg: example-string
       },
-      Oppdateringsdato: DateTimeOffset_2,
+      Oppdateringsdato: DateTimeOffset_1,
       MeterDistanseTilPunkt: 4.2
     }
   ]

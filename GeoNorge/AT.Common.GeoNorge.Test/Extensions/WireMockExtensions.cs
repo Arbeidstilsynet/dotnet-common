@@ -1,3 +1,4 @@
+using NJsonSchema.Infrastructure;
 using WireMock.Admin.Mappings;
 using WireMock.Net.OpenApiParser;
 using WireMock.Net.OpenApiParser.Settings;
@@ -33,7 +34,7 @@ public static class WireMockExtensions
             ?? new WireMockOpenApiParserSettings
             {
                 // Generate example responses based on schema
-                ExampleValues = new WireMockOpenApiParserExampleValues(),
+                ExampleValues = new ExampleValuesGenerator(),
             };
 
         var parser = new WireMockOpenApiParser();
@@ -42,3 +43,11 @@ public static class WireMockExtensions
         server.WithMapping(mappings.Select(mappingVisitor).ToArray());
     }
 }
+
+
+internal class ExampleValuesGenerator : WireMockOpenApiParserExampleValues
+{
+    private readonly DateTime _dateTime = System.DateTime.UtcNow;
+    public override Func<DateTime> Date => () => _dateTime.Date;
+    public override Func<DateTime> DateTime => () => _dateTime;
+} 
