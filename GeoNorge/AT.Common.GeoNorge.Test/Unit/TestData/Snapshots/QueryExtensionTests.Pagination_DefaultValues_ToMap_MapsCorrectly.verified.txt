@@ -1,0 +1,4 @@
+﻿{
+  side: 0,
+  treffPerSide: 10
+}
