@@ -31,9 +31,9 @@ internal static class QueryExtensions
 
         sb.Append(parameterMap.ToQueryParameters());
 
-        var paremeterizedUri = sb.ToString();
+        var parameterizedUri = sb.ToString();
 
-        return new Uri(paremeterizedUri, uri.IsAbsoluteUri ? UriKind.Absolute : UriKind.Relative);
+        return new Uri(parameterizedUri, uri.IsAbsoluteUri ? UriKind.Absolute : UriKind.Relative);
     }
 
     public static IReadOnlyDictionary<string, string> ToMap(this TextSearchQuery query)
