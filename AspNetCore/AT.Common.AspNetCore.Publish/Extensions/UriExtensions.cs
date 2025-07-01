@@ -35,7 +35,7 @@ public static class UriExtensions
         var sb = new StringBuilder();
 
         sb.Append(uri);
-        
+
         if (uri.ToString().Contains('?'))
         {
             sb.Append('&');
