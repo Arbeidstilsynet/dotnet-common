@@ -127,7 +127,7 @@ internal static class QueryExtensions
                 sb.Append('&');
             }
             var escapedValue = Uri.EscapeDataString(value);
-            
+
             sb.Append($"{key}={escapedValue}");
         }
         return sb.ToString();
