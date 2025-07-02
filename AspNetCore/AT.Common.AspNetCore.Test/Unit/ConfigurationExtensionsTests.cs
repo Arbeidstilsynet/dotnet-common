@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Arbeidstilsynet.Common.AspNetCore.Extensions;
+using Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
 using Microsoft.Extensions.Configuration;
 using Shouldly;
 using Xunit;

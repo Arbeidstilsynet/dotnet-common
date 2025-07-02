@@ -1,12 +1,9 @@
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -14,7 +11,7 @@ using OpenTelemetry.Trace;
 using Scalar.AspNetCore;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Arbeidstilsynet.Common.AspNetCore.Extensions;
+namespace Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
 
 /// <summary>
 /// Extensions configuring an ASP.NET Core application.
