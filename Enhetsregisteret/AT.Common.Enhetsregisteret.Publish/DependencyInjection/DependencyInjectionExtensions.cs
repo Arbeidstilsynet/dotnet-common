@@ -15,16 +15,10 @@ public class EnhetsregisteretConfig
     /// <param name="brregApiBaseUrl">BaseUrl for Enhetsregisteret API. Default: "https://data.brreg.no/".</param>
     /// <param name="cacheOptions">Cache settings for Enhetsregisteret.
     /// </param>
-    public EnhetsregisteretConfig(
-        string? brregApiBaseUrl = null,
-        CacheOptions? cacheOptions = null
-    )
+    public EnhetsregisteretConfig(string? brregApiBaseUrl = null, CacheOptions? cacheOptions = null)
     {
         BrregApiBaseUrl = brregApiBaseUrl ?? "https://data.brreg.no/";
-        CacheOptions = new CacheOptions
-        {
-            Disabled = cacheOptions?.Disabled ?? false,
-        };
+        CacheOptions = new CacheOptions { Disabled = cacheOptions?.Disabled ?? false };
     }
 
     /// <summary>
@@ -98,7 +92,8 @@ public static class DependencyInjectionExtensions
                 {
                     httpClient.BaseAddress = new Uri(config.BrregApiBaseUrl);
                 }
-            ).AddStandardResilienceHandler();
+            )
+            .AddStandardResilienceHandler();
 
         services.AddSingleton(config!);
         services.AddMemoryCache();
