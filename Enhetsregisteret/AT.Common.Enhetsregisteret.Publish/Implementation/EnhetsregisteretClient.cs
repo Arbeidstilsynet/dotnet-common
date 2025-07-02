@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
 using Arbeidstilsynet.Common.Enhetsregisteret.DependencyInjection;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Brreg;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
@@ -28,7 +29,7 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
 
     private HttpClient Client =>
         _optionalClient
-        ?? _httpClientFactory?.CreateClient(DependencyInjectionExtensions.CLIENTKEY)
+        ?? _httpClientFactory?.CreateClient(DependencyInjectionExtensions.Clientkey)
         ?? throw new InvalidOperationException(
             "The http client must either be provided directly or via an IHttpClientFactory."
         );
@@ -151,7 +152,7 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
 
             if (!_cacheOptions.Disabled)
             {
-                _memoryCache.Set(cacheKey, response, _cacheOptions.ExpirationTime!.Value);
+                _memoryCache.Set(cacheKey, response);
             }
             return response;
         }

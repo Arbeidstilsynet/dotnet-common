@@ -17,46 +17,18 @@ public class EnhetsregisteretConfig
     /// Initializes a new instance of the <see cref="EnhetsregisteretConfig"/> class.
     /// </summary>
     /// <param name="brregApiBaseUrl">BaseUrl for Enhetsregisteret API. Default: "https://data.brreg.no/".</param>
-    /// <param name="timeoutInSeconds">Timeout for API requests. Default: 30 seconds.</param>
-    /// <param name="retryStrategy">Retry strategy for API calls. Default retry strategy:
-    /// <br/>
-    /// <br/>- Tries up to 5 times with exponential backoff and jitter.
-    /// <br/>
-    /// <br/>This strategy is designed to handle temporary errors,
-    /// and ensure more reliable API calls to Enhetsregisteret.
-    /// </param>
     /// <param name="cacheOptions">Cache settings for Enhetsregisteret.
     /// </param>
     public EnhetsregisteretConfig(
         string? brregApiBaseUrl = null,
-        int timeoutInSeconds = 30,
-        RetryStrategyOptions? retryStrategy = null,
         CacheOptions? cacheOptions = null
     )
     {
-        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(timeoutInSeconds, 0);
-
         BrregApiBaseUrl = brregApiBaseUrl ?? "https://data.brreg.no/";
         CacheOptions = new CacheOptions
         {
             Disabled = cacheOptions?.Disabled ?? false,
-            ExpirationTime = cacheOptions?.ExpirationTime ?? TimeSpan.FromDays(1),
         };
-
-        ResiliencePipeline = new ResiliencePipelineBuilder()
-            .AddRetry(
-                retryStrategy
-                    ?? new RetryStrategyOptions
-                    {
-                        ShouldHandle = new PredicateBuilder().Handle<Exception>(),
-                        Delay = TimeSpan.FromSeconds(2),
-                        MaxRetryAttempts = 5,
-                        BackoffType = DelayBackoffType.Exponential,
-                        UseJitter = true,
-                    }
-            )
-            .AddTimeout(TimeSpan.FromSeconds(timeoutInSeconds))
-            .Build();
     }
 
     /// <summary>
@@ -68,27 +40,20 @@ public class EnhetsregisteretConfig
     /// Settings for caching mechanism.
     /// </summary>
     public CacheOptions CacheOptions { get; set; }
-
-    /// <summary>
-    /// Resilience pipeline for API calls.
-    /// </summary>
-    public ResiliencePipeline ResiliencePipeline { get; set; }
 }
 
 /// <summary>
 /// Cache settings for Enhetsregisteret.
 /// </summary>
 /// <param name="Disabled">If true, disables the caching mechanism. Default: false.</param>
-/// <param name="ExpirationTime">If caching is enabled, this specifies how long the cache value should be retained. Default: 1 day.</param>
-public record CacheOptions(bool Disabled = false, TimeSpan? ExpirationTime = null);
+public record CacheOptions(bool Disabled = false);
 
 /// <summary>
 /// Extensions for Dependency Injection.
 /// </summary>
 public static class DependencyInjectionExtensions
 {
-    internal const string RESILIENCE_PIPELINE_CONFIGKEY = "Enhetsregisteret";
-    internal const string CLIENTKEY = "EnhetsregisteretClient";
+    internal const string Clientkey = "EnhetsregisteretClient";
 
     /// <summary>
     /// Registers an implementation of IEnhetsregisteret in the specified <see cref="IServiceCollection"/>.
@@ -132,22 +97,15 @@ public static class DependencyInjectionExtensions
     {
         services
             .AddHttpClient(
-                CLIENTKEY,
+                Clientkey,
                 httpClient =>
                 {
                     httpClient.BaseAddress = new Uri(config.BrregApiBaseUrl);
                 }
-            )
-            .AddResilienceHandler(
-                RESILIENCE_PIPELINE_CONFIGKEY,
-                builder =>
-                {
-                    builder.AddPipeline(config.ResiliencePipeline);
-                }
-            );
+            ).AddStandardResilienceHandler();
 
         services.AddSingleton(config!);
-        services.TryAddSingleton<IMemoryCache, MemoryCache>();
+        services.AddMemoryCache();
         services.AddTransient<IEnhetsregisteret, EnhetsregisteretClient>();
     }
 }

@@ -6,9 +6,8 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
-using Xunit;
 
-namespace Arbeidstilsynet.Common.Enhetsregisteret.Test;
+namespace Arbeidstilsynet.Common.Enhetsregisteret.Test.Unit;
 
 public class EnhetsregisteretClientUnitTests
 {
@@ -17,7 +16,7 @@ public class EnhetsregisteretClientUnitTests
     private readonly IMemoryCache _memoryCache = Substitute.For<IMemoryCache>();
 
     private readonly EnhetsregisteretConfig _cacheOptions = new(
-        cacheOptions: new CacheOptions { Disabled = false, ExpirationTime = TimeSpan.FromDays(1) }
+        cacheOptions: new CacheOptions { Disabled = false }
     );
 
     public EnhetsregisteretClientUnitTests()
@@ -132,7 +131,7 @@ public class EnhetsregisteretClientUnitTests
 
         // Assert
         result.ShouldNotBeNull();
-        result!.Elements.ShouldBeEquivalentTo(new List<Underenhet> { underenhet });
+        result.Elements.ShouldBeEquivalentTo(new List<Underenhet> { underenhet });
     }
 
     [Theory]

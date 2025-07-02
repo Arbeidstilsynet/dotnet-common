@@ -10,11 +10,12 @@
     <Company>Arbeidstilsynet</Company>
     <Description>A http client which interfaces with enhetsregisteret (Brønnøysundregistrene)</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>0.0.1</Version>
+    <Version>0.0.2</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Arbeidstilsynet.Common.AspNetCore.Extensions" Version="1.2.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="[9,10)" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="[9,10)" />
     <PackageReference
