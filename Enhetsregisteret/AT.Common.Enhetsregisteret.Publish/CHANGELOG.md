@@ -14,6 +14,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed <!-- for any bug fixes. -->
 ### Security <!-- in case of vulnerabilities. -->
 
+## 0.1.0
+
+### Fixed
+
+- Fixed URL encoding for query parameters by using `Arbeidstilsynet.Common.AspNetCore.Extensions`
+
+### Removed
+
+- Removed the resilience pipeline options for the Enhetsregisteret client. It's just using a standard resilience pipeline now.
+- Simplified the cache options.
+
 ## 0.0.1
 
 ### Added

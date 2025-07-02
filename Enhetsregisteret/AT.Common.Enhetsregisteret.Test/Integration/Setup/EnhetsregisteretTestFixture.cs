@@ -1,6 +1,5 @@
-using Arbeidstilsynet.Common.Enhetsregisteret.Adapters.Test.Extensions;
 using Arbeidstilsynet.Common.Enhetsregisteret.DependencyInjection;
-using Microsoft.AspNetCore.Identity;
+using Arbeidstilsynet.Common.TestExtensions.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WireMock.Logging;

@@ -1,4 +1,3 @@
-using System.Text;
 using System.Text.RegularExpressions;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 
@@ -6,7 +5,7 @@ namespace Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
 
 internal static partial class QueryExtensions
 {
-    private static readonly Regex organisasjonsnummerRegex = OrgnummerRegex();
+    private static readonly Regex OrganisasjonsnummerRegex = OrgnummerRegex();
 
     public static void ValidateOrgnummerOrThrow(this string? orgnummer, string paramName)
     {
@@ -14,22 +13,6 @@ internal static partial class QueryExtensions
         {
             throw new ArgumentException($"Invalid organisasjonsnummer: {orgnummer}", paramName);
         }
-    }
-
-    public static Uri AddQueryParameters(
-        this Uri uri,
-        IReadOnlyDictionary<string, string> parameterMap
-    )
-    {
-        if (parameterMap.Count == 0)
-        {
-            return uri;
-        }
-
-        var queryString = uri.ToString().Contains('?') ? "&" : "?";
-        queryString += parameterMap.ToQueryParameters();
-
-        return new Uri(uri + queryString, uri.IsAbsoluteUri ? UriKind.Absolute : UriKind.Relative);
     }
 
     public static IReadOnlyDictionary<string, string> ToMap(this SearchEnheterQuery query)
@@ -106,22 +89,7 @@ internal static partial class QueryExtensions
 
     internal static bool IsValidOrgnummer(this string? orgnummer)
     {
-        return !string.IsNullOrWhiteSpace(orgnummer) && organisasjonsnummerRegex.IsMatch(orgnummer);
-    }
-
-    private static string ToQueryParameters(this IReadOnlyDictionary<string, string> parameterMap)
-    {
-        var sb = new StringBuilder();
-
-        foreach (var kvp in parameterMap)
-        {
-            if (sb.Length > 0)
-            {
-                sb.Append('&');
-            }
-            sb.Append($"{kvp.Key}={kvp.Value}");
-        }
-        return sb.ToString();
+        return !string.IsNullOrWhiteSpace(orgnummer) && OrganisasjonsnummerRegex.IsMatch(orgnummer);
     }
 
     [GeneratedRegex(
