@@ -14,6 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed <!-- for any bug fixes. -->
 ### Security <!-- in case of vulnerabilities. -->
 
+## 0.0.2
+
+### Fixed
+
+- Replaced a query parameter handling with the implementation from AspNetCore.Extensions
+
 ## 0.0.1
 
 ### Added

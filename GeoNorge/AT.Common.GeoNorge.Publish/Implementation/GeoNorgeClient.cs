@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
+using Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
 using Arbeidstilsynet.Common.GeoNorge.DependencyInjection;
 using Arbeidstilsynet.Common.GeoNorge.Model;
 using Arbeidstilsynet.Common.GeoNorge.Model.Request;
