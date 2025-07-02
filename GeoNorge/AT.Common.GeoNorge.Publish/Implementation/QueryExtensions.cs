@@ -6,36 +6,6 @@ namespace Arbeidstilsynet.Common.GeoNorge.Implementation;
 
 internal static class QueryExtensions
 {
-    public static Uri AddQueryParameters(
-        this Uri uri,
-        IReadOnlyDictionary<string, string> parameterMap
-    )
-    {
-        if (parameterMap.Count == 0)
-        {
-            return uri;
-        }
-
-        var sb = new StringBuilder();
-
-        sb.Append(uri);
-
-        if (uri.ToString().Contains('?'))
-        {
-            sb.Append('&');
-        }
-        else
-        {
-            sb.Append('?');
-        }
-
-        sb.Append(parameterMap.ToQueryParameters());
-
-        var parameterizedUri = sb.ToString();
-
-        return new Uri(parameterizedUri, uri.IsAbsoluteUri ? UriKind.Absolute : UriKind.Relative);
-    }
-
     public static IReadOnlyDictionary<string, string> ToMap(this TextSearchQuery query)
     {
         var parameterMap = new Dictionary<string, string>();
@@ -114,22 +84,5 @@ internal static class QueryExtensions
         );
 
         return parameterMap;
-    }
-
-    private static string ToQueryParameters(this IReadOnlyDictionary<string, string> parameterMap)
-    {
-        var sb = new StringBuilder();
-
-        foreach (var (key, value) in parameterMap)
-        {
-            if (sb.Length > 0)
-            {
-                sb.Append('&');
-            }
-            var escapedValue = Uri.EscapeDataString(value);
-
-            sb.Append($"{key}={escapedValue}");
-        }
-        return sb.ToString();
     }
 }
