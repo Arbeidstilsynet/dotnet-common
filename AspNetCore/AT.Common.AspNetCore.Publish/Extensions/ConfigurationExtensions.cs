@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Configuration;
 
-namespace Arbeidstilsynet.Common.AspNetCore.Extensions;
+namespace Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
 
 /// <summary>
 /// Extensions of the IConfiguration abstraction
