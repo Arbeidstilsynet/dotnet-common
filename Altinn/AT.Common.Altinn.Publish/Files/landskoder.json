@@ -1,0 +1,954 @@
+{
+  "AFG": {
+    "land": "Afghanistan",
+    "kode": "+93"
+  },
+  "ALB": {
+    "land": "Albania",
+    "kode": "+355"
+  },
+  "DZA": {
+    "land": "Algeria",
+    "kode": "+213"
+  },
+  "ASM": {
+    "land": "American Samoa",
+    "kode": "+684"
+  },
+  "AND": {
+    "land": "Andorra",
+    "kode": "+376"
+  },
+  "AGO": {
+    "land": "Angola",
+    "kode": "+244"
+  },
+  "AIA": {
+    "land": "Anguilla",
+    "kode": "+264"
+  },
+  "ATA": {
+    "land": "Antarctica",
+    "kode": "+672 1"
+  },
+  "ATG": {
+    "land": "Antigua and Barbuda",
+    "kode": "+268"
+  },
+  "ARG": {
+    "land": "Argentina",
+    "kode": "+54"
+  },
+  "ARM": {
+    "land": "Armenia",
+    "kode": "+374"
+  },
+  "ABW": {
+    "land": "Aruba",
+    "kode": "+297"
+  },
+  "ASC": {
+    "land": "Ascension",
+    "kode": "+247"
+  },
+  "AUS": {
+    "land": "Australia",
+    "kode": "+61"
+  },
+  "AUT": {
+    "land": "Austria",
+    "kode": "+43"
+  },
+  "AZE": {
+    "land": "Azerbaijan",
+    "kode": "+994"
+  },
+  "BHS": {
+    "land": "Bahamas",
+    "kode": "+242"
+  },
+  "BHR": {
+    "land": "Bahrain",
+    "kode": "+973"
+  },
+  "BGD": {
+    "land": "Bangladesh",
+    "kode": "+880"
+  },
+  "BRB": {
+    "land": "Barbados",
+    "kode": "+246"
+  },
+  "BLR": {
+    "land": "Belarus",
+    "kode": "+375"
+  },
+  "BEL": {
+    "land": "Belgium",
+    "kode": "+32"
+  },
+  "BLZ": {
+    "land": "Belize",
+    "kode": "+501"
+  },
+  "BEN": {
+    "land": "Benin",
+    "kode": "+229"
+  },
+  "BMU": {
+    "land": "Bermuda",
+    "kode": "+441"
+  },
+  "BTN": {
+    "land": "Bhutan",
+    "kode": "+975"
+  },
+  "BOL": {
+    "land": "Bolivia",
+    "kode": "+591"
+  },
+  "BES": {
+    "land": "Bonaire, Sint Eustatius and Saba",
+    "kode": "+599"
+  },
+  "BIH": {
+    "land": "Bosnia and Herzegovina",
+    "kode": "+387"
+  },
+  "BWA": {
+    "land": "Botswana",
+    "kode": "+267"
+  },
+  "BRA": {
+    "land": "Brazil",
+    "kode": "+55"
+  },
+  "VGB": {
+    "land": "British Virgin Islands",
+    "kode": "+284"
+  },
+  "BRN": {
+    "land": "Brunei",
+    "kode": "+673"
+  },
+  "BGR": {
+    "land": "Bulgaria",
+    "kode": "+359"
+  },
+  "BFA": {
+    "land": "Burkina Faso",
+    "kode": "+226"
+  },
+  "BDI": {
+    "land": "Burundi",
+    "kode": "+257"
+  },
+  "CPV": {
+    "land": "Cabo Verde",
+    "kode": "+238"
+  },
+  "KHM": {
+    "land": "Cambodia",
+    "kode": "+855"
+  },
+  "CMR": {
+    "land": "Cameroon",
+    "kode": "+237"
+  },
+  "CAN": {
+    "land": "Canada",
+    "kode": "+1"
+  },
+  "CYM": {
+    "land": "Cayman Islands",
+    "kode": "+345"
+  },
+  "CAF": {
+    "land": "Central African Republic",
+    "kode": "+236"
+  },
+  "TCD": {
+    "land": "Chad",
+    "kode": "+235"
+  },
+  "CHL": {
+    "land": "Chile",
+    "kode": "+56"
+  },
+  "CHN": {
+    "land": "China",
+    "kode": "+86"
+  },
+  "COL": {
+    "land": "Colombia",
+    "kode": "+57"
+  },
+  "COM": {
+    "land": "Comoros",
+    "kode": "+269"
+  },
+  "COD": {
+    "land": "Congo, Democratic Republic of the",
+    "kode": "+243"
+  },
+  "COG": {
+    "land": "Congo, Republic of the",
+    "kode": "+242"
+  },
+  "COK": {
+    "land": "Cook Islands",
+    "kode": "+682"
+  },
+  "CRI": {
+    "land": "Costa Rica",
+    "kode": "+506"
+  },
+  "CIV": {
+    "land": "Cote d'Ivoire",
+    "kode": "+225"
+  },
+  "HRV": {
+    "land": "Croatia",
+    "kode": "+385"
+  },
+  "CUB": {
+    "land": "Cuba",
+    "kode": "+53"
+  },
+  "CUW": {
+    "land": "Curaçao",
+    "kode": "+599"
+  },
+  "CYP": {
+    "land": "Cyprus",
+    "kode": "+357"
+  },
+  "CZE": {
+    "land": "Czech Republic",
+    "kode": "+420"
+  },
+  "DNK": {
+    "land": "Denmark",
+    "kode": "+45"
+  },
+  "DGA": {
+    "land": "Diego Garcia",
+    "kode": "+246"
+  },
+  "DJI": {
+    "land": "Djibouti",
+    "kode": "+253"
+  },
+  "DMA": {
+    "land": "Dominica",
+    "kode": "+767"
+  },
+  "DOM": {
+    "land": "Dominican Republic",
+    "kode": "(+809, +1829, +1849)"
+  },
+  "ECU": {
+    "land": "Ecuador",
+    "kode": "+593"
+  },
+  "EGY": {
+    "land": "Egypt",
+    "kode": "+20"
+  },
+  "SLV": {
+    "land": "El Salvador",
+    "kode": "+503"
+  },
+  "GNQ": {
+    "land": "Equatorial Guinea",
+    "kode": "+240"
+  },
+  "ERI": {
+    "land": "Eritrea",
+    "kode": "+291"
+  },
+  "EST": {
+    "land": "Estonia",
+    "kode": "+372"
+  },
+  "SWZ": {
+    "land": "Eswatini",
+    "kode": "+268"
+  },
+  "ETH": {
+    "land": "Ethiopia",
+    "kode": "+251"
+  },
+  "FLK": {
+    "land": "Falkland Islands",
+    "kode": "+500"
+  },
+  "FRO": {
+    "land": "Faroe Islands",
+    "kode": "+298"
+  },
+  "FJI": {
+    "land": "Fiji",
+    "kode": "+679"
+  },
+  "FIN": {
+    "land": "Finland",
+    "kode": "+358"
+  },
+  "FRA": {
+    "land": "France",
+    "kode": "+33"
+  },
+  "GUF": {
+    "land": "French Guiana",
+    "kode": "+594"
+  },
+  "PYF": {
+    "land": "French Polynesia",
+    "kode": "+689"
+  },
+  "GAB": {
+    "land": "Gabon",
+    "kode": "+241"
+  },
+  "GMB": {
+    "land": "Gambia",
+    "kode": "+220"
+  },
+  "GEO": {
+    "land": "Georgia",
+    "kode": "+995"
+  },
+  "DEU": {
+    "land": "Germany",
+    "kode": "+49"
+  },
+  "GHA": {
+    "land": "Ghana",
+    "kode": "+233"
+  },
+  "GIB": {
+    "land": "Gibraltar",
+    "kode": "+350"
+  },
+  "GRC": {
+    "land": "Greece",
+    "kode": "+30"
+  },
+  "GRL": {
+    "land": "Greenland",
+    "kode": "+299"
+  },
+  "GRD": {
+    "land": "Grenada",
+    "kode": "+473"
+  },
+  "GLP": {
+    "land": "Guadeloupe",
+    "kode": "+590"
+  },
+  "GUM": {
+    "land": "Guam",
+    "kode": "+671"
+  },
+  "GTM": {
+    "land": "Guatemala",
+    "kode": "+502"
+  },
+  "GIN": {
+    "land": "Guinea",
+    "kode": "+224"
+  },
+  "GNB": {
+    "land": "Guinea-Bissau",
+    "kode": "+245"
+  },
+  "GUY": {
+    "land": "Guyana",
+    "kode": "+592"
+  },
+  "HTI": {
+    "land": "Haiti",
+    "kode": "+509"
+  },
+  "HND": {
+    "land": "Honduras",
+    "kode": "+504"
+  },
+  "HKG": {
+    "land": "Hong Kong",
+    "kode": "+852"
+  },
+  "HUN": {
+    "land": "Hungary",
+    "kode": "+36"
+  },
+  "ISL": {
+    "land": "Iceland",
+    "kode": "+354"
+  },
+  "IND": {
+    "land": "India",
+    "kode": "+91"
+  },
+  "IDN": {
+    "land": "Indonesia",
+    "kode": "+62"
+  },
+  "IRN": {
+    "land": "Iran",
+    "kode": "+98"
+  },
+  "IRQ": {
+    "land": "Iraq",
+    "kode": "+964"
+  },
+  "IRL": {
+    "land": "Ireland",
+    "kode": "+353"
+  },
+  "ISR": {
+    "land": "Israel",
+    "kode": "+972"
+  },
+  "ITA": {
+    "land": "Italy",
+    "kode": "+39"
+  },
+  "JAM": {
+    "land": "Jamaica",
+    "kode": "(+658, +1876)"
+  },
+  "JPN": {
+    "land": "Japan",
+    "kode": "+81"
+  },
+  "JOR": {
+    "land": "Jordan",
+    "kode": "+962"
+  },
+  "KAZ": {
+    "land": "Kazakhstan",
+    "kode": "+7"
+  },
+  "KEN": {
+    "land": "Kenya",
+    "kode": "+254"
+  },
+  "KIR": {
+    "land": "Kiribati",
+    "kode": "+686"
+  },
+  "XKX": {
+    "land": "Kosovo",
+    "kode": "+383"
+  },
+  "KWT": {
+    "land": "Kuwait",
+    "kode": "+965"
+  },
+  "KGZ": {
+    "land": "Kyrgyzstan",
+    "kode": "+996"
+  },
+  "LAO": {
+    "land": "Laos",
+    "kode": "+856"
+  },
+  "LVA": {
+    "land": "Latvia",
+    "kode": "+371"
+  },
+  "LBN": {
+    "land": "Lebanon",
+    "kode": "+961"
+  },
+  "LSO": {
+    "land": "Lesotho",
+    "kode": "+266"
+  },
+  "LBR": {
+    "land": "Liberia",
+    "kode": "+231"
+  },
+  "LBY": {
+    "land": "Libya",
+    "kode": "+218"
+  },
+  "LIE": {
+    "land": "Liechtenstein",
+    "kode": "+423"
+  },
+  "LTU": {
+    "land": "Lithuania",
+    "kode": "+370"
+  },
+  "LUX": {
+    "land": "Luxembourg",
+    "kode": "+352"
+  },
+  "MAC": {
+    "land": "Macau",
+    "kode": "+853"
+  },
+  "MDG": {
+    "land": "Madagascar",
+    "kode": "+261"
+  },
+  "MWI": {
+    "land": "Malawi",
+    "kode": "+265"
+  },
+  "MYS": {
+    "land": "Malaysia",
+    "kode": "+60"
+  },
+  "MDV": {
+    "land": "Maldives",
+    "kode": "+960"
+  },
+  "MLI": {
+    "land": "Mali",
+    "kode": "+223"
+  },
+  "MLT": {
+    "land": "Malta",
+    "kode": "+356"
+  },
+  "MHL": {
+    "land": "Marshall Islands",
+    "kode": "+692"
+  },
+  "MTQ": {
+    "land": "Martinique",
+    "kode": "+596"
+  },
+  "MRT": {
+    "land": "Mauritania",
+    "kode": "+222"
+  },
+  "MUS": {
+    "land": "Mauritius",
+    "kode": "+230"
+  },
+  "MYT": {
+    "land": "Mayotte",
+    "kode": "+262"
+  },
+  "MEX": {
+    "land": "Mexico",
+    "kode": "+52"
+  },
+  "FSM": {
+    "land": "Micronesia, Federated States of",
+    "kode": "+691"
+  },
+  "MDA": {
+    "land": "Moldova",
+    "kode": "+373"
+  },
+  "MCO": {
+    "land": "Monaco",
+    "kode": "+377"
+  },
+  "MNG": {
+    "land": "Mongolia",
+    "kode": "+976"
+  },
+  "MNE": {
+    "land": "Montenegro",
+    "kode": "+382"
+  },
+  "MSR": {
+    "land": "Montserrat",
+    "kode": "+664"
+  },
+  "MAR": {
+    "land": "Morocco",
+    "kode": "+212"
+  },
+  "MOZ": {
+    "land": "Mozambique",
+    "kode": "+258"
+  },
+  "MMR": {
+    "land": "Myanmar",
+    "kode": "+95"
+  },
+  "NAM": {
+    "land": "Namibia",
+    "kode": "+264"
+  },
+  "NRU": {
+    "land": "Nauru",
+    "kode": "+674"
+  },
+  "NPL": {
+    "land": "Nepal",
+    "kode": "+977"
+  },
+  "NLD": {
+    "land": "Netherlands",
+    "kode": "+31"
+  },
+  "NCL": {
+    "land": "New Caledonia",
+    "kode": "+687"
+  },
+  "NZL": {
+    "land": "New Zealand",
+    "kode": "+64"
+  },
+  "NIC": {
+    "land": "Nicaragua",
+    "kode": "+505"
+  },
+  "NER": {
+    "land": "Niger",
+    "kode": "+227"
+  },
+  "NGA": {
+    "land": "Nigeria",
+    "kode": "+234"
+  },
+  "NIU": {
+    "land": "Niue",
+    "kode": "+683"
+  },
+  "NFK": {
+    "land": "Norfolk Island",
+    "kode": "+672 3"
+  },
+  "PRK": {
+    "land": "North Korea",
+    "kode": "+850"
+  },
+  "MKD": {
+    "land": "North Macedonia",
+    "kode": "+389"
+  },
+  "MNP": {
+    "land": "Northern Mariana Islands",
+    "kode": "+670"
+  },
+  "NOR": {
+    "land": "Norway",
+    "kode": "+47"
+  },
+  "OMN": {
+    "land": "Oman",
+    "kode": "+968"
+  },
+  "PAK": {
+    "land": "Pakistan",
+    "kode": "+92"
+  },
+  "PLW": {
+    "land": "Palau",
+    "kode": "+680"
+  },
+  "PSE": {
+    "land": "Palestine",
+    "kode": "+970"
+  },
+  "PAN": {
+    "land": "Panama",
+    "kode": "+507"
+  },
+  "PNG": {
+    "land": "Papua New Guinea",
+    "kode": "+675"
+  },
+  "PRY": {
+    "land": "Paraguay",
+    "kode": "+595"
+  },
+  "PER": {
+    "land": "Peru",
+    "kode": "+51"
+  },
+  "PHL": {
+    "land": "Philippines",
+    "kode": "+63"
+  },
+  "POL": {
+    "land": "Poland",
+    "kode": "+48"
+  },
+  "PRT": {
+    "land": "Portugal",
+    "kode": "+351"
+  },
+  "PRI": {
+    "land": "Puerto Rico",
+    "kode": "(+787, +1939)"
+  },
+  "QAT": {
+    "land": "Qatar",
+    "kode": "+974"
+  },
+  "REU": {
+    "land": "Reunion",
+    "kode": "+262"
+  },
+  "ROU": {
+    "land": "Romania",
+    "kode": "+40"
+  },
+  "RUS": {
+    "land": "Russia",
+    "kode": "+7"
+  },
+  "RWA": {
+    "land": "Rwanda",
+    "kode": "+250"
+  },
+  "BLM": {
+    "land": "Saint-Barthelemy",
+    "kode": "+590"
+  },
+  "SHN": {
+    "land": "Saint Helena",
+    "kode": "+290"
+  },
+  "KNA": {
+    "land": "Saint Kitts and Nevis",
+    "kode": "+869"
+  },
+  "LCA": {
+    "land": "Saint Lucia",
+    "kode": "+758"
+  },
+  "MAF": {
+    "land": "Saint Martin",
+    "kode": "+590"
+  },
+  "SPM": {
+    "land": "Saint Pierre and Miquelon",
+    "kode": "+508"
+  },
+  "VCT": {
+    "land": "Saint Vincent and the Grenadines",
+    "kode": "+784"
+  },
+  "WSM": {
+    "land": "Samoa",
+    "kode": "+685"
+  },
+  "SMR": {
+    "land": "San Marino",
+    "kode": "+378"
+  },
+  "STP": {
+    "land": "Sao Tome and Principe",
+    "kode": "+239"
+  },
+  "SAU": {
+    "land": "Saudi Arabia",
+    "kode": "+966"
+  },
+  "SEN": {
+    "land": "Senegal",
+    "kode": "+221"
+  },
+  "SRB": {
+    "land": "Serbia",
+    "kode": "+381"
+  },
+  "SYC": {
+    "land": "Seychelles",
+    "kode": "+248"
+  },
+  "SLE": {
+    "land": "Sierra Leone",
+    "kode": "+232"
+  },
+  "SGP": {
+    "land": "Singapore",
+    "kode": "+65"
+  },
+  "SXM": {
+    "land": "Sint Maarten",
+    "kode": "+721"
+  },
+  "SVK": {
+    "land": "Slovakia",
+    "kode": "+421"
+  },
+  "SVN": {
+    "land": "Slovenia",
+    "kode": "+386"
+  },
+  "SLB": {
+    "land": "Solomon Islands",
+    "kode": "+677"
+  },
+  "SOM": {
+    "land": "Somalia",
+    "kode": "+252"
+  },
+  "ZAF": {
+    "land": "South Africa",
+    "kode": "+27"
+  },
+  "KOR": {
+    "land": "South Korea",
+    "kode": "+82"
+  },
+  "SSD": {
+    "land": "South Sudan",
+    "kode": "+211"
+  },
+  "ESP": {
+    "land": "Spain",
+    "kode": "+34"
+  },
+  "LKA": {
+    "land": "Sri Lanka",
+    "kode": "+94"
+  },
+  "SDN": {
+    "land": "Sudan",
+    "kode": "+249"
+  },
+  "SUR": {
+    "land": "Suriname",
+    "kode": "+597"
+  },
+  "SWE": {
+    "land": "Sweden",
+    "kode": "+46"
+  },
+  "CHE": {
+    "land": "Switzerland",
+    "kode": "+41"
+  },
+  "SYR": {
+    "land": "Syria",
+    "kode": "+963"
+  },
+  "TWN": {
+    "land": "Taiwan",
+    "kode": "+886"
+  },
+  "TJK": {
+    "land": "Tajikistan",
+    "kode": "+992"
+  },
+  "TZA": {
+    "land": "Tanzania",
+    "kode": "+255"
+  },
+  "THA": {
+    "land": "Thailand",
+    "kode": "+66"
+  },
+  "TLS": {
+    "land": "Timor-Leste",
+    "kode": "+670"
+  },
+  "TGO": {
+    "land": "Togo",
+    "kode": "+228"
+  },
+  "TKL": {
+    "land": "Tokelau",
+    "kode": "+690"
+  },
+  "TON": {
+    "land": "Tonga",
+    "kode": "+676"
+  },
+  "TTO": {
+    "land": "Trinidad and Tobago",
+    "kode": "+868"
+  },
+  "TAA": {
+    "land": "Tristan da Cunha",
+    "kode": "+290"
+  },
+  "TUN": {
+    "land": "Tunisia",
+    "kode": "+216"
+  },
+  "TUR": {
+    "land": "Turkey",
+    "kode": "+90"
+  },
+  "TKM": {
+    "land": "Turkmenistan",
+    "kode": "+993"
+  },
+  "TCA": {
+    "land": "Turks and Caicos Islands",
+    "kode": "+649"
+  },
+  "TUV": {
+    "land": "Tuvalu",
+    "kode": "+688"
+  },
+  "UGA": {
+    "land": "Uganda",
+    "kode": "+256"
+  },
+  "UKR": {
+    "land": "Ukraine",
+    "kode": "+380"
+  },
+  "ARE": {
+    "land": "United Arab Emirates",
+    "kode": "+971"
+  },
+  "GBR": {
+    "land": "United Kingdom",
+    "kode": "+44"
+  },
+  "USA": {
+    "land": "United States of America",
+    "kode": "+1"
+  },
+  "URY": {
+    "land": "Uruguay",
+    "kode": "+598"
+  },
+  "UZB": {
+    "land": "Uzbekistan",
+    "kode": "+998"
+  },
+  "VUT": {
+    "land": "Vanuatu",
+    "kode": "+678"
+  },
+  "VAT": {
+    "land": "Vatican City State",
+    "kode": "+39"
+  },
+  "VEN": {
+    "land": "Venezuela",
+    "kode": "+58"
+  },
+  "VNM": {
+    "land": "Vietnam",
+    "kode": "+84"
+  },
+  "VIR": {
+    "land": "U.S. Virgin Islands",
+    "kode": "+340"
+  },
+  "WLF": {
+    "land": "Wallis and Futuna",
+    "kode": "+681"
+  },
+  "YEM": {
+    "land": "Yemen",
+    "kode": "+967"
+  },
+  "ZMB": {
+    "land": "Zambia",
+    "kode": "+260"
+  },
+  "ZWE": {
+    "land": "Zimbabwe",
+    "kode": "+263"
+  }
+}
