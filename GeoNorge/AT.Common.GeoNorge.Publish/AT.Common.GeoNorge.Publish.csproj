@@ -17,7 +17,7 @@
   <ItemGroup>
     <PackageReference
       Include="Arbeidstilsynet.Common.AspNetCore.Extensions"
-      Version="1.2.0-alpha.1"
+      Version="[1.2.0,2.0)"
     />
     <PackageReference
       Include="Microsoft.Extensions.DependencyInjection.Abstractions"
