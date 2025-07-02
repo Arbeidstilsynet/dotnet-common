@@ -1,10 +1,6 @@
 using Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
 using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Polly;
-using Polly.Retry;
 
 namespace Arbeidstilsynet.Common.Enhetsregisteret.DependencyInjection;
 

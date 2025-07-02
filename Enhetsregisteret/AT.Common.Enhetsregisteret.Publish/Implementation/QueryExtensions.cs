@@ -1,4 +1,3 @@
-using System.Text;
 using System.Text.RegularExpressions;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 
@@ -6,7 +5,7 @@ namespace Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
 
 internal static partial class QueryExtensions
 {
-    private static readonly Regex organisasjonsnummerRegex = OrgnummerRegex();
+    private static readonly Regex OrganisasjonsnummerRegex = OrgnummerRegex();
 
     public static void ValidateOrgnummerOrThrow(this string? orgnummer, string paramName)
     {
@@ -90,7 +89,7 @@ internal static partial class QueryExtensions
 
     internal static bool IsValidOrgnummer(this string? orgnummer)
     {
-        return !string.IsNullOrWhiteSpace(orgnummer) && organisasjonsnummerRegex.IsMatch(orgnummer);
+        return !string.IsNullOrWhiteSpace(orgnummer) && OrganisasjonsnummerRegex.IsMatch(orgnummer);
     }
 
     [GeneratedRegex(

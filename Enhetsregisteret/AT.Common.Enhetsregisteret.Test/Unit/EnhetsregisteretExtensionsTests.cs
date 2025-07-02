@@ -1,12 +1,10 @@
 using Arbeidstilsynet.Common.Enhetsregisteret.Extensions;
-using Arbeidstilsynet.Common.Enhetsregisteret.Model;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Brreg;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Response;
 using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
 using NSubstitute;
 using Shouldly;
-using Xunit;
 
 namespace Arbeidstilsynet.Common.Enhetsregisteret.Test;
 
