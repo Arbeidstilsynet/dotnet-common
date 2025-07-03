@@ -1,8 +1,8 @@
 namespace Arbeidstilsynet.Common.Altinn.Model;
 
 /// <summary>
-/// Landskode og navn på et gitt land
+/// Represents a country and its international dialing code.
 /// </summary>
-/// <param name="Land">Leselig navn på engelsk. E.g. "Norway"</param>
-/// <param name="Kode">E.g. "+47"</param>
+/// <param name="Land">The country name in English, e.g. "Norway".</param>
+/// <param name="Kode">International dialing code, e.g. "+47" for Norway.</param>
 public record Landskode(string Land, string Kode);

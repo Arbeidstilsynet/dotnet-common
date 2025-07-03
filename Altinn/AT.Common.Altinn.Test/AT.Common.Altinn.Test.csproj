@@ -26,6 +26,6 @@
     <ProjectReference Include="..\AT.Common.Altinn.Publish\AT.Common.Altinn.Publish.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Files\landskoder.json" />
+    <EmbeddedResource Include="Unit\TestData\**" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 using Altinn.Platform.Storage.Interface.Models;
 
-namespace Arbeidstilsynet.Common.Altinn.Extensions.Something;
+namespace Arbeidstilsynet.Common.Altinn.Extensions;
 
 /// <summary>
 /// Metoder for å hente ut ofte brukt informasjon fra en <see cref="Instance"/>
