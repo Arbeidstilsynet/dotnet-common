@@ -1,8 +1,17 @@
+using Altinn.App.Core.Features;
 using Arbeidstilsynet.Common.Altinn.Implementation;
 using Arbeidstilsynet.Common.Altinn.Ports;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 
 namespace Arbeidstilsynet.Common.Altinn.DependencyInjection;
+
+/// <summary>
+/// Configuration for the LandOptions feature.
+/// </summary>
+/// <param name="OptionsId">The Altinn optionsId, default is "land".</param>
+public record LandOptionsConfiguration(string OptionsId = "land");
 
 /// <summary>
 /// Dependency injection extensions for Altinn
@@ -16,7 +25,26 @@ public static class DependencyInjectionExtensions
     /// <returns>Service collection for chaining</returns>
     public static IServiceCollection AddLandskoder(this IServiceCollection services)
     {
-        services.AddSingleton<ILandskodeLookup, LandskodeLookup>();
+        services.TryAddSingleton<ILandskodeLookup, LandskodeLookup>();
+        return services;
+    }
+    
+    /// <summary>
+    /// Adds the LandOptions feature to the service collection. This also adds <see cref="ILandskodeLookup"/>.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="optionsConfiguration"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddLandOptions(this IServiceCollection services,
+        LandOptionsConfiguration? optionsConfiguration = null)
+    {
+        optionsConfiguration ??= new LandOptionsConfiguration();
+
+        services.AddLandskoder();
+
+        services.TryAddSingleton(Options.Create(optionsConfiguration));
+        services.TryAddSingleton<IAppOptionsProvider, LandOptions>();
+        
         return services;
     }
 }
