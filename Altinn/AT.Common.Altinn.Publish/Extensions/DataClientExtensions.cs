@@ -4,18 +4,18 @@ using Altinn.Platform.Storage.Interface.Models;
 namespace Arbeidstilsynet.Common.Altinn.Extensions;
 
 /// <summary>
-/// Nyttig metoder for å interagere med en <see cref="IDataClient"/> fra en <see cref="Instance"/>.
+/// Useful methods for interacting with an <see cref="IDataClient"/> from an <see cref="Instance"/>.
 /// </summary>
 public static class DataClientExtensions
 {
     /// <summary>
-    /// Hent skjema-dataen av type <typeparamref name="T"/> fra en <see cref="Instance"/>.
+    /// Get form data of type <typeparamref name="T"/> from an <see cref="Instance"/>.
     /// </summary>
-    /// <param name="dataClient">Interface som brukes for å hente skjema-dataen</param>
-    /// <param name="instance">Instansen hvor skjema-dataen ligger</param>
-    /// <param name="dataType">Datatype-IDen til skjema. Default basert på konvensjon i arbeidstilsynet: "skjema"</param>
-    /// <typeparam name="T">Typen til datamodellen for skjema</typeparam>
-    /// <returns>Skjema-dataen av type <typeparamref name="T"/>, eller null, hvis det ikke fantes et element med typen <paramref name="dataType"/></returns>
+    /// <param name="dataClient">Interface used to retrieve the form data</param>
+    /// <param name="instance">The instance where the form data is located</param>
+    /// <param name="dataType">The datatype ID for the form. Default based on Arbeidstilsynet convention: "skjema"</param>
+    /// <typeparam name="T">The type of the data model for the form</typeparam>
+    /// <returns>The form data of type <typeparamref name="T"/>, or null if no element with the type <paramref name="dataType"/> was found</returns>
     public static async Task<T?> GetSkjemaData<T>(
         this IDataClient dataClient,
         Instance instance,
@@ -41,12 +41,12 @@ public static class DataClientExtensions
     }
 
     /// <summary>
-    /// Slett et element fra <see cref="Instance"/>. Kan for eksempel brukes for å slette vedlegg som ikke lenger er i bruk.
+    /// Delete an element from an <see cref="Instance"/>. Can for example be used to delete attachments that are no longer in use.
     /// </summary>
-    /// <param name="dataClient">Interface som brukes for å slette dataelementet</param>
-    /// <param name="instance">Instansen hvor dataelementet ligger </param>
-    /// <param name="element">Elementet som skal slettes</param>
-    /// <param name="delay">Avgjør om slettinga kan utsettes, eller må skje nå (default)</param>
+    /// <param name="dataClient">Interface used to delete the data element</param>
+    /// <param name="instance">The instance where the data element is located</param>
+    /// <param name="element">The element to be deleted</param>
+    /// <param name="delay">Determines whether the deletion can be postponed, or must happen now (default)</param>
     public static async Task DeleteElement(
         this IDataClient dataClient,
         Instance instance,
