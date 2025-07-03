@@ -18,4 +18,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- First implementation: the client returns 'bar' whenever it is called.
+- **Extension Methods** for common Altinn operations
+  - `InstanceExtensions` - Extract GUID, app name, and party ID from instances
+  - `DataClientExtensions` - Simplified form data retrieval and element deletion
+  - `AssemblyExtensions` - Load and deserialize embedded JSON resources
+- **Abstract Data Processors** for handling form data changes
+  - `BaseDataProcessor<T>` - Base class for type-specific data processing
+  - `MemberProcessor<T, TMember>` - Process changes to specific object members
+  - `ListProcessor<T, TItem>` - Handle list/collection changes with item-level processing
+- **Country Code Lookup Service** (`ILandskodeLookup`)
+  - Country anmes and dial codes for 238 countries
+- **Altinn Options Provider** for country dropdowns
+  - `LandOptions` for Altinn dropdowns etc.
