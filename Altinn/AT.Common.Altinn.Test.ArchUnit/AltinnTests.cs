@@ -46,11 +46,13 @@ public class AltinnAdapterLayerTests
             .That()
             .AreNot(Layers.PublicInterfaces)
             .And()
+            .AreNot(Layers.PublicAbstractClasses)
+            .And()
             .Are(Layers.TypesInInternalNamespaces)
             .Should()
             .NotBePublic()
             .Because(
-                "public types should either be an interface OR reside in a namespace containing \"Extensions\", \"DependencyInjection\" or \"Model\"."
+                "public types should either be an abstract class, an interface OR reside in a namespace containing \"Extensions\", \"DependencyInjection\" or \"Model\"."
             )
             .WithoutRequiringPositiveResults();
 

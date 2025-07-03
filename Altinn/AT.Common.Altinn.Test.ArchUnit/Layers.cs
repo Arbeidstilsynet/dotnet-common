@@ -37,6 +37,15 @@ namespace AT.Common.Altinn.Test.ArchUnit
             .And()
             .ArePublic()
             .As("public interfaces");
+        
+        internal static readonly IObjectProvider<IType> PublicAbstractClasses = Classes()
+            .That()
+            .Are(AltinnLayer)
+            .And()
+            .AreAbstract()
+            .And()
+            .ArePublic()
+            .As("public abstract classes");
 
         internal static readonly IObjectProvider<IType> InterfaceImplementations = Classes()
             .That()
