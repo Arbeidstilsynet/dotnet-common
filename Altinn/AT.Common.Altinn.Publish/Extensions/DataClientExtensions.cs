@@ -1,8 +1,7 @@
 using Altinn.App.Core.Internal.Data;
 using Altinn.Platform.Storage.Interface.Models;
-using Arbeidstilsynet.Common.Altinn.Model;
 
-namespace Arbeidstilsynet.Common.Altinn.Extensions.Something;
+namespace Arbeidstilsynet.Common.Altinn.Extensions;
 
 /// <summary>
 /// Nyttig metoder for å interagere med en <see cref="IDataClient"/> fra en <see cref="Instance"/>.

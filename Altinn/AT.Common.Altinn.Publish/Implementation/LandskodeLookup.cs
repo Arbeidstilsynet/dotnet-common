@@ -1,6 +1,7 @@
 using System.Reflection;
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model;
+using Arbeidstilsynet.Common.Altinn.Ports;
 using Newtonsoft.Json;
 using AssemblyExtensions = Arbeidstilsynet.Common.Altinn.Extensions.AssemblyExtensions;
 

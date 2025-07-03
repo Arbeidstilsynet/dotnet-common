@@ -1,7 +1,7 @@
 using ArchUnitNET.Domain;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 
-namespace Altinn.ArchUnit.Tests
+namespace AT.Common.Altinn.Test.ArchUnit
 {
     internal static class Constants
     {

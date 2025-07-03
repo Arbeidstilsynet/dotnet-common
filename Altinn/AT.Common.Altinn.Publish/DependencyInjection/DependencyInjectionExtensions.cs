@@ -1,8 +1,8 @@
 using Arbeidstilsynet.Common.Altinn.Implementation;
+using Arbeidstilsynet.Common.Altinn.Ports;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Arbeidstilsynet.Common.Altinn.DependencyInjection;
-
 
 /// <summary>
 /// Dependency injection extensions for Altinn

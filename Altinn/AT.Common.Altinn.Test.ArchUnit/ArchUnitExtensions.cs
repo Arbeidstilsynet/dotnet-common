@@ -1,9 +1,9 @@
+//add a using directive to ArchUnitNET.Fluent.ArchRuleDefinition to easily define ArchRules
 using ArchUnitNET.Domain;
 using ArchUnitNET.Fluent.Syntax.Elements.Types;
-//add a using directive to ArchUnitNET.Fluent.ArchRuleDefinition to easily define ArchRules
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 
-namespace Altinn.ArchUnit.Tests;
+namespace AT.Common.Altinn.Test.ArchUnit;
 
 internal static class ArchUnitExtensions
 {

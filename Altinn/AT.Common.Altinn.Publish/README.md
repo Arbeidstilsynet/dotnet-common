@@ -1,6 +1,6 @@
 # Introduction
 
-Give a brief introduction to Altinn, and explain its purpose.
+A collection of common patterns and extensions for cross-cutting concerns in Altinn applications.
 
 ## 📖 Installation
 

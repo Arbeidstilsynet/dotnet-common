@@ -1,22 +1,22 @@
 using Arbeidstilsynet.Common.Altinn.Model;
 
-namespace Arbeidstilsynet.Common.Altinn;
+namespace Arbeidstilsynet.Common.Altinn.Ports;
 
 /// <summary>
-/// Interface for å hente landskode og navn
+/// Interface for looking up country codes and names based on 3-letter ISO values.
 /// </summary>
 public interface ILandskodeLookup
 {
     /// <summary>
-    /// Hent landskode og navn
+    /// Get a country code and name based on a 3-letter ISO code.
     /// </summary>
-    /// <param name="landkode">3-bokstavs ISO-3166 </param>
+    /// <param name="landkode">3-letter ISO code for the country</param>
     /// <returns></returns>
     Task<Landskode?> GetLandskode(string landkode);
 
     /// <summary>
-    /// Hent alle landskoder og navn
+    /// Get all country codes and names.
     /// </summary>
-    /// <returns>Alle land</returns>
+    /// <returns></returns>
     Task<IEnumerable<KeyValuePair<string, Landskode>>> GetLandskoder();
 }
