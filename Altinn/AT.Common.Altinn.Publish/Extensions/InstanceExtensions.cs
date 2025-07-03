@@ -21,7 +21,7 @@ public static class InstanceExtensions
     /// Henter ut applikasjonsnavn fra instansens AppId
     /// </summary>
     /// <param name="instance">Instansen</param>
-    /// <returns>Nanvet til applikasjonen</returns>
+    /// <returns>Navnet til applikasjonen</returns>
     public static string GetAppName(this Instance instance)
     {
         return instance.AppId.Split("/")[1];

@@ -34,7 +34,7 @@ public class LandskodeLookupTests
     {
         var result = await _sut.GetLandskode(landskode);
 
-        result.ShouldBeEquivalentTo(expectedData);
+        result.ShouldBe(expectedData);
     }
 
     [Fact]
