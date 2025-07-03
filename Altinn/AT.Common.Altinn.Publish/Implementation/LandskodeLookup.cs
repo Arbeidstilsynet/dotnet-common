@@ -1,6 +1,8 @@
 using System.Reflection;
+using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model;
 using Newtonsoft.Json;
+using AssemblyExtensions = Arbeidstilsynet.Common.Altinn.Extensions.AssemblyExtensions;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation;
 
@@ -13,27 +15,7 @@ internal class LandskodeLookup : ILandskodeLookup
     {
         _landskoder ??= await IngestAsync();
 
-        return _landskoder.TryGetValue(landkode, out var landskode) ? landskode : null;
-    }
-
-    private static async Task<Dictionary<string, Landskode>> IngestAsync()
-    {
-        var assembly = Assembly.GetExecutingAssembly();
-        var fileName = assembly.GetManifestResourceNames().SingleOrDefault(str => str.EndsWith(Filename));
-        if (fileName is null)
-        {
-            return [];
-        }
-
-        await using var stream = assembly.GetManifestResourceStream(fileName);
-        if (stream is null)
-        {
-            return [];
-        }
-        using var reader = new StreamReader(stream);
-        var json = await reader.ReadToEndAsync();
-
-        return JsonConvert.DeserializeObject<Dictionary<string, Landskode>>(json) ?? [];
+        return _landskoder.GetValueOrDefault(landkode);
     }
 
     public async Task<IEnumerable<KeyValuePair<string, Landskode>>> GetLandskoder()
@@ -41,5 +23,10 @@ internal class LandskodeLookup : ILandskodeLookup
         _landskoder ??= await IngestAsync();
 
         return _landskoder;
+    }
+    
+    private static Task<Dictionary<string, Landskode>> IngestAsync()
+    {
+        return Assembly.GetExecutingAssembly().GetEmbeddedResource<Dictionary<string, Landskode>>(Filename);
     }
 }
