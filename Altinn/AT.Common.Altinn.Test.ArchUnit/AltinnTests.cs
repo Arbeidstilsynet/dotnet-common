@@ -40,7 +40,7 @@ public class AltinnAdapterLayerTests
     }
 
     [Fact]
-    public void PublicClasses_MustResideInExtensionsOrDependencyInjectionOrModelNamespaces()
+    public void PublicNonAbstractClasses_MustResideInExtensionsOrDependencyInjectionOrModelNamespaces()
     {
         IArchRule archRule = Types()
             .That()
