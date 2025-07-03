@@ -12,7 +12,6 @@ public class MemberProcessorTests
     private readonly Instance _instance = new Instance();
     private readonly Guid _dataId = Guid.NewGuid();
 
-
     public MemberProcessorTests()
     {
         _sut = new MemberTestProcessor();
@@ -23,7 +22,7 @@ public class MemberProcessorTests
     {
         // Arrange
         var currentData = new MemberTestDataModel { Name = "Current", Value = "CurrentValue" };
-        
+
         // Act
         await _sut.ProcessDataWrite(_instance, _dataId, currentData, null, Language);
 
@@ -37,7 +36,7 @@ public class MemberProcessorTests
         // Arrange
         var currentData = new MemberTestDataModel { Name = "Current", Value = null };
         var previousData = new MemberTestDataModel { Name = "Previous", Value = null };
-        
+
         // Act
         await _sut.ProcessDataWrite(_instance, _dataId, currentData, previousData, Language);
 
@@ -51,7 +50,7 @@ public class MemberProcessorTests
         // Arrange
         var currentData = new MemberTestDataModel { Name = "Current", Value = "SameValue" };
         var previousData = new MemberTestDataModel { Name = "Previous", Value = "SameValue" };
-        
+
         // Act
         await _sut.ProcessDataWrite(_instance, _dataId, currentData, previousData, Language);
 
@@ -65,7 +64,7 @@ public class MemberProcessorTests
         // Arrange
         var currentData = new MemberTestDataModel { Name = "Current", Value = "CurrentValue" };
         var previousData = new MemberTestDataModel { Name = "Previous", Value = "PreviousValue" };
-        
+
         // Act
         await _sut.ProcessDataWrite(_instance, _dataId, currentData, previousData, Language);
 
@@ -83,7 +82,7 @@ public class MemberProcessorTests
         // Arrange
         var currentData = new MemberTestDataModel { Name = "Current", Value = null };
         var previousData = new MemberTestDataModel { Name = "Previous", Value = "PreviousValue" };
-        
+
         // Act
         await _sut.ProcessDataWrite(_instance, _dataId, currentData, previousData, Language);
 
@@ -99,7 +98,7 @@ public class MemberProcessorTests
         // Arrange
         var currentData = new MemberTestDataModel { Name = "Current", Value = "CurrentValue" };
         var previousData = new MemberTestDataModel { Name = "Previous", Value = null };
-        
+
         // Act
         await _sut.ProcessDataWrite(_instance, _dataId, currentData, previousData, Language);
 
@@ -124,7 +123,12 @@ public class MemberTestProcessor : MemberProcessor<MemberTestDataModel, string>
         return dataModel.Value;
     }
 
-    protected override Task ProcessMember(string? currentMember, string? previousMember, MemberTestDataModel currentDataModel, MemberTestDataModel previousDataModel)
+    protected override Task ProcessMember(
+        string? currentMember,
+        string? previousMember,
+        MemberTestDataModel currentDataModel,
+        MemberTestDataModel previousDataModel
+    )
     {
         ProcessMemberCalled = true;
         LastCurrentMember = currentMember;
@@ -140,7 +144,7 @@ public class MemberTestDataModel
 {
     public string Name { get; init; } = string.Empty;
     public string? Value { get; init; }
-    
+
     public override bool Equals(object? obj)
     {
         return obj is MemberTestDataModel other && Name == other.Name && Value == other.Value;

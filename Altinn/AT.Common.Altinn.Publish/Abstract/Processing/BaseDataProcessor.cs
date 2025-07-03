@@ -12,12 +12,8 @@ public abstract class BaseDataProcessor<TDataModel> : IDataProcessor
     where TDataModel : class
 {
     /// <inheritdoc />
-    public Task ProcessDataRead(
-        Instance instance,
-        Guid? dataId,
-        object data,
-        string? language
-    ) => Task.CompletedTask;
+    public Task ProcessDataRead(Instance instance, Guid? dataId, object data, string? language) =>
+        Task.CompletedTask;
 
     /// <inheritdoc />
     public Task ProcessDataWrite(

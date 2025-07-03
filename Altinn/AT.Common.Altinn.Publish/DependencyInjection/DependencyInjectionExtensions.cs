@@ -28,15 +28,17 @@ public static class DependencyInjectionExtensions
         services.TryAddSingleton<ILandskodeLookup, LandskodeLookup>();
         return services;
     }
-    
+
     /// <summary>
     /// Adds the LandOptions feature to the service collection. This also adds <see cref="ILandskodeLookup"/>.
     /// </summary>
     /// <param name="services"></param>
     /// <param name="optionsConfiguration"></param>
     /// <returns></returns>
-    public static IServiceCollection AddLandOptions(this IServiceCollection services,
-        LandOptionsConfiguration? optionsConfiguration = null)
+    public static IServiceCollection AddLandOptions(
+        this IServiceCollection services,
+        LandOptionsConfiguration? optionsConfiguration = null
+    )
     {
         optionsConfiguration ??= new LandOptionsConfiguration();
 
@@ -44,7 +46,7 @@ public static class DependencyInjectionExtensions
 
         services.TryAddSingleton(Options.Create(optionsConfiguration));
         services.TryAddSingleton<IAppOptionsProvider, LandOptions>();
-        
+
         return services;
     }
 }

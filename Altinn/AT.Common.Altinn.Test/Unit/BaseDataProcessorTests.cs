@@ -24,7 +24,7 @@ public class BaseDataProcessorTests
     {
         // Arrange
         var data = new BaseTestDataModel { Name = "Test" };
-        
+
         // Act
         var act = () => _sut.ProcessDataRead(_instance, _dataId, data, Language);
 
@@ -38,7 +38,7 @@ public class BaseDataProcessorTests
         // Arrange
         var currentData = new BaseTestDataModel { Name = "Current" };
         var previousData = new BaseTestDataModel { Name = "Previous" };
-        
+
         // Act
         await _sut.ProcessDataWrite(_instance, _dataId, currentData, previousData, Language);
 
@@ -54,7 +54,7 @@ public class BaseDataProcessorTests
         // Arrange
         var wrongData = "This is not a TestDataModel";
         var previousData = new BaseTestDataModel { Name = "Previous" };
-        
+
         // Act
         await _sut.ProcessDataWrite(_instance, _dataId, wrongData, previousData, Language);
 
@@ -67,7 +67,7 @@ public class BaseDataProcessorTests
     {
         // Arrange
         var currentData = new BaseTestDataModel { Name = "Current" };
-        
+
         // Act
         await _sut.ProcessDataWrite(_instance, _dataId, currentData, null, Language);
 
@@ -83,7 +83,7 @@ public class BaseDataProcessorTests
         // Arrange
         var currentData = new BaseTestDataModel { Name = "Current" };
         var wrongPreviousData = "This is not a TestDataModel";
-        
+
         // Act
         await _sut.ProcessDataWrite(_instance, _dataId, currentData, wrongPreviousData, Language);
 
@@ -101,7 +101,10 @@ public class BaseTestDataProcessor : BaseDataProcessor<BaseTestDataModel>
     public BaseTestDataModel? LastCurrentData { get; private set; }
     public BaseTestDataModel? LastPreviousData { get; private set; }
 
-    protected override Task ProcessData(BaseTestDataModel currentDataModel, BaseTestDataModel? previousDataModel)
+    protected override Task ProcessData(
+        BaseTestDataModel currentDataModel,
+        BaseTestDataModel? previousDataModel
+    )
     {
         ProcessDataCalled = true;
         LastCurrentData = currentDataModel;
@@ -114,7 +117,7 @@ public class BaseTestDataProcessor : BaseDataProcessor<BaseTestDataModel>
 public class BaseTestDataModel
 {
     public string Name { get; init; } = string.Empty;
-    
+
     public override bool Equals(object? obj)
     {
         return obj is BaseTestDataModel other && Name == other.Name;

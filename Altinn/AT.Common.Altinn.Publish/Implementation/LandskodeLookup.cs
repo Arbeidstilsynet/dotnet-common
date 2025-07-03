@@ -25,9 +25,11 @@ internal class LandskodeLookup : ILandskodeLookup
 
         return _landskoder;
     }
-    
+
     private static Task<Dictionary<string, Landskode>> IngestAsync()
     {
-        return Assembly.GetExecutingAssembly().GetEmbeddedResource<Dictionary<string, Landskode>>(Filename);
+        return Assembly
+            .GetExecutingAssembly()
+            .GetEmbeddedResource<Dictionary<string, Landskode>>(Filename);
     }
 }

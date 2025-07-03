@@ -21,17 +21,13 @@ public class ListProcessorTests
     public async Task ProcessMember_WithDifferentListCounts_ShouldCallProcessListChange()
     {
         // Arrange
-        var currentData = new ListTestDataModel 
-        { 
-            Name = "Current", 
-            Items = ["Item1", "Item2", "Item3"] 
+        var currentData = new ListTestDataModel
+        {
+            Name = "Current",
+            Items = ["Item1", "Item2", "Item3"],
         };
-        var previousData = new ListTestDataModel 
-        { 
-            Name = "Previous", 
-            Items = ["Item1", "Item2"] 
-        };
-        
+        var previousData = new ListTestDataModel { Name = "Previous", Items = ["Item1", "Item2"] };
+
         // Act
         await _sut.ProcessDataWrite(_instance, _dataId, currentData, previousData, Language);
 
@@ -48,17 +44,17 @@ public class ListProcessorTests
     public async Task ProcessMember_WithSameCountButDifferentItems_ShouldCallProcessItem()
     {
         // Arrange
-        var currentData = new ListTestDataModel 
-        { 
-            Name = "Current", 
-            Items = ["Item1", "ChangedItem2"]
+        var currentData = new ListTestDataModel
+        {
+            Name = "Current",
+            Items = ["Item1", "ChangedItem2"],
         };
-        var previousData = new ListTestDataModel 
-        { 
-            Name = "Previous", 
-            Items = ["Item1", "OriginalItem2"]
+        var previousData = new ListTestDataModel
+        {
+            Name = "Previous",
+            Items = ["Item1", "OriginalItem2"],
         };
-        
+
         // Act
         await _sut.ProcessDataWrite(_instance, _dataId, currentData, previousData, Language);
 
@@ -74,20 +70,12 @@ public class ListProcessorTests
     public async Task ProcessMember_WithIdenticalLists_ShouldNotCallAnyProcessMethods()
     {
         // Arrange
-        var currentData = new ListTestDataModel 
-        { 
-            Name = "Current", 
-            Items = ["Item1", "Item2"]
-        };
-        var previousData = new ListTestDataModel 
-        { 
-            Name = "Previous", 
-            Items = ["Item1", "Item2"]
-        };
-        
+        var currentData = new ListTestDataModel { Name = "Current", Items = ["Item1", "Item2"] };
+        var previousData = new ListTestDataModel { Name = "Previous", Items = ["Item1", "Item2"] };
+
         // Act
         await _sut.ProcessDataWrite(_instance, _dataId, currentData, previousData, Language);
-        
+
         // Assert
         _sut.ProcessListChangeCalled.ShouldBeFalse();
         _sut.ProcessItemCalled.ShouldBeFalse();
@@ -97,22 +85,14 @@ public class ListProcessorTests
     public async Task ProcessMember_WithNullCurrentAndNullPreviousItems_ShouldNotCallProcessItem()
     {
         // Arrange
-        var currentData = new ListTestDataModel 
-        { 
-            Name = "Current", 
-            Items = [null!, "Item2"]
-        };
-        var previousData = new ListTestDataModel 
-        { 
-            Name = "Previous", 
-            Items = [null!, "Item2"]
-        };
-        
+        var currentData = new ListTestDataModel { Name = "Current", Items = [null!, "Item2"] };
+        var previousData = new ListTestDataModel { Name = "Previous", Items = [null!, "Item2"] };
+
         var sut = new ListTestProcessorNullable();
-        
+
         // Act
         await sut.ProcessDataWrite(_instance, _dataId, currentData, previousData, Language);
-        
+
         // Assert
         sut.ProcessItemCalled.ShouldBeFalse();
     }
@@ -121,22 +101,14 @@ public class ListProcessorTests
     public async Task ProcessMember_WithOneNullItem_ShouldCallProcessItem()
     {
         // Arrange
-        var currentData = new ListTestDataModel 
-        { 
-            Name = "Current", 
-            Items = [null!, "Item2"] 
-        };
-        var previousData = new ListTestDataModel 
-        { 
-            Name = "Previous", 
-            Items = ["Item1", "Item2"] 
-        };
-        
+        var currentData = new ListTestDataModel { Name = "Current", Items = [null!, "Item2"] };
+        var previousData = new ListTestDataModel { Name = "Previous", Items = ["Item1", "Item2"] };
+
         var sut = new ListTestProcessorNullable();
-        
+
         // Act
         await sut.ProcessDataWrite(_instance, _dataId, currentData, previousData, Language);
-        
+
         // Assert
         sut.ProcessItemCalled.ShouldBeTrue();
         sut.LastCurrentItem.ShouldBeNull();
@@ -148,11 +120,15 @@ public class ListProcessorTests
     {
         // Arrange
         var currentData = new ListTestDataModel { Name = "Current", Items = null };
-        var previousData = new ListTestDataModel { Name = "Previous", Items = new List<string> { "Item1" } };
-        
+        var previousData = new ListTestDataModel
+        {
+            Name = "Previous",
+            Items = new List<string> { "Item1" },
+        };
+
         // Act
         await _sut.ProcessDataWrite(_instance, _dataId, currentData, previousData, Language);
-        
+
         // Assert
         _sut.ProcessListChangeCalled.ShouldBeTrue();
         _sut.LastCurrentList.ShouldBeNull();
@@ -166,12 +142,12 @@ public class ListTestProcessor : ListProcessor<ListTestDataModel, string>
     public bool ProcessListChangeCalled { get; private set; }
     public bool ProcessItemCalled { get; private set; }
     public int ProcessItemCallCount { get; private set; }
-    
+
     public List<string>? LastCurrentList { get; private set; }
     public List<string>? LastPreviousList { get; private set; }
     public ListTestDataModel? LastCurrentDataModel { get; private set; }
     public ListTestDataModel? LastPreviousDataModel { get; private set; }
-    
+
     public string? LastCurrentItem { get; private set; }
     public string? LastPreviousItem { get; private set; }
 
@@ -180,7 +156,12 @@ public class ListTestProcessor : ListProcessor<ListTestDataModel, string>
         return dataModel.Items;
     }
 
-    protected override Task ProcessListChange(List<string>? currentList, List<string>? previousList, ListTestDataModel currentDataModel, ListTestDataModel previousDataModel)
+    protected override Task ProcessListChange(
+        List<string>? currentList,
+        List<string>? previousList,
+        ListTestDataModel currentDataModel,
+        ListTestDataModel previousDataModel
+    )
     {
         ProcessListChangeCalled = true;
         LastCurrentList = currentList;
@@ -190,7 +171,12 @@ public class ListTestProcessor : ListProcessor<ListTestDataModel, string>
         return Task.CompletedTask;
     }
 
-    protected override Task ProcessItem(string currentItem, string previousItem, ListTestDataModel currentDataModel, ListTestDataModel previousDataModel)
+    protected override Task ProcessItem(
+        string currentItem,
+        string previousItem,
+        ListTestDataModel currentDataModel,
+        ListTestDataModel previousDataModel
+    )
     {
         ProcessItemCalled = true;
         ProcessItemCallCount++;
@@ -214,7 +200,12 @@ public class ListTestProcessorNullable : ListProcessor<ListTestDataModel, string
         return dataModel.Items?.Cast<string?>().ToList();
     }
 
-    protected override Task ProcessItem(string? currentItem, string? previousItem, ListTestDataModel currentDataModel, ListTestDataModel previousDataModel)
+    protected override Task ProcessItem(
+        string? currentItem,
+        string? previousItem,
+        ListTestDataModel currentDataModel,
+        ListTestDataModel previousDataModel
+    )
     {
         ProcessItemCalled = true;
         LastCurrentItem = currentItem;
@@ -223,7 +214,12 @@ public class ListTestProcessorNullable : ListProcessor<ListTestDataModel, string
     }
 
     // Expose the protected method for testing
-    public Task TestProcessMember(List<string?>? currentList, List<string?>? previousList, ListTestDataModel currentDataModel, ListTestDataModel previousDataModel)
+    public Task TestProcessMember(
+        List<string?>? currentList,
+        List<string?>? previousList,
+        ListTestDataModel currentDataModel,
+        ListTestDataModel previousDataModel
+    )
     {
         return ProcessMember(currentList, previousList, currentDataModel, previousDataModel);
     }
@@ -234,14 +230,17 @@ public class ListTestDataModel
 {
     public string Name { get; set; } = string.Empty;
     public List<string>? Items { get; set; }
-    
+
     public override bool Equals(object? obj)
     {
-        if (obj is not ListTestDataModel other) return false;
-        
-        if (Items == null && other.Items == null) return Name == other.Name;
-        if (Items == null || other.Items == null) return false;
-        
+        if (obj is not ListTestDataModel other)
+            return false;
+
+        if (Items == null && other.Items == null)
+            return Name == other.Name;
+        if (Items == null || other.Items == null)
+            return false;
+
         return Name == other.Name && Items.SequenceEqual(other.Items);
     }
 

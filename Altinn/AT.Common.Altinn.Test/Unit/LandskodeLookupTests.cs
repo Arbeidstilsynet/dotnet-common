@@ -27,7 +27,10 @@ public class LandskodeLookupTests
 
     [Theory]
     [MemberData(nameof(EØSLand))]
-    public async Task GetLandskode_Returns_Landskode_ForEØSLand(string landskode, Landskode expectedData)
+    public async Task GetLandskode_Returns_Landskode_ForEØSLand(
+        string landskode,
+        Landskode expectedData
+    )
     {
         var result = await _sut.GetLandskode(landskode);
 

@@ -5,11 +5,17 @@ namespace Arbeidstilsynet.Common.Altinn.Abstract.Processing;
 /// </summary>
 /// <typeparam name="TDataModel"></typeparam>
 /// <typeparam name="TListItem"></typeparam>
-public abstract class ListProcessor<TDataModel, TListItem> : MemberProcessor<TDataModel, List<TListItem>>
+public abstract class ListProcessor<TDataModel, TListItem>
+    : MemberProcessor<TDataModel, List<TListItem>>
     where TDataModel : class
 {
     /// <inheritdoc />
-    protected sealed override async Task ProcessMember(List<TListItem>? currentList, List<TListItem>? previousList, TDataModel currentDataModel, TDataModel previousDataModel)
+    protected sealed override async Task ProcessMember(
+        List<TListItem>? currentList,
+        List<TListItem>? previousList,
+        TDataModel currentDataModel,
+        TDataModel previousDataModel
+    )
     {
         if (currentList?.Count != previousList?.Count)
         {
@@ -23,16 +29,26 @@ public abstract class ListProcessor<TDataModel, TListItem> : MemberProcessor<TDa
                 {
                     continue; // Both items are null, nothing to process
                 }
-                
+
                 if (currentItem is null || previousItem is null)
                 {
                     // One of the items is null, treat it as a change
-                    await ProcessItem(currentItem, previousItem, currentDataModel, previousDataModel);
+                    await ProcessItem(
+                        currentItem,
+                        previousItem,
+                        currentDataModel,
+                        previousDataModel
+                    );
                 }
                 else if (!currentItem.Equals(previousItem))
                 {
                     // If the items are not equal, process the change
-                    await ProcessItem(currentItem, previousItem, currentDataModel, previousDataModel);
+                    await ProcessItem(
+                        currentItem,
+                        previousItem,
+                        currentDataModel,
+                        previousDataModel
+                    );
                 }
             }
         }
@@ -46,7 +62,12 @@ public abstract class ListProcessor<TDataModel, TListItem> : MemberProcessor<TDa
     /// <param name="currentDataModel"></param>
     /// <param name="previousDataModel"></param>
     /// <returns></returns>
-    protected virtual Task ProcessListChange(List<TListItem>? currentList, List<TListItem>? previousList, TDataModel currentDataModel, TDataModel previousDataModel) => Task.CompletedTask;
+    protected virtual Task ProcessListChange(
+        List<TListItem>? currentList,
+        List<TListItem>? previousList,
+        TDataModel currentDataModel,
+        TDataModel previousDataModel
+    ) => Task.CompletedTask;
 
     /// <summary>
     ///
@@ -56,4 +77,10 @@ public abstract class ListProcessor<TDataModel, TListItem> : MemberProcessor<TDa
     /// <param name="currentDataModel"></param>
     /// <param name="previousDataModel"></param>
     /// <returns></returns>
-    protected virtual Task ProcessItem(TListItem currentItem, TListItem previousItem, TDataModel currentDataModel, TDataModel previousDataModel) => Task.CompletedTask; }
+    protected virtual Task ProcessItem(
+        TListItem currentItem,
+        TListItem previousItem,
+        TDataModel currentDataModel,
+        TDataModel previousDataModel
+    ) => Task.CompletedTask;
+}

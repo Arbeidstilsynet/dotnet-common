@@ -12,6 +12,7 @@ public record TestKeyValue
 {
     [JsonPropertyName("key")]
     public required string Key { get; init; }
+
     [JsonPropertyName("value")]
     public required string Value { get; init; }
 }
@@ -19,7 +20,7 @@ public record TestKeyValue
 public class AssemblyExtensionsTests
 {
     private readonly Assembly _assembly = Assembly.GetExecutingAssembly();
-    
+
     [Fact]
     public async Task GetEmbeddedResource_ShouldDeserializeJsonFromEmbeddedResource()
     {
@@ -33,7 +34,7 @@ public class AssemblyExtensionsTests
         result.ShouldNotBeNull();
         result.ShouldBe(expectedKeyValue);
     }
-    
+
     [Fact]
     public async Task GetEmbeddedResource_ShouldThrowException_WhenResourceNotFound()
     {
@@ -41,9 +42,11 @@ public class AssemblyExtensionsTests
         var fileName = "nonexistent.json";
 
         // Act & Assert
-        await Should.ThrowAsync<Exception>(async () => await _assembly.GetEmbeddedResource<TestKeyValue>(fileName));
+        await Should.ThrowAsync<Exception>(async () =>
+            await _assembly.GetEmbeddedResource<TestKeyValue>(fileName)
+        );
     }
-    
+
     [Fact]
     public async Task GetEmbeddedResource_ShouldThrowException_WhenDeserializationFails()
     {
@@ -51,9 +54,11 @@ public class AssemblyExtensionsTests
         var fileName = "corrupt.json";
 
         // Act & Assert
-        await Should.ThrowAsync<Exception>(async () => await _assembly.GetEmbeddedResource<TestKeyValue>(fileName));
+        await Should.ThrowAsync<Exception>(async () =>
+            await _assembly.GetEmbeddedResource<TestKeyValue>(fileName)
+        );
     }
-    
+
     [Fact]
     public async Task GetEmbeddedResource_ShouldThrowException_WhenFileNameIsNotUnique()
     {
