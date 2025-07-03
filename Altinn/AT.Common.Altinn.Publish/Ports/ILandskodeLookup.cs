@@ -10,9 +10,9 @@ public interface ILandskodeLookup
     /// <summary>
     /// Get a country code and name based on a 3-letter ISO code.
     /// </summary>
-    /// <param name="landkode">3-letter ISO code for the country</param>
+    /// <param name="isoCode">3-letter ISO code for the country</param>
     /// <returns></returns>
-    Task<Landskode?> GetLandskode(string landkode);
+    Task<Landskode?> GetLandskode(string isoCode);
 
     /// <summary>
     /// Get all country codes and names.
