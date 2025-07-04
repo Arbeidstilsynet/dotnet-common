@@ -84,4 +84,37 @@ public class QueryExtensionTests
 
         await Verify(parameterMap, _verifySettings);
     }
+
+    [Fact]
+    public async Task PointQuery_ToMap_MapsCorrectly()
+    {
+        // Arrange
+        var query = new PointQuery()
+        {
+            Latitude = 0,
+            Longitude = 0,
+            Epsg = 1234,
+        };
+
+        // Act & Assert
+        var parameterMap = query.ToMap();
+
+        await Verify(parameterMap, _verifySettings);
+    }
+
+    [Fact]
+    public async Task PointQuery_DefaultValues_ToMap_MapsCorrectly()
+    {
+        // Arrange
+        var query = new PointQuery()
+        {
+            Latitude = 0,
+            Longitude = 0
+        };
+
+        // Act & Assert
+        var parameterMap = query.ToMap();
+
+        await Verify(parameterMap, _verifySettings);
+    }
 }

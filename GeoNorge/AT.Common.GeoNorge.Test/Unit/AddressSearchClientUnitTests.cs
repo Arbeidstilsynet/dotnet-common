@@ -13,8 +13,10 @@ public class AddressSearchClientUnitTests
         Substitute.For<ILogger<AddressSearchClient>>()
     );
 
-    [Fact]
-    public void SearchAddressesByPoint_RequestIsInvalid_ThrowsArgumentException()
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void SearchAddressesByPoint_RequestIsInvalid_ThrowsArgumentException(double invalidRadius)
     {
         // Arrange
         var act = () =>
@@ -23,7 +25,7 @@ public class AddressSearchClientUnitTests
                 {
                     Latitude = 60.0,
                     Longitude = 10.0,
-                    RadiusInMeters = 0,
+                    RadiusInMeters = invalidRadius,
                 }
             );
 

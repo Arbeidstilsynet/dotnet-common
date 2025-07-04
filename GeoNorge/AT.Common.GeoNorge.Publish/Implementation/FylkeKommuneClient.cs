@@ -1,27 +1,22 @@
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
+using Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
 using Arbeidstilsynet.Common.GeoNorge.DependencyInjection;
 using Arbeidstilsynet.Common.GeoNorge.Model.Request;
 using Arbeidstilsynet.Common.GeoNorge.Model.Response;
 using Arbeidstilsynet.Common.GeoNorge.Ports;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Implementation;
 
 internal class FylkeKommuneClient : IFylkeKommuneApi
 {
-    private readonly ILogger<FylkeKommuneClient> _logger;
     private readonly HttpClient _httpClient;
     
     public FylkeKommuneClient(
-        IHttpClientFactory httpClientFactory,
-        ILogger<FylkeKommuneClient> logger)
+        IHttpClientFactory httpClientFactory)
     {
         _httpClient = httpClientFactory.CreateClient(DependencyInjectionExtensions.GeoNorgeClientKey);
-        _logger = logger;
     }
-
 
     public async Task<IEnumerable<Fylke>> GetFylker()
     {
@@ -51,6 +46,8 @@ internal class FylkeKommuneClient : IFylkeKommuneApi
 
     public async Task<KommuneFullInfo?> GetKommuneByNumber(string kommunenummer)
     {
+        
+        
         var response = await _httpClient.GetFromJsonAsync<KommuneFullInfoResponse>($"kommuneinfo/v1/kommuner/{kommunenummer}");
         
         return response?.ToKommuneFullInfo();
@@ -58,7 +55,10 @@ internal class FylkeKommuneClient : IFylkeKommuneApi
 
     public Task<Kommune?> GetKommuneByPoint(PointQuery query)
     {
-        throw new NotImplementedException();
+        var uri = new Uri("kommuneinfo/v1/punkt", UriKind.Relative)
+            .AddQueryParameters(query.ToMap());
+        
+        return _httpClient.GetFromJsonAsync<Kommune>(uri);
     }
 }
 

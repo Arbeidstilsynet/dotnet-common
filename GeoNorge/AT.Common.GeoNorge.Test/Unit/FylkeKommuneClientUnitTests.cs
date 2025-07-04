@@ -1,23 +1,38 @@
 using Arbeidstilsynet.Common.GeoNorge.Implementation;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using Shouldly;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Test.Unit;
 
 public class FylkeKommuneClientUnitTests
 {
-    private readonly FylkeKommuneClient _sut = new FylkeKommuneClient(Substitute.For<IHttpClientFactory>(),
-        Substitute.For<ILogger<FylkeKommuneClient>>());
+    private readonly FylkeKommuneClient _sut = new FylkeKommuneClient(Substitute.For<IHttpClientFactory>());
     
     
     [Theory]
-    [InlineData]
-    public void GetFylke_ValidRequest_DeserializesResult(string invalidFylkenummer)
+    [InlineData("no")]
+    [InlineData("1")]
+    [InlineData("123")]
+    public void GetFylkeByNumber_InvalidFylkenummer_ThrowsArgumentException(string invalidFylkenummer)
     {
         // Arrange
-        var act = () => _sut.GetFylkeByNumber();
+        var act = () => _sut.GetFylkeByNumber(invalidFylkenummer);
 
         // Act & Assert
-        act.ShouldNotThrow();
+        act.ShouldThrow<ArgumentException>();
+    }
+
+    [Theory]
+    [InlineData("nope")]
+    [InlineData("123")]
+    [InlineData("12345")]
+    public void GetKommuneByNumber_InvalidKommuneId_ThrowsArgumentException(string invalidKommunenummer)
+    {
+        // Arrange
+        var act = () => _sut.GetKommuneByNumber(invalidKommunenummer);
+
+        // Act & Assert
+        act.ShouldThrow<ArgumentException>();
     }
 }
