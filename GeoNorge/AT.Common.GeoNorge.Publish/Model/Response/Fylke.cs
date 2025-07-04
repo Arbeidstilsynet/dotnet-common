@@ -12,6 +12,7 @@ public record Fylke
     /// </summary>
     [JsonPropertyName("fylkesnummer")]
     public required string Fylkesnummer { get; init; }
+
     /// <summary>
     /// Name of the county, e.g., "Oslo".
     /// </summary>

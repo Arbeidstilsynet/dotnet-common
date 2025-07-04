@@ -106,11 +106,7 @@ public class QueryExtensionTests
     public async Task PointQuery_DefaultValues_ToMap_MapsCorrectly()
     {
         // Arrange
-        var query = new PointQuery()
-        {
-            Latitude = 0,
-            Longitude = 0
-        };
+        var query = new PointQuery() { Latitude = 0, Longitude = 0 };
 
         // Act & Assert
         var parameterMap = query.ToMap();

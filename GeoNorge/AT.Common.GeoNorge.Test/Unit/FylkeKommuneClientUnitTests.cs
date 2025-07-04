@@ -6,14 +6,17 @@ namespace Arbeidstilsynet.Common.GeoNorge.Test.Unit;
 
 public class FylkeKommuneClientUnitTests
 {
-    private readonly FylkeKommuneClient _sut = new FylkeKommuneClient(Substitute.For<IHttpClientFactory>());
-    
-    
+    private readonly FylkeKommuneClient _sut = new FylkeKommuneClient(
+        Substitute.For<IHttpClientFactory>()
+    );
+
     [Theory]
     [InlineData("no")]
     [InlineData("1")]
     [InlineData("123")]
-    public void GetFylkeByNumber_InvalidFylkenummer_ThrowsArgumentException(string invalidFylkenummer)
+    public void GetFylkeByNumber_InvalidFylkenummer_ThrowsArgumentException(
+        string invalidFylkenummer
+    )
     {
         // Arrange
         var act = () => _sut.GetFylkeByNumber(invalidFylkenummer);
@@ -26,7 +29,9 @@ public class FylkeKommuneClientUnitTests
     [InlineData("nope")]
     [InlineData("123")]
     [InlineData("12345")]
-    public void GetKommuneByNumber_InvalidKommuneId_ThrowsArgumentException(string invalidKommunenummer)
+    public void GetKommuneByNumber_InvalidKommuneId_ThrowsArgumentException(
+        string invalidKommunenummer
+    )
     {
         // Arrange
         var act = () => _sut.GetKommuneByNumber(invalidKommunenummer);

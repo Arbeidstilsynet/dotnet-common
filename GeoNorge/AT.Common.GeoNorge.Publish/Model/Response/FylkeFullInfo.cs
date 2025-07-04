@@ -9,7 +9,7 @@ public record FylkeFullInfo
     /// Basic information about the county.
     /// </summary>
     public required Fylke Fylke { get; init; }
-    
+
     /// <summary>
     /// List of all municipalities within this county.
     /// </summary>

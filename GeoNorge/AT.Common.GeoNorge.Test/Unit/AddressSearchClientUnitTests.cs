@@ -16,7 +16,9 @@ public class AddressSearchClientUnitTests
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
-    public void SearchAddressesByPoint_RequestIsInvalid_ThrowsArgumentException(double invalidRadius)
+    public void SearchAddressesByPoint_RequestIsInvalid_ThrowsArgumentException(
+        double invalidRadius
+    )
     {
         // Arrange
         var act = () =>

@@ -22,7 +22,7 @@ public class FylkeKommuneClientIntegrationTests : TestBed<GeoNorgeTestFixture>
 
         _verifySettings.UseDirectory("TestData/Snapshots");
     }
-    
+
     [Fact]
     public async Task GetFylker_ValidRequest_DeserializesResult()
     {
@@ -33,7 +33,7 @@ public class FylkeKommuneClientIntegrationTests : TestBed<GeoNorgeTestFixture>
         result.ShouldNotBeNull();
         await Verify(result, _verifySettings);
     }
-    
+
     [Fact]
     public async Task GetKommuner_ValidRequest_DeserializesResult()
     {
@@ -44,7 +44,7 @@ public class FylkeKommuneClientIntegrationTests : TestBed<GeoNorgeTestFixture>
         result.ShouldNotBeNull();
         await Verify(result, _verifySettings);
     }
-    
+
     [Fact]
     public async Task GetFullFylkeDetails_ValidRequest_DeserializesResult()
     {
@@ -55,7 +55,7 @@ public class FylkeKommuneClientIntegrationTests : TestBed<GeoNorgeTestFixture>
         result.ShouldNotBeNull();
         await Verify(result, _verifySettings);
     }
-    
+
     [Fact]
     public async Task GetFylkeByNumber_ValidRequest_DeserializesResult()
     {
@@ -66,7 +66,7 @@ public class FylkeKommuneClientIntegrationTests : TestBed<GeoNorgeTestFixture>
         result.ShouldNotBeNull();
         await Verify(result, _verifySettings);
     }
-    
+
     [Fact]
     public async Task GetKommuneByNumber_ValidRequest_DeserializesResult()
     {
@@ -77,13 +77,18 @@ public class FylkeKommuneClientIntegrationTests : TestBed<GeoNorgeTestFixture>
         result.ShouldNotBeNull();
         await Verify(result, _verifySettings);
     }
-    
+
     [Fact]
     public async Task GetKommuneByPoint_ValidRequest_DeserializesResult()
     {
         // Act
         var result = await _sut.GetKommuneByPoint(
-            new PointQuery() { Latitude = 4.2, Longitude = 4.2, Epsg = 42 }
+            new PointQuery()
+            {
+                Latitude = 4.2,
+                Longitude = 4.2,
+                Epsg = 42,
+            }
         );
 
         // Assert

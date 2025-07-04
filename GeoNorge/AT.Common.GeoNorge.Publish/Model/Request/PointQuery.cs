@@ -14,7 +14,7 @@ public record PointQuery
     /// Longitude in decimal degrees.
     /// </summary>
     public required double Longitude { get; init; }
-    
+
     /// <summary>
     /// EPSG code for the coordinate system. Default is 4326 (WGS 84).
     /// </summary>

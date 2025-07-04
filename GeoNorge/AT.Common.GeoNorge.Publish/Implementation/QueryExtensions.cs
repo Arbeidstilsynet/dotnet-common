@@ -87,15 +87,22 @@ internal static class QueryExtensions
     public static IReadOnlyDictionary<string, string> ToMap(this PointQuery query)
     {
         var parameterMap = new Dictionary<string, string>();
-        
-        parameterMap.Add("nord", 
-            query.Latitude.ToString(System.Globalization.CultureInfo.InvariantCulture));
-        
-        parameterMap.Add("ost",
-            query.Longitude.ToString(System.Globalization.CultureInfo.InvariantCulture));
-        
-        parameterMap.Add("koordsys", query.Epsg.ToString(System.Globalization.CultureInfo.InvariantCulture));
-        
+
+        parameterMap.Add(
+            "nord",
+            query.Latitude.ToString(System.Globalization.CultureInfo.InvariantCulture)
+        );
+
+        parameterMap.Add(
+            "ost",
+            query.Longitude.ToString(System.Globalization.CultureInfo.InvariantCulture)
+        );
+
+        parameterMap.Add(
+            "koordsys",
+            query.Epsg.ToString(System.Globalization.CultureInfo.InvariantCulture)
+        );
+
         return parameterMap;
     }
 }

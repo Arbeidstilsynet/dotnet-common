@@ -14,10 +14,15 @@ internal class AddressSearchClient : IAddressSearch
     private readonly ILogger<AddressSearchClient> _logger;
     private readonly HttpClient _httpClient;
 
-    public AddressSearchClient(IHttpClientFactory httpClientFactory, ILogger<AddressSearchClient> logger)
+    public AddressSearchClient(
+        IHttpClientFactory httpClientFactory,
+        ILogger<AddressSearchClient> logger
+    )
     {
         _logger = logger;
-        _httpClient = httpClientFactory.CreateClient(DependencyInjectionExtensions.GeoNorgeClientKey);
+        _httpClient = httpClientFactory.CreateClient(
+            DependencyInjectionExtensions.GeoNorgeClientKey
+        );
     }
 
     public async Task<PaginationResult<Address>?> SearchAddresses(
