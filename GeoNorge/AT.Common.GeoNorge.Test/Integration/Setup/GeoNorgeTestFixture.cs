@@ -1,5 +1,5 @@
 using Arbeidstilsynet.Common.GeoNorge.DependencyInjection;
-using AT.Common.GeoNorge.Test.Extensions;
+using Arbeidstilsynet.Common.TestExtensions.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WireMock.Logging;
@@ -16,23 +16,9 @@ public class GeoNorgeTestFixture : TestBedFixture
 
     public GeoNorgeTestFixture()
     {
-        _server = WireMockServer.Start(
-            new WireMockServerSettings { Logger = new WireMockConsoleLogger() }
-        );
-
-        using var fileStream = File.Open(
-            "Integration/TestData/openapi.json",
-            FileMode.Open,
-            FileAccess.Read
-        );
-
-        _server.AddOpenApiMappings(
-            fileStream,
-            m =>
-            {
-                return m;
-            }
-        );
+        _server = WireMockServer.Start();
+        _server.AddMappings("Integration/TestData/adresser-openapi.json");
+        _server.AddMappings("Integration/TestData/kommuner-openapi.json");
     }
 
     protected override void AddServices(IServiceCollection services, IConfiguration? configuration)
@@ -47,5 +33,19 @@ public class GeoNorgeTestFixture : TestBedFixture
         _server.Stop();
         _server.Dispose();
         return ValueTask.CompletedTask;
+    }
+}
+
+file static class Extensions
+{
+    public static void AddMappings(this WireMockServer server, string filePath)
+    {
+        using var fileStream = File.Open(
+            filePath,
+            FileMode.Open,
+            FileAccess.Read
+        );
+
+        server.AddOpenApiMappings(fileStream);
     }
 }

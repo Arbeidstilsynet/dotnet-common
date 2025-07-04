@@ -6,11 +6,11 @@ using Shouldly;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Test.Unit;
 
-public class GeoNorgeClientUnitTests
+public class AddressSearchClientUnitTests
 {
-    private readonly GeoNorgeClient _sut = new(
+    private readonly AddressSearchClient _sut = new(
         Substitute.For<IHttpClientFactory>(),
-        Substitute.For<ILogger<GeoNorgeClient>>()
+        Substitute.For<ILogger<AddressSearchClient>>()
     );
 
     [Fact]

@@ -6,7 +6,7 @@ namespace Arbeidstilsynet.Common.GeoNorge.Ports;
 /// <summary>
 /// Implements the GeoNorge API for address and location searches.
 /// </summary>
-public interface IGeoNorge
+public interface IAddressSearch
 {
     /// <summary>
     /// Implements the "/sok" endpoint for searching for addresses based on the <see cref="TextSearchQuery"/> query.

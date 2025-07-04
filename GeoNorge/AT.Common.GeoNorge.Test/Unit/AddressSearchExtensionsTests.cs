@@ -7,9 +7,9 @@ using Shouldly;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Test.Unit;
 
-public class GeoNorgeExtensionsTests
+public class AddressSearchExtensionsTests
 {
-    private IGeoNorge _geoNorge = Substitute.For<IGeoNorge>();
+    private IAddressSearch _addressSearch = Substitute.For<IAddressSearch>();
 
     [Fact]
     public async Task GetClosestAddress_MapsRequestCorrectly()
@@ -23,10 +23,10 @@ public class GeoNorgeExtensionsTests
         };
 
         // Act
-        await _geoNorge.GetClosestAddress(query);
+        await _addressSearch.GetClosestAddress(query);
 
         // Assert
-        await _geoNorge
+        await _addressSearch
             .Received(1)
             .SearchAddressesByPoint(query, new Pagination() { PageIndex = 0, PageSize = 1 });
     }
@@ -50,10 +50,10 @@ public class GeoNorgeExtensionsTests
 
         var returnedPagination = new PaginationResult<Address>() { Elements = returnedElements };
 
-        _geoNorge.SearchAddressesByPoint(default!).ReturnsForAnyArgs(returnedPagination);
+        _addressSearch.SearchAddressesByPoint(default!).ReturnsForAnyArgs(returnedPagination);
 
         // Act
-        var result = await _geoNorge.GetClosestAddress(query);
+        var result = await _addressSearch.GetClosestAddress(query);
 
         // Assert
 
@@ -74,10 +74,10 @@ public class GeoNorgeExtensionsTests
         };
 
         // Act
-        await _geoNorge.QuickSearchLocation(query);
+        await _addressSearch.QuickSearchLocation(query);
 
         // Assert
-        await _geoNorge
+        await _addressSearch
             .Received(1)
             .SearchAddresses(query, new Pagination() { PageIndex = 0, PageSize = 1 });
     }
@@ -109,10 +109,10 @@ public class GeoNorgeExtensionsTests
 
         var returnedPagination = new PaginationResult<Address>() { Elements = returnedElements };
 
-        _geoNorge.SearchAddresses(default!, default!).ReturnsForAnyArgs(returnedPagination);
+        _addressSearch.SearchAddresses(default!, default!).ReturnsForAnyArgs(returnedPagination);
 
         // Act
-        var result = await _geoNorge.QuickSearchLocation(query);
+        var result = await _addressSearch.QuickSearchLocation(query);
 
         // Assert
 

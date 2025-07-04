@@ -10,15 +10,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Implementation;
 
-internal class GeoNorgeClient : IGeoNorge
+internal class AddressSearchClient : IAddressSearch
 {
-    private readonly ILogger<GeoNorgeClient> _logger;
+    private readonly ILogger<AddressSearchClient> _logger;
     private readonly HttpClient _httpClient;
 
-    public GeoNorgeClient(IHttpClientFactory httpClientFactory, ILogger<GeoNorgeClient> logger)
+    public AddressSearchClient(IHttpClientFactory httpClientFactory, ILogger<AddressSearchClient> logger)
     {
         _logger = logger;
-        _httpClient = httpClientFactory.CreateClient(DependencyInjectionExtensions.ClientKey);
+        _httpClient = httpClientFactory.CreateClient(DependencyInjectionExtensions.GeoNorgeClientKey);
     }
 
     public async Task<PaginationResult<Address>?> SearchAddresses(
