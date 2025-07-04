@@ -42,7 +42,7 @@ public abstract class MemberProcessor<TDataModel, TMember> : BaseDataProcessor<T
 
     /// <summary>
     /// Process the member after a change. It is up to the implementation to decide if the member should be updated or not.
-    /// This is only called <see cref="previousMember"/>.Equals(<see cref="currentMember"/>) is false, or if _one_ of them is null.
+    /// Called when when the current and previous member values differ or one of them is null.
     /// </summary>
     /// <param name="currentMember"></param>
     /// <param name="previousMember"></param>

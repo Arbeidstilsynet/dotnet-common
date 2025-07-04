@@ -70,7 +70,7 @@ public abstract class ListProcessor<TDataModel, TListItem>
     ) => Task.CompletedTask;
 
     /// <summary>
-    ///
+    /// Called for each list item that has changed when the list lengths are equal.
     /// </summary>
     /// <param name="currentItem"></param>
     /// <param name="previousItem"></param>
