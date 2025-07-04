@@ -6,7 +6,7 @@ namespace Arbeidstilsynet.Common.GeoNorge.Model.Request;
 public record TextSearchQuery
 {
     /// <summary>
-    /// Represents a query for searching addresses based on a text search term.
+    /// The text to search for (e.g., street name, place name, or address).
     /// </summary>
     public required string SearchTerm { get; init; }
 
