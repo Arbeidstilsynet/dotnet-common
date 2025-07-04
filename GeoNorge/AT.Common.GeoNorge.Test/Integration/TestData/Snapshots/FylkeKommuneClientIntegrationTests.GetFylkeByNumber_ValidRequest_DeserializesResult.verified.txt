@@ -1,0 +1,4 @@
+﻿{
+  Fylkesnummer: example-string,
+  Fylkesnavn: example-string
+}

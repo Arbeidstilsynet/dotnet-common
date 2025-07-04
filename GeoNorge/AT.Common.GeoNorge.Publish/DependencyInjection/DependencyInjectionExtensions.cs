@@ -20,7 +20,7 @@ public record GeoNorgeConfig
 /// </summary>
 public static class DependencyInjectionExtensions
 {
-    internal const string ClientKey = "GeoNorgeClient";
+    internal const string GeoNorgeClientKey = "GeoNorgeClient";
 
     /// <summary>
     /// Register GeoNorge services in the provided <see cref="IServiceCollection"/>.
@@ -37,7 +37,7 @@ public static class DependencyInjectionExtensions
 
         services
             .AddHttpClient(
-                ClientKey,
+                GeoNorgeClientKey,
                 client =>
                 {
                     client.BaseAddress = new Uri(geoNorgeConfig.BaseUrl);
@@ -45,7 +45,8 @@ public static class DependencyInjectionExtensions
             )
             .AddStandardResilienceHandler();
 
-        services.AddSingleton<IGeoNorge, GeoNorgeClient>();
+        services.AddSingleton<IAddressSearch, AddressSearchClient>();
+        services.AddSingleton<IFylkeKommuneApi, FylkeKommuneClient>();
 
         return services;
     }

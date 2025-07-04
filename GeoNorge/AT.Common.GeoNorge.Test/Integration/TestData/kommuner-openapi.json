@@ -1,0 +1,852 @@
+{
+  "components": {
+    "schemas": {
+      "FylkerEnkel": {
+        "properties": {
+          "fylkesnavn": {
+            "description": "Navn (norsk) på et fylke",
+            "type": "string"
+          },
+          "fylkesnummer": {
+            "description": "Nummerering av fylke. Tekstverdi som må bestå av 2 tall. 03 er for eksempel gyldig, mens 3 er ikke gyldig.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "FylkerEnkelOmrade": {
+        "properties": {
+          "fylkesnavn": {
+            "description": "Navn (norsk) på et fylke",
+            "type": "string"
+          },
+          "fylkesnummer": {
+            "description": "Nummerering av fylke. Tekstverdi som må bestå av 2 tall. 03 er for eksempel gyldig, mens 3 er ikke gyldig.",
+            "type": "string"
+          },
+          "omrade": {
+            "$ref": "#/components/schemas/geoJsonRaw"
+          }
+        },
+        "type": "object"
+      },
+      "FylkerKommunerEnkel": {
+        "properties": {
+          "avgrensningsboks": {
+            "$ref": "#/components/schemas/geoJsonPoly"
+          },
+          "fylkesnavn": {
+            "description": "Navn (norsk) på et fylke",
+            "type": "string"
+          },
+          "fylkesnummer": {
+            "description": "Nummerering av fylke. Tekstverdi som må bestå av 2 tall. 03 er for eksempel gyldig, mens 3 er ikke gyldig.",
+            "type": "string"
+          },
+          "kommuner": {
+            "items": {
+              "$ref": "#/components/schemas/KomEnkel"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "FylkerKommunerFull": {
+        "properties": {
+          "avgrensningsboks": {
+            "$ref": "#/components/schemas/geoJsonPoly"
+          },
+          "fylkesnavn": {
+            "description": "Navn (norsk) på et fylke",
+            "type": "string"
+          },
+          "fylkesnummer": {
+            "description": "Nummerering av fylke. Tekstverdi som må bestå av 2 tall. 03 er for eksempel gyldig, mens 3 er ikke gyldig.",
+            "type": "string"
+          },
+          "kommuner": {
+            "items": {
+              "$ref": "#/components/schemas/KomFull"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "KomEnkel": {
+        "properties": {
+          "kommunenavn": {
+            "type": "string"
+          },
+          "kommunenummer": {
+            "description": "Nummerering av kommuner. Tekstverdi som må bestå av 4 tall. 0301 er for eksempel gyldig, mens 301 er ikke gyldig.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "KomEnkelNorskNavn": {
+        "properties": {
+          "kommunenavn": {
+            "type": "string"
+          },
+          "kommunenavnNorsk": {
+            "type": "string"
+          },
+          "kommunenummer": {
+            "description": "Nummerering av kommuner. Tekstverdi som må bestå av 4 tall. 0301 er for eksempel gyldig, mens 301 er ikke gyldig.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "KomEnkelOmrade": {
+        "properties": {
+          "kommunenavn": {
+            "type": "string"
+          },
+          "kommunenummer": {
+            "description": "Nummerering av kommuner. Tekstverdi som må bestå av 4 tall. 0301 er for eksempel gyldig, mens 301 er ikke gyldig.",
+            "type": "string"
+          },
+          "omrade": {
+            "$ref": "#/components/schemas/geoJsonRaw"
+          }
+        },
+        "type": "object"
+      },
+      "KomFull": {
+        "properties": {
+          "avgrensningsboks": {
+            "$ref": "#/components/schemas/geoJsonPoly"
+          },
+          "fylkesnavn": {
+            "description": "Navn (norsk) på et fylke",
+            "type": "string"
+          },
+          "fylkesnummer": {
+            "description": "Nummerering av fylke. Tekstverdi som må bestå av 2 tall. 03 er for eksempel gyldig, mens 3 er ikke gyldig.",
+            "type": "string"
+          },
+          "gyldigeNavn": {
+            "items": {
+              "$ref": "#/components/schemas/NavnFull"
+            },
+            "type": "array"
+          },
+          "kommunenavn": {
+            "type": "string"
+          },
+          "kommunenavnNorsk": {
+            "type": "string"
+          },
+          "kommunenummer": {
+            "description": "Nummerering av kommuner. Tekstverdi som må bestå av 4 tall. 0301 er for eksempel gyldig, mens 301 er ikke gyldig.",
+            "type": "string"
+          },
+          "punktIOmrade": {
+            "$ref": "#/components/schemas/geoJson"
+          },
+          "samiskForvaltningsomrade": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "KommuneFylkeEnkel": {
+        "properties": {
+          "fylkesnavn": {
+            "description": "Navn (norsk) på et fylke",
+            "type": "string"
+          },
+          "fylkesnummer": {
+            "description": "Nummerering av fylke. Tekstverdi som må bestå av 2 tall. 03 er for eksempel gyldig, mens 3 er ikke gyldig.",
+            "type": "string"
+          },
+          "kommunenavn": {
+            "type": "string"
+          },
+          "kommunenummer": {
+            "description": "Nummerering av kommuner. Tekstverdi som må bestå av 4 tall. 0301 er for eksempel gyldig, mens 301 er ikke gyldig.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "NavnFull": {
+        "properties": {
+          "navn": {
+            "type": "string"
+          },
+          "prioritet": {
+            "type": "integer"
+          },
+          "sprak": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "NavnSokKommune": {
+        "properties": {
+          "antallTreff": {
+            "type": "integer"
+          },
+          "kommuner": {
+            "items": {
+              "$ref": "#/components/schemas/KomFull"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "geoJson": {
+        "properties": {
+          "coordinates": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "crs": {
+            "$ref": "#/components/schemas/geoJsonCrs"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "geoJsonCrs": {
+        "properties": {
+          "properties": {
+            "$ref": "#/components/schemas/geoJsonEpsg"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "geoJsonEpsg": {
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "geoJsonFeature": {
+        "properties": {
+          "geometry": {
+            "$ref": "#/components/schemas/geoJsonRaw"
+          },
+          "properties": {
+            "$ref": "#/components/schemas/KomEnkel"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "geoJsonFeatureCollection": {
+        "properties": {
+          "features": {
+            "items": {
+              "$ref": "#/components/schemas/geoJsonFeature"
+            },
+            "type": "array"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "geoJsonPoly": {
+        "properties": {
+          "coordinates": {
+            "items": {
+              "items": {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "crs": {
+            "$ref": "#/components/schemas/geoJsonCrs"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "geoJsonRaw": {
+        "properties": {
+          "coordinates": {
+            "items": {
+
+            },
+            "type": "array"
+          },
+          "crs": {
+            "$ref": "#/components/schemas/geoJsonCrs"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "\nI dette APIet finner du data om administrative enheter, spesifikt fylker og kommuner.\nAPIet gir blant annet informasjon som navn, nummer, område og representasjonspunkter.\n\nDet er ikke nødvendig med innlogging/autorisasjon for å bruke APIet.\n\nMedio desember 2023 ble APIet flyttet til et nytt endepunkt som er tilgjengelig på \u003Ca href=\"https://api.kartverket.no/kommuneinfo/v1\"\u003Ehttps://api.kartverket.no/kommuneinfo/v1\u003C/a\u003E.\nDet tidligere endepunktet \u003Ca href=\"https://ws.geonorge.no/kommuneinfo/v1\"\u003Ehttps://ws.geonorge.no/kommuneinfo/v1\u003C/a\u003E vil være tilgjengelig inntil videre, og vil fungere som en proxy til det nye endepunktet.\nVi anbefaler likevel å bytte til det nye endepunktet.\n\nDersom det finnes relevante testdata for APIet vil dette bli tilgjengeliggjort på \u003Ca href=\"https://api.test.kartverket.no/kommuneinfo/v1\"\u003Ehttps://api.test.kartverket.no/kommuneinfo/v1\u003C/a\u003E.\nTestmiljøet kan for eksempel brukes til å legge ut nye data før de inntreffer. Eksempelvis ble data for 2024 lagt ut medio desember 2023.\nSlike endringer på testmiljø vil ikke nødvendigvis forhåndsannonseres, men vil bli annonsert på \u003Ca href=\"https://status.kartverket.no\"\u003Ehttps://status.kartverket.no\u003C/a\u003E når det blir gjort endringer.\n\nStørre eller ikke-kompatible endringer i APIet vil bli annonsert med minst 3 måneder forvarsel på \u003Ca href=\"https://status.kartverket.no\"\u003Ehttps://status.kartverket.no\u003C/a\u003E.\n\nI tillegg til å leveres som API, kan hele datasettet for henholdsvis fylker og kommuner lastes ned fra Geonorge:\n\n\n\u003Ca href=\"https://kartkatalog.geonorge.no/metadata/administrative-enheter-fylker/6093c8a8-fa80-11e6-bc64-92361f002671\"\u003EFylker\u003C/a\u003E\n\n\u003Ca href=\"https://kartkatalog.geonorge.no/metadata/administrative-enheter-kommuner/041f1e6e-bdbc-4091-b48f-8a5990f3cc5b\"\u003EKommuner\u003C/a\u003E ",
+    "title": "Åpent API fra Kartverket for administrative enheter",
+    "version": "1.2"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/fylker": {
+      "get": {
+        "description": "Oversikt over alle fylker i Norge med fylkesnavn og fylkesnummer.",
+        "parameters": [
+          {
+            "description": "Sorter resultat etter felt.",
+            "in": "query",
+            "name": "sorter",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Kommaseparert liste med de objektene du ønsker å få returnert. For å hente ut underobjekter bruk \".\"-notasjon, f.eks.: &filtrer=kommuner.kommunenummer,fylkesnavn",
+            "in": "query",
+            "name": "filtrer",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FylkerEnkel"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Fylker i Norge."
+      }
+    },
+    "/fylker/{fylkesnummer}": {
+      "get": {
+        "description": "Gir informasjon om avgrensingsboks, fylkesnummer, fylkesnavn og kommuner i fylket.",
+        "parameters": [
+          {
+            "description": "Fylkesnummer bestående av 2 tegn, med ledende null om nødvendig.",
+            "in": "path",
+            "name": "fylkesnummer",
+            "required": true,
+            "schema": {
+              "required": true,
+              "type": "string"
+            }
+          },
+          {
+            "description": "Angi det koordinatsystemet som du ønsker at geometrien i returen skal transformeres til. Standard er 4258.",
+            "in": "query",
+            "name": "utkoordsys",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Kommaseparert liste med de objektene du ønsker å få returnert. For å hente ut underobjekter bruk \".\"-notasjon, f.eks.: &filtrer=kommuner.kommunenummer,fylkesnavn",
+            "in": "query",
+            "name": "filtrer",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FylkerKommunerEnkel"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Vis mer informasjon om et fylke"
+      }
+    },
+    "/fylker/{fylkesnummer}/omrade": {
+      "get": {
+        "description": "Områdepolygon for et spesifikt fylke",
+        "parameters": [
+          {
+            "description": "Fylkesnummer bestående av 2 tegn, med ledende null om nødvendig.",
+            "in": "path",
+            "name": "fylkesnummer",
+            "required": true,
+            "schema": {
+              "required": true,
+              "type": "string"
+            }
+          },
+          {
+            "description": "Angi det koordinatsystemet som du ønsker at geometrien i returen skal transformeres til. Standard er 4258.",
+            "in": "query",
+            "name": "utkoordsys",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Kommaseparert liste med de objektene du ønsker å få returnert. For å hente ut underobjekter bruk \".\"-notasjon, f.eks.: &filtrer=kommuner.kommunenummer,fylkesnavn",
+            "in": "query",
+            "name": "filtrer",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FylkerEnkelOmrade"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Områdepolygon for et spesifikt fylke"
+      }
+    },
+    "/fylkerkommuner": {
+      "get": {
+        "description": "Henter avgrensningsboks, nummer og navn for alle fylker og kommuner i fylket. Inkluderer informasjon for kommuner som fått i /kommuner/{kommunenummer}.",
+        "parameters": [
+          {
+            "description": "Sorter listen med kommuner etter felt.",
+            "in": "query",
+            "name": "sorterkommuner",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sorter listen med fylker etter felt.",
+            "in": "query",
+            "name": "sorterfylker",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Angi det koordinatsystemet som du ønsker at geometrien i returen skal transformeres til. Standard er 4258.",
+            "in": "query",
+            "name": "utkoordsys",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Kommaseparert liste med de objektene du ønsker å få returnert. For å hente ut underobjekter bruk \".\"-notasjon, f.eks.: &filtrer=kommuner.kommunenummer,fylkesnavn",
+            "in": "query",
+            "name": "filtrer",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FylkerKommunerFull"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Full informasjon om alle fylker og alle kommuner."
+      }
+    },
+    "/kommuner": {
+      "get": {
+        "description": "Kommunenavn og kommunenummer for alle kommuner i Norge.",
+        "parameters": [
+          {
+            "description": "Sorter resultat etter felt.",
+            "in": "query",
+            "name": "sorter",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Kommaseparert liste med de objektene du ønsker å få returnert. For å hente ut underobjekter bruk \".\"-notasjon, f.eks.: &filtrer=kommuner.kommunenummer,fylkesnavn",
+            "in": "query",
+            "name": "filtrer",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/KomEnkelNorskNavn"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Kommuner i Norge."
+      }
+    },
+    "/kommuner/illustrasjonskart": {
+      "get": {
+        "description": "En geojson-featurecollection med grovt forenklede kommunegrenser. Hver kommune er en feature og har kommunenavn og kommunenummer i properties-elementet. Kun ment til å brukes som et illustrasjonskart.",
+        "parameters": [
+          {
+            "description": "Angi det koordinatsystemet som du ønsker at geometrien i returen skal transformeres til. Standard er 4258.",
+            "in": "query",
+            "name": "utkoordsys",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/geoJsonFeatureCollection"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Illustrasjonskart over kommuner i Norge."
+      }
+    },
+    "/kommuner/{kommunenummer}": {
+      "get": {
+        "description": "Gir informasjon om avgrensingsboks, kommunenummer, kommunenavn, fylket kommunen er i, samt noe tilleggsinformasjon om kommunen.",
+        "parameters": [
+          {
+            "description": "kommunenummer bestående av 4 tegn, med ledende null om nødvendig.",
+            "in": "path",
+            "name": "kommunenummer",
+            "required": true,
+            "schema": {
+              "required": true,
+              "type": "string"
+            }
+          },
+          {
+            "description": "Angi det koordinatsystemet som du ønsker at geometrien i returen skal transformeres til. Standard er 4258.",
+            "in": "query",
+            "name": "utkoordsys",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Kommaseparert liste med de objektene du ønsker å få returnert. For å hente ut underobjekter bruk \".\"-notasjon, f.eks.: &filtrer=kommuner.kommunenummer,fylkesnavn",
+            "in": "query",
+            "name": "filtrer",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KomFull"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Full informasjon om spesifikk kommune"
+      }
+    },
+    "/kommuner/{kommunenummer}/nabokommuner": {
+      "get": {
+        "description": "Finn nabokommuner til en kommune",
+        "parameters": [
+          {
+            "description": "kommunenummer bestående av 4 tegn, med ledende null om nødvendig.",
+            "in": "path",
+            "name": "kommunenummer",
+            "required": true,
+            "schema": {
+              "required": true,
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sorter resultat etter felt.",
+            "in": "query",
+            "name": "sorter",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Kommaseparert liste med de objektene du ønsker å få returnert. For å hente ut underobjekter bruk \".\"-notasjon, f.eks.: &filtrer=kommuner.kommunenummer,fylkesnavn",
+            "in": "query",
+            "name": "filtrer",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/KomEnkelNorskNavn"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Finn nabokommuner til en kommune"
+      }
+    },
+    "/kommuner/{kommunenummer}/omrade": {
+      "get": {
+        "description": "Områdepolygon for spesifikk kommune",
+        "parameters": [
+          {
+            "description": "kommunenummer bestående av 4 tegn, med ledende null om nødvendig.",
+            "in": "path",
+            "name": "kommunenummer",
+            "required": true,
+            "schema": {
+              "required": true,
+              "type": "string"
+            }
+          },
+          {
+            "description": "Angi det koordinatsystemet som du ønsker at geometrien i returen skal transformeres til. Standard er 4258.",
+            "in": "query",
+            "name": "utkoordsys",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Kommaseparert liste med de objektene du ønsker å få returnert. For å hente ut underobjekter bruk \".\"-notasjon, f.eks.: &filtrer=kommuner.kommunenummer,fylkesnavn",
+            "in": "query",
+            "name": "filtrer",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KomEnkelOmrade"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Områdepolygon for spesifikk kommune"
+      }
+    },
+    "/punkt": {
+      "get": {
+        "description": "Finn kommune og fylke for et gitt geografisk punkt",
+        "parameters": [
+          {
+            "description": "Kommaseparert liste med de objektene du ønsker å få returnert. For å hente ut underobjekter bruk \".\"-notasjon, f.eks.: &filtrer=kommuner.kommunenummer,fylkesnavn",
+            "in": "query",
+            "name": "filtrer",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "nord/latitude-koordinaten",
+            "in": "query",
+            "name": "nord",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "description": "øst/longitude-koordinaten",
+            "in": "query",
+            "name": "ost",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "description": "Koordinatsystemet til koordinatene du søker med. Angis som en SRID, for eksempel 4258 eller 25833.",
+            "in": "query",
+            "name": "koordsys",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KommuneFylkeEnkel"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Finn kommune og fylke for et gitt geografisk punkt"
+      }
+    },
+    "/sok": {
+      "get": {
+        "description": "Søk etter kommunenavn.",
+        "parameters": [
+          {
+            "description": "Angi det koordinatsystemet som du ønsker at geometrien i returen skal transformeres til. Standard er 4258.",
+            "in": "query",
+            "name": "utkoordsys",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Sorter resultat etter felt.",
+            "in": "query",
+            "name": "sorter",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Kommaseparert liste med de objektene du ønsker å få returnert. For å hente ut underobjekter bruk \".\"-notasjon, f.eks.: &filtrer=kommuner.kommunenummer,fylkesnavn",
+            "in": "query",
+            "name": "filtrer",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Kommunenavnet du ønsker å søke etter. Wildcard (*) kan benyttes i søket. Spesialtegnene \", ', ;, /, og = kan ikke brukes",
+            "in": "query",
+            "name": "knavn",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NavnSokKommune"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "404": {
+            "description": "Kunne ikke finne kommunen du søkte etter"
+          }
+        },
+        "summary": "Søk etter kommunenavn."
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.kartverket.no/kommuneinfo/v1"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+﻿{
+  Fylkesnummer: example-string,
+  Kommune: {
+    Kommunenummer: example-string,
+    Kommunenavn: example-string
+  },
+  Location: {
+    Latitude: 4.2,
+    Longitude: 4.2
+  }
+}
