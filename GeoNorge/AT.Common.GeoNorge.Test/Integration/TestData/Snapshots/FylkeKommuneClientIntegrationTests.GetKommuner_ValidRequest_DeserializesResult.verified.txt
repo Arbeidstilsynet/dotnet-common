@@ -1,0 +1,14 @@
+﻿[
+  {
+    Kommunenummer: example-string,
+    Kommunenavn: example-string
+  },
+  {
+    Kommunenummer: example-string,
+    Kommunenavn: example-string
+  },
+  {
+    Kommunenummer: example-string,
+    Kommunenavn: example-string
+  }
+]

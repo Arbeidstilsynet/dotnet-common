@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
 using Arbeidstilsynet.Common.GeoNorge.DependencyInjection;
 using Arbeidstilsynet.Common.GeoNorge.Model.Request;
@@ -8,7 +9,7 @@ using Arbeidstilsynet.Common.GeoNorge.Ports;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Implementation;
 
-internal class FylkeKommuneClient : IFylkeKommuneApi
+internal partial class FylkeKommuneClient : IFylkeKommuneApi
 {
     private readonly HttpClient _httpClient;
     
@@ -39,6 +40,16 @@ internal class FylkeKommuneClient : IFylkeKommuneApi
 
     public async Task<FylkeFullInfo?> GetFylkeByNumber(string fylkesnummer)
     {
+        var regex = FylkesnummerRegex();
+        
+        if (!regex.IsMatch(fylkesnummer))
+        {
+            throw new ArgumentException(
+                $"Invalid fylkesnummer format: {fylkesnummer}. Must be 2 digits.",
+                nameof(fylkesnummer)
+            );
+        }
+        
         var response = await _httpClient.GetFromJsonAsync<FylkeFullInfoResponse>($"kommuneinfo/v1/fylker/{fylkesnummer}");
 
         return response?.ToFylkeFullInfo();
@@ -46,7 +57,15 @@ internal class FylkeKommuneClient : IFylkeKommuneApi
 
     public async Task<KommuneFullInfo?> GetKommuneByNumber(string kommunenummer)
     {
+        var regex = KommunenummerRegex();
         
+        if (!regex.IsMatch(kommunenummer))
+        {
+            throw new ArgumentException(
+                $"Invalid kommunenummer format: {kommunenummer}. Must be 4 digits.",
+                nameof(kommunenummer)
+            );
+        }
         
         var response = await _httpClient.GetFromJsonAsync<KommuneFullInfoResponse>($"kommuneinfo/v1/kommuner/{kommunenummer}");
         
@@ -60,6 +79,11 @@ internal class FylkeKommuneClient : IFylkeKommuneApi
         
         return _httpClient.GetFromJsonAsync<Kommune>(uri);
     }
+
+    [GeneratedRegex(@"^\d{4}$", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-GB")]
+    private static partial Regex KommunenummerRegex();
+    [GeneratedRegex(@"^\d{2}$", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-GB")]
+    private static partial Regex FylkesnummerRegex();
 }
 
 file record FylkeFullInfoResponse
