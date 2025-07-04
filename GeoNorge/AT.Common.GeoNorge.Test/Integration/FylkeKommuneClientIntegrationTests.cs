@@ -1,4 +1,3 @@
-using Arbeidstilsynet.Common.GeoNorge.Implementation;
 using Arbeidstilsynet.Common.GeoNorge.Model.Request;
 using Arbeidstilsynet.Common.GeoNorge.Ports;
 using Arbeidstilsynet.Common.GeoNorge.Test.Integration.Setup;

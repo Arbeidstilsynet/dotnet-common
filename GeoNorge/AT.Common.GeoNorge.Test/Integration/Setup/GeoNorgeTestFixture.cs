@@ -3,10 +3,8 @@ using Arbeidstilsynet.Common.TestExtensions.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WireMock.Admin.Mappings;
-using WireMock.Logging;
 using WireMock.Net.OpenApiParser.Settings;
 using WireMock.Server;
-using WireMock.Settings;
 using Xunit.Microsoft.DependencyInjection;
 using Xunit.Microsoft.DependencyInjection.Abstracts;
 

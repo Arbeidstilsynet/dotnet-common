@@ -1,6 +1,4 @@
-using System.Text;
 using Arbeidstilsynet.Common.GeoNorge.Model.Request;
-using Microsoft.Extensions.Primitives;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Implementation;
 

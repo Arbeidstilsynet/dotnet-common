@@ -1,5 +1,4 @@
 using Arbeidstilsynet.Common.GeoNorge.Implementation;
-using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 
