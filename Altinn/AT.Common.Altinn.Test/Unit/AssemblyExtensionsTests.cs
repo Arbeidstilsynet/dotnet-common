@@ -1,10 +1,8 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Arbeidstilsynet.Common.Altinn.Extensions;
-using Arbeidstilsynet.Common.Altinn.Model;
 using Shouldly;
 using Xunit;
-using AssemblyExtensions = Arbeidstilsynet.Common.Altinn.Extensions.AssemblyExtensions;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 

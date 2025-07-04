@@ -8,7 +8,7 @@
     <Product>Arbeidstilsynet.Common.Altinn</Product>
     <Authors>Digital Samhandling</Authors>
     <Company>Arbeidstilsynet</Company>
-    <Description></Description>
+    <Description>Useful methods and classes for cross-cutting concerns in Altinn applications</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Version>0.0.1-alpha.1</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>

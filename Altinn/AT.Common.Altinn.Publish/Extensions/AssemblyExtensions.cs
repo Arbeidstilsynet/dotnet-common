@@ -1,5 +1,5 @@
 using System.Reflection;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Arbeidstilsynet.Common.Altinn.Extensions;
 
@@ -35,7 +35,7 @@ public static class AssemblyExtensions
 
         var json = await reader.ReadToEndAsync();
 
-        return JsonConvert.DeserializeObject<T>(json)
+        return JsonSerializer.Deserialize<T>(json)
             ?? throw new Exception($"Error deserializing json from embedded resource: {fileName}");
     }
 }
