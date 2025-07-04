@@ -84,7 +84,7 @@ public class FylkeKommuneClientIntegrationTests : TestBed<GeoNorgeTestFixture>
     {
         // Act
         var result = await _sut.GetKommuneByPoint(
-            new PointQuery() { Latitude = 59.9139, Longitude = 10.7522 }
+            new PointQuery() { Latitude = 4.2, Longitude = 4.2, Epsg = 42 }
         );
 
         // Assert

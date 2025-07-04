@@ -34,7 +34,7 @@
     <Folder Include="Unit\TestData\Snapshots\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="**\TestData\**">
+    <None Include="Integration\TestData\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

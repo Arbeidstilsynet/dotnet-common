@@ -4,5 +4,5 @@ public record KommuneFullInfo
 {
     public required string Fylkesnummer { get; init; }
     public required Kommune Kommune { get; init; }
-    public required Location Location { get; init; }
+    public Location? Location { get; init; }
 }

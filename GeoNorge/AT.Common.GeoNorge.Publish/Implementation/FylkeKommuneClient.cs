@@ -38,7 +38,7 @@ internal partial class FylkeKommuneClient : IFylkeKommuneApi
         return response?.Select(f => f.ToFylkeFullInfo()) ?? [];
     }
 
-    public async Task<FylkeFullInfo?> GetFylkeByNumber(string fylkesnummer)
+    public Task<Fylke?> GetFylkeByNumber(string fylkesnummer)
     {
         var regex = FylkesnummerRegex();
         
@@ -50,9 +50,7 @@ internal partial class FylkeKommuneClient : IFylkeKommuneApi
             );
         }
         
-        var response = await _httpClient.GetFromJsonAsync<FylkeFullInfoResponse>($"kommuneinfo/v1/fylker/{fylkesnummer}");
-
-        return response?.ToFylkeFullInfo();
+        return _httpClient.GetFromJsonAsync<Fylke>($"kommuneinfo/v1/fylker/{fylkesnummer}");
     }
 
     public async Task<KommuneFullInfo?> GetKommuneByNumber(string kommunenummer)
@@ -146,11 +144,23 @@ file static class MappingExtensions
                 Kommunenummer = response.Kommunenummer,
                 Kommunenavn = response.Kommunenavn
             },
-            Location = new Location
-            {
-                Longitude = response.PunktIOmråde.Coordinates[0],
-                Latitude = response.PunktIOmråde.Coordinates[1]
-            }
+            Location = response.PunktIOmråde.ToLocation()
+        };
+    }
+
+    public static Location? ToLocation(
+        this GeoJson geoJson
+    )
+    {
+        if (geoJson.Coordinates.Count != 2)
+        {
+            return default;
+        }
+
+        return new Location
+        {
+            Longitude = geoJson.Coordinates[0],
+            Latitude = geoJson.Coordinates[1]
         };
     }
 }

@@ -6,9 +6,5 @@
   {
     Fylkesnummer: example-string,
     Fylkesnavn: example-string
-  },
-  {
-    Fylkesnummer: example-string,
-    Fylkesnavn: example-string
   }
 ]

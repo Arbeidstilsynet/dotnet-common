@@ -26,17 +26,6 @@
           Latitude: 4.2,
           Longitude: 4.2
         }
-      },
-      {
-        Fylkesnummer: example-string,
-        Kommune: {
-          Kommunenummer: example-string,
-          Kommunenavn: example-string
-        },
-        Location: {
-          Latitude: 4.2,
-          Longitude: 4.2
-        }
       }
     ]
   },
@@ -46,58 +35,6 @@
       Fylkesnavn: example-string
     },
     Kommuner: [
-      {
-        Fylkesnummer: example-string,
-        Kommune: {
-          Kommunenummer: example-string,
-          Kommunenavn: example-string
-        },
-        Location: {
-          Latitude: 4.2,
-          Longitude: 4.2
-        }
-      },
-      {
-        Fylkesnummer: example-string,
-        Kommune: {
-          Kommunenummer: example-string,
-          Kommunenavn: example-string
-        },
-        Location: {
-          Latitude: 4.2,
-          Longitude: 4.2
-        }
-      },
-      {
-        Fylkesnummer: example-string,
-        Kommune: {
-          Kommunenummer: example-string,
-          Kommunenavn: example-string
-        },
-        Location: {
-          Latitude: 4.2,
-          Longitude: 4.2
-        }
-      }
-    ]
-  },
-  {
-    Fylke: {
-      Fylkesnummer: example-string,
-      Fylkesnavn: example-string
-    },
-    Kommuner: [
-      {
-        Fylkesnummer: example-string,
-        Kommune: {
-          Kommunenummer: example-string,
-          Kommunenavn: example-string
-        },
-        Location: {
-          Latitude: 4.2,
-          Longitude: 4.2
-        }
-      },
       {
         Fylkesnummer: example-string,
         Kommune: {
