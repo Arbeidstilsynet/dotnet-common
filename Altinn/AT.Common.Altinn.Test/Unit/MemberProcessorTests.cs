@@ -8,9 +8,9 @@ namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 public class MemberProcessorTests
 {
     private const string Language = "nb";
-    private readonly MemberTestProcessor _sut;
-    private readonly Instance _instance = new Instance();
     private readonly Guid _dataId = Guid.NewGuid();
+    private readonly Instance _instance = new();
+    private readonly MemberTestProcessor _sut;
 
     public MemberProcessorTests()
     {

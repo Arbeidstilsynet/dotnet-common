@@ -8,9 +8,9 @@ namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 public class BaseDataProcessorTests
 {
     private const string Language = "no";
-    private readonly BaseTestDataProcessor _sut;
-    private readonly Instance _instance;
     private readonly Guid _dataId;
+    private readonly Instance _instance;
+    private readonly BaseTestDataProcessor _sut;
 
     public BaseDataProcessorTests()
     {

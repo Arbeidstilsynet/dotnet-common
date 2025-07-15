@@ -27,9 +27,9 @@ internal class LandOptions : IAppOptionsProvider
     {
         var landskoder = new List<AppOption>();
 
-        foreach (var (landISOCode, (land, _)) in await _landskodeLookup.GetLandskoder())
+        foreach (var (landISOCode, land) in await _landskodeLookup.GetLandskoder())
         {
-            landskoder.Add(new AppOption { Label = land, Value = landISOCode });
+            landskoder.Add(new AppOption { Label = land.Land, Value = landISOCode });
         }
 
         return new AppOptions { Options = landskoder, IsCacheable = true };

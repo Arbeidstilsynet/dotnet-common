@@ -9,8 +9,8 @@ namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 
 public class DataClientExtensionsTests
 {
-    private readonly IDataClient _sut = Substitute.For<IDataClient>();
     private readonly Instance _instance = Substitute.For<Instance>();
+    private readonly IDataClient _sut = Substitute.For<IDataClient>();
 
     public DataClientExtensionsTests()
     {
@@ -67,8 +67,8 @@ public class DataClientExtensionsTests
         var elementToDeleteGuid = Guid.NewGuid();
 
         // Arrange
-        var elementToDelete = new DataElement() { Id = elementToDeleteGuid.ToString() };
-        var otherDataElement = new DataElement() { Id = Guid.NewGuid().ToString() };
+        var elementToDelete = new DataElement { Id = elementToDeleteGuid.ToString() };
+        var otherDataElement = new DataElement { Id = Guid.NewGuid().ToString() };
 
         _instance.Data = [elementToDelete, otherDataElement];
 

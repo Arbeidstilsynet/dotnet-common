@@ -10,12 +10,15 @@
     <Company>Arbeidstilsynet</Company>
     <Description>Useful methods and classes for cross-cutting concerns in Altinn applications</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>0.0.1-alpha.2</Version>
+    <Version>0.0.1-alpha.3</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Altinn.App.Core" Version="[8.3.0, 9.0.0)" />
+    <PackageReference Include="Altinn.App.Api" Version="8.6.5" />
+    <PackageReference Include="Altinn.App.Core" Version="8.6.5" />
+    <PackageReference Include="Arbeidstilsynet.Common.AspNetCore.Extensions" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="9.7.0" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />

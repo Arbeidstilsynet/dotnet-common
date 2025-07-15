@@ -12,10 +12,11 @@ namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 
 public class LandOptionsTests
 {
-    private readonly ILandskodeLookup _landskodeLookup = Substitute.For<ILandskodeLookup>();
     private readonly IOptions<LandOptionsConfiguration> _configuration = Substitute.For<
         IOptions<LandOptionsConfiguration>
     >();
+
+    private readonly ILandskodeLookup _landskodeLookup = Substitute.For<ILandskodeLookup>();
 
     public LandOptionsTests()
     {
@@ -35,7 +36,7 @@ public class LandOptionsTests
     {
         // Arrange
         var expectedId = "customOptionsId";
-        _configuration.Value.Returns(new LandOptionsConfiguration() { OptionsId = expectedId });
+        _configuration.Value.Returns(new LandOptionsConfiguration { OptionsId = expectedId });
 
         // Act
         var sut = new LandOptions(_landskodeLookup, _configuration);

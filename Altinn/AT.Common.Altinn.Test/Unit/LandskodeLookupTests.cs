@@ -14,37 +14,6 @@ public class LandskodeLookupTests
         _sut = new LandskodeLookup();
     }
 
-    [Fact]
-    public async Task GetLandskoder_Returns_Alle_Landskoder()
-    {
-        const int antallLandskoder = 238;
-
-        var landskoder = (await _sut.GetLandskoder()).ToList();
-
-        landskoder.ShouldNotBeEmpty();
-        landskoder.Count.ShouldBe(antallLandskoder);
-    }
-
-    [Theory]
-    [MemberData(nameof(EØSLand))]
-    public async Task GetLandskode_Returns_Landskode_ForEØSLand(
-        string landskode,
-        Landskode expectedData
-    )
-    {
-        var result = await _sut.GetLandskode(landskode);
-
-        result.ShouldBe(expectedData);
-    }
-
-    [Fact]
-    public async Task GetLandskode_WhenLandDoesNotExist_ReturnsNull()
-    {
-        var result = await _sut.GetLandskode("XXX");
-
-        result.ShouldBeNull();
-    }
-
     public static IEnumerable<object[]> EØSLand =>
         // Kilde: https://www.udi.no/ord-og-begreper/eueos-borger/
         new List<object[]>
@@ -82,4 +51,35 @@ public class LandskodeLookupTests
             new object[] { "CHE", new Landskode("Switzerland", "+41") },
             new object[] { "GBR", new Landskode("United Kingdom", "+44") },
         };
+
+    [Fact]
+    public async Task GetLandskoder_Returns_Alle_Landskoder()
+    {
+        const int antallLandskoder = 238;
+
+        var landskoder = (await _sut.GetLandskoder()).ToList();
+
+        landskoder.ShouldNotBeEmpty();
+        landskoder.Count.ShouldBe(antallLandskoder);
+    }
+
+    [Theory]
+    [MemberData(nameof(EØSLand))]
+    public async Task GetLandskode_Returns_Landskode_ForEØSLand(
+        string landskode,
+        Landskode expectedData
+    )
+    {
+        var result = await _sut.GetLandskode(landskode);
+
+        result.ShouldBe(expectedData);
+    }
+
+    [Fact]
+    public async Task GetLandskode_WhenLandDoesNotExist_ReturnsNull()
+    {
+        var result = await _sut.GetLandskode("XXX");
+
+        result.ShouldBeNull();
+    }
 }
