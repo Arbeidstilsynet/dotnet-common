@@ -32,12 +32,13 @@ public record AltinnApiConfiguration
 public static class DependencyInjectionExtensions
 {
     private const string AltinnStorageApiBaseUrl = "https://platform.altinn.no/storage/api/v1";
-    private const string AltinnStorageApiBaseUrlStaging = "https://platform.tt02.altinn.no/storage/api/v1";
+    private const string AltinnStorageApiBaseUrlStaging =
+        "https://platform.tt02.altinn.no/storage/api/v1";
     internal const string AltinnStorageApiClientKey = "AltinnStorageApiClient";
     private const string AltinnEventsApiBaseUrl = "https://platform.altinn.no/events/api/v1";
-    private const string AltinnEventsApiBaseUrlStaging = "https://platform.tt02.altinn.no/events/api/v1";
+    private const string AltinnEventsApiBaseUrlStaging =
+        "https://platform.tt02.altinn.no/events/api/v1";
     internal const string AltinnAppApiClientKey = "AltinnEventsApiClient";
-
 
     /// <summary>
     /// Adds a <see cref="ILandskodeLookup"/> to look up countries and their dial codes based on 3-letter ISO values.
@@ -88,14 +89,30 @@ public static class DependencyInjectionExtensions
     {
         altinnApiConfiguration ??= new AltinnApiConfiguration()
         {
-            EventUrl = hostEnvironment.IsProduction() ? AltinnEventsApiBaseUrl : AltinnEventsApiBaseUrlStaging,
-            StorageUrl = hostEnvironment.IsProduction() ? AltinnStorageApiBaseUrl : AltinnStorageApiBaseUrlStaging
+            EventUrl = hostEnvironment.IsProduction()
+                ? AltinnEventsApiBaseUrl
+                : AltinnEventsApiBaseUrlStaging,
+            StorageUrl = hostEnvironment.IsProduction()
+                ? AltinnStorageApiBaseUrl
+                : AltinnStorageApiBaseUrlStaging,
         };
-        services.AddHttpClient(AltinnAppApiClientKey,
-                client => { client.BaseAddress = new Uri(altinnApiConfiguration.EventUrl); })
+        services
+            .AddHttpClient(
+                AltinnAppApiClientKey,
+                client =>
+                {
+                    client.BaseAddress = new Uri(altinnApiConfiguration.EventUrl);
+                }
+            )
             .AddStandardResilienceHandler();
-        services.AddHttpClient(AltinnStorageApiClientKey,
-                client => { client.BaseAddress = new Uri(altinnApiConfiguration.StorageUrl); })
+        services
+            .AddHttpClient(
+                AltinnStorageApiClientKey,
+                client =>
+                {
+                    client.BaseAddress = new Uri(altinnApiConfiguration.StorageUrl);
+                }
+            )
             .AddStandardResilienceHandler();
         services.AddSingleton(altinnTokenProvider);
         services.AddTransient<IAltinnEventsClient, AltinnEventsClient>();
