@@ -2,12 +2,12 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Altinn.App.Core.Models;
 using Altinn.Platform.Storage.Interface.Models;
-using Arbeidstilsynet.Common.Altinn.Model;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Ports;
+using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using static Arbeidstilsynet.Common.Altinn.DependencyInjection.DependencyInjectionExtensions;
 
-namespace Arbeidstilsynet.Common.Altinn.Implementation;
+namespace Arbeidstilsynet.Common.Altinn.Implementation.Clients;
 
 internal class AltinnStorageClient : IAltinnStorageClient
 {
@@ -34,6 +34,15 @@ internal class AltinnStorageClient : IAltinnStorageClient
     {
         return await _httpClient
                 .Get(instanceAddress.ToInstanceUri().ToString())
+                .WithHeader("Authorization", $"Bearer {await _altinnTokenProvider.GetToken()}")
+                .ReceiveContent<Instance>(_jsonSerializerOptions)
+            ?? throw new Exception("Failed to get instance");
+    }
+
+    public async Task<Instance> GetInstance(CloudEvent cloudEvent)
+    {
+        return await _httpClient
+                .Get(cloudEvent.ToInstanceUri().ToString())
                 .WithHeader("Authorization", $"Bearer {await _altinnTokenProvider.GetToken()}")
                 .ReceiveContent<Instance>(_jsonSerializerOptions)
             ?? throw new Exception("Failed to get instance");

@@ -1,0 +1,77 @@
+using Altinn.App.Core.Models;
+using Altinn.Platform.Storage.Interface.Models;
+using Arbeidstilsynet.Common.Altinn.Extensions;
+using Arbeidstilsynet.Common.Altinn.Model.Adapter;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+using Arbeidstilsynet.Common.Altinn.Ports.Adapter;
+using Arbeidstilsynet.Common.Altinn.Ports.Clients;
+
+namespace Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
+
+internal class AltinnInstanceSummaryProvider(IAltinnStorageClient altinnStorageClient)
+    : IAltinnInstanceSummaryProvider
+{
+    public async Task<AltinnInstanceSummary> GetSummary(
+        CloudEvent cloudEvent,
+        string? mainDocumentDataTypeName = "skjema"
+    )
+    {
+        // get instans basert på cloud event data
+        var instance = await altinnStorageClient.GetInstance(cloudEvent);
+
+        // map all instance data to altinn document summaries
+        var documents = await Task.WhenAll(
+            instance.Data.Select(async d => new AltinnDocument
+            {
+                DocumentContent = await GetInstanceData(d, instance),
+                IsMainDocument = d.DataType == mainDocumentDataTypeName,
+                FileMetadata = MapDatumToAltinnMetadataSummary(d),
+            })
+        );
+
+        return new AltinnInstanceSummary
+        {
+            Metadata = instance.ToAltinnMetadata(),
+            AltinnSkjema = documents.First(d => d.IsMainDocument),
+            Attachments = [.. documents.Where(d => !d.IsMainDocument)],
+        };
+    }
+
+    private async Task<Stream> GetInstanceData(DataElement dataElement, Instance instance)
+    {
+        return await altinnStorageClient.GetInstanceData(
+            new InstanceDataRequest
+            {
+                InstanceRequest = CreateInstanceRequest(dataElement, instance),
+                DataId = Guid.Parse(
+                    dataElement.Id ?? throw new InvalidOperationException("Id required")
+                ),
+            }
+        );
+    }
+
+    private static InstanceRequest CreateInstanceRequest(DataElement dataElement, Instance instance)
+    {
+        return new InstanceRequest
+        {
+            InstanceGuid = Guid.Parse(
+                dataElement.InstanceGuid
+                    ?? throw new InvalidOperationException("InstanceGuid required")
+            ),
+            InstanceOwnerPartyId =
+                instance.InstanceOwner?.PartyId
+                ?? throw new InvalidOperationException("PartyId required"),
+        };
+    }
+
+    private static FileMetadata MapDatumToAltinnMetadataSummary(DataElement dataElement)
+    {
+        return new FileMetadata()
+        {
+            ContentType = dataElement.ContentType,
+            DataType = dataElement.DataType,
+            Filename = dataElement.Filename,
+            FileScanResult = dataElement.FileScanResult.ToString(),
+        };
+    }
+}

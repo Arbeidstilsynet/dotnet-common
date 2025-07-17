@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using Altinn.App.Core.Models;
 using Arbeidstilsynet.Common.Altinn.Model;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation;
 
@@ -64,13 +65,36 @@ internal static class HttpExtensions
         string? pathAppendix = null
     )
     {
-        var baseUri =
+        var uri =
             $"instances/{instanceAddress.InstanceOwnerPartyId}/{instanceAddress.InstanceGuid}";
         if (!string.IsNullOrEmpty(pathAppendix))
         {
-            baseUri += pathAppendix.StartsWith('/') ? pathAppendix : $"/{pathAppendix}";
+            uri += pathAppendix.StartsWith('/') ? pathAppendix : $"/{pathAppendix}";
         }
-        return new Uri(baseUri, UriKind.Relative);
+        return new Uri(uri, UriKind.Relative);
+    }
+
+    public static Uri ToInstanceUri(this CloudEvent cloudEvent)
+    {
+        try
+        {
+            var sourcePath = cloudEvent.Source.PathAndQuery;
+            var uri = sourcePath[sourcePath.IndexOf("instances")..];
+            var queryIndex = uri.IndexOf('?');
+            if (queryIndex > 0)
+            {
+                uri = uri.Substring(0, queryIndex);
+            }
+            var trimmedUri = string.Join("/", uri.Split("/").Take(3).ToList());
+            return new Uri(trimmedUri, UriKind.Relative);
+        }
+        catch (Exception e)
+        {
+            throw new AltinnEventSourceParseException(
+                $"Could not extract the instance identifier for the provided Source URL by an altinn cloud event. The source url was {cloudEvent.Source?.AbsoluteUri}",
+                e
+            );
+        }
     }
 
     public static Uri MakeRelativeOrThrow(this Uri? baseUri, Uri uri)

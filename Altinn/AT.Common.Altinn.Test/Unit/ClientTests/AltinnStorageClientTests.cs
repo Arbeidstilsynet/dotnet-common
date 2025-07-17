@@ -1,4 +1,5 @@
 using Arbeidstilsynet.Common.Altinn.Ports;
+using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Arbeidstilsynet.Common.Altinn.Test.Setup;
 using ProtoBuf.Meta;
 using Shouldly;

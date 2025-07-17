@@ -1,6 +1,10 @@
 using Altinn.App.Core.Features;
 using Arbeidstilsynet.Common.Altinn.Implementation;
+using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
+using Arbeidstilsynet.Common.Altinn.Implementation.Clients;
 using Arbeidstilsynet.Common.Altinn.Ports;
+using Arbeidstilsynet.Common.Altinn.Ports.Adapter;
+using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -68,6 +72,27 @@ public static class DependencyInjectionExtensions
 
         services.TryAddSingleton(Options.Create(optionsConfiguration));
         services.TryAddSingleton<IAppOptionsProvider, LandOptions>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adds an adapter which contains convenience services for altinn communication. It also adds all available Altinn Clients to communicate with the Altinn 3 Apis.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="hostEnvironment"></param>
+    /// <param name="altinnTokenProvider">Implementation to retrieve a valid altinn token. If caching is required, it need to be implemented.</param>
+    /// <param name="altinnApiConfiguration">Only required if it needs to be overwritten. By default, we determine BaseUrls based on the provided hostEnvironment.</param>
+    /// <returns>Makes the usage of <see cref="IAltinnInstanceSummaryProvider"/>, <see cref="IAltinnEventsClient"/> and <see cref="IAltinnStorageClient"/> available for the consumer.</returns>
+    public static IServiceCollection AddAltinnAdapter(
+        this IServiceCollection services,
+        IWebHostEnvironment hostEnvironment,
+        IAltinnTokenProvider altinnTokenProvider,
+        AltinnApiConfiguration? altinnApiConfiguration = null
+    )
+    {
+        services.AddAltinnApiClients(hostEnvironment, altinnTokenProvider, altinnApiConfiguration);
+        services.AddScoped<IAltinnInstanceSummaryProvider, AltinnInstanceSummaryProvider>();
 
         return services;
     }

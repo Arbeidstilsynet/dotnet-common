@@ -1,10 +1,10 @@
 using System.Text.Json;
 using Altinn.App.Core.Infrastructure.Clients.Events;
-using Altinn.App.Core.Internal.Events;
 using Arbeidstilsynet.Common.Altinn.Ports;
+using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using static Arbeidstilsynet.Common.Altinn.DependencyInjection.DependencyInjectionExtensions;
 
-namespace Arbeidstilsynet.Common.Altinn.Implementation;
+namespace Arbeidstilsynet.Common.Altinn.Implementation.Clients;
 
 internal class AltinnEventsClient : IAltinnEventsClient
 {
