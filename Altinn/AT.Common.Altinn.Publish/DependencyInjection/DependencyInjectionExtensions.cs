@@ -1,4 +1,5 @@
 using Altinn.App.Core.Features;
+using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Implementation.Clients;
@@ -26,8 +27,10 @@ public record LandOptionsConfiguration(string OptionsId = "land");
 /// <param name="EventUrl">Base Url for Altinn App Endpoints. See https://docs.altinn.studio/events/api/openapi/</param>
 public record AltinnApiConfiguration
 {
-    public required string StorageUrl { get; init; }
-    public required string EventUrl { get; init; }
+    public required Uri StorageUrl { get; init; }
+    public required Uri EventUrl { get; init; }
+
+    public required Uri AppBaseUrl { get; init; }
 }
 
 /// <summary>
@@ -35,13 +38,12 @@ public record AltinnApiConfiguration
 /// </summary>
 public static class DependencyInjectionExtensions
 {
-    private const string AltinnStorageApiBaseUrl = "https://platform.altinn.no/storage/api/v1";
-    private const string AltinnStorageApiBaseUrlStaging =
-        "https://platform.tt02.altinn.no/storage/api/v1";
+    private const string AltinnEventApiSuffix = "events/api/v1";
+
+    private const string AltinnStorageApiSuffix = "storage/api/v1";
+
+    internal const string AltinnOrgIdentifier = "dat";
     internal const string AltinnStorageApiClientKey = "AltinnStorageApiClient";
-    private const string AltinnEventsApiBaseUrl = "https://platform.altinn.no/events/api/v1";
-    private const string AltinnEventsApiBaseUrlStaging =
-        "https://platform.tt02.altinn.no/events/api/v1";
     internal const string AltinnAppApiClientKey = "AltinnEventsApiClient";
 
     /// <summary>
@@ -83,7 +85,7 @@ public static class DependencyInjectionExtensions
     /// <param name="hostEnvironment"></param>
     /// <param name="altinnTokenProvider">Implementation to retrieve a valid altinn token. If caching is required, it need to be implemented.</param>
     /// <param name="altinnApiConfiguration">Only required if it needs to be overwritten. By default, we determine BaseUrls based on the provided hostEnvironment.</param>
-    /// <returns>Makes the usage of <see cref="IAltinnInstanceSummaryProvider"/>, <see cref="IAltinnEventsClient"/> and <see cref="IAltinnStorageClient"/> available for the consumer.</returns>
+    /// <returns>Makes the usage of <see cref="IAltinnAdapter"/>, <see cref="IAltinnEventsClient"/> and <see cref="IAltinnStorageClient"/> available for the consumer.</returns>
     public static IServiceCollection AddAltinnAdapter(
         this IServiceCollection services,
         IWebHostEnvironment hostEnvironment,
@@ -92,7 +94,7 @@ public static class DependencyInjectionExtensions
     )
     {
         services.AddAltinnApiClients(hostEnvironment, altinnTokenProvider, altinnApiConfiguration);
-        services.AddScoped<IAltinnInstanceSummaryProvider, AltinnInstanceSummaryProvider>();
+        services.AddScoped<IAltinnAdapter, AltinnAdapter>();
 
         return services;
     }
@@ -114,19 +116,22 @@ public static class DependencyInjectionExtensions
     {
         altinnApiConfiguration ??= new AltinnApiConfiguration()
         {
-            EventUrl = hostEnvironment.IsProduction()
-                ? AltinnEventsApiBaseUrl
-                : AltinnEventsApiBaseUrlStaging,
-            StorageUrl = hostEnvironment.IsProduction()
-                ? AltinnStorageApiBaseUrl
-                : AltinnStorageApiBaseUrlStaging,
+            EventUrl = new Uri(
+                new Uri(hostEnvironment.GetAltinnPlattformUrl()),
+                AltinnEventApiSuffix
+            ),
+            StorageUrl = new Uri(
+                new Uri(hostEnvironment.GetAltinnPlattformUrl()),
+                AltinnStorageApiSuffix
+            ),
+            AppBaseUrl = new Uri(hostEnvironment.GetAltinnAppBaseUrl(AltinnOrgIdentifier)),
         };
         services
             .AddHttpClient(
                 AltinnAppApiClientKey,
                 client =>
                 {
-                    client.BaseAddress = new Uri(altinnApiConfiguration.EventUrl);
+                    client.BaseAddress = altinnApiConfiguration.EventUrl;
                 }
             )
             .AddStandardResilienceHandler();
@@ -135,7 +140,7 @@ public static class DependencyInjectionExtensions
                 AltinnStorageApiClientKey,
                 client =>
                 {
-                    client.BaseAddress = new Uri(altinnApiConfiguration.StorageUrl);
+                    client.BaseAddress = altinnApiConfiguration.StorageUrl;
                 }
             )
             .AddStandardResilienceHandler();

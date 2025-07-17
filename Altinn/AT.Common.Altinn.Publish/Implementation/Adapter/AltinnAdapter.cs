@@ -1,15 +1,20 @@
+using Altinn.App.Core.Infrastructure.Clients.Events;
 using Altinn.App.Core.Models;
 using Altinn.Platform.Storage.Interface.Models;
+using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Ports.Adapter;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 
-internal class AltinnInstanceSummaryProvider(IAltinnStorageClient altinnStorageClient)
-    : IAltinnInstanceSummaryProvider
+internal class AltinnAdapter(
+    IAltinnStorageClient altinnStorageClient,
+    IAltinnEventsClient altinnEventsClient
+) : IAltinnAdapter
 {
     public async Task<AltinnInstanceSummary> GetSummary(
         CloudEvent cloudEvent,
@@ -35,6 +40,28 @@ internal class AltinnInstanceSummaryProvider(IAltinnStorageClient altinnStorageC
             AltinnSkjema = documents.First(d => d.IsMainDocument),
             Attachments = [.. documents.Where(d => !d.IsMainDocument)],
         };
+    }
+
+    public async Task<Subscription> SubscribeForCompletedProcessEvents(
+        SubscriptionRequestDto subscriptionRequestDto,
+        IWebHostEnvironment webHostEnvironment
+    )
+    {
+        return await altinnEventsClient.Subscribe(
+            new SubscriptionRequest()
+            {
+                SourceFilter = new Uri(
+                    new Uri(
+                        webHostEnvironment.GetAltinnAppBaseUrl(
+                            DependencyInjectionExtensions.AltinnOrgIdentifier
+                        )
+                    ),
+                    subscriptionRequestDto.AltinnAppIdentifier
+                ),
+                EndPoint = subscriptionRequestDto.CallbackUrl,
+                TypeFilter = "app.instance.process.completed",
+            }
+        );
     }
 
     private async Task<Stream> GetInstanceData(DataElement dataElement, Instance instance)

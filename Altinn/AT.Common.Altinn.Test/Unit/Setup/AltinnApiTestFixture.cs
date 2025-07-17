@@ -63,8 +63,9 @@ public class AltinnApiTestFixture : TestBedFixture
             _tokenProvider,
             new AltinnApiConfiguration()
             {
-                StorageUrl = $"{_server.Urls[0]}/storage/api/v1/",
-                EventUrl = $"{_server.Urls[0]}/events/api/v1/",
+                StorageUrl = new Uri($"{_server.Urls[0]}/storage/api/v1/"),
+                EventUrl = new Uri($"{_server.Urls[0]}/events/api/v1/"),
+                AppBaseUrl = new Uri(_server.Urls[0]),
             }
         );
     }
