@@ -38,9 +38,9 @@ public record AltinnApiConfiguration
 /// </summary>
 public static class DependencyInjectionExtensions
 {
-    private const string AltinnEventApiSuffix = "events/api/v1";
+    private const string AltinnEventApiSuffix = "events/api/v1/";
 
-    private const string AltinnStorageApiSuffix = "storage/api/v1";
+    private const string AltinnStorageApiSuffix = "storage/api/v1/";
 
     internal const string AltinnOrgIdentifier = "dat";
     internal const string AltinnStorageApiClientKey = "AltinnStorageApiClient";

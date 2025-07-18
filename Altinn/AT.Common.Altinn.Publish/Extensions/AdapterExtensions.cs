@@ -8,7 +8,7 @@ public static class AdapterExtensions
 {
     public static AltinnMetadata ToAltinnMetadata(this Instance altinnInstance)
     {
-        var appIdParts = altinnInstance?.AppId?.Split('/');
+        var appIdParts = altinnInstance.AppId?.Split('/');
 
         if (appIdParts is not { Length: 2 })
         {
