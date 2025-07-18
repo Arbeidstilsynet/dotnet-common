@@ -111,7 +111,7 @@ internal class AltinnAdapter(
         var instances = await altinnStorageClient.GetInstances(
             new InstanceQueryParameters
             {
-                AppId = appId,
+                AppId = $"{DependencyInjectionExtensions.AltinnOrgIdentifier}/{appId}",
                 Org = DependencyInjectionExtensions.AltinnOrgIdentifier,
                 ProcessIsComplete = processIsComplete,
                 ExcludeConfirmedBy =
