@@ -104,18 +104,18 @@ internal class AltinnAdapter(
 
     public async Task<List<AltinnMetadata>> GetNonCompletedInstances(
         string appId,
-        string org,
-        bool? processIsComplete,
-        string excludeConfirmedBy
+        bool? processIsComplete = true,
+        string? excludeConfirmedBy = DependencyInjectionExtensions.AltinnOrgIdentifier
     )
     {
         var instances = await altinnStorageClient.GetInstances(
             new InstanceQueryParameters
             {
                 AppId = appId,
-                Org = org,
+                Org = DependencyInjectionExtensions.AltinnOrgIdentifier,
                 ProcessIsComplete = processIsComplete,
-                ExcludeConfirmedBy = excludeConfirmedBy,
+                ExcludeConfirmedBy =
+                    excludeConfirmedBy ?? DependencyInjectionExtensions.AltinnOrgIdentifier,
             }
         );
         return instances?.Instances?.Select(s => s.ToAltinnMetadata()).ToList() ?? [];

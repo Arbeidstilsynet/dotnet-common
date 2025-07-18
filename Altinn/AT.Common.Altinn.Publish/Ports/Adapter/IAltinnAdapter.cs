@@ -1,5 +1,6 @@
 using Altinn.App.Core.Infrastructure.Clients.Events;
 using Altinn.App.Core.Models;
+using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Microsoft.AspNetCore.Hosting;
 
@@ -19,8 +20,7 @@ public interface IAltinnAdapter
 
     public Task<List<AltinnMetadata>> GetNonCompletedInstances(
         string appId,
-        string org,
-        bool? ProcessIsComplete,
-        string ExcludeConfirmedBy
+        bool? ProcessIsComplete = true,
+        string? ExcludeConfirmedBy = DependencyInjectionExtensions.AltinnOrgIdentifier
     );
 }
