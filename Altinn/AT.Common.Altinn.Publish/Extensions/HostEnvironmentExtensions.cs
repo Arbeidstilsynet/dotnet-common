@@ -9,7 +9,7 @@ public static class HostEnvironmentExtensions
     {
         if (webHostEnvironment.IsDevelopment())
         {
-            return "https://local.altinn.cloud/";
+            return "http://local.altinn.cloud:5101/";
         }
         else if (webHostEnvironment.IsProduction())
         {
@@ -28,7 +28,7 @@ public static class HostEnvironmentExtensions
     {
         if (webHostEnvironment.IsDevelopment())
         {
-            return "https://local.altinn.cloud:5005/";
+            return "http://local.altinn.cloud:5005/";
         }
         else if (webHostEnvironment.IsProduction())
         {
