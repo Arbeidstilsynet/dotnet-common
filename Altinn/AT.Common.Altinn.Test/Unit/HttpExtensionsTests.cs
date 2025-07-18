@@ -2,9 +2,7 @@ using Altinn.App.Core.Models;
 using Arbeidstilsynet.Common.Altinn.Implementation;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
-using Bogus;
 using NSubstitute;
-using NSubstitute.Core;
 using Shouldly;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
