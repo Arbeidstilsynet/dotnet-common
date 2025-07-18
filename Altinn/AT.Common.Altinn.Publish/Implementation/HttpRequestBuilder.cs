@@ -1,6 +1,14 @@
 namespace Arbeidstilsynet.Common.Altinn.Implementation;
 
-internal class HttpRequestBuilder
+internal interface IHttpRequestBuilder
+{
+    Task<HttpResponseMessage> Send();
+    IHttpRequestBuilder WithHeader(string name, string value);
+    IHttpRequestBuilder WithQueryParameter(string name, string? value);
+    IHttpRequestBuilder WithQueryParameterArray(string name, IEnumerable<string> values);
+}
+
+internal class HttpRequestBuilder : IHttpRequestBuilder
 {
     private bool _isSent = false;
 
@@ -15,13 +23,13 @@ internal class HttpRequestBuilder
         _request = request;
     }
 
-    public HttpRequestBuilder WithHeader(string name, string value)
+    public IHttpRequestBuilder WithHeader(string name, string value)
     {
         _request.Headers.Add(name, value);
         return this;
     }
 
-    public HttpRequestBuilder WithQueryParameter(string name, string? value)
+    public IHttpRequestBuilder WithQueryParameter(string name, string? value)
     {
         if (value != null)
         {
@@ -31,7 +39,7 @@ internal class HttpRequestBuilder
         return this;
     }
 
-    public HttpRequestBuilder WithQueryParameterArray(string name, IEnumerable<string> values)
+    public IHttpRequestBuilder WithQueryParameterArray(string name, IEnumerable<string> values)
     {
         foreach (var value in values)
         {

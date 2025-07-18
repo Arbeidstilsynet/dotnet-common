@@ -78,4 +78,14 @@ internal class AltinnStorageClient : IAltinnStorageClient
             .WithHeader("Authorization", $"Bearer {await _altinnTokenProvider.GetToken()}")
             .ReceiveStream();
     }
+
+    public async Task<QueryResponse<Instance>> GetInstances(InstanceQueryParameters queryParameters)
+    {
+        return await _httpClient
+                .Get(new Uri("instances", UriKind.Relative).ToString())
+                .ApplyInstanceQueryParameters(queryParameters)
+                .WithHeader("Authorization", $"Bearer {await _altinnTokenProvider.GetToken()}")
+                .ReceiveContent<QueryResponse<Instance>>(_jsonSerializerOptions)
+            ?? throw new Exception("Failed to get instance");
+    }
 }

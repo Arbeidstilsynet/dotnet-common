@@ -1,7 +1,7 @@
-using Arbeidstilsynet.Common.Altinn.Ports;
+using Altinn.App.Core.Models;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Arbeidstilsynet.Common.Altinn.Test.Setup;
-using ProtoBuf.Meta;
 using Shouldly;
 using Xunit.Abstractions;
 using Xunit.Microsoft.DependencyInjection.Abstracts;
@@ -72,5 +72,42 @@ public class AltinnStorageClientTests : TestBed<AltinnApiTestFixture>
         );
         //assert
         result.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public async Task GetInstance_WhenCalledWithValidCloudEvent_ReturnsExampleResponse()
+    {
+        //arrange
+        //act
+        var result = await _sut.GetInstance(
+            new CloudEvent()
+            {
+                Source = new Uri(
+                    $"https://altinnapp/instances/{DynamicDataGeneration.DefaultIntValue}/{DynamicDataGeneration.DefaultPathUuid}"
+                ),
+            }
+        );
+        //assert
+        result.ShouldNotBeNull();
+        result.Id.ShouldBe(DynamicDataGeneration.DefaultPathUuid.ToString());
+    }
+
+    [Fact]
+    public async Task GetInstances_WhenCalledWithValidQueryParameters_ReturnsExampleResponse()
+    {
+        //arrange
+        //act
+        var result = await _sut.GetInstances(
+            new InstanceQueryParameters
+            {
+                AppId = "dat/test",
+                Org = "dat",
+                ProcessIsComplete = true,
+                ExcludeConfirmedBy = "dat",
+            }
+        );
+        //assert
+        result.ShouldNotBeNull();
+        result.Instances[0].Id.ShouldBe(DynamicDataGeneration.DefaultPathUuid.ToString());
     }
 }

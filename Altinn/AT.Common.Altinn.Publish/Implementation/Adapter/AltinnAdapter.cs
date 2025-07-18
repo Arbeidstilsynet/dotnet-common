@@ -101,4 +101,23 @@ internal class AltinnAdapter(
             FileScanResult = dataElement.FileScanResult.ToString(),
         };
     }
+
+    public async Task<List<AltinnMetadata>> GetNonCompletedInstances(
+        string appId,
+        string org,
+        bool? processIsComplete,
+        string excludeConfirmedBy
+    )
+    {
+        var instances = await altinnStorageClient.GetInstances(
+            new InstanceQueryParameters
+            {
+                AppId = appId,
+                Org = org,
+                ProcessIsComplete = processIsComplete,
+                ExcludeConfirmedBy = excludeConfirmedBy,
+            }
+        );
+        return instances?.Instances?.Select(s => s.ToAltinnMetadata()).ToList() ?? [];
+    }
 }

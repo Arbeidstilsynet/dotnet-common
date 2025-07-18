@@ -16,4 +16,11 @@ public interface IAltinnAdapter
         SubscriptionRequestDto subscriptionRequestDto,
         IWebHostEnvironment webHostEnvironment
     );
+
+    public Task<List<AltinnMetadata>> GetNonCompletedInstances(
+        string appId,
+        string org,
+        bool? ProcessIsComplete,
+        string ExcludeConfirmedBy
+    );
 }

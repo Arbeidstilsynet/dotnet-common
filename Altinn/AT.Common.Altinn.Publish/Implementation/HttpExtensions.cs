@@ -10,7 +10,7 @@ namespace Arbeidstilsynet.Common.Altinn.Implementation;
 
 internal static class HttpExtensions
 {
-    public static HttpRequestBuilder Post<TContent>(
+    public static IHttpRequestBuilder Post<TContent>(
         this HttpClient client,
         string resource,
         TContent content
@@ -27,7 +27,7 @@ internal static class HttpExtensions
         );
     }
 
-    public static HttpRequestBuilder Get(this HttpClient client, string resource)
+    public static IHttpRequestBuilder Get(this HttpClient client, string resource)
     {
         return new HttpRequestBuilder(
             client,
@@ -40,7 +40,7 @@ internal static class HttpExtensions
     }
 
     public static async Task<TResponse?> ReceiveContent<TResponse>(
-        this HttpRequestBuilder requestBuilder,
+        this IHttpRequestBuilder requestBuilder,
         JsonSerializerOptions? options = null
     )
     {
@@ -51,7 +51,7 @@ internal static class HttpExtensions
         return await response.Content.ReadFromJsonAsync<TResponse>(options);
     }
 
-    public static async Task<Stream> ReceiveStream(this HttpRequestBuilder requestBuilder)
+    public static async Task<Stream> ReceiveStream(this IHttpRequestBuilder requestBuilder)
     {
         var response = await requestBuilder.Send();
 
@@ -111,5 +111,67 @@ internal static class HttpExtensions
         }
 
         return relativeUri;
+    }
+
+    public static IHttpRequestBuilder ApplyInstanceQueryParameters(
+        this IHttpRequestBuilder httpRequestBuilder,
+        InstanceQueryParameters queryParameters
+    )
+    {
+        var selectedParameters = queryParameters
+            .GetType()
+            .GetProperties()
+            .Where(s => s.GetValue(queryParameters) != null)
+            .ToList();
+        foreach (var parameter in selectedParameters)
+        {
+            var queryParamAttributes = parameter.GetCustomAttributes(
+                typeof(MappedQueryParameterAttribute),
+                true
+            );
+            if (queryParamAttributes.Length > 0)
+            {
+                var queryParamAttribute = (MappedQueryParameterAttribute)queryParamAttributes[0];
+                var queryParamValue = parameter.GetValue(queryParameters);
+                if (queryParamValue is Array array)
+                {
+                    foreach (var item in array)
+                    {
+                        httpRequestBuilder = httpRequestBuilder.WithQueryParameter(
+                            queryParamAttribute.QueryParameterName,
+                            item.ToString()
+                        );
+                    }
+                }
+                else
+                {
+                    if (queryParamValue != null)
+                    {
+                        httpRequestBuilder = httpRequestBuilder.WithQueryParameter(
+                            queryParamAttribute.QueryParameterName,
+                            queryParamValue.ToString()
+                        );
+                    }
+                }
+            }
+            var requestHeaderParamAttributes = parameter.GetCustomAttributes(
+                typeof(MappedRequestHeaderParameterAttribute),
+                true
+            );
+            if (requestHeaderParamAttributes.Length > 0)
+            {
+                var requestHeaderAttribute = (MappedRequestHeaderParameterAttribute)
+                    requestHeaderParamAttributes[0];
+                var requestHeaderValue = parameter.GetValue(queryParameters);
+                if (requestHeaderValue != null)
+                {
+                    httpRequestBuilder = httpRequestBuilder.WithHeader(
+                        requestHeaderAttribute.HeaderParameterName,
+                        requestHeaderValue.ToString()!
+                    );
+                }
+            }
+        }
+        return httpRequestBuilder;
     }
 }
