@@ -78,13 +78,18 @@ internal class AltinnAdapter(
         };
     }
 
-    private static FileMetadata MapDatumToAltinnMetadataSummary(DataElement dataElement)
+    private static FileMetadata MapDatumToAltinnMetadataSummary(
+        DataElement dataElement,
+        string mainDocumentDataTypeName
+    )
     {
         return new FileMetadata()
         {
             ContentType = dataElement.ContentType,
             DataType = dataElement.DataType,
-            Filename = dataElement.Filename,
+            Filename = string.Equals(mainDocumentDataTypeName, dataElement.DataType)
+                ? "MainDocument"
+                : dataElement.Filename,
             FileScanResult = dataElement.FileScanResult.ToString(),
         };
     }
@@ -127,7 +132,7 @@ internal class AltinnAdapter(
             {
                 DocumentContent = await GetInstanceData(d, instance),
                 IsMainDocument = d.DataType == mainDocumentDataTypeName,
-                FileMetadata = MapDatumToAltinnMetadataSummary(d),
+                FileMetadata = MapDatumToAltinnMetadataSummary(d, mainDocumentDataTypeName),
             })
         );
 
