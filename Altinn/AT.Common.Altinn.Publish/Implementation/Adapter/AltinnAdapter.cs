@@ -18,28 +18,15 @@ internal class AltinnAdapter(
 {
     public async Task<AltinnInstanceSummary> GetSummary(
         CloudEvent cloudEvent,
-        string? mainDocumentDataTypeName = "skjema"
+        Action<AltinnAppConfiguration>? appConfigAction = null
     )
     {
+        var appConfig = new AltinnAppConfiguration();
+        appConfigAction?.Invoke(appConfig);
         // get instans basert på cloud event data
         var instance = await altinnStorageClient.GetInstance(cloudEvent);
 
-        // map all instance data to altinn document summaries
-        var documents = await Task.WhenAll(
-            instance.Data.Select(async d => new AltinnDocument
-            {
-                DocumentContent = await GetInstanceData(d, instance),
-                IsMainDocument = d.DataType == mainDocumentDataTypeName,
-                FileMetadata = MapDatumToAltinnMetadataSummary(d),
-            })
-        );
-
-        return new AltinnInstanceSummary
-        {
-            Metadata = instance.ToAltinnMetadata(),
-            AltinnSkjema = documents.First(d => d.IsMainDocument),
-            Attachments = [.. documents.Where(d => !d.IsMainDocument)],
-        };
+        return await GetInstanceSummaryAsync(instance, appConfig.MainDocumentDataTypeName);
     }
 
     public async Task<Subscription> SubscribeForCompletedProcessEvents(
@@ -102,12 +89,15 @@ internal class AltinnAdapter(
         };
     }
 
-    public async Task<List<AltinnMetadata>> GetNonCompletedInstances(
+    public async Task<AltinnInstanceSummary[]> GetNonCompletedInstances(
         string appId,
         bool? processIsComplete = true,
-        string? excludeConfirmedBy = DependencyInjectionExtensions.AltinnOrgIdentifier
+        string? excludeConfirmedBy = DependencyInjectionExtensions.AltinnOrgIdentifier,
+        Action<AltinnAppConfiguration>? appConfigAction = null
     )
     {
+        var appConfig = new AltinnAppConfiguration();
+        appConfigAction?.Invoke(appConfig);
         var instances = await altinnStorageClient.GetInstances(
             new InstanceQueryParameters
             {
@@ -118,6 +108,34 @@ internal class AltinnAdapter(
                     excludeConfirmedBy ?? DependencyInjectionExtensions.AltinnOrgIdentifier,
             }
         );
-        return instances?.Instances?.Select(s => s.ToAltinnMetadata()).ToList() ?? [];
+        return await Task.WhenAll(
+            instances
+                ?.Instances?.Select(async s =>
+                    await GetInstanceSummaryAsync(s, appConfig.MainDocumentDataTypeName)
+                )
+                .ToList() ?? await Task.FromResult(new List<Task<AltinnInstanceSummary>>())
+        );
+    }
+
+    private async Task<AltinnInstanceSummary> GetInstanceSummaryAsync(
+        Instance instance,
+        string mainDocumentDataTypeName
+    )
+    {
+        var documents = await Task.WhenAll(
+            instance.Data.Select(async d => new AltinnDocument
+            {
+                DocumentContent = await GetInstanceData(d, instance),
+                IsMainDocument = d.DataType == mainDocumentDataTypeName,
+                FileMetadata = MapDatumToAltinnMetadataSummary(d),
+            })
+        );
+
+        return new AltinnInstanceSummary
+        {
+            Metadata = instance.ToAltinnMetadata(),
+            AltinnSkjema = documents.First(d => d.IsMainDocument),
+            Attachments = [.. documents.Where(d => !d.IsMainDocument)],
+        };
     }
 }

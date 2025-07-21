@@ -10,7 +10,7 @@ public interface IAltinnAdapter
 {
     public Task<AltinnInstanceSummary> GetSummary(
         CloudEvent cloudEvent,
-        string? mainDocumentDataTypeName = "skjema"
+        Action<AltinnAppConfiguration>? appConfigAction = null
     );
 
     public Task<Subscription> SubscribeForCompletedProcessEvents(
@@ -18,9 +18,10 @@ public interface IAltinnAdapter
         IWebHostEnvironment webHostEnvironment
     );
 
-    public Task<List<AltinnMetadata>> GetNonCompletedInstances(
+    public Task<AltinnInstanceSummary[]> GetNonCompletedInstances(
         string appId,
         bool? ProcessIsComplete = true,
-        string? ExcludeConfirmedBy = DependencyInjectionExtensions.AltinnOrgIdentifier
+        string? ExcludeConfirmedBy = DependencyInjectionExtensions.AltinnOrgIdentifier,
+        Action<AltinnAppConfiguration>? appConfigAction = null
     );
 }
