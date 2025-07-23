@@ -14,8 +14,7 @@ public interface IAltinnAdapter
     );
 
     public Task<Subscription> SubscribeForCompletedProcessEvents(
-        SubscriptionRequestDto subscriptionRequestDto,
-        IWebHostEnvironment webHostEnvironment
+        SubscriptionRequestDto subscriptionRequestDto
     );
 
     public Task<AltinnInstanceSummary[]> GetNonCompletedInstances(

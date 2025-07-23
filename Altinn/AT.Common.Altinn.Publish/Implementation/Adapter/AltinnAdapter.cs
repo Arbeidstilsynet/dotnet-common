@@ -8,12 +8,14 @@ using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Ports.Adapter;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 
 internal class AltinnAdapter(
     IAltinnStorageClient altinnStorageClient,
-    IAltinnEventsClient altinnEventsClient
+    IAltinnEventsClient altinnEventsClient,
+    IOptions<AltinnApiConfiguration> altinnApiConfigurationOptions
 ) : IAltinnAdapter
 {
     public async Task<AltinnInstanceSummary> GetSummary(
@@ -30,19 +32,14 @@ internal class AltinnAdapter(
     }
 
     public async Task<Subscription> SubscribeForCompletedProcessEvents(
-        SubscriptionRequestDto subscriptionRequestDto,
-        IWebHostEnvironment webHostEnvironment
+        SubscriptionRequestDto subscriptionRequestDto
     )
     {
         return await altinnEventsClient.Subscribe(
             new SubscriptionRequest()
             {
                 SourceFilter = new Uri(
-                    new Uri(
-                        webHostEnvironment.GetAltinnAppBaseUrl(
-                            DependencyInjectionExtensions.AltinnOrgIdentifier
-                        )
-                    ),
+                    altinnApiConfigurationOptions.Value.AppBaseUrl,
                     subscriptionRequestDto.AltinnAppIdentifier
                 ),
                 EndPoint = subscriptionRequestDto.CallbackUrl,

@@ -126,6 +126,7 @@ public static class DependencyInjectionExtensions
             ),
             AppBaseUrl = new Uri(hostEnvironment.GetAltinnAppBaseUrl(AltinnOrgIdentifier)),
         };
+        services.AddSingleton(Options.Create(altinnApiConfiguration));
         services
             .AddHttpClient(
                 AltinnAppApiClientKey,
