@@ -12,14 +12,15 @@ public interface IMeldingerReceiver
     /// Gets all notifications which have not been read yet
     /// </summary>
     /// <returns></returns>
-    Task<Dictionary<string, MeldingerReceiverNotificationDto>> GetNotifications(string groupName,
-        string appId);
-    
+    Task<Dictionary<string, MeldingerReceiverNotificationDto>> GetNotifications(
+        string groupName,
+        string appId
+    );
+
     /// <summary>
     /// Gets all notifications which have not been acknowledged yet
     /// </summary>
     /// <returns></returns>
-
     Task<StreamEntry[]> GetPendingMessages(string groupName);
 
     /// <summary>
@@ -29,5 +30,4 @@ public interface IMeldingerReceiver
     /// </summary>
     /// <returns></returns>
     Task<long> AcknowledgeMessage(string groupName, string messageId);
-    
 }

@@ -15,21 +15,27 @@ internal class MeldingerReceiver : IMeldingerReceiver
         _db = connectionMultiplexer.GetDatabase();
     }
 
-    public async Task<Dictionary<string, MeldingerReceiverNotificationDto>> GetNotifications(string groupName,
-        string appId)
+    public async Task<Dictionary<string, MeldingerReceiverNotificationDto>> GetNotifications(
+        string groupName,
+        string appId
+    )
     {
         const string streamName = IConstants.StreamName;
         var resultMap = new Dictionary<string, MeldingerReceiverNotificationDto>();
-        if (!(await _db.KeyExistsAsync(streamName)) ||
-            (await _db.StreamGroupInfoAsync(streamName)).All(x => x.Name != groupName))
+        if (
+            !(await _db.KeyExistsAsync(streamName))
+            || (await _db.StreamGroupInfoAsync(streamName)).All(x => x.Name != groupName)
+        )
         {
             await _db.StreamCreateConsumerGroupAsync(streamName, groupName, "0-0", true);
         }
 
-        var results =
-            (await _db.StreamReadGroupAsync(streamName, groupName, ConsumerName, ">", 10));
-        var filteredResults = results.Where(r =>
-                r.Values.Any(v => v.Name == IConstants.MessageKey)).ToArray();
+        var results = (
+            await _db.StreamReadGroupAsync(streamName, groupName, ConsumerName, ">", 10)
+        );
+        var filteredResults = results
+            .Where(r => r.Values.Any(v => v.Name == IConstants.MessageKey))
+            .ToArray();
         foreach (var entry in results.Except(filteredResults))
         {
             await AcknowledgeMessage(groupName, entry.Id!);
@@ -53,9 +59,14 @@ internal class MeldingerReceiver : IMeldingerReceiver
 
     public async Task<StreamEntry[]> GetPendingMessages(string groupName)
     {
-        return await _db.StreamReadGroupAsync(IConstants.StreamName, groupName, ConsumerName, "0-0", count: 10);
+        return await _db.StreamReadGroupAsync(
+            IConstants.StreamName,
+            groupName,
+            ConsumerName,
+            "0-0",
+            count: 10
+        );
     }
-    
 
     public async Task<long> AcknowledgeMessage(string groupName, string messageId)
     {

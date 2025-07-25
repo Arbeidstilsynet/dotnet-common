@@ -20,9 +20,14 @@ public static class DependencyInjectionExtensions
     /// <param name="services"><see cref="IServiceCollection"/> som tjenesten skal legges til i.</param>
     /// <param name="configuration"></param>
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
-    public static IServiceCollection AddMeldingerReceiver(this IServiceCollection services, ValkeyConfiguration configuration)
+    public static IServiceCollection AddMeldingerReceiver(
+        this IServiceCollection services,
+        ValkeyConfiguration configuration
+    )
     {
-        services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(configuration.ConnectionString));
+        services.AddSingleton<IConnectionMultiplexer>(
+            ConnectionMultiplexer.Connect(configuration.ConnectionString)
+        );
         services.AddSingleton<IMeldingerReceiver, Implementation.MeldingerReceiver>();
 
         return services;

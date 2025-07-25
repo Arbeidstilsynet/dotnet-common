@@ -9,7 +9,7 @@ public record MeldingerReceiverNotificationDto
     /// AppId which can be used for filtering received notifications
     /// </summary>
     public required string AppId { get; init; }
-    
+
     /// <summary>
     /// Timestamp when this notification was created
     /// </summary>

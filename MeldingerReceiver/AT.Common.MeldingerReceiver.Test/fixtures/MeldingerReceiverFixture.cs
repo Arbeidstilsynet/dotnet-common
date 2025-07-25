@@ -6,10 +6,10 @@ using Xunit.Microsoft.DependencyInjection.Abstracts;
 
 namespace Arbeidstilsynet.Common.MeldingerReceiver.Adapters.Test.fixtures;
 
-public class MeldingerReceiverFixture: TestBedFixture, IAsyncLifetime
+public class MeldingerReceiverFixture : TestBedFixture, IAsyncLifetime
 {
     private readonly ValkeyFixture _ValkeyFixture;
-    
+
     public MeldingerReceiverFixture()
     {
         _ValkeyFixture = new ValkeyFixture();
@@ -20,7 +20,9 @@ public class MeldingerReceiverFixture: TestBedFixture, IAsyncLifetime
         global::Microsoft.Extensions.Configuration.IConfiguration? configuration
     )
     {
-        services.AddMeldingerReceiver(new ValkeyConfiguration { ConnectionString = _ValkeyFixture.ValkeyBaseUrl});
+        services.AddMeldingerReceiver(
+            new ValkeyConfiguration { ConnectionString = _ValkeyFixture.ValkeyBaseUrl }
+        );
     }
 
     protected override ValueTask DisposeAsyncCore() => new();
