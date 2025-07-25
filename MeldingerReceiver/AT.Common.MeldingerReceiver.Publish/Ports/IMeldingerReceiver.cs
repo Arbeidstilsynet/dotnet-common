@@ -1,4 +1,5 @@
 using Arbeidstilsynet.Common.MeldingerReceiver.Model;
+using StackExchange.Redis;
 
 namespace Arbeidstilsynet.Common.MeldingerReceiver;
 
@@ -8,8 +9,25 @@ namespace Arbeidstilsynet.Common.MeldingerReceiver;
 public interface IMeldingerReceiver
 {
     /// <summary>
-    /// Required XML summary of the Get method
+    /// Gets all notifications which have not been read yet
     /// </summary>
     /// <returns></returns>
-    Task<MeldingerReceiverDto> Get();
+    Task<Dictionary<string, MeldingerReceiverNotificationDto>> GetNotifications(string groupName,
+        string appId);
+    
+    /// <summary>
+    /// Gets all notifications which have not been acknowledged yet
+    /// </summary>
+    /// <returns></returns>
+
+    Task<StreamEntry[]> GetPendingMessages(string groupName);
+
+    /// <summary>
+    /// Acknowledges a pending message to remove it from the pending messages list.
+    /// The message is not going to get consumed anymore by the same group.
+    /// When the message is acknowledged by all groups, it can be deleted.
+    /// </summary>
+    /// <returns></returns>
+    Task<long> AcknowledgeMessage(string groupName, string messageId);
+    
 }

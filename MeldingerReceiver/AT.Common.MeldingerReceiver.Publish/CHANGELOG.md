@@ -18,4 +18,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- First implementation: the client returns 'bar' whenever it is called.
+- added(melding-receiver): basic functionality to consume notifications from stream

@@ -10,7 +10,7 @@
     <Company>Arbeidstilsynet</Company>
     <Description></Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>0.0.1</Version>
+    <Version>0.0.1-alpha1</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
   </PropertyGroup>
@@ -21,11 +21,13 @@
     />
     <PackageReference Include="StackExchange.Redis" Version="2.8.58">
       <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Abstract\" />
   </ItemGroup>
   <Target
     Name="InjectPackageReleaseNotesFromFile"
