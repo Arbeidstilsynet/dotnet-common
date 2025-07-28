@@ -85,7 +85,7 @@ internal static class HttpExtensions
             {
                 uri = uri.Substring(0, queryIndex);
             }
-            var trimmedUri = string.Join("/", uri.Split("/").Take(3).ToList());
+            var trimmedUri = string.Join("/", uri.Split("/").Take(3));
             return new Uri(trimmedUri, UriKind.Relative);
         }
         catch (Exception e)
