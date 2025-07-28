@@ -30,7 +30,6 @@ public class MeldingerReceiverTests : TestBed<MeldingerReceiverFixture>
     {
         //arrange
 
-        var testGroupName = $"test-group-{Guid.NewGuid().ToString("n")[..8]}";
         var testAppName = $"test-app-{Guid.NewGuid().ToString("n")[..8]}";
         var testDto = new MeldingerReceiverNotificationDto()
         {
@@ -42,13 +41,12 @@ public class MeldingerReceiverTests : TestBed<MeldingerReceiverFixture>
             new NameValueEntry[] { new(IConstants.MessageKey, JsonSerializer.Serialize(testDto)) }
         );
         //act
-        var result = await _meldingerReceiver.GetNotifications(testGroupName, testAppName);
+        var result = await _meldingerReceiver.GetNotifications(testAppName);
         //assert
         result.ShouldNotBeEmpty();
         result.Values.First().ShouldBeEquivalentTo(testDto);
 
         var resultAfterNotificationWasAlreadyRetrieved = await _meldingerReceiver.GetNotifications(
-            testGroupName,
             testAppName
         );
         resultAfterNotificationWasAlreadyRetrieved.ShouldBeEmpty();
@@ -58,7 +56,6 @@ public class MeldingerReceiverTests : TestBed<MeldingerReceiverFixture>
     public async Task GetNotifications_WhenCalledWithNoNotificationsForApp_ReturnsEmptyAndIdWasAcknowledged()
     {
         //arrange
-        var testGroupName = $"test-group-{Guid.NewGuid().ToString("n")[..8]}";
         var testAppName = $"test-app-{Guid.NewGuid().ToString("n")[..8]}";
         var testDto = new MeldingerReceiverNotificationDto()
         {
@@ -70,8 +67,8 @@ public class MeldingerReceiverTests : TestBed<MeldingerReceiverFixture>
             new NameValueEntry[] { new(IConstants.MessageKey, JsonSerializer.Serialize(testDto)) }
         );
         //act
-        var result = await _meldingerReceiver.GetNotifications(testGroupName, testAppName);
-        var pendingMessages = await _meldingerReceiver.GetPendingMessages(testGroupName);
+        var result = await _meldingerReceiver.GetNotifications(testAppName);
+        var pendingMessages = await _meldingerReceiver.GetPendingMessages(testAppName);
         //assert
         result.ShouldBeEmpty();
         pendingMessages.ShouldBeEmpty();
@@ -81,7 +78,6 @@ public class MeldingerReceiverTests : TestBed<MeldingerReceiverFixture>
     public async Task GetNotifications_WhenCalledWithNoNotificationsForAppAndAckAfterwards_MakesNotificationNotAccessibleAnymore()
     {
         //arrange
-        var testGroupName = $"test-group-{Guid.NewGuid().ToString("n")[..8]}";
         var testAppName = $"test-app-{Guid.NewGuid().ToString("n")[..8]}";
         var testDto = new MeldingerReceiverNotificationDto()
         {
@@ -93,12 +89,12 @@ public class MeldingerReceiverTests : TestBed<MeldingerReceiverFixture>
             new NameValueEntry[] { new(IConstants.MessageKey, JsonSerializer.Serialize(testDto)) }
         );
         //act
-        var result = await _meldingerReceiver.GetNotifications(testGroupName, testAppName);
+        var result = await _meldingerReceiver.GetNotifications(testAppName);
         result.Count.ShouldBe(1);
-        var pendingMessages = await _meldingerReceiver.GetPendingMessages(testGroupName);
+        var pendingMessages = await _meldingerReceiver.GetPendingMessages(testAppName);
         pendingMessages.Length.ShouldBe(1);
-        await _meldingerReceiver.AcknowledgeMessage(testGroupName, pendingMessages.First().Id);
-        var resultAfterAck = await _meldingerReceiver.GetPendingMessages(testGroupName);
+        await _meldingerReceiver.AcknowledgeMessage(testAppName, pendingMessages.First().Id);
+        var resultAfterAck = await _meldingerReceiver.GetPendingMessages(testAppName);
         //assert
         resultAfterAck.ShouldBeEmpty();
     }

@@ -13,15 +13,15 @@ public interface IMeldingerReceiver
     /// </summary>
     /// <returns></returns>
     Task<Dictionary<string, MeldingerReceiverNotificationDto>> GetNotifications(
-        string groupName,
-        string appId
+        string appId,
+        Predicate<MeldingerReceiverNotificationDto>? messageFilter = null
     );
 
     /// <summary>
     /// Gets all notifications which have not been acknowledged yet
     /// </summary>
     /// <returns></returns>
-    Task<StreamEntry[]> GetPendingMessages(string groupName);
+    Task<StreamEntry[]> GetPendingMessages(string appId);
 
     /// <summary>
     /// Acknowledges a pending message to remove it from the pending messages list.
@@ -29,5 +29,5 @@ public interface IMeldingerReceiver
     /// When the message is acknowledged by all groups, it can be deleted.
     /// </summary>
     /// <returns></returns>
-    Task<long> AcknowledgeMessage(string groupName, string messageId);
+    Task<long> AcknowledgeMessage(string groupName, string appId);
 }

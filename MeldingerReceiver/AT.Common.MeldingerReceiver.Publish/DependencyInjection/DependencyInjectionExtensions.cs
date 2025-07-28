@@ -19,6 +19,25 @@ public static class DependencyInjectionExtensions
     /// </summary>
     /// <param name="services"><see cref="IServiceCollection"/> som tjenesten skal legges til i.</param>
     /// <param name="configuration"></param>
+    /// <param name="meldingerConsumer"></param>
+    /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
+    public static IServiceCollection AddMeldingerReceiverWithBackgroundService(
+        this IServiceCollection services,
+        ValkeyConfiguration configuration,
+        IMeldingerConsumer meldingerConsumer
+    )
+    {
+        services.AddSingleton(meldingerConsumer);
+        services.AddHostedService<ReceiverListener>();
+        services.AddMeldingerReceiver(configuration);
+        return services;
+    }
+
+    /// <summary>
+    /// Registrerer en implementasjon av IMeldingerReceiver i den spesifiserte <see cref="IServiceCollection"/>.
+    /// </summary>
+    /// <param name="services"><see cref="IServiceCollection"/> som tjenesten skal legges til i.</param>
+    /// <param name="configuration"></param>
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
     public static IServiceCollection AddMeldingerReceiver(
         this IServiceCollection services,

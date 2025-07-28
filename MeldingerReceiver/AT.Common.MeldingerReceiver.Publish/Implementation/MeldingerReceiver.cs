@@ -16,60 +16,61 @@ internal class MeldingerReceiver : IMeldingerReceiver
     }
 
     public async Task<Dictionary<string, MeldingerReceiverNotificationDto>> GetNotifications(
-        string groupName,
-        string appId
+        string appId,
+        Predicate<MeldingerReceiverNotificationDto>? messageFilter = null
     )
     {
+        var isMessageRelevantBasedOn =
+            messageFilter
+            ?? new Predicate<MeldingerReceiverNotificationDto>(dto => dto.AppId == appId);
         const string streamName = IConstants.StreamName;
         var resultMap = new Dictionary<string, MeldingerReceiverNotificationDto>();
         if (
-            !(await _db.KeyExistsAsync(streamName))
-            || (await _db.StreamGroupInfoAsync(streamName)).All(x => x.Name != groupName)
+            !await _db.KeyExistsAsync(streamName)
+            || (await _db.StreamGroupInfoAsync(streamName)).All(x => x.Name != appId)
         )
         {
-            await _db.StreamCreateConsumerGroupAsync(streamName, groupName, "0-0", true);
+            await _db.StreamCreateConsumerGroupAsync(streamName, appId, "0-0", true);
         }
 
-        var results = (
-            await _db.StreamReadGroupAsync(streamName, groupName, ConsumerName, ">", 10)
-        );
+        var results = await _db.StreamReadGroupAsync(streamName, appId, ConsumerName, ">", 10);
         var filteredResults = results
             .Where(r => r.Values.Any(v => v.Name == IConstants.MessageKey))
             .ToArray();
         foreach (var entry in results.Except(filteredResults))
         {
-            await AcknowledgeMessage(groupName, entry.Id!);
+            await AcknowledgeMessage(appId, entry.Id!);
         }
         foreach (var result in filteredResults)
         {
             var value = result.Values.First(v => v.Name == IConstants.MessageKey).Value.ToString();
             var dto = JsonSerializer.Deserialize<MeldingerReceiverNotificationDto>(value);
-            if (dto != null && dto.AppId == appId)
+            if (dto != null && isMessageRelevantBasedOn(dto))
             {
                 resultMap.Add(result.Id.ToString(), dto);
             }
             else
             {
-                await AcknowledgeMessage(groupName, result.Id!);
+                await AcknowledgeMessage(appId, result.Id!);
             }
         }
 
         return resultMap;
     }
 
-    public async Task<StreamEntry[]> GetPendingMessages(string groupName)
+    public async Task<StreamEntry[]> GetPendingMessages(string appId)
     {
         return await _db.StreamReadGroupAsync(
             IConstants.StreamName,
-            groupName,
+            appId,
             ConsumerName,
             "0-0",
             count: 10
         );
     }
 
-    public async Task<long> AcknowledgeMessage(string groupName, string messageId)
+    public async Task<long> AcknowledgeMessage(string appId, string messageId)
     {
-        return await _db.StreamAcknowledgeAsync(IConstants.StreamName, groupName, messageId);
+        return await _db.StreamAcknowledgeAsync(IConstants.StreamName, appId, messageId);
     }
 }

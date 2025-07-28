@@ -10,7 +10,7 @@
     <Company>Arbeidstilsynet</Company>
     <Description></Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>0.0.1-alpha1</Version>
+    <Version>0.0.1-alpha2</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
   </PropertyGroup>
@@ -19,6 +19,7 @@
       Include="Microsoft.Extensions.DependencyInjection.Abstractions"
       Version="8.0.2"
     />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.7" />
     <PackageReference Include="StackExchange.Redis" Version="2.8.58">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
