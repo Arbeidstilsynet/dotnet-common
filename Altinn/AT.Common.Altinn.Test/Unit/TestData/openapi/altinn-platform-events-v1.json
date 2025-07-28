@@ -243,7 +243,7 @@
     "/subscriptions/validate/{id}": {
       "put": {
         "tags": ["Subscription"],
-        "summary": "Method to validate a specific subscription. Only avaiable from validation function.",
+        "summary": "Method to validate a specific subscription. Only available from validation function.",
         "parameters": [
           {
             "name": "id",
