@@ -81,11 +81,11 @@ internal static class HttpExtensions
         try
         {
             var sourcePath = cloudEvent.Source.PathAndQuery;
-            var uri = sourcePath[sourcePath.IndexOf("instances")..];
+            var uri = sourcePath[sourcePath.IndexOf("instances", StringComparison.Ordinal)..];
             var queryIndex = uri.IndexOf('?');
             if (queryIndex >= 0)
             {
-                uri = uri.Substring(0, queryIndex);
+                uri = uri[..queryIndex];
             }
             var trimmedUri = string.Join("/", uri.Split("/").Take(3));
             return new Uri(trimmedUri, UriKind.Relative);
@@ -120,49 +120,16 @@ internal static class HttpExtensions
         InstanceQueryParameters queryParameters
     )
     {
-        var selectedParameters = queryParameters
-            .GetType()
-            .GetProperties()
-            .Select(s => (s, s.GetValue(queryParameters)))
-            .Where((s) => s.Item2 != null);
-        
-        foreach (var (propertyInfo, parameterValue) in selectedParameters)
+        foreach (var (name, value) in queryParameters.GetQueryParameters())
         {
-            if (parameterValue is null)
-            {
-                continue;
-            }
-            
-            if (propertyInfo.GetCustomAttribute<MappedQueryParameterAttribute>() is { QueryParameterName: {Length: > 0} queryParameterName })
-            {
-                if (parameterValue is ICollection<object> collection)
-                {
-                    foreach (var item in collection)
-                    {
-                        httpRequestBuilder = httpRequestBuilder.WithQueryParameter(
-                            queryParameterName,
-                            item.ToString()!
-                        );
-                    }
-                }
-                else
-                {
-                    httpRequestBuilder = httpRequestBuilder.WithQueryParameter(
-                        queryParameterName,
-                        parameterValue.ToString()
-                    );
-                    
-                }
-            }
-
-            if (propertyInfo.GetCustomAttribute<MappedRequestHeaderParameterAttribute>() is { HeaderParameterName: { Length: > 0 } headerParameterName })
-            {
-                httpRequestBuilder = httpRequestBuilder.WithHeader(
-                    headerParameterName,
-                    parameterValue.ToString()!
-                );
-            }
+            httpRequestBuilder.WithQueryParameter(name, value);
         }
+        
+        foreach (var (name, value) in queryParameters.GetHeaderParameters())
+        {
+            httpRequestBuilder.WithHeader(name, value);
+        }
+        
         return httpRequestBuilder;
     }
 }

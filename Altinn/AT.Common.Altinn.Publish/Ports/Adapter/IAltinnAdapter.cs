@@ -10,17 +10,17 @@ public interface IAltinnAdapter
 {
     public Task<AltinnInstanceSummary> GetSummary(
         CloudEvent cloudEvent,
-        Action<AltinnAppConfiguration>? appConfigAction = null
+        AltinnAppConfiguration? appConfig = null
     );
 
     public Task<Subscription> SubscribeForCompletedProcessEvents(
         SubscriptionRequestDto subscriptionRequestDto
     );
 
-    public Task<AltinnInstanceSummary[]> GetNonCompletedInstances(
+    public Task<IEnumerable<AltinnInstanceSummary>> GetNonCompletedInstances(
         string appId,
-        bool? ProcessIsComplete = true,
+        bool ProcessIsComplete = true,
         string? ExcludeConfirmedBy = DependencyInjectionExtensions.AltinnOrgIdentifier,
-        Action<AltinnAppConfiguration>? appConfigAction = null
+        AltinnAppConfiguration? appConfig = null
     );
 }

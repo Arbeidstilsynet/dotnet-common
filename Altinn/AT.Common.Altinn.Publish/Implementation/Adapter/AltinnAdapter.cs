@@ -20,22 +20,21 @@ internal class AltinnAdapter(
 {
     public async Task<AltinnInstanceSummary> GetSummary(
         CloudEvent cloudEvent,
-        Action<AltinnAppConfiguration>? appConfigAction = null
+        AltinnAppConfiguration? appConfig = null
     )
     {
-        var appConfig = new AltinnAppConfiguration();
-        appConfigAction?.Invoke(appConfig);
+        appConfig ??= new AltinnAppConfiguration();
         // get instans basert på cloud event data
         var instance = await altinnStorageClient.GetInstance(cloudEvent);
 
         return await GetInstanceSummaryAsync(instance, appConfig.MainDocumentDataTypeName);
     }
 
-    public async Task<Subscription> SubscribeForCompletedProcessEvents(
+    public Task<Subscription> SubscribeForCompletedProcessEvents(
         SubscriptionRequestDto subscriptionRequestDto
     )
     {
-        return await altinnEventsClient.Subscribe(
+        return altinnEventsClient.Subscribe(
             new SubscriptionRequest()
             {
                 SourceFilter = new Uri(
@@ -48,58 +47,16 @@ internal class AltinnAdapter(
         );
     }
 
-    private async Task<Stream> GetInstanceData(DataElement dataElement, Instance instance)
-    {
-        return await altinnStorageClient.GetInstanceData(
-            new InstanceDataRequest
-            {
-                InstanceRequest = CreateInstanceRequest(dataElement, instance),
-                DataId = Guid.Parse(
-                    dataElement.Id ?? throw new InvalidOperationException("Id required")
-                ),
-            }
-        );
-    }
+    
 
-    private static InstanceRequest CreateInstanceRequest(DataElement dataElement, Instance instance)
-    {
-        return new InstanceRequest
-        {
-            InstanceGuid = Guid.Parse(
-                dataElement.InstanceGuid
-                    ?? throw new InvalidOperationException("InstanceGuid required")
-            ),
-            InstanceOwnerPartyId =
-                instance.InstanceOwner?.PartyId
-                ?? throw new InvalidOperationException("PartyId required"),
-        };
-    }
-
-    private static FileMetadata MapDatumToAltinnMetadataSummary(
-        DataElement dataElement,
-        string mainDocumentDataTypeName
-    )
-    {
-        return new FileMetadata()
-        {
-            ContentType = dataElement.ContentType,
-            DataType = dataElement.DataType,
-            Filename = string.Equals(mainDocumentDataTypeName, dataElement.DataType)
-                ? "MainDocument"
-                : dataElement.Filename,
-            FileScanResult = dataElement.FileScanResult.ToString(),
-        };
-    }
-
-    public async Task<AltinnInstanceSummary[]> GetNonCompletedInstances(
+    public async Task<IEnumerable<AltinnInstanceSummary>> GetNonCompletedInstances(
         string appId,
-        bool? processIsComplete = true,
+        bool processIsComplete = true,
         string? excludeConfirmedBy = DependencyInjectionExtensions.AltinnOrgIdentifier,
-        Action<AltinnAppConfiguration>? appConfigAction = null
+        AltinnAppConfiguration? appConfig = null
     )
     {
-        var appConfig = new AltinnAppConfiguration();
-        appConfigAction?.Invoke(appConfig);
+        appConfig ??= new AltinnAppConfiguration();
         var instances = await altinnStorageClient.GetInstances(
             new InstanceQueryParameters
             {
@@ -110,13 +67,13 @@ internal class AltinnAdapter(
                     excludeConfirmedBy ?? DependencyInjectionExtensions.AltinnOrgIdentifier,
             }
         );
-        return await Task.WhenAll(
-            instances
-                ?.Instances?.Select(async s =>
-                    await GetInstanceSummaryAsync(s, appConfig.MainDocumentDataTypeName)
-                )
-                .ToList() ?? await Task.FromResult(new List<Task<AltinnInstanceSummary>>())
-        );
+        
+        // TODO: Walk the pages to get all instances
+
+        var tasks = instances.Instances?
+            .Select(instance => GetInstanceSummaryAsync(instance, appConfig.MainDocumentDataTypeName)) ?? [];
+        
+        return await Task.WhenAll(tasks);
     }
 
     private async Task<AltinnInstanceSummary> GetInstanceSummaryAsync(
@@ -125,12 +82,7 @@ internal class AltinnAdapter(
     )
     {
         var documents = await Task.WhenAll(
-            instance.Data.Select(async d => new AltinnDocument
-            {
-                DocumentContent = await GetInstanceData(d, instance),
-                IsMainDocument = d.DataType == mainDocumentDataTypeName,
-                FileMetadata = MapDatumToAltinnMetadataSummary(d, mainDocumentDataTypeName),
-            })
+            instance.Data.Select(dataElement => GetAltinnDocument(dataElement, instance, mainDocumentDataTypeName))
         );
 
         return new AltinnInstanceSummary
@@ -140,4 +92,57 @@ internal class AltinnAdapter(
             Attachments = [.. documents.Where(d => !d.IsMainDocument)],
         };
     }
+    
+    private async Task<AltinnDocument> GetAltinnDocument(DataElement dataElement, Instance instance, string mainDocumentDataTypeName)
+    {
+        var document = await altinnStorageClient.GetInstanceData(instance.CreateInstanceDataRequest(dataElement));
+        
+        return new AltinnDocument
+        {
+            DocumentContent = document,
+            IsMainDocument = dataElement.DataType == mainDocumentDataTypeName,
+            FileMetadata = dataElement.ToFileMetadata(mainDocumentDataTypeName),
+        };
+    }
+}
+
+
+file static class Extensions
+{
+    public static FileMetadata ToFileMetadata(this DataElement dataElement, string mainDocumentDataTypeName)
+    {
+        return new FileMetadata
+        {
+            ContentType = dataElement.ContentType,
+            DataType = dataElement.DataType,
+            Filename = string.Equals(mainDocumentDataTypeName, dataElement.DataType)
+                ? "MainDocument"
+                : dataElement.Filename,
+            FileScanResult = dataElement.FileScanResult.ToString(),
+        };
+    }
+    
+    public static InstanceRequest CreateInstanceRequest(this Instance instance)
+    {
+        return new InstanceRequest
+        {
+            InstanceGuid = instance.GetInstanceGuid(),
+            InstanceOwnerPartyId = instance.InstanceOwner?.PartyId
+                                   ?? throw new InvalidOperationException("PartyId required"),
+        };
+    }
+    
+    public static InstanceDataRequest CreateInstanceDataRequest(
+        this Instance instance,
+        DataElement dataElement
+    )
+    {
+        return new InstanceDataRequest
+        {
+            InstanceRequest = instance.CreateInstanceRequest(),
+            DataId = Guid.Parse(dataElement.Id ?? throw new InvalidOperationException("Id required")),
+        };
+    }
+    
+    
 }

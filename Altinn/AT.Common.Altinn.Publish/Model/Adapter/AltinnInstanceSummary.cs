@@ -4,5 +4,5 @@ public record AltinnInstanceSummary
 {
     public required AltinnMetadata Metadata { get; init; }
     public required AltinnDocument AltinnSkjema { get; init; }
-    public required List<AltinnDocument> Attachments { get; init; } = new List<AltinnDocument>();
+    public required List<AltinnDocument> Attachments { get; init; } = [];
 }

@@ -38,10 +38,6 @@ public record AltinnApiConfiguration
 /// </summary>
 public static class DependencyInjectionExtensions
 {
-    private const string AltinnEventApiSuffix = "events/api/v1/";
-
-    private const string AltinnStorageApiSuffix = "storage/api/v1/";
-
     internal const string AltinnOrgIdentifier = "dat";
     internal const string AltinnStorageApiClientKey = "AltinnStorageApiClient";
     internal const string AltinnAppApiClientKey = "AltinnEventsApiClient";
@@ -114,18 +110,7 @@ public static class DependencyInjectionExtensions
         AltinnApiConfiguration? altinnApiConfiguration = null
     )
     {
-        altinnApiConfiguration ??= new AltinnApiConfiguration()
-        {
-            EventUrl = new Uri(
-                new Uri(hostEnvironment.GetAltinnPlattformUrl()),
-                AltinnEventApiSuffix
-            ),
-            StorageUrl = new Uri(
-                new Uri(hostEnvironment.GetAltinnPlattformUrl()),
-                AltinnStorageApiSuffix
-            ),
-            AppBaseUrl = new Uri(hostEnvironment.GetAltinnAppBaseUrl(AltinnOrgIdentifier)),
-        };
+        altinnApiConfiguration ??= hostEnvironment.CreateDefaultAltinnApiConfiguration();
         services.AddSingleton(Options.Create(altinnApiConfiguration));
         services
             .AddHttpClient(
