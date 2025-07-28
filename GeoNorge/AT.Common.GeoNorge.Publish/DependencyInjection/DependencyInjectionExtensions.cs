@@ -23,7 +23,11 @@ public static class DependencyInjectionExtensions
     internal const string GeoNorgeClientKey = "GeoNorgeClient";
 
     /// <summary>
-    /// Register GeoNorge services in the provided <see cref="IServiceCollection"/>.
+    /// Register GeoNorge services in the provided <see cref="IServiceCollection"/>:
+    /// <br/>
+    /// - <see cref="IAddressSearch"/> for address search functionality.
+    /// <br/>
+    /// - <see cref="IFylkeKommuneApi"/> for fylke and kommune information.
     /// </summary>
     /// <param name="services"></param>
     /// <param name="geoNorgeConfig"></param>

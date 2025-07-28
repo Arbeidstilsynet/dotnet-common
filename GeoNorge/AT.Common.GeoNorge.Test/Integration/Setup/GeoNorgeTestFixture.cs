@@ -23,7 +23,7 @@ public class GeoNorgeTestFixture : TestBedFixture
             KommuneFylkeMappingVisitor,
             new WireMockOpenApiParserSettings()
             {
-                NumberOfArrayItems = 2, // Important because coordinates are arrays with 2 items (lat, lon)
+                NumberOfArrayItems = 2, // Important because coordinates are arrays with 2 items [lat, lon]
             }
         );
     }
