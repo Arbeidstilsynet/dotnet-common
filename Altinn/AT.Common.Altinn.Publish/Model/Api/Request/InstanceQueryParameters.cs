@@ -30,19 +30,19 @@ public class InstanceQueryParameters
     /// The organization identifier.
     /// </summary>
     [MappedQueryParameterAttribute(QueryParameterName = _orgParameterName)]
-    public string Org { get; set; }
+    public string? Org { get; set; }
 
     /// <summary>
     /// The application identifier.
     /// </summary>
     [MappedQueryParameterAttribute(QueryParameterName = _appIdParameterName)]
-    public string AppId { get; set; }
+    public string? AppId { get; set; }
 
     /// <summary>
     /// The current task identifier.
     /// </summary>
     [MappedQueryParameterAttribute(QueryParameterName = _currentTaskParameterName)]
-    public string ProcessCurrentTask { get; set; }
+    public string? ProcessCurrentTask { get; set; }
 
     /// <summary>
     /// A value indicating whether the process is completed.
