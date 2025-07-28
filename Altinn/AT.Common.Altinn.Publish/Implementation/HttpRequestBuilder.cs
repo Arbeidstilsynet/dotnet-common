@@ -53,7 +53,7 @@ internal class HttpRequestBuilder : IHttpRequestBuilder
     {
         if (_isSent)
         {
-            throw new InvalidOperationException("Request has already been sent");
+            throw new InvalidOperationException("Request has already been sent. The HttpRequestBuilder instance cannot be reused. Create a new HttpRequestBuilder instance for additional requests.");
         }
 
         _isSent = true;

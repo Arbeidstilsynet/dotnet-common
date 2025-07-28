@@ -83,11 +83,11 @@ internal static class HttpExtensions
             var sourcePath = cloudEvent.Source.PathAndQuery;
             var uri = sourcePath[sourcePath.IndexOf("instances")..];
             var queryIndex = uri.IndexOf('?');
-            if (queryIndex > 0)
+            if (queryIndex >= 0)
             {
                 uri = uri.Substring(0, queryIndex);
             }
-            var trimmedUri = string.Join("/", uri.Split("/").Take(3).ToList());
+            var trimmedUri = string.Join("/", uri.Split("/").Take(3));
             return new Uri(trimmedUri, UriKind.Relative);
         }
         catch (Exception e)
