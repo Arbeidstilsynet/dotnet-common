@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Net.Http.Json;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Altinn.App.Core.Models;
@@ -121,55 +123,44 @@ internal static class HttpExtensions
         var selectedParameters = queryParameters
             .GetType()
             .GetProperties()
-            .Where(s => s.GetValue(queryParameters) != null)
-            .ToList();
-        foreach (var parameter in selectedParameters)
+            .Select(s => (s, s.GetValue(queryParameters)))
+            .Where((s) => s.Item2 != null);
+        
+        foreach (var (propertyInfo, parameterValue) in selectedParameters)
         {
-            var queryParamAttributes = parameter.GetCustomAttributes(
-                typeof(MappedQueryParameterAttribute),
-                true
-            );
-            if (queryParamAttributes.Length > 0)
+            if (parameterValue is null)
             {
-                var queryParamAttribute = (MappedQueryParameterAttribute)queryParamAttributes[0];
-                var queryParamValue = parameter.GetValue(queryParameters);
-                if (queryParamValue is Array array)
+                continue;
+            }
+            
+            if (propertyInfo.GetCustomAttribute<MappedQueryParameterAttribute>() is { QueryParameterName: {Length: > 0} queryParameterName })
+            {
+                if (parameterValue is ICollection<object> collection)
                 {
-                    foreach (var item in array)
+                    foreach (var item in collection)
                     {
                         httpRequestBuilder = httpRequestBuilder.WithQueryParameter(
-                            queryParamAttribute.QueryParameterName,
-                            item.ToString()
+                            queryParameterName,
+                            item.ToString()!
                         );
                     }
                 }
                 else
                 {
-                    if (queryParamValue != null)
-                    {
-                        httpRequestBuilder = httpRequestBuilder.WithQueryParameter(
-                            queryParamAttribute.QueryParameterName,
-                            queryParamValue.ToString()
-                        );
-                    }
+                    httpRequestBuilder = httpRequestBuilder.WithQueryParameter(
+                        queryParameterName,
+                        parameterValue.ToString()
+                    );
+                    
                 }
             }
-            var requestHeaderParamAttributes = parameter.GetCustomAttributes(
-                typeof(MappedRequestHeaderParameterAttribute),
-                true
-            );
-            if (requestHeaderParamAttributes.Length > 0)
+
+            if (propertyInfo.GetCustomAttribute<MappedRequestHeaderParameterAttribute>() is { HeaderParameterName: { Length: > 0 } headerParameterName })
             {
-                var requestHeaderAttribute = (MappedRequestHeaderParameterAttribute)
-                    requestHeaderParamAttributes[0];
-                var requestHeaderValue = parameter.GetValue(queryParameters);
-                if (requestHeaderValue != null)
-                {
-                    httpRequestBuilder = httpRequestBuilder.WithHeader(
-                        requestHeaderAttribute.HeaderParameterName,
-                        requestHeaderValue.ToString()!
-                    );
-                }
+                httpRequestBuilder = httpRequestBuilder.WithHeader(
+                    headerParameterName,
+                    parameterValue.ToString()!
+                );
             }
         }
         return httpRequestBuilder;
