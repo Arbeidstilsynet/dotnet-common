@@ -81,7 +81,7 @@ internal static class HttpExtensions
             var sourcePath = cloudEvent.Source.PathAndQuery;
             var uri = sourcePath[sourcePath.IndexOf("instances")..];
             var queryIndex = uri.IndexOf('?');
-            if (queryIndex > 0)
+            if (queryIndex >= 0)
             {
                 uri = uri.Substring(0, queryIndex);
             }
