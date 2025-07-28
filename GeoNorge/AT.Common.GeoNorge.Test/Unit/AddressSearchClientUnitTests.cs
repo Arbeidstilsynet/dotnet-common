@@ -6,15 +6,19 @@ using Shouldly;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Test.Unit;
 
-public class GeoNorgeClientUnitTests
+public class AddressSearchClientUnitTests
 {
-    private readonly GeoNorgeClient _sut = new(
+    private readonly AddressSearchClient _sut = new(
         Substitute.For<IHttpClientFactory>(),
-        Substitute.For<ILogger<GeoNorgeClient>>()
+        Substitute.For<ILogger<AddressSearchClient>>()
     );
 
-    [Fact]
-    public void SearchAddressesByPoint_RequestIsInvalid_ThrowsArgumentException()
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void SearchAddressesByPoint_RequestIsInvalid_ThrowsArgumentException(
+        double invalidRadius
+    )
     {
         // Arrange
         var act = () =>
@@ -23,7 +27,7 @@ public class GeoNorgeClientUnitTests
                 {
                     Latitude = 60.0,
                     Longitude = 10.0,
-                    RadiusInMeters = 0,
+                    RadiusInMeters = invalidRadius,
                 }
             );
 

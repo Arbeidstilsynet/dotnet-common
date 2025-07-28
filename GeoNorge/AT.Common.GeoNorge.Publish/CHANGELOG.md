@@ -14,6 +14,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed <!-- for any bug fixes. -->
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.0.0
+
+### Added
+
+- Added support for parts of the [kommuneinfo API](https://ws.geonorge.no/kommuneinfo/v1/)
+  - `/fylker`
+  - `/fylker/{fylkesnummer}`
+  - `/kommuner`
+  - `/kommuner/{kommunenummer}`
+  - `/punkt` - for getting a kommune and fylke at a specific coordinate
+  - `/fylkerkommuner` - for details on all fylker (and kommuner) in Norway
+
 ## 0.0.2
 
 ### Fixed

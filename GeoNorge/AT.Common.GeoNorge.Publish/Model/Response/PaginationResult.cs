@@ -1,9 +1,9 @@
 namespace Arbeidstilsynet.Common.GeoNorge.Model.Response;
 
 /// <summary>
-/// Result of a paginated query.
+/// Result of a paginated query containing elements of type <typeparamref name="T"/>.
 /// </summary>
-/// <typeparam name="T"></typeparam>
+/// <typeparam name="T">The type of elements contained in the pagination result.</typeparam>
 public record PaginationResult<T>
 {
     /// <summary>
