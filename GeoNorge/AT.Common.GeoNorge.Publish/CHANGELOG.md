@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `/kommuner`
   - `/kommuner/{kommunenummer}`
   - `/punkt` - for getting a kommune and fylke at a specific coordinate
-  - `/fylkerkommuner` - for detailed on all fylker (and kommuner) in Norway
+  - `/fylkerkommuner` - for details on all fylker (and kommuner) in Norway
 
 ## 0.0.2
 
