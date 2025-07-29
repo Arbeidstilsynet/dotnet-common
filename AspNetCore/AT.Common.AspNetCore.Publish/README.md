@@ -40,6 +40,10 @@ services.ConfigureCors(
 services.AddMemoryCachedHttpClient("MyCachedClient", configure =>
 {
     configure.BaseAddress = new Uri("https://api.example.com");
+}, new MemoryCacheOptions
+{
+    SlidingExpiration = TimeSpan.FromMinutes(5),
+    AbsoluteExpiration = TimeSpan.FromHours(1)
 });
 
 // Do the rest of your dependency injection here ...
