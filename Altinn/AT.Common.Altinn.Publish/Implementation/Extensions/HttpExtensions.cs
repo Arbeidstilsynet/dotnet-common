@@ -19,7 +19,7 @@ internal static class HttpExtensions
     {
         return requestBuilder.WithHeader("Authorization", $"Bearer {token}");
     }
-    
+
     public static IHttpRequestBuilder Post<TContent>(
         this HttpClient client,
         string resource,
@@ -36,7 +36,7 @@ internal static class HttpExtensions
             }
         );
     }
-    
+
     public static IHttpRequestBuilder Post<TContent>(
         this HttpClient client,
         Uri uri,
@@ -65,16 +65,12 @@ internal static class HttpExtensions
             }
         );
     }
-    
+
     public static IHttpRequestBuilder Get(this HttpClient client, Uri uri)
     {
         return new HttpRequestBuilder(
             client,
-            new HttpRequestMessage()
-            {
-                RequestUri = uri,
-                Method = HttpMethod.Get,
-            }
+            new HttpRequestMessage() { RequestUri = uri, Method = HttpMethod.Get }
         );
     }
 
@@ -161,12 +157,12 @@ internal static class HttpExtensions
         {
             httpRequestBuilder.WithQueryParameter(name, value);
         }
-        
+
         foreach (var (name, value) in queryParameters.GetHeaderParameters())
         {
             httpRequestBuilder.WithHeader(name, value);
         }
-        
+
         return httpRequestBuilder;
     }
 }

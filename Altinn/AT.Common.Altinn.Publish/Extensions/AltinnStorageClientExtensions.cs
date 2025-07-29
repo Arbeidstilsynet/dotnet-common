@@ -15,26 +15,30 @@ public static class AltinnStorageClientExtensions
     )
     {
         var visitedUris = new HashSet<string>();
-        
+
         var queryResponse = await altinnStorageClient.GetInstances(queryParameters);
 
         var instances = new List<Instance>(queryResponse.Instances);
-        
-        while (Uri.IsWellFormedUriString(queryResponse.Next, UriKind.Absolute) 
-               && visitedUris.Add(queryResponse.Next)
-               && queryParameters.TryAppendContinuationToken(new Uri(queryResponse.Next), out queryParameters))
+
+        while (
+            Uri.IsWellFormedUriString(queryResponse.Next, UriKind.Absolute)
+            && visitedUris.Add(queryResponse.Next)
+            && queryParameters.TryAppendContinuationToken(
+                new Uri(queryResponse.Next),
+                out queryParameters
+            )
+        )
         {
             queryResponse = await altinnStorageClient.GetInstances(queryParameters);
-            
+
             if (queryResponse?.Instances is null)
             {
                 break;
             }
-            
+
             instances.AddRange(queryResponse.Instances);
         }
 
         return instances;
-    } 
-    
+    }
 }

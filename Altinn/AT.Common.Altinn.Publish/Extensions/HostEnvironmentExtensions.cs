@@ -9,8 +9,10 @@ public static class HostEnvironmentExtensions
     private const string AltinnEventApiSuffix = "events/api/v1/";
 
     private const string AltinnStorageApiSuffix = "storage/api/v1/";
-    
-    public static AltinnApiConfiguration CreateDefaultAltinnApiConfiguration(this IWebHostEnvironment webHostEnvironment)
+
+    public static AltinnApiConfiguration CreateDefaultAltinnApiConfiguration(
+        this IWebHostEnvironment webHostEnvironment
+    )
     {
         return new AltinnApiConfiguration()
         {
@@ -22,11 +24,14 @@ public static class HostEnvironmentExtensions
                 new Uri(webHostEnvironment.GetAltinnPlattformUrl()),
                 AltinnStorageApiSuffix
             ),
-            AppBaseUrl =
-                new Uri(webHostEnvironment.GetAltinnAppBaseUrl(DependencyInjectionExtensions.AltinnOrgIdentifier)),
+            AppBaseUrl = new Uri(
+                webHostEnvironment.GetAltinnAppBaseUrl(
+                    DependencyInjectionExtensions.AltinnOrgIdentifier
+                )
+            ),
         };
     }
-    
+
     private static string GetAltinnPlattformUrl(this IWebHostEnvironment webHostEnvironment)
     {
         if (webHostEnvironment.IsDevelopment())

@@ -53,7 +53,9 @@ internal class HttpRequestBuilder : IHttpRequestBuilder
     {
         if (_isSent)
         {
-            throw new InvalidOperationException("Request has already been sent. The HttpRequestBuilder instance cannot be reused. Create a new HttpRequestBuilder instance for additional requests.");
+            throw new InvalidOperationException(
+                "Request has already been sent. The HttpRequestBuilder instance cannot be reused. Create a new HttpRequestBuilder instance for additional requests."
+            );
         }
 
         _isSent = true;
@@ -61,10 +63,9 @@ internal class HttpRequestBuilder : IHttpRequestBuilder
         if (_queryParameters.Count != 0)
         {
             // Default to relative
-            var kind = _request.RequestUri?.IsAbsoluteUri ?? false
-                ? UriKind.Absolute
-                : UriKind.Relative;
-            
+            var kind =
+                _request.RequestUri?.IsAbsoluteUri ?? false ? UriKind.Absolute : UriKind.Relative;
+
             _request.RequestUri = new Uri(
                 $"{_request.RequestUri}?{string.Join('&', _queryParameters)}",
                 kind

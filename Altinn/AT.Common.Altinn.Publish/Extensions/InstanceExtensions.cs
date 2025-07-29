@@ -17,15 +17,19 @@ public static class InstanceExtensions
         // Split the Id by '/' and parse the second part as a Guid
         if (instance.Id.Split("/").Length != 2)
         {
-            throw new InvalidOperationException("Instance ID must be in the format partyId/instanceGuid");
+            throw new InvalidOperationException(
+                "Instance ID must be in the format partyId/instanceGuid"
+            );
         }
-        
+
         // Ensure the second part is a valid Guid
         if (!Guid.TryParse(instance.Id.Split("/")[1], out var instanceGuid))
         {
-            throw new InvalidOperationException("Instance ID must contain a valid Guid in the second part");
+            throw new InvalidOperationException(
+                "Instance ID must contain a valid Guid in the second part"
+            );
         }
-        
+
         // Return the parsed Guid
         return instanceGuid;
     }
@@ -41,7 +45,7 @@ public static class InstanceExtensions
         {
             throw new InvalidOperationException("AppId must be in the format org/app");
         }
-        
+
         // Return the second part of the AppId, which is the application name
         return instance.AppId.Split("/")[1];
     }

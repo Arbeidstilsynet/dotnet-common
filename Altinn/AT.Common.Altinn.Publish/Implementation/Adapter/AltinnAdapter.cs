@@ -47,8 +47,6 @@ internal class AltinnAdapter(
         );
     }
 
-    
-
     public async Task<IEnumerable<AltinnInstanceSummary>> GetNonCompletedInstances(
         string appId,
         bool processIsComplete = true,
@@ -57,7 +55,7 @@ internal class AltinnAdapter(
     )
     {
         appConfig ??= new AltinnAppConfiguration();
-        
+
         var instances = await altinnStorageClient.GetAllInstances(
             new InstanceQueryParameters
             {
@@ -68,10 +66,11 @@ internal class AltinnAdapter(
                     excludeConfirmedBy ?? DependencyInjectionExtensions.AltinnOrgIdentifier,
             }
         );
-        
-        var fetchInstanceTasks  = instances
-            .Select(instance => GetInstanceSummaryAsync(instance, appConfig.MainDocumentDataTypeName));
-        
+
+        var fetchInstanceTasks = instances.Select(instance =>
+            GetInstanceSummaryAsync(instance, appConfig.MainDocumentDataTypeName)
+        );
+
         return await Task.WhenAll(fetchInstanceTasks);
     }
 
@@ -81,7 +80,9 @@ internal class AltinnAdapter(
     )
     {
         var documents = await Task.WhenAll(
-            instance.Data.Select(dataElement => GetAltinnDocument(dataElement, instance, mainDocumentDataTypeName))
+            instance.Data.Select(dataElement =>
+                GetAltinnDocument(dataElement, instance, mainDocumentDataTypeName)
+            )
         );
 
         return new AltinnInstanceSummary
@@ -91,11 +92,17 @@ internal class AltinnAdapter(
             Attachments = [.. documents.Where(d => !d.IsMainDocument)],
         };
     }
-    
-    private async Task<AltinnDocument> GetAltinnDocument(DataElement dataElement, Instance instance, string mainDocumentDataTypeName)
+
+    private async Task<AltinnDocument> GetAltinnDocument(
+        DataElement dataElement,
+        Instance instance,
+        string mainDocumentDataTypeName
+    )
     {
-        var document = await altinnStorageClient.GetInstanceData(instance.CreateInstanceDataRequest(dataElement));
-        
+        var document = await altinnStorageClient.GetInstanceData(
+            instance.CreateInstanceDataRequest(dataElement)
+        );
+
         return new AltinnDocument
         {
             DocumentContent = document,
@@ -105,10 +112,12 @@ internal class AltinnAdapter(
     }
 }
 
-
 file static class Extensions
 {
-    public static FileMetadata ToFileMetadata(this DataElement dataElement, string mainDocumentDataTypeName)
+    public static FileMetadata ToFileMetadata(
+        this DataElement dataElement,
+        string mainDocumentDataTypeName
+    )
     {
         return new FileMetadata
         {
@@ -120,17 +129,18 @@ file static class Extensions
             FileScanResult = dataElement.FileScanResult.ToString(),
         };
     }
-    
+
     public static InstanceRequest CreateInstanceRequest(this Instance instance)
     {
         return new InstanceRequest
         {
             InstanceGuid = instance.GetInstanceGuid(),
-            InstanceOwnerPartyId = instance.InstanceOwner?.PartyId
-                                   ?? throw new InvalidOperationException("PartyId required"),
+            InstanceOwnerPartyId =
+                instance.InstanceOwner?.PartyId
+                ?? throw new InvalidOperationException("PartyId required"),
         };
     }
-    
+
     public static InstanceDataRequest CreateInstanceDataRequest(
         this Instance instance,
         DataElement dataElement
@@ -139,9 +149,9 @@ file static class Extensions
         return new InstanceDataRequest
         {
             InstanceRequest = instance.CreateInstanceRequest(),
-            DataId = Guid.Parse(dataElement.Id ?? throw new InvalidOperationException("Id required")),
+            DataId = Guid.Parse(
+                dataElement.Id ?? throw new InvalidOperationException("Id required")
+            ),
         };
     }
-    
-    
 }

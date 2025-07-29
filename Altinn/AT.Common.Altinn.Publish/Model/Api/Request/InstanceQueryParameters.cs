@@ -138,9 +138,7 @@ public record InstanceQueryParameters
     /// <summary>
     /// The instance owner identifier.
     /// </summary>
-    [MappedRequestHeaderParameter(
-        HeaderParameterName = InstanceOwnerIdentifierHeaderName
-    )]
+    [MappedRequestHeaderParameter(HeaderParameterName = InstanceOwnerIdentifierHeaderName)]
     public string InstanceOwnerIdentifier { get; set; }
 
     /// <summary>
