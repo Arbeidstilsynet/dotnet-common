@@ -1701,7 +1701,7 @@
         "properties": {
           "count": {
             "type": "integer",
-            "description": "The nuber of subscriptions in the list",
+            "description": "The number of subscriptions in the list",
             "format": "int32"
           },
           "subscriptions": {
