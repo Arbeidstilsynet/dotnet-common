@@ -106,7 +106,7 @@
       },
       "get": {
         "tags": ["Subscription"],
-        "summary": "Get all subscription for the authorized consumer",
+        "summary": "Get all subscriptions for the authorized consumer",
         "responses": {
           "200": {
             "description": "OK",
