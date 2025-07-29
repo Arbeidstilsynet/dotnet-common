@@ -36,6 +36,7 @@ public static class AdapterExtensions
             Org = org,
             InstanceGuid = instanceGuid,
             InstanceOwnerPartyId = partyId,
+            OrganisationNumber = altinnInstance.InstanceOwner.OrganisationNumber,
         };
     }
 

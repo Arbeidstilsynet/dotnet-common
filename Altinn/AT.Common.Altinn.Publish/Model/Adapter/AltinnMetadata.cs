@@ -6,4 +6,6 @@ public record AltinnMetadata
     public string? InstanceOwnerPartyId { get; init; }
     public string? Org { get; init; }
     public string? App { get; init; }
+
+    public string? OrganisationNumber { get; init; }
 }
