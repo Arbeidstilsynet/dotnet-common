@@ -1,6 +1,4 @@
-using System.Text;
 using Arbeidstilsynet.Common.GeoNorge.Model.Request;
-using Microsoft.Extensions.Primitives;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Implementation;
 
@@ -81,6 +79,28 @@ internal static class QueryExtensions
         parameterMap.Add(
             "radius",
             query.RadiusInMeters.ToString(System.Globalization.CultureInfo.InvariantCulture)
+        );
+
+        return parameterMap;
+    }
+
+    public static IReadOnlyDictionary<string, string> ToMap(this PointQuery query)
+    {
+        var parameterMap = new Dictionary<string, string>();
+
+        parameterMap.Add(
+            "nord",
+            query.Latitude.ToString(System.Globalization.CultureInfo.InvariantCulture)
+        );
+
+        parameterMap.Add(
+            "ost",
+            query.Longitude.ToString(System.Globalization.CultureInfo.InvariantCulture)
+        );
+
+        parameterMap.Add(
+            "koordsys",
+            query.Epsg.ToString(System.Globalization.CultureInfo.InvariantCulture)
         );
 
         return parameterMap;

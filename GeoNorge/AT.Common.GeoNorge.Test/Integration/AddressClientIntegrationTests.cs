@@ -2,24 +2,23 @@ using Arbeidstilsynet.Common.GeoNorge.Model.Request;
 using Arbeidstilsynet.Common.GeoNorge.Ports;
 using Arbeidstilsynet.Common.GeoNorge.Test.Integration.Setup;
 using Shouldly;
-using WireMock.Pact.Models.V2;
 using Xunit.Abstractions;
 using Xunit.Microsoft.DependencyInjection.Abstracts;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Adapters.Test.Integration;
 
-public class GeoNorgeClientIntegrationTests : TestBed<GeoNorgeTestFixture>
+public class AddressClientIntegrationTests : TestBed<GeoNorgeTestFixture>
 {
-    private readonly IGeoNorge _sut;
+    private readonly IAddressSearch _sut;
     private readonly VerifySettings _verifySettings = new VerifySettings();
 
-    public GeoNorgeClientIntegrationTests(
+    public AddressClientIntegrationTests(
         ITestOutputHelper testOutputHelper,
         GeoNorgeTestFixture fixture
     )
         : base(testOutputHelper, fixture)
     {
-        _sut = fixture.GetService<IGeoNorge>(testOutputHelper)!;
+        _sut = fixture.GetService<IAddressSearch>(testOutputHelper)!;
 
         _verifySettings.UseDirectory("TestData/Snapshots");
     }
