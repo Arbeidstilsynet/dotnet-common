@@ -1,9 +1,14 @@
+using Arbeidstilsynet.Common.AspNetCore.DependencyInjection;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 
 namespace Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
 
-internal class MemoryCachingHandler(IMemoryCache cache) : DelegatingHandler
+internal class MemoryCachingHandler(IMemoryCache cache, IOptions<CachingOptions> cachingOptions)
+    : DelegatingHandler
 {
+    private readonly CachingOptions _cachingOptions = cachingOptions.Value;
+
     protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request,
         CancellationToken cancellationToken
@@ -31,7 +36,15 @@ internal class MemoryCachingHandler(IMemoryCache cache) : DelegatingHandler
         {
             // Clone the response to allow it to be read multiple times
             var cachedClonedResponse = await response.Clone();
-            cache.Set(cacheKey, cachedClonedResponse);
+            cache.Set(
+                cacheKey,
+                cachedClonedResponse,
+                new MemoryCacheEntryOptions()
+                {
+                    SlidingExpiration = _cachingOptions.SlidingExpiration,
+                    AbsoluteExpirationRelativeToNow = _cachingOptions.AbsoluteExpiration,
+                }
+            );
         }
 
         return response;
@@ -53,10 +66,10 @@ file static class Extensions
     public static bool TryGetCachedResponse(
         this IMemoryCache cache,
         string cacheKey,
-        out HttpResponseMessage cachedResponse
+        out HttpResponseMessage? cachedResponse
     )
     {
-        cachedResponse = null!;
+        cachedResponse = default;
 
         if (
             !cache.TryGetValue(cacheKey, out var value)
@@ -78,7 +91,8 @@ file static class Extensions
         {
             cloned.Headers.TryAddWithoutValidation(header.Key, header.Value);
         }
-        cloned.Content = new StreamContent(await original.Content.ReadAsStreamAsync());
+        var contentBytes = await original.Content.ReadAsByteArrayAsync();
+        cloned.Content = new ByteArrayContent(contentBytes);
         foreach (var header in original.Content.Headers)
         {
             cloned.Content.Headers.TryAddWithoutValidation(header.Key, header.Value);

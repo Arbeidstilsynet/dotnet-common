@@ -1,8 +1,10 @@
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Arbeidstilsynet.Common.AspNetCore.DependencyInjection;
 using Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 using Shouldly;
 using Xunit;
@@ -11,6 +13,14 @@ namespace AT.Common.AspNetCore.Extensions.Test.Unit;
 
 public class MemoryCachingHandlerTests
 {
+    private readonly IOptions<CachingOptions> _cachingOptions = Options.Create(
+        new CachingOptions()
+        {
+            SlidingExpiration = TimeSpan.FromMinutes(5),
+            AbsoluteExpiration = TimeSpan.FromHours(1),
+        }
+    );
+
     [Fact]
     public async Task SendAsync_CachesSuccessfulGetResponse()
     {
@@ -20,7 +30,7 @@ public class MemoryCachingHandlerTests
         {
             Content = new StringContent("response"),
         };
-        var handler = new MemoryCachingHandler(cache)
+        var handler = new MemoryCachingHandler(cache, _cachingOptions)
         {
             InnerHandler = new TestHandler(responseMessage),
         };
@@ -28,7 +38,7 @@ public class MemoryCachingHandlerTests
         var request = new HttpRequestMessage(HttpMethod.Get, "https://test/api");
 
         // Act
-        var response = await invoker.SendAsync(request, CancellationToken.None);
+        _ = await invoker.SendAsync(request, CancellationToken.None);
 
         // Assert
         cache.Received(1).Set(request.RequestUri!.ToString(), responseMessage);
@@ -39,14 +49,14 @@ public class MemoryCachingHandlerTests
     {
         var cache = Substitute.For<IMemoryCache>();
         var responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
-        var handler = new MemoryCachingHandler(cache)
+        var handler = new MemoryCachingHandler(cache, _cachingOptions)
         {
             InnerHandler = new TestHandler(responseMessage),
         };
         var invoker = new HttpMessageInvoker(handler);
         var request = new HttpRequestMessage(HttpMethod.Post, "https://test/api");
 
-        await invoker.SendAsync(request, CancellationToken.None);
+        _ = await invoker.SendAsync(request, CancellationToken.None);
 
         cache.DidNotReceiveWithAnyArgs().Set<HttpResponseMessage>(default!, default!);
     }
@@ -67,7 +77,7 @@ public class MemoryCachingHandlerTests
                 return true;
             });
 
-        var handler = new MemoryCachingHandler(cache)
+        var handler = new MemoryCachingHandler(cache, _cachingOptions)
         {
             InnerHandler = new TestHandler(
                 new HttpResponseMessage(HttpStatusCode.OK)
@@ -88,16 +98,49 @@ public class MemoryCachingHandlerTests
     public async Task SendAsync_DoesNotCache_UnsuccessfulResponse()
     {
         var cache = Substitute.For<IMemoryCache>();
-        var handler = new MemoryCachingHandler(cache)
+        var handler = new MemoryCachingHandler(cache, _cachingOptions)
         {
             InnerHandler = new TestHandler(new HttpResponseMessage(HttpStatusCode.BadRequest)),
         };
         var invoker = new HttpMessageInvoker(handler);
         var request = new HttpRequestMessage(HttpMethod.Get, "https://test/api");
 
-        await invoker.SendAsync(request, CancellationToken.None);
+        _ = await invoker.SendAsync(request, CancellationToken.None);
 
         cache.DidNotReceiveWithAnyArgs().Set<HttpResponseMessage>(default!, default!);
+    }
+
+    [Fact]
+    public async Task SendAsync_UsesCachingOptions()
+    {
+        // Arrange
+        var cache = Substitute.For<IMemoryCache>();
+        var responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent("response"),
+        };
+        var handler = new MemoryCachingHandler(cache, _cachingOptions)
+        {
+            InnerHandler = new TestHandler(responseMessage),
+        };
+        var invoker = new HttpMessageInvoker(handler);
+        var request = new HttpRequestMessage(HttpMethod.Get, "https://test/api");
+
+        // Act
+        _ = await invoker.SendAsync(request, CancellationToken.None);
+
+        // Assert
+        cache
+            .Received(1)
+            .Set(
+                request.RequestUri!.ToString(),
+                responseMessage,
+                new MemoryCacheEntryOptions()
+                {
+                    SlidingExpiration = _cachingOptions.Value.SlidingExpiration,
+                    AbsoluteExpirationRelativeToNow = _cachingOptions.Value.AbsoluteExpiration,
+                }
+            );
     }
 
     // Helper handler to simulate responses
