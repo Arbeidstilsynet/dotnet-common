@@ -21,7 +21,8 @@ public class MeldingerReceiverFixture : TestBedFixture, IAsyncLifetime
     )
     {
         services.AddMeldingerReceiver(
-            new ValkeyConfiguration { ConnectionString = _ValkeyFixture.ValkeyBaseUrl }
+            new ValkeyConfiguration { ConnectionString = _ValkeyFixture.ValkeyBaseUrl },
+            new MeldingerReceiverApiConfiguration { BaseUrl = "http://localhost:9008" }
         );
     }
 

@@ -11,6 +11,11 @@ public record MeldingerReceiverNotificationDto
     public required string AppId { get; init; }
 
     /// <summary>
+    /// Id of the melding which was newly created. This should be used for calling the api to get more detailed information
+    /// </summary>
+    public required Guid MeldingId { get; init; }
+
+    /// <summary>
     /// Timestamp when this notification was created
     /// </summary>
     public required DateTime CreatedAt { get; init; }

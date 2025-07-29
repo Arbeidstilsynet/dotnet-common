@@ -34,6 +34,7 @@ public class MeldingerReceiverTests : TestBed<MeldingerReceiverFixture>
         var testDto = new MeldingerReceiverNotificationDto()
         {
             AppId = testAppName,
+            MeldingId = Guid.NewGuid(),
             CreatedAt = DateTime.Now,
         };
         await _testDatabase.StreamAddAsync(
@@ -60,6 +61,7 @@ public class MeldingerReceiverTests : TestBed<MeldingerReceiverFixture>
         var testDto = new MeldingerReceiverNotificationDto()
         {
             AppId = "non-existing-app-id",
+            MeldingId = Guid.NewGuid(),
             CreatedAt = DateTime.Now,
         };
         await _testDatabase.StreamAddAsync(
@@ -82,6 +84,7 @@ public class MeldingerReceiverTests : TestBed<MeldingerReceiverFixture>
         var testDto = new MeldingerReceiverNotificationDto()
         {
             AppId = testAppName,
+            MeldingId = Guid.NewGuid(),
             CreatedAt = DateTime.Now,
         };
         await _testDatabase.StreamAddAsync(

@@ -17,10 +17,11 @@ internal class ReceiverListener(
                     await meldingerReceiver.GetNotifications(meldingerConsumer.AppId)
                 );
             }
-            Thread.Sleep(
+            await Task.Delay(
                 meldingerConsumer.PollInterval == null || meldingerConsumer.PollInterval < 1000
                     ? 1000
-                    : (int)meldingerConsumer.PollInterval
+                    : (int)meldingerConsumer.PollInterval,
+                stoppingToken
             );
         }
     }
