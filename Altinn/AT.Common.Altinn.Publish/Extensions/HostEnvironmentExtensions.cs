@@ -10,6 +10,17 @@ public static class HostEnvironmentExtensions
 
     private const string AltinnStorageApiSuffix = "storage/api/v1/";
 
+    /// <summary>
+    /// Creates a default <see cref="AltinnApiConfiguration"/> for the current web host environment.
+    /// <br/>
+    /// - Development: Uses local.altinn.cloud.
+    /// <br/>
+    /// - Staging: Uses TT02.
+    /// <br/>
+    /// - Production: Uses production Altinn URLs.
+    /// </summary>
+    /// <param name="webHostEnvironment">The web host environment.</param>
+    /// <returns>A default Altinn API configuration for the environment.</returns>
     public static AltinnApiConfiguration CreateDefaultAltinnApiConfiguration(
         this IWebHostEnvironment webHostEnvironment
     )

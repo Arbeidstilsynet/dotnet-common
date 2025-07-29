@@ -6,6 +6,11 @@ namespace Arbeidstilsynet.Common.Altinn.Extensions;
 
 public static class AdapterExtensions
 {
+    /// <summary>
+    /// Converts an Altinn <see cref="Instance"/> to <see cref="AltinnMetadata"/>.
+    /// </summary>
+    /// <param name="altinnInstance">The Altinn instance to convert.</param>
+    /// <returns>The corresponding <see cref="AltinnMetadata"/> object.</returns>
     public static AltinnMetadata ToAltinnMetadata(this Instance altinnInstance)
     {
         var appIdParts = altinnInstance.AppId?.Split('/');
@@ -40,6 +45,11 @@ public static class AdapterExtensions
         };
     }
 
+    /// <summary>
+    /// Converts <see cref="AltinnMetadata"/> to an <see cref="InstanceRequest"/>.
+    /// </summary>
+    /// <param name="altinnMetadata">The Altinn metadata to convert.</param>
+    /// <returns>The corresponding <see cref="InstanceRequest"/>.</returns>
     public static InstanceRequest ToInstanceAddress(this AltinnMetadata altinnMetadata)
     {
         return new InstanceRequest()
