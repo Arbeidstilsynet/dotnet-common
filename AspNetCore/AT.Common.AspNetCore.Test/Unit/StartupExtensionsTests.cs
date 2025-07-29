@@ -3,10 +3,12 @@ using Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Scalar.AspNetCore;
 using Shouldly;
 using Xunit;
 
@@ -30,7 +32,52 @@ public class StartupExtensionsTests
         // Assert
         result.ShouldBe(expectedOutput);
     }
+    
+    [Fact]
+    public void AddCachedHttpClient_ShouldAddMemoryCacheAndHttpClient()
+    {
+        // Arrange
+        var services = new ServiceCollection();
 
+        // Act
+        var clientBuilder = services.AddCachedHttpClient("TestClient");
+
+        // Assert
+        services.ShouldContain(s => s.ServiceType == typeof(IMemoryCache));
+        services.ShouldContain(s => s.ServiceType == typeof(IHttpClientFactory));
+        clientBuilder.ShouldNotBeNull();
+    }
+    
+    [Fact]
+    public void AddCachedHttpClient_WithConfiguration_ShouldAddMemoryCacheAndHttpClientWithConfig()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+
+        // Act
+        var clientBuilder = services.AddCachedHttpClient("TestClient", (_) => { });
+
+        // Assert
+        services.ShouldContain(s => s.ServiceType == typeof(IMemoryCache));
+        services.ShouldContain(s => s.ServiceType == typeof(IHttpClientFactory));
+        clientBuilder.ShouldNotBeNull();
+    }
+    
+    [Fact]
+    public void AddCachedHttpClient_WithServiceProviderConfiguration_ShouldAddMemoryCacheAndHttpClientWithConfig()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+
+        // Act
+        var clientBuilder = services.AddCachedHttpClient("TestClient", (_, _) => { });
+
+        // Assert
+        services.ShouldContain(s => s.ServiceType == typeof(IMemoryCache));
+        services.ShouldContain(s => s.ServiceType == typeof(IHttpClientFactory));
+        clientBuilder.ShouldNotBeNull();
+    }
+    
     [Fact]
     public void ConfigureCors_ShouldAddCorsService()
     {

@@ -1,9 +1,11 @@
 using System.Text.RegularExpressions;
+using Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -18,6 +20,57 @@ namespace Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
 /// </summary>
 public static partial class StartupExtensions
 {
+    /// <summary>
+    /// Adds a cached HTTP client to the service collection.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public static IHttpClientBuilder AddCachedHttpClient(this IServiceCollection services, string name)
+    {
+        services.AddMemoryCache();
+        services.TryAddTransient<MemoryCachingHandler>();
+
+        return services.AddHttpClient(name)
+            .AddHttpMessageHandler<MemoryCachingHandler>();
+    }
+    
+    /// <summary>
+    /// Adds a cached HTTP client to the service collection with a custom configuration action.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="name"></param>
+    /// <param name="configureClient"></param>
+    /// <returns></returns>
+    public static IHttpClientBuilder AddCachedHttpClient(
+        this IServiceCollection services,
+        string name,
+        Action<HttpClient> configureClient
+    )
+    {
+        var clientBuilder = services.AddCachedHttpClient(name);
+        clientBuilder.ConfigureHttpClient(configureClient);
+        return clientBuilder;
+    }
+    
+    /// <summary>
+    /// Adds a cached HTTP client to the service collection with a custom configuration action that receives the service provider.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="name"></param>
+    /// <param name="configureClient"></param>
+    /// <returns></returns>
+    public static IHttpClientBuilder AddCachedHttpClient(
+        this IServiceCollection services,
+        string name,
+        Action<IServiceProvider, HttpClient> configureClient
+    )
+    {
+        var clientBuilder = services.AddCachedHttpClient(name);
+        clientBuilder.ConfigureHttpClient(configureClient);
+        return clientBuilder;
+    } 
+    
     /// <summary>
     /// Adds Controllers, model validation, problem details, and health checks.
     /// </summary>
