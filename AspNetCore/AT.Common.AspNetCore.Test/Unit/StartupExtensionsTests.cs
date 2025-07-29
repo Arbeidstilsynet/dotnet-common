@@ -32,7 +32,7 @@ public class StartupExtensionsTests
         // Assert
         result.ShouldBe(expectedOutput);
     }
-    
+
     [Fact]
     public void AddCachedHttpClient_ShouldAddMemoryCacheAndHttpClient()
     {
@@ -47,7 +47,7 @@ public class StartupExtensionsTests
         services.ShouldContain(s => s.ServiceType == typeof(IHttpClientFactory));
         clientBuilder.ShouldNotBeNull();
     }
-    
+
     [Fact]
     public void AddCachedHttpClient_WithConfiguration_ShouldAddMemoryCacheAndHttpClientWithConfig()
     {
@@ -62,7 +62,7 @@ public class StartupExtensionsTests
         services.ShouldContain(s => s.ServiceType == typeof(IHttpClientFactory));
         clientBuilder.ShouldNotBeNull();
     }
-    
+
     [Fact]
     public void AddCachedHttpClient_WithServiceProviderConfiguration_ShouldAddMemoryCacheAndHttpClientWithConfig()
     {
@@ -77,7 +77,7 @@ public class StartupExtensionsTests
         services.ShouldContain(s => s.ServiceType == typeof(IHttpClientFactory));
         clientBuilder.ShouldNotBeNull();
     }
-    
+
     [Fact]
     public void ConfigureCors_ShouldAddCorsService()
     {

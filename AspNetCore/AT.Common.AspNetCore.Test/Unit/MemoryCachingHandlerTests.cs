@@ -18,11 +18,11 @@ public class MemoryCachingHandlerTests
         var cache = Substitute.For<IMemoryCache>();
         var responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
         {
-            Content = new StringContent("response")
-        }; 
+            Content = new StringContent("response"),
+        };
         var handler = new MemoryCachingHandler(cache)
         {
-            InnerHandler = new TestHandler(responseMessage)
+            InnerHandler = new TestHandler(responseMessage),
         };
         var invoker = new HttpMessageInvoker(handler);
         var request = new HttpRequestMessage(HttpMethod.Get, "https://test/api");
@@ -41,7 +41,7 @@ public class MemoryCachingHandlerTests
         var responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
         var handler = new MemoryCachingHandler(cache)
         {
-            InnerHandler = new TestHandler(responseMessage)
+            InnerHandler = new TestHandler(responseMessage),
         };
         var invoker = new HttpMessageInvoker(handler);
         var request = new HttpRequestMessage(HttpMethod.Post, "https://test/api");
@@ -57,23 +57,30 @@ public class MemoryCachingHandlerTests
         var cache = Substitute.For<IMemoryCache>();
         var cachedResponse = new HttpResponseMessage(HttpStatusCode.OK)
         {
-            Content = new StringContent("cached")
+            Content = new StringContent("cached"),
         };
-        cache.TryGetValue(Arg.Any<object>(), out Arg.Any<object?>())
-            .Returns(x => { x[1] = cachedResponse; return true; });
+        cache
+            .TryGetValue(Arg.Any<object>(), out Arg.Any<object?>())
+            .Returns(x =>
+            {
+                x[1] = cachedResponse;
+                return true;
+            });
 
         var handler = new MemoryCachingHandler(cache)
         {
-            InnerHandler = new TestHandler(new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent("should not be used")
-            })
+            InnerHandler = new TestHandler(
+                new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent("should not be used"),
+                }
+            ),
         };
         var invoker = new HttpMessageInvoker(handler);
         var request = new HttpRequestMessage(HttpMethod.Get, "https://test/api");
 
         var response = await invoker.SendAsync(request, CancellationToken.None);
-        
+
         response.ShouldBe(cachedResponse);
     }
 
@@ -83,7 +90,7 @@ public class MemoryCachingHandlerTests
         var cache = Substitute.For<IMemoryCache>();
         var handler = new MemoryCachingHandler(cache)
         {
-            InnerHandler = new TestHandler(new HttpResponseMessage(HttpStatusCode.BadRequest))
+            InnerHandler = new TestHandler(new HttpResponseMessage(HttpStatusCode.BadRequest)),
         };
         var invoker = new HttpMessageInvoker(handler);
         var request = new HttpRequestMessage(HttpMethod.Get, "https://test/api");
@@ -97,8 +104,12 @@ public class MemoryCachingHandlerTests
     private class TestHandler : DelegatingHandler
     {
         private readonly HttpResponseMessage _response;
+
         public TestHandler(HttpResponseMessage response) => _response = response;
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-            => Task.FromResult(_response);
+
+        protected override Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken
+        ) => Task.FromResult(_response);
     }
 }

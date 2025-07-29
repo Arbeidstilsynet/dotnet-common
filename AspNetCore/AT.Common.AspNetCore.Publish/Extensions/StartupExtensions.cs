@@ -26,15 +26,17 @@ public static partial class StartupExtensions
     /// <param name="services"></param>
     /// <param name="name"></param>
     /// <returns></returns>
-    public static IHttpClientBuilder AddCachedHttpClient(this IServiceCollection services, string name)
+    public static IHttpClientBuilder AddCachedHttpClient(
+        this IServiceCollection services,
+        string name
+    )
     {
         services.AddMemoryCache();
         services.TryAddTransient<MemoryCachingHandler>();
 
-        return services.AddHttpClient(name)
-            .AddHttpMessageHandler<MemoryCachingHandler>();
+        return services.AddHttpClient(name).AddHttpMessageHandler<MemoryCachingHandler>();
     }
-    
+
     /// <summary>
     /// Adds a cached HTTP client to the service collection with a custom configuration action.
     /// </summary>
@@ -52,7 +54,7 @@ public static partial class StartupExtensions
         clientBuilder.ConfigureHttpClient(configureClient);
         return clientBuilder;
     }
-    
+
     /// <summary>
     /// Adds a cached HTTP client to the service collection with a custom configuration action that receives the service provider.
     /// </summary>
@@ -69,8 +71,8 @@ public static partial class StartupExtensions
         var clientBuilder = services.AddCachedHttpClient(name);
         clientBuilder.ConfigureHttpClient(configureClient);
         return clientBuilder;
-    } 
-    
+    }
+
     /// <summary>
     /// Adds Controllers, model validation, problem details, and health checks.
     /// </summary>
