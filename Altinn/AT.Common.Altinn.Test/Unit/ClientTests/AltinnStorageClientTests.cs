@@ -110,4 +110,22 @@ public class AltinnStorageClientTests : TestBed<AltinnApiTestFixture>
         result.ShouldNotBeNull();
         result.Instances[0].Id.ShouldBe(DynamicDataGeneration.DefaultPathUuid.ToString());
     }
+    
+    [Fact]
+    public async Task GetAllInstances_WhenCalledWithValidQueryParameters_ReturnsExampleResponse()
+    {
+        //arrange
+        //act
+        var result = (await _sut.GetAllInstances(
+            new InstanceQueryParameters
+            {
+                AppId = "dat/test",
+                Org = "dat",
+                ProcessIsComplete = true,
+                ExcludeConfirmedBy = "dat",
+            }
+        )).ToList();
+        //assert
+        result.First().Id.ShouldBe(DynamicDataGeneration.DefaultPathUuid.ToString());
+    }
 }

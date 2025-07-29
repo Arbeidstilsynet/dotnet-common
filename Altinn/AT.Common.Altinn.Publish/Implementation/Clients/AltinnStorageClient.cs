@@ -33,8 +33,8 @@ internal class AltinnStorageClient : IAltinnStorageClient
     public async Task<Instance> GetInstance(InstanceRequest instanceAddress)
     {
         return await _httpClient
-                .Get(instanceAddress.ToInstanceUri().ToString())
-                .WithHeader("Authorization", $"Bearer {await _altinnTokenProvider.GetToken()}")
+                .Get(instanceAddress.ToInstanceUri())
+                .WithBearerToken(await _altinnTokenProvider.GetToken())
                 .ReceiveContent<Instance>(_jsonSerializerOptions)
             ?? throw new Exception("Failed to get instance");
     }
@@ -42,19 +42,19 @@ internal class AltinnStorageClient : IAltinnStorageClient
     public async Task<Instance> GetInstance(CloudEvent cloudEvent)
     {
         return await _httpClient
-                .Get(cloudEvent.ToInstanceUri().ToString())
-                .WithHeader("Authorization", $"Bearer {await _altinnTokenProvider.GetToken()}")
+                .Get(cloudEvent.ToInstanceUri())
+                .WithBearerToken(await _altinnTokenProvider.GetToken())
                 .ReceiveContent<Instance>(_jsonSerializerOptions)
             ?? throw new Exception("Failed to get instance");
     }
 
     public async Task<Instance> CompleteInstance(InstanceRequest instanceAddress)
     {
-        var url = instanceAddress.ToInstanceUri("complete").ToString();
+        var url = instanceAddress.ToInstanceUri("complete");
 
         return await _httpClient
                 .Post(url, new { })
-                .WithHeader("Authorization", $"Bearer {await _altinnTokenProvider.GetToken()}")
+                .WithBearerToken(await _altinnTokenProvider.GetToken())
                 .ReceiveContent<Instance>(_jsonSerializerOptions)
             ?? throw new Exception("Failed to complete instance");
     }
@@ -64,8 +64,8 @@ internal class AltinnStorageClient : IAltinnStorageClient
         var uri = request.InstanceRequest.ToInstanceUri($"data/{request.DataId}");
 
         return await _httpClient
-                .Get(uri.ToString())
-                .WithHeader("Authorization", $"Bearer {await _altinnTokenProvider.GetToken()}")
+                .Get(uri)
+                .WithBearerToken(await _altinnTokenProvider.GetToken())
                 .ReceiveStream() ?? throw new Exception("Failed to get instance data");
     }
 
@@ -75,17 +75,42 @@ internal class AltinnStorageClient : IAltinnStorageClient
 
         return await _httpClient
             .Get(url)
-            .WithHeader("Authorization", $"Bearer {await _altinnTokenProvider.GetToken()}")
+            .WithBearerToken(await _altinnTokenProvider.GetToken())
             .ReceiveStream();
     }
 
     public async Task<QueryResponse<Instance>> GetInstances(InstanceQueryParameters queryParameters)
     {
         return await _httpClient
-                .Get(new Uri("instances", UriKind.Relative).ToString())
+                .Get("instances")
                 .ApplyInstanceQueryParameters(queryParameters)
-                .WithHeader("Authorization", $"Bearer {await _altinnTokenProvider.GetToken()}")
+                .WithBearerToken(await _altinnTokenProvider.GetToken())
                 .ReceiveContent<QueryResponse<Instance>>(_jsonSerializerOptions)
             ?? throw new Exception("Failed to get instance");
+    }
+
+    public async Task<IEnumerable<Instance>> GetAllInstances(InstanceQueryParameters queryParameters)
+    {
+        var visitedUris = new HashSet<string>();
+        
+        var queryResponse = await GetInstances(queryParameters);
+
+        var instances = new List<Instance>(queryResponse.Instances);
+        
+        while (Uri.IsWellFormedUriString(queryResponse.Next, UriKind.Absolute) && visitedUris.Add(queryResponse.Next))
+        {
+            queryResponse = await _httpClient.Get(new Uri(queryResponse.Next, UriKind.Absolute))
+                .WithBearerToken(await _altinnTokenProvider.GetToken())
+                .ReceiveContent<QueryResponse<Instance>>();
+            
+            if (queryResponse?.Instances is null)
+            {
+                break;
+            }
+            
+            instances.AddRange(queryResponse.Instances);
+        }
+
+        return instances;
     }
 }

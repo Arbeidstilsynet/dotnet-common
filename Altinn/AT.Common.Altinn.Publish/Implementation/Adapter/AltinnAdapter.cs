@@ -57,7 +57,8 @@ internal class AltinnAdapter(
     )
     {
         appConfig ??= new AltinnAppConfiguration();
-        var instances = await altinnStorageClient.GetInstances(
+        
+        var instances = await altinnStorageClient.GetAllInstances(
             new InstanceQueryParameters
             {
                 AppId = $"{DependencyInjectionExtensions.AltinnOrgIdentifier}/{appId}",
@@ -68,12 +69,10 @@ internal class AltinnAdapter(
             }
         );
         
-        // TODO: Walk the pages to get all instances
-
-        var tasks = instances.Instances?
-            .Select(instance => GetInstanceSummaryAsync(instance, appConfig.MainDocumentDataTypeName)) ?? [];
+        var fetchInstanceTasks  = instances
+            .Select(instance => GetInstanceSummaryAsync(instance, appConfig.MainDocumentDataTypeName));
         
-        return await Task.WhenAll(tasks);
+        return await Task.WhenAll(fetchInstanceTasks);
     }
 
     private async Task<AltinnInstanceSummary> GetInstanceSummaryAsync(

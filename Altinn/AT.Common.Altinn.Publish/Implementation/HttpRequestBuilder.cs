@@ -15,7 +15,7 @@ internal class HttpRequestBuilder : IHttpRequestBuilder
     private readonly HttpClient _httpClient;
     private readonly HttpRequestMessage _request;
 
-    private List<string> _queryParameters = [];
+    private readonly List<string> _queryParameters = [];
 
     public HttpRequestBuilder(HttpClient httpClient, HttpRequestMessage request)
     {
@@ -60,9 +60,14 @@ internal class HttpRequestBuilder : IHttpRequestBuilder
 
         if (_queryParameters.Count != 0)
         {
+            // Default to relative
+            var kind = _request.RequestUri?.IsAbsoluteUri ?? false
+                ? UriKind.Absolute
+                : UriKind.Relative;
+            
             _request.RequestUri = new Uri(
                 $"{_request.RequestUri}?{string.Join('&', _queryParameters)}",
-                UriKind.Relative
+                kind
             );
         }
 

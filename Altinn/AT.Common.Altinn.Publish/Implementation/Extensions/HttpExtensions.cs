@@ -12,6 +12,14 @@ namespace Arbeidstilsynet.Common.Altinn.Implementation;
 
 internal static class HttpExtensions
 {
+    public static IHttpRequestBuilder WithBearerToken(
+        this IHttpRequestBuilder requestBuilder,
+        string token
+    )
+    {
+        return requestBuilder.WithHeader("Authorization", $"Bearer {token}");
+    }
+    
     public static IHttpRequestBuilder Post<TContent>(
         this HttpClient client,
         string resource,
@@ -28,6 +36,23 @@ internal static class HttpExtensions
             }
         );
     }
+    
+    public static IHttpRequestBuilder Post<TContent>(
+        this HttpClient client,
+        Uri uri,
+        TContent content
+    )
+    {
+        return new HttpRequestBuilder(
+            client,
+            new HttpRequestMessage()
+            {
+                RequestUri = uri,
+                Method = HttpMethod.Post,
+                Content = JsonContent.Create(content),
+            }
+        );
+    }
 
     public static IHttpRequestBuilder Get(this HttpClient client, string resource)
     {
@@ -36,6 +61,18 @@ internal static class HttpExtensions
             new HttpRequestMessage()
             {
                 RequestUri = new Uri(resource, UriKind.Relative),
+                Method = HttpMethod.Get,
+            }
+        );
+    }
+    
+    public static IHttpRequestBuilder Get(this HttpClient client, Uri uri)
+    {
+        return new HttpRequestBuilder(
+            client,
+            new HttpRequestMessage()
+            {
+                RequestUri = uri,
                 Method = HttpMethod.Get,
             }
         );

@@ -55,6 +55,24 @@ public class AltinnApiTestFixture : TestBedFixture
             }
         );
     }
+    
+    private static MappingModel MappingVisitor(MappingModel mapping)
+    {
+        if (mapping.Request?.Body is not null)
+        {
+            mapping.Request.Body = mapping.Request.Body with
+            {
+                Example = new Dictionary<string, object>
+                {
+                    { "appId", "dat-arbeidstilsynet-test" },
+                    { "instanceOwner", "dat-arbeidstilsynet" },
+                    { "instanceOwnerName", "Arbeidstilsynet" },
+                }
+            };
+        }
+
+        return mapping;
+    }
 
     protected override void AddServices(IServiceCollection services, IConfiguration? configuration)
     {
