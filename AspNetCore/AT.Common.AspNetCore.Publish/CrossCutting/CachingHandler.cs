@@ -7,7 +7,7 @@ internal class MemoryCachingHandler(IMemoryCache cache) : DelegatingHandler
     protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        if (request.Method !=  HttpMethod.Get)
+        if (request.Method != HttpMethod.Get)
         {            
             // Bypass caching for non-GET requests
             return await base.SendAsync(request, cancellationToken);
