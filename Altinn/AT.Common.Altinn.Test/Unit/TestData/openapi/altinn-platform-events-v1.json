@@ -18,7 +18,7 @@
     "/subscriptions": {
       "post": {
         "tags": ["Subscription"],
-        "summary": "Register an subscription for events.",
+        "summary": "Register a subscription for events.",
         "description": "Requires information about endpoint to post events for subscribers.",
         "requestBody": {
           "description": "The subscription details",
