@@ -5,6 +5,28 @@ namespace Arbeidstilsynet.Common.Altinn.Implementation;
 
 internal static class InstanceQueryParametersExtensions
 {
+    public static bool TryAppendContinuationToken(this InstanceQueryParameters instanceQueryParameters, Uri uri, out InstanceQueryParameters updatedQueryParameters)
+    {
+        var queryParameters = uri.Query
+            .TrimStart('?')
+            .Split('&', StringSplitOptions.RemoveEmptyEntries)
+            .Select(param => param.Split('='))
+            .Where(parts => parts.Length == 2)
+            .ToDictionary(parts => parts[0], parts => parts[1]);
+        
+        if (queryParameters.TryGetValue(InstanceQueryParameters.ContinuationTokenParameterName, out var continuationToken))
+        {
+            updatedQueryParameters = instanceQueryParameters with
+            {
+                ContinuationToken = continuationToken
+            };
+            return true;
+        }
+        updatedQueryParameters = instanceQueryParameters;
+        
+        return false;
+    }
+    
     public static IEnumerable<(string, string)> GetQueryParameters(
         this InstanceQueryParameters? queryParameters
     )

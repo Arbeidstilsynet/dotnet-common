@@ -88,29 +88,4 @@ internal class AltinnStorageClient : IAltinnStorageClient
                 .ReceiveContent<QueryResponse<Instance>>(_jsonSerializerOptions)
             ?? throw new Exception("Failed to get instance");
     }
-
-    public async Task<IEnumerable<Instance>> GetAllInstances(InstanceQueryParameters queryParameters)
-    {
-        var visitedUris = new HashSet<string>();
-        
-        var queryResponse = await GetInstances(queryParameters);
-
-        var instances = new List<Instance>(queryResponse.Instances);
-        
-        while (Uri.IsWellFormedUriString(queryResponse.Next, UriKind.Absolute) && visitedUris.Add(queryResponse.Next))
-        {
-            queryResponse = await _httpClient.Get(new Uri(queryResponse.Next, UriKind.Absolute))
-                .WithBearerToken(await _altinnTokenProvider.GetToken())
-                .ReceiveContent<QueryResponse<Instance>>();
-            
-            if (queryResponse?.Instances is null)
-            {
-                break;
-            }
-            
-            instances.AddRange(queryResponse.Instances);
-        }
-
-        return instances;
-    }
 }

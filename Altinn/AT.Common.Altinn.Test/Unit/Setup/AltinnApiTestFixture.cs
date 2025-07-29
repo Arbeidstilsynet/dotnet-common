@@ -42,36 +42,16 @@ public class AltinnApiTestFixture : TestBedFixture
         );
         _server.AddMappings(
             "Unit/TestData/openapi/altinn-platform-events-v1.json",
-            null,
-            new WireMockOpenApiParserSettings { DynamicExamples = false }
+            settings: new WireMockOpenApiParserSettings { DynamicExamples = false }
         );
         _server.AddMappings(
             "Unit/TestData/openapi/altinn-platform-storage-v1.json",
-            null,
-            new WireMockOpenApiParserSettings
+            settings: new WireMockOpenApiParserSettings
             {
                 ExampleValues = new DynamicDataGeneration(),
                 PathPatternToUse = ExampleValueType.Value,
             }
         );
-    }
-    
-    private static MappingModel MappingVisitor(MappingModel mapping)
-    {
-        if (mapping.Request?.Body is not null)
-        {
-            mapping.Request.Body = mapping.Request.Body with
-            {
-                Example = new Dictionary<string, object>
-                {
-                    { "appId", "dat-arbeidstilsynet-test" },
-                    { "instanceOwner", "dat-arbeidstilsynet" },
-                    { "instanceOwnerName", "Arbeidstilsynet" },
-                }
-            };
-        }
-
-        return mapping;
     }
 
     protected override void AddServices(IServiceCollection services, IConfiguration? configuration)

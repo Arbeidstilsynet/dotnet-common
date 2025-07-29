@@ -14,7 +14,4 @@ public interface IAltinnStorageClient
     Task<Stream> GetInstanceData(Uri absoluteUri);
 
     Task<QueryResponse<Instance>> GetInstances(InstanceQueryParameters queryParameters);
-    Task<IEnumerable<Instance>> GetAllInstances(InstanceQueryParameters queryParameters);
-    
-    
 }
