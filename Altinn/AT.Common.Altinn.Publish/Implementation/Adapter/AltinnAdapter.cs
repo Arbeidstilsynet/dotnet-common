@@ -41,7 +41,7 @@ internal class AltinnAdapter(
             {
                 SourceFilter = new Uri(
                     altinnApiConfigurationOptions.Value.AppBaseUrl,
-                    subscriptionRequestDto.AltinnAppIdentifier
+                    $"{DependencyInjectionExtensions.AltinnOrgIdentifier}/{subscriptionRequestDto.AltinnAppIdentifier}"
                 ),
                 EndPoint = subscriptionRequestDto.CallbackUrl,
                 TypeFilter = "app.instance.process.completed",
