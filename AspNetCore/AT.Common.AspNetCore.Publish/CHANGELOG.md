@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.2.1
+
+### Added
+
+- feat(extensions): added enum to string converter as default behavior when adding controllers
+
 ## 1.2.0
 
 ### Added
