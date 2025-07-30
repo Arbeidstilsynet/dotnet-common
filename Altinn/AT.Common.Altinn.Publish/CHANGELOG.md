@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 0.0.2
+
+### Changed
+
+- chore(altinn-adapter): update FileMetadata model to return an enum of FileScanResults instead of a string
+
 ## 0.0.1
 
 ### Added

@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 using Altinn.App.Core.Infrastructure.Clients.Events;
 using Altinn.App.Core.Models;
 using Altinn.Platform.Storage.Interface.Models;
@@ -126,7 +128,25 @@ file static class Extensions
             Filename = string.Equals(mainDocumentDataTypeName, dataElement.DataType)
                 ? "MainDocument"
                 : dataElement.Filename,
-            FileScanResult = dataElement.FileScanResult.ToString(),
+            FileScanResult = dataElement.FileScanResult.MapToInternalModel(),
+        };
+    }
+
+    public static FileScanResult MapToInternalModel(
+        this global::Altinn.Platform.Storage.Interface.Enums.FileScanResult fileScanResult
+    )
+    {
+        return fileScanResult switch
+        {
+            global::Altinn.Platform.Storage.Interface.Enums.FileScanResult.NotApplicable =>
+                FileScanResult.NotApplicable,
+            global::Altinn.Platform.Storage.Interface.Enums.FileScanResult.Pending =>
+                FileScanResult.Pending,
+            global::Altinn.Platform.Storage.Interface.Enums.FileScanResult.Clean =>
+                FileScanResult.Clean,
+            global::Altinn.Platform.Storage.Interface.Enums.FileScanResult.Infected =>
+                FileScanResult.Infected,
+            _ => throw new NotImplementedException(),
         };
     }
 
