@@ -27,18 +27,20 @@ internal class MemoryCachingHandler(IMemoryCache cache, IOptions<CachingOptions>
             && cache.TryGetCachedResponse(cacheKey, out var cachedResponse)
         )
         {
-            return cachedResponse;
+            return await cachedResponse!.CreateCopy()
+                        .WithHeader("X-From-Cache", "true");
         }
 
         var response = await base.SendAsync(request, cancellationToken);
 
-        if (response.IsSuccessStatusCode && cacheKey is { Length: > 0 })
+        if (response.IsSuccessStatusCode && cacheKey is { Length: > 0 }
+            && response.Content is ByteArrayContent or StringContent)
         {
-            // Clone the response to allow it to be read multiple times
-            var cachedClonedResponse = await response.Clone();
+            // Only cache if content is fully buffered and not null
+            cachedResponse = await response.CreateCopy();
             cache.Set(
                 cacheKey,
-                cachedClonedResponse,
+                cachedResponse,
                 new MemoryCacheEntryOptions()
                 {
                     SlidingExpiration = _cachingOptions.SlidingExpiration,
@@ -53,6 +55,8 @@ internal class MemoryCachingHandler(IMemoryCache cache, IOptions<CachingOptions>
 
 file static class Extensions
 {
+    
+    
     public static string? GetCacheKey(this HttpRequestMessage requestMessage)
     {
         if (requestMessage.RequestUri?.ToString() is not { Length: > 0 } cacheKey)
@@ -83,24 +87,66 @@ file static class Extensions
         return true;
     }
 
-    public static async Task<HttpResponseMessage> Clone(this HttpResponseMessage original)
+    public static async Task<HttpResponseMessage> CreateCopy(this HttpResponseMessage original)
     {
-        var cloned = new HttpResponseMessage(original.StatusCode);
+        var clone = new HttpResponseMessage(original.StatusCode)
+        {
+            Version = original.Version,
+            ReasonPhrase = original.ReasonPhrase,
+            RequestMessage = null // Avoid referencing disposed request
+        };
 
+        // Copy headers
         foreach (var header in original.Headers)
         {
-            cloned.Headers.TryAddWithoutValidation(header.Key, header.Value);
+            clone.Headers.TryAddWithoutValidation(header.Key, header.Value);
         }
-        var contentBytes = await original.Content.ReadAsByteArrayAsync();
-        cloned.Content = new ByteArrayContent(contentBytes);
-        foreach (var header in original.Content.Headers)
+
+        // Copy content
+        if (original.Content is StringContent stringContent)
         {
-            cloned.Content.Headers.TryAddWithoutValidation(header.Key, header.Value);
+            var str = await stringContent.ReadAsStringAsync();
+            clone.Content = new StringContent(str, stringContent.Headers.ContentType?.CharSet != null
+                ? System.Text.Encoding.GetEncoding(stringContent.Headers.ContentType.CharSet)
+                : null,
+                stringContent.Headers.ContentType?.MediaType);
+        }
+        else if (original.Content is ByteArrayContent)
+        {
+            var bytes = await original.Content.ReadAsByteArrayAsync();
+            clone.Content = new ByteArrayContent(bytes);
+        }
+        else if (original.Content != null)
+        {
+            // fallback: buffer as byte array
+            var bytes = await original.Content.ReadAsByteArrayAsync();
+            clone.Content = new ByteArrayContent(bytes);
         }
 
-        cloned.RequestMessage = original.RequestMessage;
-        cloned.Version = original.Version;
+        // Copy content headers
+        if (original.Content != null && clone.Content != null)
+        {
+            foreach (var header in original.Content.Headers)
+            {
+                if (!clone.Content.Headers.Contains(header.Key)) // Some content headers are set when setting content
+                {
+                    clone.Content.Headers.TryAddWithoutValidation(header.Key, header.Value);
+                }
+            }
+        }
 
-        return cloned;
+        return clone;
+    }
+    
+    public static async Task<HttpResponseMessage> WithHeader(
+        this Task<HttpResponseMessage> responseTask,
+        string headerName,
+        string headerValue
+    )
+    {
+        var response = await responseTask;
+        
+        response.Headers.TryAddWithoutValidation(headerName, headerValue);
+        return response;
     }
 }
