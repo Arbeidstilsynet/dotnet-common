@@ -8,14 +8,13 @@ internal class CustomControllerFeatureProvider : ControllerFeatureProvider
 {
     protected override bool IsController(TypeInfo typeInfo)
     {
-        var isControllerWithinExecutingAssembly =
-            Assembly.GetCallingAssembly() == typeInfo.Assembly;
+        var isControllerPartOfEntryAssembly = Assembly.GetEntryAssembly() == typeInfo.Assembly;
         var isInternalController =
             !typeInfo.IsAbstract
             && !typeInfo.IsPublic
             && typeInfo.IsDefined(typeof(ControllerAttribute));
-        // if a controller is internal it should only be added when it is a part of the calling assembly
-        return (isControllerWithinExecutingAssembly && isInternalController)
+        // if a controller is internal it should only be added when it is a part of assembly which starts the app
+        return (isControllerPartOfEntryAssembly && isInternalController)
             || base.IsController(typeInfo);
     }
 }
