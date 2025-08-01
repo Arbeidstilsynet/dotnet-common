@@ -5,6 +5,9 @@ using Microsoft.Extensions.Options;
 
 namespace Arbeidstilsynet.Common.AspNetCore.DependencyInjection;
 
+/// <summary>
+/// Options for configuring caching behavior.
+/// </summary>
 public record CachingOptions
 {
     /// <summary>
@@ -18,6 +21,9 @@ public record CachingOptions
     public TimeSpan AbsoluteExpiration { get; set; } = TimeSpan.FromHours(1);
 };
 
+/// <summary>
+/// Provides extension methods for adding a memory cached HTTP client to the service collection.
+/// </summary>
 public static class MemoryCachedHttpClient
 {
     /// <summary>
