@@ -55,8 +55,6 @@ internal class MemoryCachingHandler(IMemoryCache cache, IOptions<CachingOptions>
 
 file static class Extensions
 {
-    
-    
     public static string? GetCacheKey(this HttpRequestMessage requestMessage)
     {
         if (requestMessage.RequestUri?.ToString() is not { Length: > 0 } cacheKey)
@@ -106,10 +104,23 @@ file static class Extensions
         if (original.Content is StringContent stringContent)
         {
             var str = await stringContent.ReadAsStringAsync();
-            clone.Content = new StringContent(str, stringContent.Headers.ContentType?.CharSet != null
+            var encoding = stringContent.Headers.ContentType?.CharSet != null
                 ? System.Text.Encoding.GetEncoding(stringContent.Headers.ContentType.CharSet)
-                : null,
-                stringContent.Headers.ContentType?.MediaType);
+                : null;
+            var mediaType = stringContent.Headers.ContentType?.MediaType;
+
+            if (encoding == null)
+            {
+                clone.Content = new StringContent(str);
+            }
+            else if (mediaType == null)
+            {
+                clone.Content = new StringContent(str, encoding);
+            }
+            else
+            {
+                clone.Content = new StringContent(str, encoding, mediaType);
+            }
         }
         else if (original.Content is ByteArrayContent)
         {

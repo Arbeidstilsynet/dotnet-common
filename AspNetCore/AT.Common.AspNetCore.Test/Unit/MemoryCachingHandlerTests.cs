@@ -1,6 +1,7 @@
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Arbeidstilsynet.Common.AspNetCore;
 using Arbeidstilsynet.Common.AspNetCore.DependencyInjection;
 using Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
 using Microsoft.Extensions.Caching.Memory;
@@ -13,8 +14,6 @@ namespace AT.Common.AspNetCore.Extensions.Test.Unit;
 
 public class MemoryCachingHandlerTests
 {
-    
-    
     private readonly IOptions<CachingOptions> _cachingOptions = Options.Create(
         new CachingOptions()
         {
@@ -22,6 +21,13 @@ public class MemoryCachingHandlerTests
             AbsoluteExpiration = TimeSpan.FromHours(1),
         }
     );
+
+    private readonly VerifySettings _verifySettings = new();
+
+    public MemoryCachingHandlerTests()
+    {
+        _verifySettings.UseDirectory("TestData/Snapshots");
+    }
 
     [Fact]
     public async Task SendAsync_CachesSuccessfulGetResponse()
@@ -71,20 +77,6 @@ public class MemoryCachingHandlerTests
         {
             Content = new StringContent("cached"),
         };
-        var expectedCachedResponse = new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent("cached")
-            {
-                Headers =
-                {
-                    { "Content-Length", "cached".Length.ToString() }
-                }
-            },
-            Headers =
-            {
-                { "X-From-Cache", "true" }
-            }
-        };
         
         cache
             .TryGetValue(Arg.Any<object>(), out Arg.Any<object?>())
@@ -108,7 +100,9 @@ public class MemoryCachingHandlerTests
 
         var response = await invoker.SendAsync(request, CancellationToken.None);
 
-        
+        await Verify(response, _verifySettings);
+        var content = await response.Content.ReadAsStringAsync();
+        content.ShouldBe("cached");
     }
 
     [Fact]
@@ -161,35 +155,12 @@ public class MemoryCachingHandlerTests
     }
 
     [Fact]
-    public async Task SendAsync_CachedResponse_HasXFromCacheHeader()
-    {
-        var cache = new MemoryCache(new MemoryCacheOptions());
-        var handler = new MemoryCachingHandler(cache, _cachingOptions)
-        {
-            InnerHandler = new TestHandler(new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent("test"),
-            }),
-        };
-        var invoker = new HttpMessageInvoker(handler);
-        var request = new HttpRequestMessage(HttpMethod.Get, "https://test/api");
-
-        // First call: populates cache
-        var firstResponse = await invoker.SendAsync(request, CancellationToken.None);
-        // Second call: should hit cache
-        var secondResponse = await invoker.SendAsync(request, CancellationToken.None);
-
-        secondResponse.Headers.Contains("X-From-Cache").ShouldBeTrue();
-        secondResponse.Headers.GetValues("X-From-Cache").ShouldContain("true");
-    }
-
-    [Fact]
     public async Task SendAsync_DoesNotCache_NonBufferedContent()
     {
         var cache = Substitute.For<IMemoryCache>();
         var responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
         {
-            Content = new StreamContent(new MemoryStream(new byte[] { 1, 2, 3 })),
+            Content = new StreamContent(new MemoryStream([1, 2, 3])),
         };
         var handler = new MemoryCachingHandler(cache, _cachingOptions)
         {
@@ -223,15 +194,14 @@ public class MemoryCachingHandlerTests
         var secondResponse = await invoker.SendAsync(request, CancellationToken.None);
 
         // Mutate the cached response
-        secondResponse.Headers.Add("X-Mutated", "yes");
+        secondResponse.Headers.Add("X-Mutated", "yes, but this should not affect the cached response");
 
         // Third call: should get a mutated header (since same instance is returned)
         var thirdResponse = await invoker.SendAsync(request, CancellationToken.None);
 
-        // This will fail if you don't clone per retrieval; if you want true immutability, you must clone on every cache hit.
-        // For now, just assert it's the same instance (current implementation)
-        thirdResponse.ShouldBe(secondResponse);
-        thirdResponse.Headers.Contains("X-Mutated").ShouldBeTrue();
+        await Verify(thirdResponse, _verifySettings);
+        var content = await thirdResponse.Content.ReadAsStringAsync();
+        content.ShouldBe("test");
     }
 
     [Fact]
