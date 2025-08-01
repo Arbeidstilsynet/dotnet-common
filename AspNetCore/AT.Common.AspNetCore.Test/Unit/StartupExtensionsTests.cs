@@ -35,13 +35,13 @@ public class StartupExtensionsTests
     }
 
     [Fact]
-    public void AddCachedHttpClient_ShouldAddMemoryCacheAndHttpClient()
+    public void AddMemoryCachedClient_ShouldAddMemoryCacheAndHttpClient()
     {
         // Arrange
         var services = new ServiceCollection();
 
         // Act
-        var clientBuilder = services.AddCachedHttpClient("TestClient");
+        var clientBuilder = services.AddMemoryCachedClient("TestClient");
 
         // Assert
         services.ShouldContain(s => s.ServiceType == typeof(IMemoryCache));
@@ -50,13 +50,13 @@ public class StartupExtensionsTests
     }
 
     [Fact]
-    public void AddCachedHttpClient_WithConfiguration_ShouldAddMemoryCacheAndHttpClientWithConfig()
+    public void AddMemoryCachedClient_WithConfiguration_ShouldAddMemoryCacheAndHttpClientWithConfig()
     {
         // Arrange
         var services = new ServiceCollection();
 
         // Act
-        var clientBuilder = services.AddCachedHttpClient("TestClient", (_) => { });
+        var clientBuilder = services.AddMemoryCachedClient("TestClient", (_) => { });
 
         // Assert
         services.ShouldContain(s => s.ServiceType == typeof(IMemoryCache));
@@ -65,13 +65,13 @@ public class StartupExtensionsTests
     }
 
     [Fact]
-    public void AddCachedHttpClient_WithServiceProviderConfiguration_ShouldAddMemoryCacheAndHttpClientWithConfig()
+    public void AddMemoryCachedClient_WithServiceProviderConfiguration_ShouldAddMemoryCacheAndHttpClientWithConfig()
     {
         // Arrange
         var services = new ServiceCollection();
 
         // Act
-        var clientBuilder = services.AddCachedHttpClient("TestClient", (_, _) => { });
+        var clientBuilder = services.AddMemoryCachedClient("TestClient", (_, _) => { });
 
         // Assert
         services.ShouldContain(s => s.ServiceType == typeof(IMemoryCache));

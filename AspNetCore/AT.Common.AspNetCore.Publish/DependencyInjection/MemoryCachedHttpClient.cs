@@ -25,8 +25,9 @@ public static class MemoryCachedHttpClient
     /// </summary>
     /// <param name="services"></param>
     /// <param name="name"></param>
+    /// <param name="configureCachingOptions"></param>
     /// <returns></returns>
-    public static IHttpClientBuilder AddCachedHttpClient(
+    public static IHttpClientBuilder AddMemoryCachedClient(
         this IServiceCollection services,
         string name,
         Action<CachingOptions>? configureCachingOptions = null
@@ -49,15 +50,16 @@ public static class MemoryCachedHttpClient
     /// <param name="services"></param>
     /// <param name="name"></param>
     /// <param name="configureClient"></param>
+    /// <param name="configureCachingOptions"></param>
     /// <returns></returns>
-    public static IHttpClientBuilder AddCachedHttpClient(
+    public static IHttpClientBuilder AddMemoryCachedClient(
         this IServiceCollection services,
         string name,
         Action<HttpClient> configureClient,
         Action<CachingOptions>? configureCachingOptions = null
     )
     {
-        var clientBuilder = services.AddCachedHttpClient(name, configureCachingOptions);
+        var clientBuilder = services.AddMemoryCachedClient(name, configureCachingOptions);
         clientBuilder.ConfigureHttpClient(configureClient);
         return clientBuilder;
     }
@@ -68,15 +70,16 @@ public static class MemoryCachedHttpClient
     /// <param name="services"></param>
     /// <param name="name"></param>
     /// <param name="configureClient"></param>
+    /// <param name="configureCachingOptions"></param>
     /// <returns></returns>
-    public static IHttpClientBuilder AddCachedHttpClient(
+    public static IHttpClientBuilder AddMemoryCachedClient(
         this IServiceCollection services,
         string name,
         Action<IServiceProvider, HttpClient> configureClient,
         Action<CachingOptions>? configureCachingOptions = null
     )
     {
-        var clientBuilder = services.AddCachedHttpClient(name, configureCachingOptions);
+        var clientBuilder = services.AddMemoryCachedClient(name, configureCachingOptions);
         clientBuilder.ConfigureHttpClient(configureClient);
         return clientBuilder;
     }
