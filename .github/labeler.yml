@@ -1,10 +1,26 @@
+Altinn:
+  - changed-files:
+      - any-glob-to-any-file: "Altinn/**"
+
 AspNetCore:
   - changed-files:
       - any-glob-to-any-file: "AspNetCore/**"
 
+Enhetsregisteret:
+  - changed-files:
+      - any-glob-to-any-file: "Enhetsregisteret/**"
+
 EraClient:
   - changed-files:
       - any-glob-to-any-file: "EraClient/**"
+
+GeoNorge:
+  - changed-files:
+      - any-glob-to-any-file: "GeoNorge/**"
+
+TestExtensions:
+  - changed-files:
+      - any-glob-to-any-file: "TestExtensions/**"
 
 documentation:
   - changed-files:
