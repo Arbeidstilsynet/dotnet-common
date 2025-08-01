@@ -36,6 +36,16 @@ services.ConfigureCors(
     env.IsDevelopment()
 );
 
+// Add a memory cached HTTP client
+services.AddMemoryCachedHttpClient("MyCachedClient", configure =>
+{
+    configure.BaseAddress = new Uri("https://api.example.com");
+}, cachingOptions =>
+{
+    cachingOptions.SlidingExpiration = TimeSpan.FromMinutes(5);
+    cachingOptions.AbsoluteExpiration = DateTimeOffset.UtcNow.AddHours(1);
+});
+
 // Do the rest of your dependency injection here ...
 
 var app = builder.Build();

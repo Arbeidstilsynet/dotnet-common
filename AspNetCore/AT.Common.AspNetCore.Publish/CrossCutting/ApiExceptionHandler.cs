@@ -1,9 +1,10 @@
 using System.Net;
+using Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Arbeidstilsynet.Common.AspNetCore.Extensions;
+namespace Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
 
 internal static class ApiExceptionHandler
 {

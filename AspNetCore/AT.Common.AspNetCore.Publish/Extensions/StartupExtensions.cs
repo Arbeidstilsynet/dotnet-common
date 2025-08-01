@@ -1,10 +1,12 @@
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;

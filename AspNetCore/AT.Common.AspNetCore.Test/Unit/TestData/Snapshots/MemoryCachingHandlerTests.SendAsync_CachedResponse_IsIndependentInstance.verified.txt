@@ -1,0 +1,28 @@
+﻿{
+  Version: 1.1,
+  Content: {
+    Headers: [
+      {
+        Content-Type: [
+          text/plain; charset=utf-8
+        ]
+      },
+      {
+        Content-Length: [
+          4
+        ]
+      }
+    ]
+  },
+  StatusCode: OK,
+  ReasonPhrase: OK,
+  Headers: [
+    {
+      X-From-Cache: [
+        true
+      ]
+    }
+  ],
+  TrailingHeaders: [],
+  IsSuccessStatusCode: true
+}

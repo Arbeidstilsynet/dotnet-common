@@ -1,5 +1,7 @@
 using System.Net;
 using Arbeidstilsynet.Common.AspNetCore.Extensions;
+using Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
+using Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;

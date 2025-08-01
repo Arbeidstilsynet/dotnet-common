@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.3.0
+
+### Added
+
+- feat(extensions): added a memory cached http client (`services.AddMemoryCachedHttpClient(name)`)
+
 ## 1.2.1
 
 ### Added

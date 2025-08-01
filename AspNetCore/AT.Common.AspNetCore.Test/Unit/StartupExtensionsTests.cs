@@ -1,12 +1,15 @@
+using Arbeidstilsynet.Common.AspNetCore.DependencyInjection;
 using Arbeidstilsynet.Common.AspNetCore.Extensions;
 using Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Scalar.AspNetCore;
 using Shouldly;
 using Xunit;
 
@@ -29,6 +32,51 @@ public class StartupExtensionsTests
 
         // Assert
         result.ShouldBe(expectedOutput);
+    }
+
+    [Fact]
+    public void AddMemoryCachedClient_ShouldAddMemoryCacheAndHttpClient()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+
+        // Act
+        var clientBuilder = services.AddMemoryCachedClient("TestClient");
+
+        // Assert
+        services.ShouldContain(s => s.ServiceType == typeof(IMemoryCache));
+        services.ShouldContain(s => s.ServiceType == typeof(IHttpClientFactory));
+        clientBuilder.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void AddMemoryCachedClient_WithConfiguration_ShouldAddMemoryCacheAndHttpClientWithConfig()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+
+        // Act
+        var clientBuilder = services.AddMemoryCachedClient("TestClient", (_) => { });
+
+        // Assert
+        services.ShouldContain(s => s.ServiceType == typeof(IMemoryCache));
+        services.ShouldContain(s => s.ServiceType == typeof(IHttpClientFactory));
+        clientBuilder.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void AddMemoryCachedClient_WithServiceProviderConfiguration_ShouldAddMemoryCacheAndHttpClientWithConfig()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+
+        // Act
+        var clientBuilder = services.AddMemoryCachedClient("TestClient", (_, _) => { });
+
+        // Assert
+        services.ShouldContain(s => s.ServiceType == typeof(IMemoryCache));
+        services.ShouldContain(s => s.ServiceType == typeof(IHttpClientFactory));
+        clientBuilder.ShouldNotBeNull();
     }
 
     [Fact]
