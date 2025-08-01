@@ -39,6 +39,10 @@ public static partial class StartupExtensions
         services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
         services
             .AddControllers(configureMvcAction)
+            .ConfigureApplicationPartManager(manager =>
+            {
+                manager.FeatureProviders.Add(new CustomControllerFeatureProvider());
+            })
             .AddJsonOptions(options =>
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter())
             );

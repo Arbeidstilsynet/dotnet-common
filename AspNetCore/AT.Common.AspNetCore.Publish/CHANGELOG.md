@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - feat(extensions): added enum to string converter as default behavior when adding controllers
+- feat(extensions): added custom controller detector to also detect internal controllers (before it detected only public classes)
 
 ## 1.2.0
 
