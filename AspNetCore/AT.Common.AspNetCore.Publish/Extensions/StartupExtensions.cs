@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -36,7 +37,15 @@ public static partial class StartupExtensions
         configureMvcAction ??= options => options.Filters.Add<RequestValidationFilter>();
 
         services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
-        services.AddControllers(configureMvcAction);
+        services
+            .AddControllers(configureMvcAction)
+            .ConfigureApplicationPartManager(manager =>
+            {
+                manager.FeatureProviders.Add(new CustomControllerFeatureProvider());
+            })
+            .AddJsonOptions(options =>
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter())
+            );
         services.AddProblemDetails(configureProblemDetailsAction);
         var healthChecksBuilder = services.AddHealthChecks();
 
