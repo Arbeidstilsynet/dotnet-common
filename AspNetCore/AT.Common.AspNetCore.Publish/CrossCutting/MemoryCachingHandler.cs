@@ -27,14 +27,16 @@ internal class MemoryCachingHandler(IMemoryCache cache, IOptions<CachingOptions>
             && cache.TryGetCachedResponse(cacheKey, out var cachedResponse)
         )
         {
-            return await cachedResponse!.CreateCopy()
-                        .WithHeader("X-From-Cache", "true");
+            return await cachedResponse!.CreateCopy().WithHeader("X-From-Cache", "true");
         }
 
         var response = await base.SendAsync(request, cancellationToken);
 
-        if (response.IsSuccessStatusCode && cacheKey is { Length: > 0 }
-            && response.Content is ByteArrayContent or StringContent)
+        if (
+            response.IsSuccessStatusCode
+            && cacheKey is { Length: > 0 }
+            && response.Content is ByteArrayContent or StringContent
+        )
         {
             // Only cache if content is fully buffered and not null
             cachedResponse = await response.CreateCopy();
@@ -91,7 +93,7 @@ file static class Extensions
         {
             Version = original.Version,
             ReasonPhrase = original.ReasonPhrase,
-            RequestMessage = null // Avoid referencing disposed request
+            RequestMessage = null, // Avoid referencing disposed request
         };
 
         // Copy headers
@@ -104,9 +106,10 @@ file static class Extensions
         if (original.Content is StringContent stringContent)
         {
             var str = await stringContent.ReadAsStringAsync();
-            var encoding = stringContent.Headers.ContentType?.CharSet != null
-                ? System.Text.Encoding.GetEncoding(stringContent.Headers.ContentType.CharSet)
-                : null;
+            var encoding =
+                stringContent.Headers.ContentType?.CharSet != null
+                    ? System.Text.Encoding.GetEncoding(stringContent.Headers.ContentType.CharSet)
+                    : null;
             var mediaType = stringContent.Headers.ContentType?.MediaType;
 
             if (encoding == null)
@@ -148,7 +151,7 @@ file static class Extensions
 
         return clone;
     }
-    
+
     public static async Task<HttpResponseMessage> WithHeader(
         this Task<HttpResponseMessage> responseTask,
         string headerName,
@@ -156,7 +159,7 @@ file static class Extensions
     )
     {
         var response = await responseTask;
-        
+
         response.Headers.TryAddWithoutValidation(headerName, headerValue);
         return response;
     }

@@ -77,7 +77,7 @@ public class MemoryCachingHandlerTests
         {
             Content = new StringContent("cached"),
         };
-        
+
         cache
             .TryGetValue(Arg.Any<object>(), out Arg.Any<object?>())
             .Returns(x =>
@@ -180,10 +180,9 @@ public class MemoryCachingHandlerTests
         var cache = new MemoryCache(new MemoryCacheOptions());
         var handler = new MemoryCachingHandler(cache, _cachingOptions)
         {
-            InnerHandler = new TestHandler(new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent("test"),
-            }),
+            InnerHandler = new TestHandler(
+                new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("test") }
+            ),
         };
         var invoker = new HttpMessageInvoker(handler);
         var request = new HttpRequestMessage(HttpMethod.Get, "https://test/api");
@@ -194,7 +193,10 @@ public class MemoryCachingHandlerTests
         var secondResponse = await invoker.SendAsync(request, CancellationToken.None);
 
         // Mutate the cached response
-        secondResponse.Headers.Add("X-Mutated", "yes, but this should not affect the cached response");
+        secondResponse.Headers.Add(
+            "X-Mutated",
+            "yes, but this should not affect the cached response"
+        );
 
         // Third call: should get a mutated header (since same instance is returned)
         var thirdResponse = await invoker.SendAsync(request, CancellationToken.None);
@@ -210,10 +212,9 @@ public class MemoryCachingHandlerTests
         var cache = new MemoryCache(new MemoryCacheOptions());
         var handler = new MemoryCachingHandler(cache, _cachingOptions)
         {
-            InnerHandler = new TestHandler(new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent("test"),
-            }),
+            InnerHandler = new TestHandler(
+                new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("test") }
+            ),
         };
         var invoker = new HttpMessageInvoker(handler);
         var request = new HttpRequestMessage(HttpMethod.Get, "https://test/api");
