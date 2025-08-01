@@ -13,7 +13,7 @@ internal class CustomControllerFeatureProvider : ControllerFeatureProvider
         var isInternalController =
             !typeInfo.IsAbstract
             && !typeInfo.IsPublic
-            && typeof(ControllerBase).IsAssignableFrom(typeInfo);
+            && typeInfo.IsDefined(typeof(ControllerAttribute));
         // if a controller is internal it should only be added when it is a part of the executing assembly
         return (isControllerWithinExecutingAssembly && isInternalController)
             || base.IsController(typeInfo);
