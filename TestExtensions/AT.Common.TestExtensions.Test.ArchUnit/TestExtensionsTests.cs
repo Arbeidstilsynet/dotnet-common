@@ -10,7 +10,7 @@ namespace TestExtensions.ArchUnit.Tests;
 public class TestExtensionsAdapterLayerTests
 {
     static readonly Architecture Architecture = new ArchLoader()
-        .LoadAssemblies(Layers.TestExtensionsAssembly)
+        .LoadAssemblies(Layers.TestExtensionsAssembly, Layers.SystemConsoleAssembly)
         .Build();
 
     [Fact]
@@ -20,7 +20,7 @@ public class TestExtensionsAdapterLayerTests
             .That()
             .Are(Layers.TestExtensionsLayer)
             .Should()
-            .ResideInNamespace(Constants.RootNamespace, true)
+            .ResideInNamespaceMatching(Constants.RootNamespace)
             .WithoutRequiringPositiveResults();
 
         archRule.Check(Architecture);
@@ -64,8 +64,7 @@ public class TestExtensionsAdapterLayerTests
             .That()
             .Are(Layers.TestExtensionsLayer)
             .Should()
-            .NotDependOnAnyTypesThat()
-            .ResideInNamespace("^Amazon.*$", true);
+            .NotDependOnAny(Types().That().ResideInNamespaceMatching("^Amazon.*$"));
 
         archRule.Check(Architecture);
     }

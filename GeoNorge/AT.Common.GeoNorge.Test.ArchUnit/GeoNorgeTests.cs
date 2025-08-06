@@ -10,7 +10,7 @@ namespace GeoNorge.ArchUnit.Tests;
 public class GeoNorgeAdapterLayerTests
 {
     static readonly Architecture Architecture = new ArchLoader()
-        .LoadAssemblies(Layers.GeoNorgeAssembly)
+        .LoadAssemblies(Layers.GeoNorgeAssembly, Layers.SystemConsoleAssembly)
         .Build();
 
     [Fact]
@@ -20,7 +20,7 @@ public class GeoNorgeAdapterLayerTests
             .That()
             .Are(Layers.GeoNorgeLayer)
             .Should()
-            .ResideInNamespace(Constants.RootNamespace, true)
+            .ResideInNamespaceMatching(Constants.RootNamespace)
             .WithoutRequiringPositiveResults();
 
         archRule.Check(Architecture);
@@ -64,8 +64,7 @@ public class GeoNorgeAdapterLayerTests
             .That()
             .Are(Layers.GeoNorgeLayer)
             .Should()
-            .NotDependOnAnyTypesThat()
-            .ResideInNamespace("^Amazon.*$", true);
+            .NotDependOnAny(Types().That().ResideInNamespaceMatching("^Amazon.*$"));
 
         archRule.Check(Architecture);
     }

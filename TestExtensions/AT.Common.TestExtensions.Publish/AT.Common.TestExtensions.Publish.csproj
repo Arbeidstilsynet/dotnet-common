@@ -10,7 +10,7 @@
     <Company>Arbeidstilsynet</Company>
     <Description>A collection of useful patterns and extensions for unit testing in .NET.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>0.0.1</Version>
+    <Version>0.0.2</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
   </PropertyGroup>
