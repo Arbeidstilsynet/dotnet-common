@@ -8,4 +8,8 @@ public record AltinnMetadata
     public string? App { get; init; }
 
     public string? OrganisationNumber { get; init; }
+
+    public DateTime? ProcessStarted { get; init; }
+
+    public DateTime? ProcessEnded { get; init; }
 }
