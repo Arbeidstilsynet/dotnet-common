@@ -24,6 +24,9 @@ namespace AspNetCore.ArchUnit.Tests
         internal static readonly System.Reflection.Assembly AspNetCoreAssembly =
             typeof(Arbeidstilsynet.Common.AspNetCore.IAssemblyInfo).Assembly;
 
+        internal static readonly System.Reflection.Assembly SystemConsoleAssembly =
+            typeof(System.Console).Assembly;
+
         internal static readonly IObjectProvider<IType> AspNetCoreLayer = Types()
             .That()
             .ResideInAssembly(AspNetCoreAssembly)
@@ -49,11 +52,11 @@ namespace AspNetCore.ArchUnit.Tests
 
         internal static readonly IObjectProvider<IType> ExportableTypes = Types()
             .That()
-            .ResideInNamespace(Constants.ExtensionsNamespace, true)
+            .ResideInNamespaceMatching(Constants.ExtensionsNamespace)
             .Or()
-            .ResideInNamespace(Constants.DependencyInjectionNamespace, true)
+            .ResideInNamespaceMatching(Constants.DependencyInjectionNamespace)
             .Or()
-            .ResideInNamespace(Constants.ModelNamespace, true)
+            .ResideInNamespaceMatching(Constants.ModelNamespace)
             .As("inside exportable namespaces");
 
         internal static readonly IObjectProvider<IType> TypesInInternalNamespaces = Types()

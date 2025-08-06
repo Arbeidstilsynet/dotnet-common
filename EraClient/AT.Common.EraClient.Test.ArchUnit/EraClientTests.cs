@@ -10,7 +10,7 @@ namespace EraClient.ArchUnit.Tests;
 public class EraClientAdapterLayerTests
 {
     static readonly Architecture Architecture = new ArchLoader()
-        .LoadAssemblies(Layers.EraClientAssembly)
+        .LoadAssemblies(Layers.EraClientAssembly, Layers.SystemConsoleAssembly)
         .Build();
 
     [Fact]
@@ -20,7 +20,7 @@ public class EraClientAdapterLayerTests
             .That()
             .Are(Layers.EraClientLayer)
             .Should()
-            .ResideInNamespace(Constants.RootNamespace, true);
+            .ResideInNamespaceMatching(Constants.RootNamespace);
 
         archRule.Check(Architecture);
     }
@@ -62,8 +62,7 @@ public class EraClientAdapterLayerTests
             .That()
             .Are(Layers.EraClientLayer)
             .Should()
-            .NotDependOnAnyTypesThat()
-            .ResideInNamespace("^Amazon.*$", true);
+            .NotDependOnAny(Types().That().ResideInNamespaceMatching("^Amazon.*$"));
 
         archRule.Check(Architecture);
     }

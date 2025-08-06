@@ -10,7 +10,7 @@ namespace AT.Common.Altinn.Test.ArchUnit;
 public class AltinnAdapterLayerTests
 {
     static readonly Architecture Architecture = new ArchLoader()
-        .LoadAssemblies(Layers.AltinnAssembly)
+        .LoadAssemblies(Layers.AltinnAssembly, Layers.SystemConsoleAssembly)
         .Build();
 
     [Fact]
@@ -20,7 +20,7 @@ public class AltinnAdapterLayerTests
             .That()
             .Are(Layers.AltinnLayer)
             .Should()
-            .ResideInNamespace(Constants.RootNamespace, true)
+            .ResideInNamespaceMatching(Constants.RootNamespace)
             .WithoutRequiringPositiveResults();
 
         archRule.Check(Architecture);
@@ -66,8 +66,7 @@ public class AltinnAdapterLayerTests
             .That()
             .Are(Layers.AltinnLayer)
             .Should()
-            .NotDependOnAnyTypesThat()
-            .ResideInNamespace("^Amazon.*$", true);
+            .NotDependOnAny(Types().That().ResideInNamespaceMatching("^Amazon.*$"));
 
         archRule.Check(Architecture);
     }

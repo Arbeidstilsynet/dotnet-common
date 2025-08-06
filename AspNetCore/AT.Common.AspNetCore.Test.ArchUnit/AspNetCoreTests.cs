@@ -10,7 +10,7 @@ namespace AspNetCore.ArchUnit.Tests;
 public class AspNetCoreAdapterLayerTests
 {
     static readonly Architecture Architecture = new ArchLoader()
-        .LoadAssemblies(Layers.AspNetCoreAssembly)
+        .LoadAssemblies(Layers.AspNetCoreAssembly, Layers.SystemConsoleAssembly)
         .Build();
 
     [Fact]
@@ -20,7 +20,7 @@ public class AspNetCoreAdapterLayerTests
             .That()
             .Are(Layers.AspNetCoreLayer)
             .Should()
-            .ResideInNamespace(Constants.RootNamespace, true);
+            .ResideInNamespaceMatching(Constants.RootNamespace);
 
         archRule.Check(Architecture);
     }
@@ -62,8 +62,7 @@ public class AspNetCoreAdapterLayerTests
             .That()
             .Are(Layers.AspNetCoreLayer)
             .Should()
-            .NotDependOnAnyTypesThat()
-            .ResideInNamespace("^Amazon.*$", true);
+            .NotDependOnAny(Types().That().ResideInNamespaceMatching("^Amazon.*$"));
 
         archRule.Check(Architecture);
     }

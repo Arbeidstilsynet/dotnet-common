@@ -24,6 +24,8 @@ namespace Enhetsregisteret.ArchUnit.Tests
         internal static readonly System.Reflection.Assembly EnhetsregisteretAssembly =
             typeof(Arbeidstilsynet.Common.Enhetsregisteret.IAssemblyInfo).Assembly;
 
+        internal static readonly System.Reflection.Assembly SystemConsoleAssembly =
+            typeof(System.Console).Assembly;
         internal static readonly IObjectProvider<IType> EnhetsregisteretLayer = Types()
             .That()
             .ResideInAssembly(EnhetsregisteretAssembly)
@@ -49,11 +51,11 @@ namespace Enhetsregisteret.ArchUnit.Tests
 
         internal static readonly IObjectProvider<IType> ExportableTypes = Types()
             .That()
-            .ResideInNamespace(Constants.ExtensionsNamespace, true)
+            .ResideInNamespaceMatching(Constants.ExtensionsNamespace)
             .Or()
-            .ResideInNamespace(Constants.DependencyInjectionNamespace, true)
+            .ResideInNamespaceMatching(Constants.DependencyInjectionNamespace)
             .Or()
-            .ResideInNamespace(Constants.ModelNamespace, true)
+            .ResideInNamespaceMatching(Constants.ModelNamespace)
             .As("inside exportable namespaces");
 
         internal static readonly IObjectProvider<IType> TypesInInternalNamespaces = Types()
