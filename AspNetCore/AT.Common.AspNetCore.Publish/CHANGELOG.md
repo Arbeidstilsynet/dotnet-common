@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.3.2
+
+### Added
+
+- chore(extensions): add default hexarch project `Sources` for tracing. Also added ef instrumentation as default tracing instrumentation.
+
 ## 1.3.1
 
 ### Changed
