@@ -84,8 +84,12 @@ public static partial class StartupExtensions
             })
             .WithTracing(options =>
             {
+                options.AddSource("API.Adapters");
+                options.AddSource("Domain.Logic");
+                options.AddSource("Infrastructure.Adapters");
                 options.AddAspNetCoreInstrumentation();
                 options.AddHttpClientInstrumentation();
+                options.AddEntityFrameworkCoreInstrumentation();
                 options.AddOtlpExporter();
             })
             .WithLogging(
