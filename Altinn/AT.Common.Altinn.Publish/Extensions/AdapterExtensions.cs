@@ -42,6 +42,8 @@ public static class AdapterExtensions
             InstanceGuid = instanceGuid,
             InstanceOwnerPartyId = partyId,
             OrganisationNumber = altinnInstance.InstanceOwner.OrganisationNumber,
+            ProcessStarted = altinnInstance.Process.Started,
+            ProcessEnded = altinnInstance.Process.Ended,
         };
     }
 
