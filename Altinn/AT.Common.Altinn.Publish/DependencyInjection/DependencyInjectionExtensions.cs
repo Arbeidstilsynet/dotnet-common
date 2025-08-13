@@ -155,21 +155,18 @@ public static class DependencyInjectionExtensions
     /// <param name="services"></param>
     /// <param name="hostEnvironment"></param>
     /// <param name="altinnTokenProvider">A custom altinn token provider which should be used for authenticating altinn clients.</param>
-    /// <param name="maskinportenBaseUrl">Optional maskinporten url if deviation from default is required.</param>
     /// <param name="altinnApiConfiguration">Only required if it needs to be overwritten. By default, we determine BaseUrls based on the provided hostEnvironment.</param>
     /// <returns>Makes the usage of <see cref="IAltinnAdapter"/>, <see cref="IAltinnEventsClient"/> and <see cref="IAltinnStorageClient"/> available for the consumer.</returns>
     public static IServiceCollection AddAltinnAdapter(
         this IServiceCollection services,
         IWebHostEnvironment hostEnvironment,
         IAltinnTokenProvider altinnTokenProvider,
-        string? maskinportenBaseUrl = null,
         AltinnApiConfiguration? altinnApiConfiguration = null
     )
     {
         services.AddAltinnApiClients(
             hostEnvironment,
             altinnTokenProvider,
-            maskinportenBaseUrl,
             altinnApiConfiguration
         );
         services.AddScoped<IAltinnAdapter, AltinnAdapter>();
@@ -203,9 +200,13 @@ public static class DependencyInjectionExtensions
         {
             services.AddSingleton<IAltinnTokenProvider, AltinnTokenProvider>();
         }
-        return services.AddAltinnApiClientsInternal(
+
+        services.AddAltinnTokenClientsInternal(
             hostEnvironment,
             altinnAuthenticationConfiguration,
+            altinnApiConfiguration
+            );
+        return services.AddAltinnApiClientsInternal(
             altinnApiConfiguration
         );
     }
@@ -216,14 +217,12 @@ public static class DependencyInjectionExtensions
     /// <param name="services"></param>
     /// <param name="hostEnvironment"></param>
     /// <param name="altinnTokenProvider">A custom altinn token provider which should be used for authenticating altinn clients.</param>
-    /// <param name="maskinportenBaseUrl">Optional maskinporten url if deviation from default is required.</param>
     /// <param name="altinnApiConfiguration">Only required if it needs to be overwritten. By default, we determine BaseUrls based on the provided hostEnvironment.</param>
     /// <returns>Makes the usage of <see cref="IAltinnEventsClient"/> and <see cref="IAltinnStorageClient"/> available for the consumer.</returns>
     public static IServiceCollection AddAltinnApiClients(
         this IServiceCollection services,
         IWebHostEnvironment hostEnvironment,
         IAltinnTokenProvider altinnTokenProvider,
-        string? maskinportenBaseUrl = null,
         AltinnApiConfiguration? altinnApiConfiguration = null
     )
     {
@@ -234,24 +233,49 @@ public static class DependencyInjectionExtensions
         services.AddSingleton<IAltinnTokenProvider>(altinnTokenProvider);
 
         return services.AddAltinnApiClientsInternal(
-            hostEnvironment,
-            new AltinnAuthenticationConfiguration
-            {
-                CertificatePrivateKey = "",
-                IntegrationId = "",
-                Scopes = [],
-                MaskinportenUrl = string.IsNullOrEmpty(maskinportenBaseUrl)
-                    ? default
-                    : new Uri(maskinportenBaseUrl),
-            },
             altinnApiConfiguration
         );
     }
 
-    private static IServiceCollection AddAltinnApiClientsInternal(
+    private static IServiceCollection AddAltinnTokenClientsInternal(
         this IServiceCollection services,
         IWebHostEnvironment hostEnvironment,
         AltinnAuthenticationConfiguration altinnAuthenticationConfiguration,
+        AltinnApiConfiguration altinnApiConfiguration)
+    {
+        services
+            .AddMemoryCachedClient(
+                AltinnAuthenticationApiClientKey,
+                client =>
+                {
+                    client.BaseAddress = altinnApiConfiguration.AuthenticationUrl;
+                },
+                options =>
+                {
+                    // max token lifetime is 120 seconds
+                    options.AbsoluteExpiration = TimeSpan.FromSeconds(110);
+                }
+            )
+            .AddStandardResilienceHandler();
+        services
+            .AddHttpClient(
+                MaskinportenApiClientKey,
+                client =>
+                {
+                    client.BaseAddress =
+                        altinnAuthenticationConfiguration.MaskinportenUrl
+                        ?? new Uri(hostEnvironment.GetMaskinportenUrl());
+                }
+            )
+            .AddStandardResilienceHandler();
+        services.AddTransient<IAltinnAuthenticationClient, AltinnAuthenticationClient>();
+        services.AddTransient<IMaskinportenClient, MaskinportenClient>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddAltinnApiClientsInternal(
+        this IServiceCollection services,
         AltinnApiConfiguration altinnApiConfiguration
     )
     {
@@ -273,36 +297,10 @@ public static class DependencyInjectionExtensions
                 }
             )
             .AddStandardResilienceHandler();
-        services
-            .AddHttpClient(
-                AltinnAuthenticationApiClientKey,
-                client =>
-                {
-                    client.BaseAddress = altinnApiConfiguration.AuthenticationUrl;
-                }
-            )
-            .AddStandardResilienceHandler();
-        services
-            .AddMemoryCachedClient(
-                MaskinportenApiClientKey,
-                client =>
-                {
-                    client.BaseAddress =
-                        altinnAuthenticationConfiguration.MaskinportenUrl
-                        ?? new Uri(hostEnvironment.GetMaskinportenUrl());
-                },
-                options =>
-                {
-                    // max token lifetime is 120 seconds
-                    options.AbsoluteExpiration = TimeSpan.FromSeconds(110);
-                }
-            )
-            .AddStandardResilienceHandler();
 
         services.AddTransient<IAltinnEventsClient, AltinnEventsClient>();
         services.AddTransient<IAltinnStorageClient, AltinnStorageClient>();
-        services.AddTransient<IAltinnAuthenticationClient, AltinnAuthenticationClient>();
-        services.AddTransient<IMaskinportenClient, MaskinportenClient>();
+        
         return services;
     }
 }
