@@ -8,7 +8,9 @@ namespace Arbeidstilsynet.Common.Altinn.Ports.Clients;
 /// </summary>
 public interface IMaskinportenClient
 {
-    Task<MaskinportenTokenResponse> GetToken(string jwtGrant);
-
-    Uri BaseUrl { get; }
+    /// <summary>
+    /// Get a Maskinporten token
+    /// </summary>
+    /// <returns></returns>
+    Task<MaskinportenTokenResponse> GetToken();
 }

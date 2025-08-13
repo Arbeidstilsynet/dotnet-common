@@ -20,7 +20,7 @@ internal class AltinnEventsClient : IAltinnEventsClient
     )
     {
         _altinnTokenProvider = altinnTokenProvider;
-        _httpClient = httpClientFactory.CreateClient(AltinnAppApiClientKey);
+        _httpClient = httpClientFactory.CreateClient(AltinnEventsApiClientKey);
         _jsonSerializerOptions = new System.Text.Json.JsonSerializerOptions()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,

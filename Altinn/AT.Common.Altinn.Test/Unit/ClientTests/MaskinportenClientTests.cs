@@ -28,7 +28,7 @@ public class MaskinportenClientTests : TestBed<AltinnApiTestFixture>
     {
         //arrange
         //act
-        var result = await _sut.GetToken(AltinnApiTestFixture.SampleJwtToken);
+        var result = await _sut.GetToken();
 
         //assert
         result.ShouldBeEquivalentTo(AltinnApiTestFixture.SampleMaskinportenTokenResponse);

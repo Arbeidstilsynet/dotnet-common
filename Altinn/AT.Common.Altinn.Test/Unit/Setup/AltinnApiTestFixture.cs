@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using Altinn.App.Core.Helpers;
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Model.Api;
@@ -69,7 +70,7 @@ public class AltinnApiTestFixture : TestBedFixture
                         new FormUrlEncodedMatcher(
                             [
                                 "grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer",
-                                $"assertion={SampleJwtToken}",
+                                $"assertion=eyJ*",
                             ],
                             false,
                             MatchOperator.And
@@ -89,7 +90,7 @@ public class AltinnApiTestFixture : TestBedFixture
             new AltinnAuthenticationConfiguration()
             {
                 MaskinportenUrl = new Uri(_server.Urls[0]),
-                CertificatePrivateKey = "privateKey",
+                CertificatePrivateKey = Convert.ToBase64String(RSA.Create(2048).ExportRSAPrivateKey()),
                 IntegrationId = "integration",
                 Scopes = ["test:read"],
             },

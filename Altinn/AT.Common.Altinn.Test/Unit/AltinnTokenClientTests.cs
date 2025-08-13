@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Altinn.App.Core.Features.Maskinporten;
+using Arbeidstilsynet.Common.Altinn.Implementation;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -29,7 +30,7 @@ public class AltinnTokenClientTests
         var privateKey = rsa.ExportRSAPrivateKey();
 
         //act
-        var result = AltinnTokenProvider.GenerateJwtGrant(
+        var result = JwtExtensions.GenerateJwtGrant(
             "https://test.maskinporten.no",
             Convert.ToBase64String(privateKey),
             "testIntegration",

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Altinn.App.Core.Features;
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation;
@@ -25,25 +26,57 @@ public record LandOptionsConfiguration(string OptionsId = "land");
 /// <summary>
 /// Configuration for Altinn 3 APIs.
 /// </summary>
-/// <param name="StorageUrl">Base Url for Altinn Storage Endpoints. See https://docs.altinn.studio/nb/api/storage/spec/</param>
-/// <param name="EventUrl">Base Url for Altinn App Endpoints. See https://docs.altinn.studio/events/api/openapi/</param>
 public record AltinnApiConfiguration
 {
+    /// <summary>
+    /// The base URL for Altinn authentication endpoints. See https://docs.altinn.studio/nb/api/authentication/spec/
+    /// </summary>
     public required Uri AuthenticationUrl { get; init; }
+    
+    /// <summary>
+    /// The base URL for Altinn storage endpoints. See https://docs.altinn.studio/nb/api/storage/spec/
+    /// </summary>
     public required Uri StorageUrl { get; init; }
+    
+    /// <summary>
+    /// The base URL for Altinn event endpoints. See https://docs.altinn.studio/events/api/openapi/
+    /// </summary>
     public required Uri EventUrl { get; init; }
-
+    
+    /// <summary>
+    /// The base URL for the Altinn application.
+    /// </summary>
     public required Uri AppBaseUrl { get; init; }
 }
 
+/// <summary>
+/// Configuration for Altinn authentication.
+/// </summary>
 public record AltinnAuthenticationConfiguration
 {
+    /// <summary>
+    /// The private key for the certificate used for authentication.
+    /// </summary>
+    [Required]
     public required string CertificatePrivateKey { get; init; }
+    
+    /// <summary>
+    /// The integration ID for the Altinn application.
+    /// </summary>
+    [Required]
     public required string IntegrationId { get; init; }
 
+    /// <summary>
+    /// The scopes to request during authentication.
+    /// </summary>
+    [Required]
     public required string[] Scopes { get; init; }
 
-    public Uri? MaskinportenUrl { get; init; } = default;
+    /// <summary>
+    /// The base URL for Maskinporten authentication.
+    /// </summary>
+    [Required]
+    public Uri? MaskinportenUrl { get; init; }
 }
 
 /// <summary>
@@ -53,7 +86,7 @@ public static class DependencyInjectionExtensions
 {
     internal const string AltinnOrgIdentifier = "dat";
     internal const string AltinnStorageApiClientKey = "AltinnStorageApiClient";
-    internal const string AltinnAppApiClientKey = "AltinnEventsApiClient";
+    internal const string AltinnEventsApiClientKey = "AltinnEventsApiClient";
 
     internal const string AltinnAuthenticationApiClientKey = "AltinnAuthenticationApiClient";
 
@@ -224,7 +257,7 @@ public static class DependencyInjectionExtensions
     {
         services
             .AddHttpClient(
-                AltinnAppApiClientKey,
+                AltinnEventsApiClientKey,
                 client =>
                 {
                     client.BaseAddress = altinnApiConfiguration.EventUrl;
