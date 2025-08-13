@@ -1,9 +1,9 @@
-namespace Arbeidstilsynet.Common.Altinn.Ports;
+namespace Arbeidstilsynet.Common.Altinn.Ports.Token;
 
 /// <summary>
-/// Provides access to Altinn authentication tokens. Should only be used internally via DependencyInjection.
+/// Provides access to Altinn authentication tokens.
 /// </summary>
-internal interface IAltinnTokenProvider
+public interface IAltinnTokenProvider
 {
     /// <summary>
     /// Gets an authentication token for Altinn API requests.

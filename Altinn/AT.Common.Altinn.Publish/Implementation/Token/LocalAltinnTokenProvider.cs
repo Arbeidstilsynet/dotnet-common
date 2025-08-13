@@ -1,8 +1,4 @@
-using System.IdentityModel.Tokens.Jwt;
-using Arbeidstilsynet.Common.Altinn.DependencyInjection;
-using Arbeidstilsynet.Common.Altinn.Ports;
-using Arbeidstilsynet.Common.Altinn.Ports.Adapter;
-using Microsoft.Extensions.Options;
+using Arbeidstilsynet.Common.Altinn.Ports.Token;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 

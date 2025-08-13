@@ -6,6 +6,7 @@ using Arbeidstilsynet.Common.Altinn.Implementation.Clients;
 using Arbeidstilsynet.Common.Altinn.Ports;
 using Arbeidstilsynet.Common.Altinn.Ports.Adapter;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
+using Arbeidstilsynet.Common.Altinn.Ports.Token;
 using Arbeidstilsynet.Common.AspNetCore.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -95,7 +96,7 @@ public static class DependencyInjectionExtensions
     /// </summary>
     /// <param name="services"></param>
     /// <param name="hostEnvironment"></param>
-    /// <param name="altinnTokenProvider">Implementation to retrieve a valid altinn token. If caching is required, it need to be implemented.</param>
+    /// <param name="altinnAuthenticationConfiguration">Configuration for the altinn token exchange</param>
     /// <param name="altinnApiConfiguration">Only required if it needs to be overwritten. By default, we determine BaseUrls based on the provided hostEnvironment.</param>
     /// <returns>Makes the usage of <see cref="IAltinnAdapter"/>, <see cref="IAltinnEventsClient"/> and <see cref="IAltinnStorageClient"/> available for the consumer.</returns>
     public static IServiceCollection AddAltinnAdapter(
@@ -111,7 +112,34 @@ public static class DependencyInjectionExtensions
             altinnApiConfiguration
         );
         services.AddScoped<IAltinnAdapter, AltinnAdapter>();
-        services.AddScoped<IAltinnTokenAdapter, AltinnTokenAdapter>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adds an adapter which contains convenience services for altinn communication. It also adds all available Altinn Clients to communicate with the Altinn 3 Apis.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="hostEnvironment"></param>
+    /// <param name="altinnTokenProvider">A custom altinn token provider which should be used for authenticating altinn clients.</param>
+    /// <param name="maskinportenBaseUrl">Optional maskinporten url if deviation from default is required.</param>
+    /// <param name="altinnApiConfiguration">Only required if it needs to be overwritten. By default, we determine BaseUrls based on the provided hostEnvironment.</param>
+    /// <returns>Makes the usage of <see cref="IAltinnAdapter"/>, <see cref="IAltinnEventsClient"/> and <see cref="IAltinnStorageClient"/> available for the consumer.</returns>
+    public static IServiceCollection AddAltinnAdapter(
+        this IServiceCollection services,
+        IWebHostEnvironment hostEnvironment,
+        IAltinnTokenProvider altinnTokenProvider,
+        string? maskinportenBaseUrl = null,
+        AltinnApiConfiguration? altinnApiConfiguration = null
+    )
+    {
+        services.AddAltinnApiClients(
+            hostEnvironment,
+            altinnTokenProvider,
+            maskinportenBaseUrl,
+            altinnApiConfiguration
+        );
+        services.AddScoped<IAltinnAdapter, AltinnAdapter>();
 
         return services;
     }
@@ -134,6 +162,66 @@ public static class DependencyInjectionExtensions
         altinnApiConfiguration ??= hostEnvironment.CreateDefaultAltinnApiConfiguration();
         services.AddSingleton(Options.Create(altinnApiConfiguration));
         services.AddSingleton(Options.Create(altinnAuthenticationConfiguration));
+        if (hostEnvironment.IsDevelopment())
+        {
+            services.AddSingleton<IAltinnTokenProvider, LocalAltinnTokenProvider>();
+        }
+        else
+        {
+            services.AddSingleton<IAltinnTokenProvider, AltinnTokenProvider>();
+        }
+        return services.AddAltinnApiClientsInternal(
+            hostEnvironment,
+            altinnAuthenticationConfiguration,
+            altinnApiConfiguration
+        );
+    }
+
+    /// <summary>
+    /// Adds all available Altinn Clients to communicate with the Altinn 3 Apis.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="hostEnvironment"></param>
+    /// <param name="altinnTokenProvider">A custom altinn token provider which should be used for authenticating altinn clients.</param>
+    /// <param name="maskinportenBaseUrl">Optional maskinporten url if deviation from default is required.</param>
+    /// <param name="altinnApiConfiguration">Only required if it needs to be overwritten. By default, we determine BaseUrls based on the provided hostEnvironment.</param>
+    /// <returns>Makes the usage of <see cref="IAltinnEventsClient"/> and <see cref="IAltinnStorageClient"/> available for the consumer.</returns>
+    public static IServiceCollection AddAltinnApiClients(
+        this IServiceCollection services,
+        IWebHostEnvironment hostEnvironment,
+        IAltinnTokenProvider altinnTokenProvider,
+        string? maskinportenBaseUrl = null,
+        AltinnApiConfiguration? altinnApiConfiguration = null
+    )
+    {
+        altinnApiConfiguration ??= hostEnvironment.CreateDefaultAltinnApiConfiguration();
+
+        services.AddSingleton(Options.Create(altinnApiConfiguration));
+
+        services.AddSingleton<IAltinnTokenProvider>(altinnTokenProvider);
+
+        return services.AddAltinnApiClientsInternal(
+            hostEnvironment,
+            new AltinnAuthenticationConfiguration
+            {
+                CertificatePrivateKey = "",
+                IntegrationId = "",
+                Scopes = [],
+                MaskinportenUrl = string.IsNullOrEmpty(maskinportenBaseUrl)
+                    ? default
+                    : new Uri(maskinportenBaseUrl),
+            },
+            altinnApiConfiguration
+        );
+    }
+
+    private static IServiceCollection AddAltinnApiClientsInternal(
+        this IServiceCollection services,
+        IWebHostEnvironment hostEnvironment,
+        AltinnAuthenticationConfiguration altinnAuthenticationConfiguration,
+        AltinnApiConfiguration altinnApiConfiguration
+    )
+    {
         services
             .AddHttpClient(
                 AltinnAppApiClientKey,
@@ -177,15 +265,7 @@ public static class DependencyInjectionExtensions
                 }
             )
             .AddStandardResilienceHandler();
-        if (hostEnvironment.IsDevelopment())
-        {
-            services.AddSingleton<IAltinnTokenProvider, LocalAltinnTokenProvider>();
-        }
-        else
-        {
-            services.AddSingleton<IAltinnTokenProvider, AltinnTokenProvider>();
-        }
-        services.AddSingleton<IAltinnTokenAdapter, AltinnTokenAdapter>();
+
         services.AddTransient<IAltinnEventsClient, AltinnEventsClient>();
         services.AddTransient<IAltinnStorageClient, AltinnStorageClient>();
         services.AddTransient<IAltinnAuthenticationClient, AltinnAuthenticationClient>();

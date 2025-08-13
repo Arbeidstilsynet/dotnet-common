@@ -1,15 +1,13 @@
 using Altinn.App.Core.Helpers;
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
-using Arbeidstilsynet.Common.Altinn.Implementation.Clients;
 using Arbeidstilsynet.Common.Altinn.Model.Api;
-using Arbeidstilsynet.Common.Altinn.Ports;
+using Arbeidstilsynet.Common.Altinn.Ports.Token;
 using Arbeidstilsynet.Common.TestExtensions.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NSubstitute;
-using Scriban.Parsing;
 using WireMock.Admin.Mappings;
 using WireMock.Matchers;
 using WireMock.Net.OpenApiParser.Settings;

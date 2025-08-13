@@ -2,6 +2,7 @@ using System.Text.Json;
 using Altinn.App.Core.Infrastructure.Clients.Events;
 using Arbeidstilsynet.Common.Altinn.Ports;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
+using Arbeidstilsynet.Common.Altinn.Ports.Token;
 using static Arbeidstilsynet.Common.Altinn.DependencyInjection.DependencyInjectionExtensions;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Clients;

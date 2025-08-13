@@ -10,5 +10,5 @@ public interface IMaskinportenClient
 {
     Task<MaskinportenTokenResponse> GetToken(string jwtGrant);
 
-    Uri BaseUrl();
+    Uri BaseUrl { get; }
 }

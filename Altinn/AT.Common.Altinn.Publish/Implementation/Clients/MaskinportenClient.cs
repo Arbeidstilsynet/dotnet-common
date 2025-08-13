@@ -25,11 +25,9 @@ internal class MaskinportenClient : IMaskinportenClient
         };
     }
 
-    public Uri BaseUrl()
-    {
-        return _httpClient.BaseAddress
-            ?? throw new InvalidOperationException("HttpClient does not have a base address set.");
-    }
+    Uri IMaskinportenClient.BaseUrl =>
+        _httpClient.BaseAddress
+        ?? throw new InvalidOperationException("HttpClient does not have a base address set.");
 
     public async Task<MaskinportenTokenResponse> GetToken(string jwtGrant)
     {
