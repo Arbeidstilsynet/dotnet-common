@@ -53,7 +53,7 @@ internal class AltinnStorageClient : IAltinnStorageClient
         var url = instanceAddress.ToInstanceUri("complete");
 
         return await _httpClient
-                .Post(url, new { })
+                .PostAsJson(url, new { })
                 .WithBearerToken(await _altinnTokenProvider.GetToken())
                 .ReceiveContent<Instance>(_jsonSerializerOptions)
             ?? throw new Exception("Failed to complete instance");

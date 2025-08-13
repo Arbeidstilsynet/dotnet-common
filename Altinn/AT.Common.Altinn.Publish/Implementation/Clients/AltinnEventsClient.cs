@@ -29,7 +29,7 @@ internal class AltinnEventsClient : IAltinnEventsClient
     public async Task<Subscription> Subscribe(SubscriptionRequest request)
     {
         return await _httpClient
-                .Post(new Uri("subscriptions", UriKind.Relative).ToString(), request)
+                .PostAsJson(new Uri("subscriptions", UriKind.Relative).ToString(), request)
                 .WithHeader("Authorization", $"Bearer {await _altinnTokenProvider.GetToken()}")
                 .ReceiveContent<Subscription>(_jsonSerializerOptions)
             ?? throw new Exception("Failed to subscribe to Altinn");
