@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.0.0
+
+### Added
+
+- feat: add altinn token provider and clients to handle token exchange
+
 ## 0.0.4
 
 ### Changed
