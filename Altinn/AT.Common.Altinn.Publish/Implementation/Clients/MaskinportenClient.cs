@@ -16,9 +16,9 @@ internal class MaskinportenClient : IMaskinportenClient
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
-    private readonly IOptions<AltinnAuthenticationConfiguration> _config;
+    private readonly IOptions<MaskinportenConfiguration> _config;
 
-    public MaskinportenClient(IHttpClientFactory httpClientFactory, IOptions<AltinnAuthenticationConfiguration> altinnAuthenticationConfigurationOptions)
+    public MaskinportenClient(IHttpClientFactory httpClientFactory, IOptions<MaskinportenConfiguration> altinnAuthenticationConfigurationOptions)
     {
         _httpClient = httpClientFactory.CreateClient(MaskinportenApiClientKey);
         _jsonSerializerOptions = new System.Text.Json.JsonSerializerOptions()
@@ -31,7 +31,7 @@ internal class MaskinportenClient : IMaskinportenClient
 
     public async Task<MaskinportenTokenResponse> GetToken()
     {
-        var jwtGrant = _config.Value.GenerateJwtGrant();
+        var jwtGrant = _config.Value.GenerateJwtGrant(_httpClient.BaseAddress!);
         
         var dict = new Dictionary<string, string>
         {
@@ -47,10 +47,10 @@ internal class MaskinportenClient : IMaskinportenClient
 
 file static class Extensions
 {
-    public static string GenerateJwtGrant(this AltinnAuthenticationConfiguration config)
+    public static string GenerateJwtGrant(this MaskinportenConfiguration config, Uri baseAddress)
     {
         return JwtExtensions.GenerateJwtGrant(
-            config.MaskinportenUrl!.ToString(),
+            baseAddress.ToString(),
             config.CertificatePrivateKey,
             config.IntegrationId,
             config.Scopes);

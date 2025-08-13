@@ -52,7 +52,7 @@ public record AltinnApiConfiguration
 /// <summary>
 /// Configuration for Altinn authentication.
 /// </summary>
-public record AltinnAuthenticationConfiguration
+public record MaskinportenConfiguration
 {
     /// <summary>
     /// The private key for the certificate used for authentication.
@@ -73,10 +73,9 @@ public record AltinnAuthenticationConfiguration
     public required string[] Scopes { get; init; }
 
     /// <summary>
-    /// The base URL for Maskinporten authentication.
+    /// The base URL for Maskinporten authentication. Default will be determined based on the environment.
     /// </summary>
-    [Required]
-    public Uri? MaskinportenUrl { get; init; }
+    public Uri? MaskinportenUrl { get; init; } = default;
 }
 
 /// <summary>
@@ -129,19 +128,19 @@ public static class DependencyInjectionExtensions
     /// </summary>
     /// <param name="services"></param>
     /// <param name="hostEnvironment"></param>
-    /// <param name="altinnAuthenticationConfiguration">Configuration for the altinn token exchange</param>
+    /// <param name="maskinportenConfiguration">Configuration for the altinn token exchange</param>
     /// <param name="altinnApiConfiguration">Only required if it needs to be overwritten. By default, we determine BaseUrls based on the provided hostEnvironment.</param>
     /// <returns>Makes the usage of <see cref="IAltinnAdapter"/>, <see cref="IAltinnEventsClient"/> and <see cref="IAltinnStorageClient"/> available for the consumer.</returns>
     public static IServiceCollection AddAltinnAdapter(
         this IServiceCollection services,
         IWebHostEnvironment hostEnvironment,
-        AltinnAuthenticationConfiguration altinnAuthenticationConfiguration,
+        MaskinportenConfiguration maskinportenConfiguration,
         AltinnApiConfiguration? altinnApiConfiguration = null
     )
     {
         services.AddAltinnApiClients(
             hostEnvironment,
-            altinnAuthenticationConfiguration,
+            maskinportenConfiguration,
             altinnApiConfiguration
         );
         services.AddScoped<IAltinnAdapter, AltinnAdapter>();
@@ -179,19 +178,19 @@ public static class DependencyInjectionExtensions
     /// </summary>
     /// <param name="services"></param>
     /// <param name="hostEnvironment"></param>
-    /// <param name="altinnAuthenticationConfiguration">Configuration for the altinn token exchange</param>
+    /// <param name="maskinportenConfiguration">Configuration for the altinn token exchange</param>
     /// <param name="altinnApiConfiguration">Only required if it needs to be overwritten. By default, we determine BaseUrls based on the provided hostEnvironment.</param>
     /// <returns>Makes the usage of <see cref="IAltinnEventsClient"/> and <see cref="IAltinnStorageClient"/> available for the consumer.</returns>
     public static IServiceCollection AddAltinnApiClients(
         this IServiceCollection services,
         IWebHostEnvironment hostEnvironment,
-        AltinnAuthenticationConfiguration altinnAuthenticationConfiguration,
+        MaskinportenConfiguration maskinportenConfiguration,
         AltinnApiConfiguration? altinnApiConfiguration = null
     )
     {
         altinnApiConfiguration ??= hostEnvironment.CreateDefaultAltinnApiConfiguration();
         services.AddSingleton(Options.Create(altinnApiConfiguration));
-        services.AddSingleton(Options.Create(altinnAuthenticationConfiguration));
+        services.AddSingleton(Options.Create(maskinportenConfiguration));
         if (hostEnvironment.IsDevelopment())
         {
             services.AddSingleton<IAltinnTokenProvider, LocalAltinnTokenProvider>();
@@ -203,7 +202,7 @@ public static class DependencyInjectionExtensions
 
         services.AddAltinnTokenClientsInternal(
             hostEnvironment,
-            altinnAuthenticationConfiguration,
+            maskinportenConfiguration,
             altinnApiConfiguration
             );
         return services.AddAltinnApiClientsInternal(
@@ -240,20 +239,15 @@ public static class DependencyInjectionExtensions
     private static IServiceCollection AddAltinnTokenClientsInternal(
         this IServiceCollection services,
         IWebHostEnvironment hostEnvironment,
-        AltinnAuthenticationConfiguration altinnAuthenticationConfiguration,
+        MaskinportenConfiguration maskinportenConfiguration,
         AltinnApiConfiguration altinnApiConfiguration)
     {
         services
-            .AddMemoryCachedClient(
+            .AddHttpClient(
                 AltinnAuthenticationApiClientKey,
                 client =>
                 {
                     client.BaseAddress = altinnApiConfiguration.AuthenticationUrl;
-                },
-                options =>
-                {
-                    // max token lifetime is 120 seconds
-                    options.AbsoluteExpiration = TimeSpan.FromSeconds(110);
                 }
             )
             .AddStandardResilienceHandler();
@@ -263,7 +257,7 @@ public static class DependencyInjectionExtensions
                 client =>
                 {
                     client.BaseAddress =
-                        altinnAuthenticationConfiguration.MaskinportenUrl
+                        maskinportenConfiguration.MaskinportenUrl
                         ?? new Uri(hostEnvironment.GetMaskinportenUrl());
                 }
             )

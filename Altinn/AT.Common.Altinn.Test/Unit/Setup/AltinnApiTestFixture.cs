@@ -87,7 +87,7 @@ public class AltinnApiTestFixture : TestBedFixture
     {
         services.AddAltinnApiClients(
             _webHostEnvironment,
-            new AltinnAuthenticationConfiguration()
+            new MaskinportenConfiguration()
             {
                 MaskinportenUrl = new Uri(_server.Urls[0]),
                 CertificatePrivateKey = Convert.ToBase64String(RSA.Create(2048).ExportRSAPrivateKey()),
