@@ -32,17 +32,17 @@ public record AltinnApiConfiguration
     /// The base URL for Altinn authentication endpoints. See https://docs.altinn.studio/nb/api/authentication/spec/
     /// </summary>
     public required Uri AuthenticationUrl { get; init; }
-    
+
     /// <summary>
     /// The base URL for Altinn storage endpoints. See https://docs.altinn.studio/nb/api/storage/spec/
     /// </summary>
     public required Uri StorageUrl { get; init; }
-    
+
     /// <summary>
     /// The base URL for Altinn event endpoints. See https://docs.altinn.studio/events/api/openapi/
     /// </summary>
     public required Uri EventUrl { get; init; }
-    
+
     /// <summary>
     /// The base URL for the Altinn application.
     /// </summary>
@@ -59,7 +59,7 @@ public record MaskinportenConfiguration
     /// </summary>
     [Required]
     public required string CertificatePrivateKey { get; init; }
-    
+
     /// <summary>
     /// The integration ID for the Altinn application.
     /// </summary>
@@ -207,7 +207,7 @@ public static class DependencyInjectionExtensions
                 }
             )
             .AddStandardResilienceHandler();
-        
+
         services
             .AddHttpClient(
                 AltinnAuthenticationApiClientKey,
@@ -233,7 +233,7 @@ public static class DependencyInjectionExtensions
         services.AddTransient<IAltinnStorageClient, AltinnStorageClient>();
         services.AddTransient<IAltinnAuthenticationClient, AltinnAuthenticationClient>();
         services.AddTransient<IMaskinportenClient, MaskinportenClient>();
-        
+
         return services;
     }
 }
