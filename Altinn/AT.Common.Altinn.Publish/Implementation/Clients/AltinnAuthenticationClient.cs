@@ -23,13 +23,8 @@ internal class AltinnAuthenticationClient : IAltinnAuthenticationClient
     )
     {
         return await _httpClient
-                .Get(
-                    new Uri(
-                        $"exchange/{tokenProvider.ToString().ToLower()}",
-                        UriKind.Relative
-                    ).ToString()
-                )
-                .WithHeader("Authorization", $"Bearer {tokenProviderToken}")
+                .Get($"exchange/{tokenProvider.ToString().ToLower()}")
+                .WithBearerToken(tokenProviderToken)
                 .WithAcceptHeader("text/plain", 1.0)
                 .ReceiveString() ?? throw new Exception("Failed to subscribe to Altinn");
     }

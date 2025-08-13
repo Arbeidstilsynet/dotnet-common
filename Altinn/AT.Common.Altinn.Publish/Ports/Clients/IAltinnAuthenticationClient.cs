@@ -10,6 +10,12 @@ namespace Arbeidstilsynet.Common.Altinn.Ports.Clients;
 /// </summary>
 public interface IAltinnAuthenticationClient
 {
+    /// <summary>
+    /// Exchanges a token from an external authentication provider for an Altinn token.
+    /// </summary>
+    /// <param name="tokenProvider"></param>
+    /// <param name="tokenProviderToken"></param>
+    /// <returns></returns>
     Task<string> ExchangeToken(
         AuthenticationTokenProvider tokenProvider,
         string tokenProviderToken

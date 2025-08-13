@@ -27,7 +27,8 @@ internal class MaskinportenClient : IMaskinportenClient
 
     public Uri BaseUrl()
     {
-        return _httpClient.BaseAddress;
+        return _httpClient.BaseAddress
+            ?? throw new InvalidOperationException("HttpClient does not have a base address set.");
     }
 
     public async Task<MaskinportenTokenResponse> GetToken(string jwtGrant)
@@ -38,10 +39,7 @@ internal class MaskinportenClient : IMaskinportenClient
             { "assertion", jwtGrant },
         };
         return await _httpClient
-                .Post(
-                    new Uri($"token", UriKind.Relative).ToString(),
-                    new FormUrlEncodedContent(dict)
-                )
+                .Post("token", new FormUrlEncodedContent(dict))
                 .ReceiveContent<MaskinportenTokenResponse>(_jsonSerializerOptions)
             ?? throw new Exception("Failed to subscribe to Altinn");
     }
