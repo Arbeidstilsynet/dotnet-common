@@ -21,7 +21,7 @@ public class AltinnTokenClientTests
     }
 
     [Fact]
-    public async Task AltinnTokenClientTests_GenerateJwtGrant_MapsToCorrectFields()
+    public async Task JwtExtensions_GenerateJwtGrant_MapsToCorrectFields()
     {
         //arrange
         using RSA rsa = RSA.Create();
@@ -33,6 +33,7 @@ public class AltinnTokenClientTests
         var result = JwtExtensions.GenerateJwtGrant(
             "https://test.maskinporten.no",
             Convert.ToBase64String(privateKey),
+            "",
             "testIntegration",
             ["test:read"]
         );

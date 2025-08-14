@@ -55,6 +55,7 @@ file static class Extensions
         return JwtExtensions.GenerateJwtGrant(
             baseAddress.ToString(),
             config.CertificatePrivateKey,
+            config.CertificateChain,
             config.IntegrationId,
             config.Scopes
         );

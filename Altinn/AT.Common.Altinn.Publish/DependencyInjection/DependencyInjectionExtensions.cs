@@ -10,6 +10,7 @@ using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Arbeidstilsynet.Common.Altinn.Ports.Token;
 using Arbeidstilsynet.Common.AspNetCore.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -55,21 +56,31 @@ public record AltinnApiConfiguration
 public record MaskinportenConfiguration
 {
     /// <summary>
-    /// The private key for the certificate used for authentication.
+    /// The private key base64 encoded for the certificate used for authentication.
     /// </summary>
     [Required]
+    [ConfigurationKeyName("")]
     public required string CertificatePrivateKey { get; init; }
+
+    /// <summary>
+    /// The certificate chain base64 encoded to be used as x5c header.
+    /// </summary>
+    [Required]
+    [ConfigurationKeyName("CertificateChain")]
+    public required string CertificateChain { get; init; }
 
     /// <summary>
     /// The integration ID for the Altinn application.
     /// </summary>
     [Required]
+    [ConfigurationKeyName("IntegrationId")]
     public required string IntegrationId { get; init; }
 
     /// <summary>
     /// The scopes to request during authentication.
     /// </summary>
     [Required]
+    [ConfigurationKeyName("Scopes")]
     public required string[] Scopes { get; init; }
 
     /// <summary>

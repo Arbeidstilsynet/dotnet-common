@@ -11,10 +11,10 @@
   IsSigned: true,
   Claims: [
     {
-      scope: test:read
+      aud: https://test.maskinporten.no
     },
     {
-      nbf: Scrubbed
+      iss: testIntegration
     },
     {
       exp: Scrubbed
@@ -23,10 +23,10 @@
       iat: Scrubbed
     },
     {
-      iss: testIntegration
+      scope: test:read
     },
     {
-      aud: https://test.maskinporten.no
+      nbf: Scrubbed
     }
   ],
   Alg: RS256,

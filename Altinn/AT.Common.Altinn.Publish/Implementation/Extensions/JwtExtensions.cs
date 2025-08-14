@@ -1,6 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation;
@@ -10,6 +12,7 @@ internal static class JwtExtensions
     public static string GenerateJwtGrant(
         string audience,
         string certificatePrivateKey,
+        string certificateChain,
         string integrationId,
         string[] scopes
     )
@@ -21,7 +24,7 @@ internal static class JwtExtensions
             new RsaSecurityKey(rsa),
             SecurityAlgorithms.RsaSha256
         );
-        var claims = new ClaimsIdentity(scopes.Select(s => new Claim("scope", s)));
+        var claims = new ClaimsIdentity([new Claim("scope", string.Join(" ", scopes))]);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
@@ -30,9 +33,15 @@ internal static class JwtExtensions
             Issuer = integrationId,
             Audience = audience,
             SigningCredentials = signingCredentials,
+            AdditionalHeaderClaims = new Dictionary<string, object>
+            {
+                {
+                    "x5c",
+                    new List<string> { certificateChain }
+                },
+            },
         };
-        var tokenHandler = new JwtSecurityTokenHandler();
-        SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
+        var tokenHandler = new JsonWebTokenHandler();
+        return tokenHandler.CreateToken(tokenDescriptor);
     }
 }

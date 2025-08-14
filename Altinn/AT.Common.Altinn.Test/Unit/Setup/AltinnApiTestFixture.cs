@@ -93,6 +93,7 @@ public class AltinnApiTestFixture : TestBedFixture
                 CertificatePrivateKey = Convert.ToBase64String(
                     RSA.Create(2048).ExportRSAPrivateKey()
                 ),
+                CertificateChain = "",
                 IntegrationId = "integration",
                 Scopes = ["test:read"],
             },
