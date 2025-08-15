@@ -18,7 +18,7 @@ internal static class JwtExtensions
     )
     {
         var privateKey = Convert.FromBase64String(certificatePrivateKey);
-        using var rsa = RSA.Create();
+        var rsa = RSA.Create();
         rsa.ImportRSAPrivateKey(privateKey, out _);
         var signingCredentials = new SigningCredentials(
             new RsaSecurityKey(rsa),
