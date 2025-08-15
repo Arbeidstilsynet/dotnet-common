@@ -10,6 +10,7 @@ using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Ports.Adapter;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
@@ -17,7 +18,8 @@ namespace Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 internal class AltinnAdapter(
     IAltinnStorageClient altinnStorageClient,
     IAltinnEventsClient altinnEventsClient,
-    IOptions<AltinnApiConfiguration> altinnApiConfigurationOptions
+    IOptions<AltinnApiConfiguration> altinnApiConfigurationOptions,
+    ILogger<AltinnAdapter> logger
 ) : IAltinnAdapter
 {
     public async Task<AltinnInstanceSummary> GetSummary(
@@ -36,17 +38,22 @@ internal class AltinnAdapter(
         SubscriptionRequestDto subscriptionRequestDto
     )
     {
-        return altinnEventsClient.Subscribe(
-            new SubscriptionRequest()
-            {
-                SourceFilter = new Uri(
-                    altinnApiConfigurationOptions.Value.AppBaseUrl,
-                    $"{DependencyInjectionExtensions.AltinnOrgIdentifier}/{subscriptionRequestDto.AltinnAppIdentifier}"
-                ),
-                EndPoint = subscriptionRequestDto.CallbackUrl,
-                TypeFilter = "app.instance.process.completed",
-            }
+        var mappedRequest = new SubscriptionRequest()
+        {
+            SourceFilter = new Uri(
+                altinnApiConfigurationOptions.Value.AppBaseUrl,
+                $"{DependencyInjectionExtensions.AltinnOrgIdentifier}/{subscriptionRequestDto.AltinnAppIdentifier}"
+            ),
+            EndPoint = subscriptionRequestDto.CallbackUrl,
+            TypeFilter = "app.instance.process.completed",
+        };
+        logger.LogInformation(
+            "Sending subscription request with the following options: {SourceFilter}, {Endpoint}, {TypeFilter}",
+            mappedRequest.SourceFilter,
+            mappedRequest.EndPoint,
+            mappedRequest.TypeFilter
         );
+        return altinnEventsClient.Subscribe(mappedRequest);
     }
 
     public async Task<IEnumerable<AltinnInstanceSummary>> GetNonCompletedInstances(
