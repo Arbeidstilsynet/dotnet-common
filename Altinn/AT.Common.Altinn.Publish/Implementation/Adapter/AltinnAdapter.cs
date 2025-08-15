@@ -76,11 +76,15 @@ internal class AltinnAdapter(
             }
         );
 
-        var fetchInstanceTasks = instances.Select(instance =>
-            GetInstanceSummaryAsync(instance, appConfig.MainDocumentDataTypeName)
-        );
+        IList<AltinnInstanceSummary> summaries = [];
+        foreach (var instance in instances)
+        {
+            summaries.Add(
+                await GetInstanceSummaryAsync(instance, appConfig.MainDocumentDataTypeName)
+            );
+        }
 
-        return await Task.WhenAll(fetchInstanceTasks);
+        return summaries;
     }
 
     private async Task<AltinnInstanceSummary> GetInstanceSummaryAsync(
@@ -88,11 +92,11 @@ internal class AltinnAdapter(
         string mainDocumentDataTypeName
     )
     {
-        var documents = await Task.WhenAll(
-            instance.Data.Select(dataElement =>
-                GetAltinnDocument(dataElement, instance, mainDocumentDataTypeName)
-            )
-        );
+        IList<AltinnDocument> documents = [];
+        foreach (var dataElement in instance.Data)
+        {
+            documents.Add(await GetAltinnDocument(dataElement, instance, mainDocumentDataTypeName));
+        }
 
         return new AltinnInstanceSummary
         {
