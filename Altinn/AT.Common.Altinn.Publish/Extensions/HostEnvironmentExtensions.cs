@@ -87,12 +87,12 @@ public static class HostEnvironmentExtensions
         }
         else if (webHostEnvironment.IsProduction())
         {
-            return $"https://{org}.apps.altinn.no/{org}/";
+            return $"https://{org}.apps.altinn.no/";
             ;
         }
         else
         {
-            return $"https://{org}.apps.tt02.altinn.no/{org}/";
+            return $"https://{org}.apps.tt02.altinn.no/";
         }
     }
 }
