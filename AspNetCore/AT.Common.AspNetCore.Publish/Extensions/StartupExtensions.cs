@@ -46,8 +46,10 @@ public static partial class StartupExtensions
                 manager.FeatureProviders.Add(new CustomControllerFeatureProvider());
             })
             .AddJsonOptions(options =>
-                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter())
-            );
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                options.JsonSerializerOptions.Converters.Add(new JsonStringUriConverter());
+            });
         services.AddProblemDetails(configureProblemDetailsAction);
         var healthChecksBuilder = services.AddHealthChecks();
 

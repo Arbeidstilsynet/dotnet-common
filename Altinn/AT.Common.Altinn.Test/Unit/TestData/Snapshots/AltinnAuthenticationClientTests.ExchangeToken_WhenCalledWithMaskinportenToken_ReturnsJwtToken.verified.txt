@@ -1,0 +1,35 @@
+﻿{
+  Claims: [
+    {
+      sub: 1234567890
+    },
+    {
+      name: John Doe
+    },
+    {
+      admin: true
+    },
+    {
+      iat: 1516239022
+    }
+  ],
+  EncodedHeader: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9,
+  EncodedPayload: eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0,
+  Header: {
+    alg: HS256,
+    typ: JWT
+  },
+  Payload: {
+    admin: true,
+    iat: 1516239022,
+    name: John Doe,
+    sub: 1234567890
+  },
+  RawData: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30,
+  RawHeader: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9,
+  RawPayload: eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0,
+  RawSignature: KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30,
+  SignatureAlgorithm: HS256,
+  Subject: 1234567890,
+  IssuedAt: DateTime_1
+}

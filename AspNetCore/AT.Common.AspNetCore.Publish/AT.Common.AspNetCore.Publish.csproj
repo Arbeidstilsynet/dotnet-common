@@ -10,7 +10,7 @@
     <Company>Arbeidstilsynet</Company>
     <Description>Useful extensions for cross-cutting concerns at Arbeidstilsynet</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.3.2</Version>
+    <Version>1.3.3-alpha</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
   </PropertyGroup>
