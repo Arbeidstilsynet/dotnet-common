@@ -2,6 +2,8 @@ using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+namespace Arbeidstilsynet.Common.AspNetCore.Extensions;
+
 public class UriConverter : JsonConverter<Uri>
 {
     public override Uri? Read(
