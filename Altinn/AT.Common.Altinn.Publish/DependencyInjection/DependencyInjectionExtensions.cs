@@ -200,45 +200,37 @@ public static class DependencyInjectionExtensions
         AltinnApiConfiguration altinnApiConfiguration
     )
     {
-        services
-            .AddHttpClient(
-                AltinnEventsApiClientKey,
-                client =>
-                {
-                    client.BaseAddress = altinnApiConfiguration.EventUrl;
-                }
-            )
-            .AddStandardResilienceHandler();
-        services
-            .AddHttpClient(
-                AltinnStorageApiClientKey,
-                client =>
-                {
-                    client.BaseAddress = altinnApiConfiguration.StorageUrl;
-                }
-            )
-            .AddStandardResilienceHandler();
+        services.AddHttpClient(
+            AltinnEventsApiClientKey,
+            client =>
+            {
+                client.BaseAddress = altinnApiConfiguration.EventUrl;
+            }
+        );
+        services.AddHttpClient(
+            AltinnStorageApiClientKey,
+            client =>
+            {
+                client.BaseAddress = altinnApiConfiguration.StorageUrl;
+            }
+        );
 
-        services
-            .AddHttpClient(
-                AltinnAuthenticationApiClientKey,
-                client =>
-                {
-                    client.BaseAddress = altinnApiConfiguration.AuthenticationUrl;
-                }
-            )
-            .AddStandardResilienceHandler();
-        services
-            .AddHttpClient(
-                MaskinportenApiClientKey,
-                client =>
-                {
-                    client.BaseAddress =
-                        maskinportenConfiguration.MaskinportenUrl
-                        ?? new Uri(hostEnvironment.GetMaskinportenUrl());
-                }
-            )
-            .AddStandardResilienceHandler();
+        services.AddHttpClient(
+            AltinnAuthenticationApiClientKey,
+            client =>
+            {
+                client.BaseAddress = altinnApiConfiguration.AuthenticationUrl;
+            }
+        );
+        services.AddHttpClient(
+            MaskinportenApiClientKey,
+            client =>
+            {
+                client.BaseAddress =
+                    maskinportenConfiguration.MaskinportenUrl
+                    ?? new Uri(hostEnvironment.GetMaskinportenUrl());
+            }
+        );
 
         services.AddTransient<IAltinnEventsClient, AltinnEventsClient>();
         services.AddTransient<IAltinnStorageClient, AltinnStorageClient>();
