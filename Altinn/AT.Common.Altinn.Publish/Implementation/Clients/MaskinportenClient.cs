@@ -1,13 +1,8 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using Altinn.App.Core.Infrastructure.Clients.Events;
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Model.Api;
-using Arbeidstilsynet.Common.Altinn.Ports;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using static Arbeidstilsynet.Common.Altinn.DependencyInjection.DependencyInjectionExtensions;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Clients;

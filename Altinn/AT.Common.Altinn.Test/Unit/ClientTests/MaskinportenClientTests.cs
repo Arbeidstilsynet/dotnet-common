@@ -1,9 +1,5 @@
-using Altinn.App.Core.Infrastructure.Clients.Events;
-using Arbeidstilsynet.Common.Altinn.Implementation.Clients;
-using Arbeidstilsynet.Common.Altinn.Ports;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Arbeidstilsynet.Common.Altinn.Test.Setup;
-using ProtoBuf.Meta;
 using Shouldly;
 using Xunit.Abstractions;
 using Xunit.Microsoft.DependencyInjection.Abstracts;

@@ -1,4 +1,3 @@
-using Microsoft.OpenApi.Models;
 using RandomDataGenerator.FieldOptions;
 using RandomDataGenerator.Randomizers;
 using WireMock.Net.OpenApiParser.Settings;

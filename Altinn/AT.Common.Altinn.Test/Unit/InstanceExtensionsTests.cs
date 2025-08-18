@@ -1,7 +1,6 @@
 using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Shouldly;
-using Xunit;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 

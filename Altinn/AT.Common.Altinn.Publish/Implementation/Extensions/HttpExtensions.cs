@@ -1,10 +1,6 @@
-using System.Collections;
 using System.Net.Http.Json;
-using System.Reflection;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Altinn.App.Core.Models;
-using Arbeidstilsynet.Common.Altinn.Model;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 

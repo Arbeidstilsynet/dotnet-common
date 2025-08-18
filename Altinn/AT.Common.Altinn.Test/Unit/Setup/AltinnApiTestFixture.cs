@@ -1,5 +1,4 @@
 using System.Security.Cryptography;
-using Altinn.App.Core.Helpers;
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Model.Api;
 using Arbeidstilsynet.Common.Altinn.Ports.Token;

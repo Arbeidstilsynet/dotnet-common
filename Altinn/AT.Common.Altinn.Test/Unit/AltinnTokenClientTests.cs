@@ -1,13 +1,6 @@
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using Altinn.App.Core.Features.Maskinporten;
 using Arbeidstilsynet.Common.Altinn.Implementation;
-using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
-using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Microsoft.IdentityModel.JsonWebTokens;
-using NSubstitute;
-using Shouldly;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 
