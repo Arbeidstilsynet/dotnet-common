@@ -1,11 +1,11 @@
 using Altinn.App.Core.Infrastructure.Clients.Events;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
-using Arbeidstilsynet.Common.Altinn.Test.Setup;
+using Arbeidstilsynet.Common.Altinn.Test.Unit.Setup;
 using Shouldly;
 using Xunit.Abstractions;
 using Xunit.Microsoft.DependencyInjection.Abstracts;
 
-namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
+namespace Arbeidstilsynet.Common.Altinn.Test.Unit.ClientTests;
 
 public class AltinnEventsClientTests : TestBed<AltinnApiTestFixture>
 {

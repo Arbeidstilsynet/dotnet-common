@@ -1,7 +1,7 @@
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Arbeidstilsynet.Common.Altinn.Ports.Token;
 
-namespace Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
+namespace Arbeidstilsynet.Common.Altinn.Implementation.Token;
 
 internal class AltinnTokenProvider(
     IMaskinportenClient maskinportenClient,

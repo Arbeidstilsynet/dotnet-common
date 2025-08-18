@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using Arbeidstilsynet.Common.Altinn.Implementation;
+using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;

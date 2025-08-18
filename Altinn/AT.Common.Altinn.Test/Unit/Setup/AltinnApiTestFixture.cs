@@ -16,7 +16,7 @@ using WireMock.Server;
 using Xunit.Microsoft.DependencyInjection;
 using Xunit.Microsoft.DependencyInjection.Abstracts;
 
-namespace Arbeidstilsynet.Common.Altinn.Test.Setup;
+namespace Arbeidstilsynet.Common.Altinn.Test.Unit.Setup;
 
 public class AltinnApiTestFixture : TestBedFixture
 {

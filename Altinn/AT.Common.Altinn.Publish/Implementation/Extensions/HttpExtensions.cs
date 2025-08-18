@@ -4,7 +4,7 @@ using Altinn.App.Core.Models;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 
-namespace Arbeidstilsynet.Common.Altinn.Implementation;
+namespace Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 
 internal static class HttpExtensions
 {
