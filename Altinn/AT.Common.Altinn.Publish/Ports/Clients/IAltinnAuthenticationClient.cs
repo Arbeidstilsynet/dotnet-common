@@ -17,7 +17,7 @@ public interface IAltinnAuthenticationClient
     /// <param name="tokenProviderToken"></param>
     /// <returns></returns>
     Task<string> ExchangeToken(
-        AuthenticationTokenProvider tokenProvider,
-        string tokenProviderToken
+        string tokenProviderToken,
+        AuthenticationTokenProvider tokenProvider = AuthenticationTokenProvider.Maskinporten
     );
 }

@@ -15,31 +15,11 @@ internal class AltinnTokenProvider(
     IAltinnAuthenticationClient altinnAuthenticationClient
 ) : IAltinnTokenProvider
 {
-    private MaskinportenTokenResponse? _currentToken;
-
-    private DateTime _lastUpdate = DateTime.Now;
-
     public async Task<string> GetToken()
     {
-        if (_currentToken != null)
-        {
-            var timeDiff = DateTime.Now - _lastUpdate;
-            if (timeDiff.Seconds >= _currentToken.ExpiresIn)
-            { // get maskinporten token
-                _currentToken = await maskinportenClient.GetToken();
-                _lastUpdate = DateTime.Now;
-            }
-        }
-        else
-        {
-            // get maskinporten token
-            _currentToken = await maskinportenClient.GetToken();
-            _lastUpdate = DateTime.Now;
-        }
+        var maskinportenToken = await maskinportenClient.GetToken();
+
         // get altinn token
-        return await altinnAuthenticationClient.ExchangeToken(
-            Model.Api.AuthenticationTokenProvider.Maskinporten,
-            _currentToken.AccessToken
-        );
+        return await altinnAuthenticationClient.ExchangeToken(maskinportenToken.AccessToken);
     }
 }

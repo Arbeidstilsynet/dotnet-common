@@ -28,8 +28,8 @@ public class AltinnAuthenticationClientTests : TestBed<AltinnApiTestFixture>
         //arrange
         //act
         var result = await _sut.ExchangeToken(
-            Model.Api.AuthenticationTokenProvider.Maskinporten,
-            "dummyBearerToken"
+            "dummyBearerToken",
+            Model.Api.AuthenticationTokenProvider.Maskinporten
         );
 
         //assert

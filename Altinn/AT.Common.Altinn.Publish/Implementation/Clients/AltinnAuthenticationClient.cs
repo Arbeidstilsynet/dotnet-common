@@ -18,8 +18,8 @@ internal class AltinnAuthenticationClient : IAltinnAuthenticationClient
     }
 
     public async Task<string> ExchangeToken(
-        AuthenticationTokenProvider tokenProvider,
-        string tokenProviderToken
+        string tokenProviderToken,
+        AuthenticationTokenProvider tokenProvider = AuthenticationTokenProvider.Maskinporten
     )
     {
         return await _httpClient
