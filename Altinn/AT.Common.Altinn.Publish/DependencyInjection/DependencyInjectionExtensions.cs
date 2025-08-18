@@ -195,8 +195,8 @@ public static class DependencyInjectionExtensions
 
     private static IServiceCollection AddAltinnApiClientsInternal(
         this IServiceCollection services,
-        IWebHostEnvironment? hostEnvironment,
-        MaskinportenConfiguration? maskinportenConfiguration,
+        IWebHostEnvironment hostEnvironment,
+        MaskinportenConfiguration maskinportenConfiguration,
         AltinnApiConfiguration altinnApiConfiguration
     )
     {

@@ -8,17 +8,22 @@ public class JsonStringUriConverterTests
 {
     private readonly JsonStringUriConverter _sut = new();
 
-    [Fact]
-    public void Read_ValidUri_ReturnsUri()
+    [Theory]
+    [InlineData("\"https://example.com\"", "https://example.com/")]
+    [InlineData("\"http://example.com/path?query=123\"", "http://example.com/path?query=123")]
+    [InlineData("\"ftp://example.com/resource.txt\"", "ftp://example.com/resource.txt")]
+    [InlineData("\"https://example.com:8080\"", "https://example.com:8080/")]
+    [InlineData("\"https://example.com/path/to/resource\"", "https://example.com/path/to/resource")]
+    [InlineData("\"https://example.com/path/to/resource?query=123#fragment\"", "https://example.com/path/to/resource?query=123#fragment")]
+    public void Read_ValidUri_ReturnsUri(string url, string expectedUri)
     {
-        const string json = "\"https://example.com\"";
-        var reader = new Utf8JsonReader(System.Text.Encoding.UTF8.GetBytes(json));
+        var reader = new Utf8JsonReader(System.Text.Encoding.UTF8.GetBytes(url));
 
         reader.Read(); // Move to the start of the string
         var uri = _sut.Read(ref reader, typeof(Uri), new JsonSerializerOptions());
 
         uri.ShouldNotBeNull();
-        uri.ToString().ShouldBe("https://example.com/");
+        uri.ToString().ShouldBe(expectedUri);
     }
 
     [Fact]
