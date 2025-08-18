@@ -14,7 +14,10 @@ public class JsonStringUriConverterTests
     [InlineData("\"ftp://example.com/resource.txt\"", "ftp://example.com/resource.txt")]
     [InlineData("\"https://example.com:8080\"", "https://example.com:8080/")]
     [InlineData("\"https://example.com/path/to/resource\"", "https://example.com/path/to/resource")]
-    [InlineData("\"https://example.com/path/to/resource?query=123#fragment\"", "https://example.com/path/to/resource?query=123#fragment")]
+    [InlineData(
+        "\"https://example.com/path/to/resource?query=123#fragment\"",
+        "https://example.com/path/to/resource?query=123#fragment"
+    )]
     public void Read_ValidUri_ReturnsUri(string url, string expectedUri)
     {
         var reader = new Utf8JsonReader(System.Text.Encoding.UTF8.GetBytes(url));
