@@ -70,7 +70,7 @@ internal class MaskinportenClient : IMaskinportenClient
             await _httpClient
                 .Post("token", new FormUrlEncodedContent(dict))
                 .ReceiveContent<MaskinportenTokenResponse>(_jsonSerializerOptions)
-            ?? throw new Exception("Failed to subscribe to Altinn");
+            ?? throw new Exception("Failed to retrieve Maskinporten token");
 
         UpdateCachedToken(tokenResponse);
 
