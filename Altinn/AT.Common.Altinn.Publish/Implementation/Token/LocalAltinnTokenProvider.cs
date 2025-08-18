@@ -6,9 +6,9 @@ internal class LocalAltinnTokenProvider : IAltinnTokenProvider
 {
     private readonly HttpClient _httpClient;
 
-    public LocalAltinnTokenProvider()
+    public LocalAltinnTokenProvider(IHttpClientFactory httpClientFactory)
     {
-        _httpClient = new HttpClient();
+        _httpClient = httpClientFactory.CreateClient();
     }
 
     public async Task<string> GetToken()

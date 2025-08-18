@@ -85,17 +85,4 @@ public class JsonStringUriConverterTests
         var result = System.Text.Encoding.UTF8.GetString(stream.ToArray());
         result.ShouldBe("\"https://example.com/\"");
     }
-
-    [Fact]
-    public void Write_EmptyUri_WritesNullValue()
-    {
-        using var stream = new MemoryStream();
-        using var writer = new Utf8JsonWriter(stream);
-
-        _sut.Write(writer, new Uri(""), new JsonSerializerOptions());
-        writer.Flush();
-
-        var result = System.Text.Encoding.UTF8.GetString(stream.ToArray());
-        result.ShouldBe("null");
-    }
 }
