@@ -1,24 +1,54 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Arbeidstilsynet.Common.AspNetCore.Extensions;
+namespace Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
 
-public class JsonStringUriConverter : JsonConverterFactory
+/// <inheritdoc />
+public sealed class JsonStringUriConverter : JsonConverter<Uri>
 {
-    public override bool CanConvert(Type typeToConvert)
-    {
-        return typeToConvert == typeof(Uri);
-    }
-
-    public override JsonConverter? CreateConverter(
+    /// <inheritdoc />
+    public override Uri? Read(
+        ref Utf8JsonReader reader,
         Type typeToConvert,
         JsonSerializerOptions options
     )
     {
-        if (typeToConvert != typeof(Uri))
+        if (reader.TokenType == JsonTokenType.Null)
         {
-            throw new ArgumentOutOfRangeException();
+            return null;
         }
-        return new UriConverter();
+
+        if (reader.TokenType != JsonTokenType.String)
+        {
+            throw new JsonException(
+                $"Unexpected token parsing Uri. Expected String, got {reader.TokenType}."
+            );
+        }
+
+        var uriString = reader.GetString();
+        if (string.IsNullOrWhiteSpace(uriString))
+        {
+            return null; // matches behavior for empty/whitespace
+        }
+
+        if (Uri.TryCreate(uriString, UriKind.Absolute, out var uri))
+        {
+            return uri;
+        }
+
+        throw new JsonException($"Invalid URI: '{uriString}'.");
+    }
+
+    /// <inheritdoc />
+    public override void Write(Utf8JsonWriter writer, Uri? value, JsonSerializerOptions options)
+    {
+        if (value is null)
+        {
+            writer.WriteNullValue();
+        }
+        else
+        {
+            writer.WriteStringValue(value.ToString());
+        }
     }
 }
