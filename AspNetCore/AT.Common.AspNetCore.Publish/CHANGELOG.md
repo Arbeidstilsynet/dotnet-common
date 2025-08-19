@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.3.3
+
+### Added
+
+- feat(serialization): Added String-Uri serialization support (`JsonStringEnumConverter`)
+
 ## 1.3.2
 
 ### Added

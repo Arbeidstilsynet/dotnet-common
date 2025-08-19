@@ -3,7 +3,6 @@ using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using NSubstitute;
 using Shouldly;
-using Xunit;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 
