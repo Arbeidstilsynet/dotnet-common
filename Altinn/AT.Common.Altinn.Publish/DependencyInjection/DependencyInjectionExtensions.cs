@@ -150,7 +150,7 @@ public static class DependencyInjectionExtensions
     )
     {
         ArgumentNullException.ThrowIfNull(hostEnvironment);
-        
+
         services.AddAltinnApiClients(
             hostEnvironment,
             maskinportenConfiguration,
@@ -177,7 +177,7 @@ public static class DependencyInjectionExtensions
     )
     {
         ArgumentNullException.ThrowIfNull(hostEnvironment);
-        
+
         altinnApiConfiguration ??= hostEnvironment.CreateDefaultAltinnApiConfiguration();
         services.AddSingleton(Options.Create(altinnApiConfiguration));
         services.AddSingleton(Options.Create(maskinportenConfiguration));
