@@ -105,7 +105,7 @@ public class AltinnApiTestFixture : TestBedFixture
             }
         );
         services.RemoveAll<IAltinnTokenProvider>();
-        services.AddSingleton<IAltinnTokenProvider>(Substitute.For<IAltinnTokenProvider>());
+        services.AddSingleton(_tokenProvider);
     }
 
     protected override IEnumerable<TestAppSettings> GetTestAppSettings() => [];
