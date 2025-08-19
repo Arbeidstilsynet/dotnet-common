@@ -1,8 +1,7 @@
 using Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
 using Shouldly;
-using Xunit;
 
-namespace AT.Common.AspNetCore.Extensions.Test.Unit;
+namespace Arbeidstilsynet.Common.AspNetCore.Extensions.Test.Unit;
 
 public class UriExtensionTests
 {

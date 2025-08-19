@@ -1,0 +1,50 @@
+﻿{
+  AuthenticationTag: ,
+  Ciphertext: ,
+  EncodedHeader: {Scrubbed},
+  EncryptedKey: ,
+  EncodedPayload: {Scrubbed},
+  EncodedSignature: {Scrubbed},
+  EncodedToken: {Scrubbed},
+  InitializationVector: ,
+  IsEncrypted: false,
+  IsSigned: true,
+  Claims: [
+    {
+      aud: https://test.maskinporten.no
+    },
+    {
+      iss: testIntegration
+    },
+    {
+      exp: Scrubbed
+    },
+    {
+      iat: Scrubbed
+    },
+    {
+      scope: test:read
+    },
+    {
+      nbf: Scrubbed
+    }
+  ],
+  Alg: RS256,
+  Cty: ,
+  Enc: ,
+  Kid: ,
+  Typ: JWT,
+  X5t: ,
+  Zip: ,
+  Actor: ,
+  Audiences: [
+    https://test.maskinporten.no
+  ],
+  Azp: ,
+  IssuedAt: DateTime_1,
+  Issuer: testIntegration,
+  Id: ,
+  Subject: ,
+  ValidFrom: DateTime_1,
+  ValidTo: DateTime_2
+}
