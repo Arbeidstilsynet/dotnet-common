@@ -1,15 +1,12 @@
-using Arbeidstilsynet.Common.AspNetCore.Extensions;
 using Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Shouldly;
-using Xunit;
 using RouteData = Microsoft.AspNetCore.Routing.RouteData;
 
-namespace AT.Common.AspNetCore.Extensions.Test.Unit;
+namespace Arbeidstilsynet.Common.AspNetCore.Extensions.Test.Unit;
 
 public class RequestActionFilterTests
 {

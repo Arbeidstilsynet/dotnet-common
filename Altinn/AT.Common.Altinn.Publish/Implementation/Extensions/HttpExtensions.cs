@@ -1,14 +1,10 @@
-using System.Collections;
 using System.Net.Http.Json;
-using System.Reflection;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Altinn.App.Core.Models;
-using Arbeidstilsynet.Common.Altinn.Model;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 
-namespace Arbeidstilsynet.Common.Altinn.Implementation;
+namespace Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 
 internal static class HttpExtensions
 {
@@ -20,10 +16,10 @@ internal static class HttpExtensions
         return requestBuilder.WithHeader("Authorization", $"Bearer {token}");
     }
 
-    public static IHttpRequestBuilder Post<TContent>(
+    public static IHttpRequestBuilder PostAsJson<T>(
         this HttpClient client,
         string resource,
-        TContent content
+        T content
     )
     {
         return new HttpRequestBuilder(
@@ -37,11 +33,7 @@ internal static class HttpExtensions
         );
     }
 
-    public static IHttpRequestBuilder Post<TContent>(
-        this HttpClient client,
-        Uri uri,
-        TContent content
-    )
+    public static IHttpRequestBuilder PostAsJson<T>(this HttpClient client, Uri uri, T content)
     {
         return new HttpRequestBuilder(
             client,
@@ -50,6 +42,36 @@ internal static class HttpExtensions
                 RequestUri = uri,
                 Method = HttpMethod.Post,
                 Content = JsonContent.Create(content),
+            }
+        );
+    }
+
+    public static IHttpRequestBuilder Post(
+        this HttpClient client,
+        string resource,
+        HttpContent content
+    )
+    {
+        return new HttpRequestBuilder(
+            client,
+            new HttpRequestMessage()
+            {
+                RequestUri = new Uri(resource, UriKind.Relative),
+                Method = HttpMethod.Post,
+                Content = content,
+            }
+        );
+    }
+
+    public static IHttpRequestBuilder Post(this HttpClient client, Uri uri, HttpContent content)
+    {
+        return new HttpRequestBuilder(
+            client,
+            new HttpRequestMessage()
+            {
+                RequestUri = uri,
+                Method = HttpMethod.Post,
+                Content = content,
             }
         );
     }
@@ -93,6 +115,15 @@ internal static class HttpExtensions
         response.EnsureSuccessStatusCode();
 
         return await response.Content.ReadAsStreamAsync();
+    }
+
+    public static async Task<string> ReceiveString(this IHttpRequestBuilder requestBuilder)
+    {
+        var response = await requestBuilder.Send();
+
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadAsStringAsync();
     }
 
     public static Uri ToInstanceUri(

@@ -1,5 +1,3 @@
-using System.Diagnostics;
-using System.Reflection.Metadata.Ecma335;
 using Altinn.App.Core.Infrastructure.Clients.Events;
 using Altinn.App.Core.Models;
 using Altinn.Platform.Storage.Interface.Models;
@@ -9,7 +7,7 @@ using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Ports.Adapter;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
@@ -17,7 +15,8 @@ namespace Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 internal class AltinnAdapter(
     IAltinnStorageClient altinnStorageClient,
     IAltinnEventsClient altinnEventsClient,
-    IOptions<AltinnApiConfiguration> altinnApiConfigurationOptions
+    IOptions<AltinnApiConfiguration> altinnApiConfigurationOptions,
+    ILogger<AltinnAdapter> logger
 ) : IAltinnAdapter
 {
     public async Task<AltinnInstanceSummary> GetSummary(
@@ -36,17 +35,22 @@ internal class AltinnAdapter(
         SubscriptionRequestDto subscriptionRequestDto
     )
     {
-        return altinnEventsClient.Subscribe(
-            new SubscriptionRequest()
-            {
-                SourceFilter = new Uri(
-                    altinnApiConfigurationOptions.Value.AppBaseUrl,
-                    $"{DependencyInjectionExtensions.AltinnOrgIdentifier}/{subscriptionRequestDto.AltinnAppIdentifier}"
-                ),
-                EndPoint = subscriptionRequestDto.CallbackUrl,
-                TypeFilter = "app.instance.process.completed",
-            }
+        var mappedRequest = new SubscriptionRequest()
+        {
+            SourceFilter = new Uri(
+                altinnApiConfigurationOptions.Value.AppBaseUrl,
+                $"{DependencyInjectionExtensions.AltinnOrgIdentifier}/{subscriptionRequestDto.AltinnAppIdentifier}"
+            ),
+            EndPoint = subscriptionRequestDto.CallbackUrl,
+            TypeFilter = "app.instance.process.completed",
+        };
+        logger.LogInformation(
+            "Sending subscription request with the following options: {SourceFilter}, {Endpoint}, {TypeFilter}",
+            mappedRequest.SourceFilter,
+            mappedRequest.EndPoint,
+            mappedRequest.TypeFilter
         );
+        return altinnEventsClient.Subscribe(mappedRequest);
     }
 
     public async Task<IEnumerable<AltinnInstanceSummary>> GetNonCompletedInstances(
@@ -69,11 +73,15 @@ internal class AltinnAdapter(
             }
         );
 
-        var fetchInstanceTasks = instances.Select(instance =>
-            GetInstanceSummaryAsync(instance, appConfig.MainDocumentDataTypeName)
-        );
+        IList<AltinnInstanceSummary> summaries = [];
+        foreach (var instance in instances)
+        {
+            summaries.Add(
+                await GetInstanceSummaryAsync(instance, appConfig.MainDocumentDataTypeName)
+            );
+        }
 
-        return await Task.WhenAll(fetchInstanceTasks);
+        return summaries;
     }
 
     private async Task<AltinnInstanceSummary> GetInstanceSummaryAsync(
@@ -81,11 +89,11 @@ internal class AltinnAdapter(
         string mainDocumentDataTypeName
     )
     {
-        var documents = await Task.WhenAll(
-            instance.Data.Select(dataElement =>
-                GetAltinnDocument(dataElement, instance, mainDocumentDataTypeName)
-            )
-        );
+        IList<AltinnDocument> documents = [];
+        foreach (var dataElement in instance.Data)
+        {
+            documents.Add(await GetAltinnDocument(dataElement, instance, mainDocumentDataTypeName));
+        }
 
         return new AltinnInstanceSummary
         {

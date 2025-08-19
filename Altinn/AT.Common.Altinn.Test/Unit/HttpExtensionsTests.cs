@@ -1,5 +1,6 @@
 using Altinn.App.Core.Models;
 using Arbeidstilsynet.Common.Altinn.Implementation;
+using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 using NSubstitute;

@@ -1,5 +1,4 @@
 using Arbeidstilsynet.Common.AspNetCore.DependencyInjection;
-using Arbeidstilsynet.Common.AspNetCore.Extensions;
 using Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
@@ -9,11 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Scalar.AspNetCore;
 using Shouldly;
-using Xunit;
 
-namespace AT.Common.AspNetCore.Extensions.Test.Unit;
+namespace Arbeidstilsynet.Common.AspNetCore.Extensions.Test.Unit;
 
 public class StartupExtensionsTests
 {

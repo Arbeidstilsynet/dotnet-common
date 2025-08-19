@@ -2,9 +2,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Altinn.App.Core.Models;
 using Altinn.Platform.Storage.Interface.Models;
+using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
-using Arbeidstilsynet.Common.Altinn.Ports;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
+using Arbeidstilsynet.Common.Altinn.Ports.Token;
 using static Arbeidstilsynet.Common.Altinn.DependencyInjection.DependencyInjectionExtensions;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Clients;
@@ -53,7 +54,7 @@ internal class AltinnStorageClient : IAltinnStorageClient
         var url = instanceAddress.ToInstanceUri("complete");
 
         return await _httpClient
-                .Post(url, new { })
+                .PostAsJson(url, new { })
                 .WithBearerToken(await _altinnTokenProvider.GetToken())
                 .ReceiveContent<Instance>(_jsonSerializerOptions)
             ?? throw new Exception("Failed to complete instance");

@@ -1,9 +1,8 @@
-using Microsoft.OpenApi.Models;
 using RandomDataGenerator.FieldOptions;
 using RandomDataGenerator.Randomizers;
 using WireMock.Net.OpenApiParser.Settings;
 
-namespace Arbeidstilsynet.Common.Altinn.Test.Setup;
+namespace Arbeidstilsynet.Common.Altinn.Test.Unit.Setup;
 
 public class DynamicDataGeneration : WireMockOpenApiParserDynamicExampleValues
 {
