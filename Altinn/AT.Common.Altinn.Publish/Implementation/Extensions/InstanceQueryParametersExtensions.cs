@@ -1,7 +1,7 @@
 using System.Reflection;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 
-namespace Arbeidstilsynet.Common.Altinn.Implementation;
+namespace Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 
 internal static class InstanceQueryParametersExtensions
 {

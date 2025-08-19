@@ -1,9 +1,13 @@
+using System.Net.Http.Headers;
+
 namespace Arbeidstilsynet.Common.Altinn.Implementation;
 
 internal interface IHttpRequestBuilder
 {
     Task<HttpResponseMessage> Send();
     IHttpRequestBuilder WithHeader(string name, string value);
+
+    IHttpRequestBuilder WithAcceptHeader(string value, double quality);
     IHttpRequestBuilder WithQueryParameter(string name, string? value);
     IHttpRequestBuilder WithQueryParameterArray(string name, IEnumerable<string> values);
 }
@@ -73,5 +77,11 @@ internal class HttpRequestBuilder : IHttpRequestBuilder
         }
 
         return _httpClient.SendAsync(_request);
+    }
+
+    public IHttpRequestBuilder WithAcceptHeader(string value, double quality)
+    {
+        _request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(value, quality));
+        return this;
     }
 }

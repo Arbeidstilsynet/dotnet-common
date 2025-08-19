@@ -1,14 +1,12 @@
 using System.Net;
-using Arbeidstilsynet.Common.AspNetCore.Extensions;
 using Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
 using Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
 using Shouldly;
-using Xunit;
 
-namespace AT.Common.AspNetCore.Extensions.Test.Unit;
+namespace Arbeidstilsynet.Common.AspNetCore.Extensions.Test.Unit;
 
 public class ApiExceptionHandlerTests
 {

@@ -1,16 +1,12 @@
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-using Arbeidstilsynet.Common.AspNetCore;
 using Arbeidstilsynet.Common.AspNetCore.DependencyInjection;
 using Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using Shouldly;
-using Xunit;
 
-namespace AT.Common.AspNetCore.Extensions.Test.Unit;
+namespace Arbeidstilsynet.Common.AspNetCore.Extensions.Test.Unit;
 
 public class MemoryCachingHandlerTests
 {

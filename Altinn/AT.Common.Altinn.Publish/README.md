@@ -22,6 +22,8 @@ dotnet add package Arbeidstilsynet.Common.Altinn
 
 ### Dependency Injection Setup
 
+#### Altinn Application Utilities
+
 Add services to your service collection:
 
 ```csharp
@@ -33,6 +35,21 @@ public void ConfigureServices(IServiceCollection services)
     // OR add country options for Altinn dropdowns (includes AddLandskoder)
     services.AddLandOptions();
 }
+```
+
+#### Consuming Altinn Instances
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+var services = builder.Services;
+var appSettings = builder.Configuration.GetRequired<MyAppSettings>();
+
+// Adds IAltinnAdapter, which abstracts communication with Altinn instances.
+services.AddAltinnAdapter(builder.Environment, appSettings.MaskinportenConfiguration);
+
+// Adds Altinn API clients for consuming Altinn services, at a lower level of abstraction than IAltinnAdapter
+services.AddAltinnApiClients(builder.Environment, appSettings.MaskinportenConfiguration);
+
 ```
 
 ### Extension Methods
