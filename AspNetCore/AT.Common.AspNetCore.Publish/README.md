@@ -43,7 +43,7 @@ services.AddMemoryCachedHttpClient("MyCachedClient", configure =>
 }, cachingOptions =>
 {
     cachingOptions.SlidingExpiration = TimeSpan.FromMinutes(5);
-    cachingOptions.AbsoluteExpiration = DateTimeOffset.UtcNow.AddHours(1);
+    cachingOptions.AbsoluteExpiration = TimeSpan.FromHours(1);
 });
 
 // Do the rest of your dependency injection here ...
