@@ -6,6 +6,7 @@ namespace Arbeidstilsynet.Common.Altinn.Extensions;
 
 public static class HostEnvironmentExtensions
 {
+    private const string AltinnAuthenticationApiSuffix = "authentication/api/v1/";
     private const string AltinnEventApiSuffix = "events/api/v1/";
 
     private const string AltinnStorageApiSuffix = "storage/api/v1/";
@@ -27,6 +28,10 @@ public static class HostEnvironmentExtensions
     {
         return new AltinnApiConfiguration()
         {
+            AuthenticationUrl = new Uri(
+                new Uri(webHostEnvironment.GetAltinnPlattformUrl()),
+                AltinnAuthenticationApiSuffix
+            ),
             EventUrl = new Uri(
                 new Uri(webHostEnvironment.GetAltinnPlattformUrl()),
                 AltinnEventApiSuffix
@@ -41,6 +46,18 @@ public static class HostEnvironmentExtensions
                 )
             ),
         };
+    }
+
+    public static string GetMaskinportenUrl(this IWebHostEnvironment webHostEnvironment)
+    {
+        if (webHostEnvironment.IsProduction())
+        {
+            return "https://maskinporten.no/";
+        }
+        else
+        {
+            return "https://test.maskinporten.no/";
+        }
     }
 
     private static string GetAltinnPlattformUrl(this IWebHostEnvironment webHostEnvironment)
@@ -70,12 +87,12 @@ public static class HostEnvironmentExtensions
         }
         else if (webHostEnvironment.IsProduction())
         {
-            return $"https://{org}.apps.altinn.no/{org}/";
+            return $"https://{org}.apps.altinn.no/";
             ;
         }
         else
         {
-            return $"https://{org}.apps.tt02.altinn.no/{org}/";
+            return $"https://{org}.apps.tt02.altinn.no/";
         }
     }
 }

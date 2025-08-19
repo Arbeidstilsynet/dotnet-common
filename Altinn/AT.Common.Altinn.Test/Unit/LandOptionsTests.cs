@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 using Shouldly;
-using Xunit;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 

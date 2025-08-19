@@ -3,10 +3,8 @@ using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
-using Arbeidstilsynet.Common.Altinn.Test.Setup;
 using NSubstitute;
 using Shouldly;
-using Xunit.Abstractions;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 

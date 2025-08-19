@@ -8,11 +8,11 @@ namespace Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
 public static class UriExtensions
 {
     /// <summary>
-    /// Adds query parameters to a URI. Query parameters are added like "?key1=value1&amp;key2=value2" (or leading with '&amp;' if <param name="uri"/> contains parameters.
+    /// Adds query parameters to a URI. Query parameters are added like "?key1=value1&amp;key2=value2" (or leading with '&amp;' if <paramref name="uri"/> contains parameters.
     /// </summary>
-    /// <param name="uri"></param>
+    /// <param name="uri">The <see cref="Uri"/> to base the resulting <see cref="Uri"/> on</param>
     /// <param name="queryParameters">Query parameters as key value pairs. Pairs with blank values are ignored.</param>
-    /// <returns>A new <see cref="Uri"/> with the query parameters added. If <param name="queryParameters"/> is empty, the same Uri is returned instead.</returns>
+    /// <returns>A new <see cref="Uri"/> with the query parameters added. If <paramref name="queryParameters"/> is empty, the same Uri is returned instead.</returns>
     /// <remarks>
     /// Values are URL-escaped.
     /// <br/>

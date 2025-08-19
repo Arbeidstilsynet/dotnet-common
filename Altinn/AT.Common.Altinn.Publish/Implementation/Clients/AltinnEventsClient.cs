@@ -1,7 +1,8 @@
 using System.Text.Json;
 using Altinn.App.Core.Infrastructure.Clients.Events;
-using Arbeidstilsynet.Common.Altinn.Ports;
+using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
+using Arbeidstilsynet.Common.Altinn.Ports.Token;
 using static Arbeidstilsynet.Common.Altinn.DependencyInjection.DependencyInjectionExtensions;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Clients;
@@ -19,7 +20,7 @@ internal class AltinnEventsClient : IAltinnEventsClient
     )
     {
         _altinnTokenProvider = altinnTokenProvider;
-        _httpClient = httpClientFactory.CreateClient(AltinnAppApiClientKey);
+        _httpClient = httpClientFactory.CreateClient(AltinnEventsApiClientKey);
         _jsonSerializerOptions = new System.Text.Json.JsonSerializerOptions()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -29,8 +30,8 @@ internal class AltinnEventsClient : IAltinnEventsClient
     public async Task<Subscription> Subscribe(SubscriptionRequest request)
     {
         return await _httpClient
-                .Post(new Uri("subscriptions", UriKind.Relative).ToString(), request)
-                .WithHeader("Authorization", $"Bearer {await _altinnTokenProvider.GetToken()}")
+                .PostAsJson("subscriptions", request)
+                .WithBearerToken(await _altinnTokenProvider.GetToken())
                 .ReceiveContent<Subscription>(_jsonSerializerOptions)
             ?? throw new Exception("Failed to subscribe to Altinn");
     }
