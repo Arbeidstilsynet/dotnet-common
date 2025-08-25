@@ -98,6 +98,8 @@ public static class DependencyInjectionExtensions
     internal const string AltinnStorageApiClientKey = "AltinnStorageApiClient";
     internal const string AltinnEventsApiClientKey = "AltinnEventsApiClient";
 
+    internal const string AltinnAppsApiClientKey = "AltinnAppsApiClient";
+
     internal const string AltinnAuthenticationApiClientKey = "AltinnAuthenticationApiClient";
 
     internal const string MaskinportenApiClientKey = "MaskinportenApiClient";
@@ -206,6 +208,15 @@ public static class DependencyInjectionExtensions
     {
         services
             .AddHttpClient(
+                AltinnAppsApiClientKey,
+                client =>
+                {
+                    client.BaseAddress = altinnApiConfiguration.AppBaseUrl;
+                }
+            )
+            .AddStandardResilienceHandler();
+        services
+            .AddHttpClient(
                 AltinnEventsApiClientKey,
                 client =>
                 {
@@ -244,6 +255,7 @@ public static class DependencyInjectionExtensions
             )
             .AddStandardResilienceHandler();
 
+        services.AddTransient<IAltinnAppsClient, AltinnAppsClient>();
         services.AddTransient<IAltinnEventsClient, AltinnEventsClient>();
         services.AddTransient<IAltinnStorageClient, AltinnStorageClient>();
         services.AddTransient<IAltinnAuthenticationClient, AltinnAuthenticationClient>();
