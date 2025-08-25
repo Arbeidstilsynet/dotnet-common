@@ -24,13 +24,6 @@ public interface IAltinnStorageClient
     Task<Instance> GetInstance(CloudEvent cloudEvent);
 
     /// <summary>
-    /// Completes an instance (marks as complete in Altinn).
-    /// </summary>
-    /// <param name="instanceAddress">The instance address request.</param>
-    /// <returns>The completed instance.</returns>
-    Task<Instance> CompleteInstance(InstanceRequest instanceAddress);
-
-    /// <summary>
     /// Gets instance data as a stream by request.
     /// </summary>
     /// <param name="request">The instance data request.</param>

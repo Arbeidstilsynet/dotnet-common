@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.1.0
+
+### Fixed
+
+- fix: move complete action to new "Apps Client" since all mutable instance actions must go through Apps Api instead of Storage Api
+
 ## 1.0.0
 
 ### Added

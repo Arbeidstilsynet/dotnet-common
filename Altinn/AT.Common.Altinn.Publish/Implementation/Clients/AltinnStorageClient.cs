@@ -49,17 +49,6 @@ internal class AltinnStorageClient : IAltinnStorageClient
             ?? throw new Exception("Failed to get instance");
     }
 
-    public async Task<Instance> CompleteInstance(InstanceRequest instanceAddress)
-    {
-        var url = instanceAddress.ToInstanceUri("complete");
-
-        return await _httpClient
-                .PostAsJson(url, new { })
-                .WithBearerToken(await _altinnTokenProvider.GetToken())
-                .ReceiveContent<Instance>(_jsonSerializerOptions)
-            ?? throw new Exception("Failed to complete instance");
-    }
-
     public async Task<Stream> GetInstanceData(InstanceDataRequest request)
     {
         var uri = request.InstanceRequest.ToInstanceUri($"data/{request.DataId}");

@@ -61,6 +61,14 @@ public class AltinnApiTestFixture : TestBedFixture
                 PathPatternToUse = ExampleValueType.Value,
             }
         );
+        _server.AddMappings(
+            "Unit/TestData/openapi/altinn-apps-v1.json",
+            settings: new WireMockOpenApiParserSettings
+            {
+                ExampleValues = new DynamicDataGeneration(),
+                PathPatternToUse = ExampleValueType.Wildcard,
+            }
+        );
         _server
             .WhenRequest(r =>
                 r.WithPath("/token")
