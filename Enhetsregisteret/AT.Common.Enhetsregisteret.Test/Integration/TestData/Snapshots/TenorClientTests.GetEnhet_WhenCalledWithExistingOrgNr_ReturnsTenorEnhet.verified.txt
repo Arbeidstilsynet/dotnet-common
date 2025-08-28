@@ -1,0 +1,68 @@
+﻿{
+  Organisasjonsnummer: 214246252,
+  Navn: OVERFØLSOM KJEMPENDE TIGER AS,
+  Organisasjonsform: {
+    Kode: AS,
+    Beskrivelse: Aksjeselskap
+  },
+  Postadresse: {
+    Kommune: STEINKJER,
+    Landkode: NO,
+    Postnummer: 7795,
+    Gateadresse: [
+      Postboks 9078
+    ],
+    Land: Norge,
+    Kommunenummer: 5006,
+    Poststed: FOLLAFOSS
+  },
+  Forretningsadresse: {
+    Kommune: MOLDE,
+    Landkode: NO,
+    Postnummer: 6470,
+    Gateadresse: [
+      Vestre Feltet
+    ],
+    Land: Norge,
+    Kommunenummer: 1506,
+    Poststed: ERESFJORD
+  },
+  RegistrertIMvaregisteret: true,
+  Maalform: Bokmål,
+  Naeringskode1: {
+    Kode: 69,
+    Beskrivelse: Juridisk og regnskapsmessig tjenesteyting
+  },
+  Naeringskode2: {
+    Kode: 69.1,
+    Beskrivelse: Juridisk tjenesteyting
+  },
+  Naeringskode3: {
+    Kode: 69.10,
+    Beskrivelse: Juridisk tjenesteyting
+  },
+  UnderAvvikling: false,
+  RegistrertIStiftelsesregisteret: false,
+  Konkurs: false,
+  Vedtektsdato: 2019-08-26,
+  VedtektsfestetFormaal: [
+    Juridisk tjenesteyting
+  ],
+  Aktivitet: [
+    Juridisk tjenesteyting
+  ],
+  RegistrertIFrivillighetsregisteret: false,
+  Stiftelsesdato: 2012-04-24,
+  InstitusjonellSektorkode: {
+    Kode: 2100,
+    Beskrivelse: Private aksjeselskaper mv. 
+  },
+  RegistrertIForetaksregisteret: true,
+  RegistreringsdatoEnhetsregisteret: 2021-03-15,
+  Hjemmeside: www.achernarrevati.no,
+  SisteInnsendteAarsregnskap: 2019,
+  UnderTvangsavviklingEllerTvangsopplosning: false,
+  AntallAnsatte: 179,
+  Epostadresse: cassiopeia@apussaclateni.no,
+  Telefon: 02 14 24 25
+}

@@ -1,7 +1,9 @@
 using Arbeidstilsynet.Common.Enhetsregisteret.DependencyInjection;
 using Arbeidstilsynet.Common.TestExtensions.Extensions;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using WireMock.Logging;
 using WireMock.Server;
 using WireMock.Settings;
@@ -32,6 +34,7 @@ public class EnhetsregisteretTestFixture : TestBedFixture
     protected override void AddServices(IServiceCollection services, IConfiguration? configuration)
     {
         services.AddEnhetsregisteret(
+            Substitute.For<IWebHostEnvironment>(),
             new EnhetsregisteretConfig() { BrregApiBaseUrl = _server.Urls[0] }
         );
     }

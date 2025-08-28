@@ -1,0 +1,47 @@
+﻿{
+  Organisasjonsnummer: 311672932,
+  Navn: HEVNGJERRIG RIKTIG FJELLREV,
+  Organisasjonsform: {
+    Kode: BEDR,
+    Beskrivelse: Underenhet til næringsdrivende og offentlig forvaltning
+  },
+  Postadresse: {
+    Kommune: SANDEFJORD,
+    Landkode: NO,
+    Postnummer: 3168,
+    Gateadresse: [
+      Postboks 9010
+    ],
+    Land: Norge,
+    Kommunenummer: 3907,
+    Poststed: MELSOMVIK
+  },
+  Beliggenhetsadresse: {
+    Kommune: SANDEFJORD,
+    Landkode: NO,
+    Postnummer: 3208,
+    Gateadresse: [
+      Leikvollgata 79
+    ],
+    Land: Norge,
+    Kommunenummer: 3907,
+    Poststed: SANDEFJORD
+  },
+  RegistrertIMvaregisteret: false,
+  Naeringskode1: {
+    Kode: 69,
+    Beskrivelse: Juridisk og regnskapsmessig tjenesteyting
+  },
+  Naeringskode2: {
+    Kode: 69.1,
+    Beskrivelse: Juridisk tjenesteyting
+  },
+  Naeringskode3: {
+    Kode: 69.10,
+    Beskrivelse: Juridisk tjenesteyting
+  },
+  RegistreringsdatoEnhetsregisteret: 2021-03-18,
+  AntallAnsatte: 16,
+  HarRegistrertAntallAnsatte: false,
+  OverordnetEnhet: 214246252
+}

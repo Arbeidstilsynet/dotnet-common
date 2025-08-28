@@ -1,0 +1,53 @@
+﻿{
+  Organisasjonsnummer: example-value,
+  Navn: example-value,
+  Organisasjonsform: {},
+  Postadresse: {
+    Kommune: MOLDE,
+    Landkode: NO,
+    Postnummer: 6470,
+    Gateadresse: [
+      Vestre Feltet
+    ],
+    Land: Norge,
+    Kommunenummer: 1506,
+    Poststed: ERESFJORD
+  },
+  Forretningsadresse: {
+    Kommune: MOLDE,
+    Landkode: NO,
+    Postnummer: 6470,
+    Gateadresse: [
+      Vestre Feltet
+    ],
+    Land: Norge,
+    Kommunenummer: 1506,
+    Poststed: ERESFJORD
+  },
+  RegistrertIMvaregisteret: false,
+  Maalform: example-value,
+  Naeringskode1: {
+    Kode: 79,
+    Beskrivelse: Beskrivelse 1
+  },
+  Naeringskode2: {
+    Kode: 79.9,
+    Beskrivelse: Beskrivelse 2
+  },
+  UnderAvvikling: false,
+  RegistrertIStiftelsesregisteret: false,
+  Konkurs: false,
+  Vedtektsdato: example-value,
+  RegistrertIFrivillighetsregisteret: false,
+  Stiftelsesdato: example-value,
+  InstitusjonellSektorkode: {},
+  RegistrertIForetaksregisteret: false,
+  RegistreringsdatoEnhetsregisteret: example-value,
+  Hjemmeside: example-value,
+  SisteInnsendteAarsregnskap: example-value,
+  UnderTvangsavviklingEllerTvangsopplosning: false,
+  AntallAnsatte: 42,
+  Epostadresse: example-value,
+  Telefon: example-value,
+  Mobil: example-value
+}

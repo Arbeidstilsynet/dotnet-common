@@ -10,7 +10,7 @@
     <Company>Arbeidstilsynet</Company>
     <Description>A http client which interfaces with enhetsregisteret (Brønnøysundregistrene)</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>0.1.1</Version>
+    <Version>0.1.2-alpha</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
   </PropertyGroup>
@@ -24,9 +24,17 @@
       Version="[9,10)"
     />
     <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="[9,10)" />
+    <PackageReference Include="Mapster" Version="7.4.0" />
+    <PackageReference Include="Mapster.DependencyInjection" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="Data\orgdata.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Data\orgdata.json" />
   </ItemGroup>
   <Target
     Name="InjectPackageReleaseNotesFromFile"
