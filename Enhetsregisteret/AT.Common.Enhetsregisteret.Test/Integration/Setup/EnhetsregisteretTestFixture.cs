@@ -35,7 +35,11 @@ public class EnhetsregisteretTestFixture : TestBedFixture
     {
         services.AddEnhetsregisteret(
             Substitute.For<IWebHostEnvironment>(),
-            new EnhetsregisteretConfig() { BrregApiBaseUrl = _server.Urls[0] }
+            new EnhetsregisteretConfig()
+            {
+                BrregApiBaseUrl = _server.Urls[0],
+                CacheOptions = new CacheOptions { Disabled = false },
+            }
         );
     }
 

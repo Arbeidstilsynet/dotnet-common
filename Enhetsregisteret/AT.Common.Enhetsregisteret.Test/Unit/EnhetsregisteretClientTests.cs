@@ -15,9 +15,10 @@ public class EnhetsregisteretClientUnitTests
 
     private readonly IMemoryCache _memoryCache = Substitute.For<IMemoryCache>();
 
-    private readonly EnhetsregisteretConfig _cacheOptions = new(
-        cacheOptions: new CacheOptions { Disabled = false }
-    );
+    private readonly EnhetsregisteretConfig _cacheOptions = new EnhetsregisteretConfig
+    {
+        CacheOptions = new CacheOptions { Disabled = false },
+    };
 
     public EnhetsregisteretClientUnitTests()
     {
