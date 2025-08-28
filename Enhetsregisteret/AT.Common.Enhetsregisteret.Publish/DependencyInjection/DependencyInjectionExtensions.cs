@@ -1,8 +1,5 @@
-using System.Reflection;
 using Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
 using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
-using Mapster;
-using MapsterMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
