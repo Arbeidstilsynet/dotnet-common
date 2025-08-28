@@ -12,9 +12,9 @@ namespace Arbeidstilsynet.Common.Enhetsregisteret.DependencyInjection;
 public class EnhetsregisteretConfig
 {
     /// <summary>
-    /// BaseUrl for Enhetsregisteret API.
+    /// Overwrites the baseUrl for Enhetsregisteret API. If not set, the BaseUrl is determined by the host environment.
     /// </summary>
-    public string BrregApiBaseUrl { get; set; }
+    public string? BrregApiBaseUrlOverwrite { get; set; }
 
     /// <summary>
     /// Settings for caching mechanism.
@@ -45,16 +45,15 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddEnhetsregisteret(
         this IServiceCollection services,
         IWebHostEnvironment webHostEnvironment,
-        Action<EnhetsregisteretConfig>? configure = null
+        Action<EnhetsregisteretConfig> configure
     )
     {
         var config = new EnhetsregisteretConfig()
         {
-            BrregApiBaseUrl = GetBrregUrlBasedOnEnvironment(webHostEnvironment),
             CacheOptions = new CacheOptions { Disabled = false },
         };
 
-        configure?.Invoke(config);
+        configure.Invoke(config);
 
         services.AddServices(webHostEnvironment, config);
 
@@ -76,7 +75,6 @@ public static class DependencyInjectionExtensions
     {
         config ??= new EnhetsregisteretConfig()
         {
-            BrregApiBaseUrl = GetBrregUrlBasedOnEnvironment(webHostEnvironment),
             CacheOptions = new CacheOptions { Disabled = false },
         };
 
@@ -105,7 +103,11 @@ public static class DependencyInjectionExtensions
                 Clientkey,
                 httpClient =>
                 {
-                    httpClient.BaseAddress = new Uri(config.BrregApiBaseUrl);
+                    httpClient.BaseAddress = new Uri(
+                        string.IsNullOrEmpty(config.BrregApiBaseUrlOverwrite)
+                            ? GetBrregUrlBasedOnEnvironment(webHostEnvironment)
+                            : config.BrregApiBaseUrlOverwrite
+                    );
                 }
             )
             .AddStandardResilienceHandler();

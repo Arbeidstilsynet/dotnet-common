@@ -37,7 +37,7 @@ public class EnhetsregisteretTestFixture : TestBedFixture
             Substitute.For<IWebHostEnvironment>(),
             new EnhetsregisteretConfig()
             {
-                BrregApiBaseUrl = _server.Urls[0],
+                BrregApiBaseUrlOverwrite = _server.Urls[0],
                 CacheOptions = new CacheOptions { Disabled = false },
             }
         );

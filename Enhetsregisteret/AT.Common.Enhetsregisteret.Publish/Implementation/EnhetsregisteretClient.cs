@@ -50,7 +50,10 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
     public EnhetsregisteretClient(EnhetsregisteretConfig config)
     {
         _logger = new NullLogger<EnhetsregisteretClient>();
-        _optionalClient = new HttpClient() { BaseAddress = new Uri(config.BrregApiBaseUrl) };
+        _optionalClient = new HttpClient()
+        {
+            BaseAddress = new Uri(config.BrregApiBaseUrlOverwrite),
+        };
         _memoryCache = new MemoryCache(optionsAccessor: new MemoryCacheOptions { });
         _cacheOptions = config.CacheOptions;
     }
