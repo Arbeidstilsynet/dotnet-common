@@ -1,6 +1,8 @@
 using Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
 using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Arbeidstilsynet.Common.Enhetsregisteret.DependencyInjection;
 
@@ -10,21 +12,9 @@ namespace Arbeidstilsynet.Common.Enhetsregisteret.DependencyInjection;
 public class EnhetsregisteretConfig
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="EnhetsregisteretConfig"/> class.
+    /// Overwrites the baseUrl for Enhetsregisteret API. If not set, the BaseUrl is determined by the host environment.
     /// </summary>
-    /// <param name="brregApiBaseUrl">BaseUrl for Enhetsregisteret API. Default: "https://data.brreg.no/".</param>
-    /// <param name="cacheOptions">Cache settings for Enhetsregisteret.
-    /// </param>
-    public EnhetsregisteretConfig(string? brregApiBaseUrl = null, CacheOptions? cacheOptions = null)
-    {
-        BrregApiBaseUrl = brregApiBaseUrl ?? "https://data.brreg.no/";
-        CacheOptions = new CacheOptions { Disabled = cacheOptions?.Disabled ?? false };
-    }
-
-    /// <summary>
-    /// BaseUrl for Enhetsregisteret API.
-    /// </summary>
-    public string BrregApiBaseUrl { get; set; }
+    public string? BrregApiBaseUrlOverwrite { get; set; }
 
     /// <summary>
     /// Settings for caching mechanism.
@@ -49,18 +39,23 @@ public static class DependencyInjectionExtensions
     /// Registers an implementation of IEnhetsregisteret in the specified <see cref="IServiceCollection"/>.
     /// </summary>
     /// <param name="services"><see cref="IServiceCollection"/> to add the service to.</param>
+    /// <param name="webHostEnvironment">the environment the application runs in</param>
     /// <param name="configure">Configure the client.</param>
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
     public static IServiceCollection AddEnhetsregisteret(
         this IServiceCollection services,
-        Action<EnhetsregisteretConfig>? configure = null
+        IWebHostEnvironment webHostEnvironment,
+        Action<EnhetsregisteretConfig> configure
     )
     {
-        var config = new EnhetsregisteretConfig();
+        var config = new EnhetsregisteretConfig()
+        {
+            CacheOptions = new CacheOptions { Disabled = false },
+        };
 
-        configure?.Invoke(config);
+        configure.Invoke(config);
 
-        services.AddServices(config);
+        services.AddServices(webHostEnvironment, config);
 
         return services;
     }
@@ -69,33 +64,54 @@ public static class DependencyInjectionExtensions
     /// Registers an implementation of IEnhetsregisteret in the specified <see cref="IServiceCollection"/>.
     /// </summary>
     /// <param name="services"><see cref="IServiceCollection"/> to add the service to.</param>
+    /// <param name="webHostEnvironment">the environment the application runs in</param>
     /// <param name="config">Configuration for the client. If null, a default configuration is used.</param>
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
     public static IServiceCollection AddEnhetsregisteret(
         this IServiceCollection services,
+        IWebHostEnvironment webHostEnvironment,
         EnhetsregisteretConfig? config = null
     )
     {
-        config ??= new EnhetsregisteretConfig();
+        config ??= new EnhetsregisteretConfig()
+        {
+            CacheOptions = new CacheOptions { Disabled = false },
+        };
 
-        services.AddServices(config);
+        services.AddServices(webHostEnvironment, config);
 
         return services;
     }
 
-    private static void AddServices(this IServiceCollection services, EnhetsregisteretConfig config)
+    private static string GetBrregUrlBasedOnEnvironment(IWebHostEnvironment webHostEnvironment)
     {
+        return webHostEnvironment.IsProduction()
+            ? "https://data.brreg.no/"
+            : "https://data.ppe.brreg.no/";
+    }
+
+    private static void AddServices(
+        this IServiceCollection services,
+        IWebHostEnvironment webHostEnvironment,
+        EnhetsregisteretConfig config
+    )
+    {
+        services.AddSingleton(config!);
+
         services
             .AddHttpClient(
                 Clientkey,
                 httpClient =>
                 {
-                    httpClient.BaseAddress = new Uri(config.BrregApiBaseUrl);
+                    httpClient.BaseAddress = new Uri(
+                        string.IsNullOrEmpty(config.BrregApiBaseUrlOverwrite)
+                            ? GetBrregUrlBasedOnEnvironment(webHostEnvironment)
+                            : config.BrregApiBaseUrlOverwrite
+                    );
                 }
             )
             .AddStandardResilienceHandler();
 
-        services.AddSingleton(config!);
         services.AddMemoryCache();
         services.AddTransient<IEnhetsregisteret, EnhetsregisteretClient>();
     }
