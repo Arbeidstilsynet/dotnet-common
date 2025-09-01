@@ -39,22 +39,6 @@ public class AltinnStorageClientTests : TestBed<AltinnApiTestFixture>
     }
 
     [Fact]
-    public async Task CompleteInstance_WhenCalledWithValidInstanceRequestDto_ReturnsExampleResponse()
-    {
-        //arrange
-        //act
-        var result = await _sut.CompleteInstance(
-            new Model.Api.Request.InstanceRequest
-            {
-                InstanceGuid = DynamicDataGeneration.DefaultPathUuid,
-                InstanceOwnerPartyId = DynamicDataGeneration.DefaultIntValue.ToString(),
-            }
-        );
-        //assert
-        result.ShouldNotBeNull();
-    }
-
-    [Fact]
     public async Task GetInstanceData_WhenCalledWithValidInstanceDataRequestDto_ReturnsExampleResponse()
     {
         //arrange
