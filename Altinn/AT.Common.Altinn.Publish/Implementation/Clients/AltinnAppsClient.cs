@@ -33,17 +33,9 @@ internal class AltinnAppsClient : IAltinnAppsClient
     public async Task<Instance> CompleteInstance(string appId, InstanceRequest instanceAddress)
     {
         var instanceUri = instanceAddress.ToInstanceUri("complete");
-        var appUri = new Uri(
-            string.Join(
-                "/",
-                $"{DependencyInjectionExtensions.AltinnOrgIdentifier}/{appId}",
-                instanceUri
-            ),
-            UriKind.Relative
-        );
 
         return await _httpClient
-                .PostAsJson(appUri, new { })
+                .PostAsJson($"{AltinnOrgIdentifier}/{appId}/{instanceUri}", new { })
                 .WithBearerToken(await _altinnTokenProvider.GetToken())
                 .ReceiveContent<Instance>(_jsonSerializerOptions)
             ?? throw new Exception("Failed to complete instance");

@@ -6,7 +6,7 @@ using SubscriptionRequest = Altinn.App.Core.Infrastructure.Clients.Events.Subscr
 namespace Arbeidstilsynet.Common.Altinn.Ports.Clients;
 
 /// <summary>
-/// Client for subscribing to Altinn events.
+/// Client for interacting directly with the altinn app instance (mutuable actions).
 /// </summary>
 public interface IAltinnAppsClient
 {
