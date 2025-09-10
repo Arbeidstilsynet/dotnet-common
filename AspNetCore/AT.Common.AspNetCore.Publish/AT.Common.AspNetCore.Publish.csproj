@@ -10,17 +10,17 @@
     <Company>Arbeidstilsynet</Company>
     <Description>Useful extensions for cross-cutting concerns at Arbeidstilsynet</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.4.0</Version>
+    <Version>1.4.1</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="[1.9.0,1.10.0]" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="[1.9.0,1.10.0]" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="[1.9.0,1.10.0]" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="[1.9.0,1.10.0)" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="[1.9.0,1.10.0)" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="[1.9.0,1.10.0)" />
     <PackageReference
       Include="OpenTelemetry.Instrumentation.EntityFrameworkCore"
-      Version="[1.0.0-beta.12, 1.10.0-beta.1]"
+      Version="[1.0.0-beta.12, 1.10.0-beta.1)"
     />
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.12.0" />
     <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.12.0" />
