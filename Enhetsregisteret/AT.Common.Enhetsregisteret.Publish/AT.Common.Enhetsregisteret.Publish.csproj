@@ -10,7 +10,7 @@
     <Company>Arbeidstilsynet</Company>
     <Description>A http client which interfaces with enhetsregisteret (Brønnøysundregistrene)</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>0.2.0-alpha</Version>
+    <Version>0.2.0-alpha2</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
   </PropertyGroup>
@@ -21,9 +21,9 @@
     />
     <PackageReference
       Include="Microsoft.Extensions.DependencyInjection.Abstractions"
-      Version="[8,9)"
+      Version="[8,10)"
     />
-    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="[8,9)" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="[8,10)" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
