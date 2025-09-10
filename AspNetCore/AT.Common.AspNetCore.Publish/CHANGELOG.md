@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.4.0
+
+### Changed
+
+- fix(deps): downgraded opentelemetry packages to last version where they support Microsoft.* v8 packages
+
 ## 1.3.3
 
 ### Added
