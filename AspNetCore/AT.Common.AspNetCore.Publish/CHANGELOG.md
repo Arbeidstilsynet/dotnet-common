@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 1.3.3
 
+### Changed
+
+- fix(deps): downgraded opentelemetry packages to last version where they support Microsoft.* v8 packages
+
+## 1.3.3
+
 ### Added
 
 - feat(serialization): Added String-Uri serialization support (`JsonStringEnumConverter`)
