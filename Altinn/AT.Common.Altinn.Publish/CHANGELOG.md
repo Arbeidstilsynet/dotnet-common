@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.2.0
+
+### Changed
+
+- fix(deps): use correct version range to only support Microsoft version 8.* packages
+
 ## 1.1.0
 
 ### Fixed

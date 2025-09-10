@@ -10,20 +10,20 @@
     <Company>Arbeidstilsynet</Company>
     <Description>Implements a client which integrates with https://ws.geonorge.no/.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.0.1</Version>
+    <Version>1.1.0</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference
       Include="Arbeidstilsynet.Common.AspNetCore.Extensions"
-      Version="[1.2.0,2.0)"
+      Version="[1.4.1,2.0)"
     />
     <PackageReference
       Include="Microsoft.Extensions.DependencyInjection.Abstractions"
-      Version="[9,10)"
+      Version="[8,10)"
     />
-    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="[9,10)" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="[8,10)" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
