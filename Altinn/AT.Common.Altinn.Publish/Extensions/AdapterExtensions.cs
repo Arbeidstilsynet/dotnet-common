@@ -1,6 +1,6 @@
-using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 
 namespace Arbeidstilsynet.Common.Altinn.Extensions;
 
@@ -11,7 +11,7 @@ public static class AdapterExtensions
     /// </summary>
     /// <param name="altinnInstance">The Altinn instance to convert.</param>
     /// <returns>The corresponding <see cref="AltinnMetadata"/> object.</returns>
-    public static AltinnMetadata ToAltinnMetadata(this Instance altinnInstance)
+    public static AltinnMetadata ToAltinnMetadata(this AltinnInstance altinnInstance)
     {
         var appIdParts = altinnInstance.AppId?.Split('/');
 

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Arbeidstilsynet.Common.Altinn.Model;
+namespace Arbeidstilsynet.Common.AltinnApp.Model;
 
 /// <summary>
 /// Represents a country and its international dialing code.

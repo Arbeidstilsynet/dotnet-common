@@ -1,9 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Altinn.App.Core.Models;
-using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Arbeidstilsynet.Common.Altinn.Ports.Token;
 using static Arbeidstilsynet.Common.Altinn.DependencyInjection.DependencyInjectionExtensions;
@@ -31,24 +30,6 @@ internal class AltinnStorageClient : IAltinnStorageClient
         _jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     }
 
-    public async Task<Instance> GetInstance(InstanceRequest instanceAddress)
-    {
-        return await _httpClient
-                .Get(instanceAddress.ToInstanceUri())
-                .WithBearerToken(await _altinnTokenProvider.GetToken())
-                .ReceiveContent<Instance>(_jsonSerializerOptions)
-            ?? throw new Exception("Failed to get instance");
-    }
-
-    public async Task<Instance> GetInstance(CloudEvent cloudEvent)
-    {
-        return await _httpClient
-                .Get(cloudEvent.ToInstanceUri())
-                .WithBearerToken(await _altinnTokenProvider.GetToken())
-                .ReceiveContent<Instance>(_jsonSerializerOptions)
-            ?? throw new Exception("Failed to get instance");
-    }
-
     public async Task<Stream> GetInstanceData(InstanceDataRequest request)
     {
         var uri = request.InstanceRequest.ToInstanceUri($"data/{request.DataId}");
@@ -69,13 +50,33 @@ internal class AltinnStorageClient : IAltinnStorageClient
             .ReceiveStream();
     }
 
-    public async Task<QueryResponse<Instance>> GetInstances(InstanceQueryParameters queryParameters)
+    public async Task<AltinnInstance> GetInstance(InstanceRequest instanceAddress)
+    {
+        return await _httpClient
+                .Get(instanceAddress.ToInstanceUri())
+                .WithBearerToken(await _altinnTokenProvider.GetToken())
+                .ReceiveContent<AltinnInstance>(_jsonSerializerOptions)
+            ?? throw new Exception("Failed to get instance");
+    }
+
+    public async Task<AltinnInstance> GetInstance(AltinnCloudEvent cloudEvent)
+    {
+        return await _httpClient
+                .Get(cloudEvent.ToInstanceUri())
+                .WithBearerToken(await _altinnTokenProvider.GetToken())
+                .ReceiveContent<AltinnInstance>(_jsonSerializerOptions)
+            ?? throw new Exception("Failed to get instance");
+    }
+
+    public async Task<AltinnQueryResponse<AltinnInstance>> GetInstances(
+        InstanceQueryParameters queryParameters
+    )
     {
         return await _httpClient
                 .Get("instances")
                 .ApplyInstanceQueryParameters(queryParameters)
                 .WithBearerToken(await _altinnTokenProvider.GetToken())
-                .ReceiveContent<QueryResponse<Instance>>(_jsonSerializerOptions)
+                .ReceiveContent<AltinnQueryResponse<AltinnInstance>>(_jsonSerializerOptions)
             ?? throw new Exception("Failed to get instance");
     }
 }

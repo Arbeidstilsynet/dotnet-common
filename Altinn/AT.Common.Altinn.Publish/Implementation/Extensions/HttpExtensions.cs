@@ -1,6 +1,5 @@
 using System.Net.Http.Json;
 using System.Text.Json;
-using Altinn.App.Core.Models;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 
@@ -140,7 +139,7 @@ internal static class HttpExtensions
         return new Uri(uri, UriKind.Relative);
     }
 
-    public static Uri ToInstanceUri(this CloudEvent cloudEvent)
+    public static Uri ToInstanceUri(this AltinnCloudEvent cloudEvent)
     {
         try
         {

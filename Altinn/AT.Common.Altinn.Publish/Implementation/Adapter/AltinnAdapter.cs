@@ -1,14 +1,14 @@
-using Altinn.App.Core.Infrastructure.Clients.Events;
-using Altinn.App.Core.Models;
-using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Ports.Adapter;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using DataElement = Arbeidstilsynet.Common.Altinn.Model.Api.Response.DataElement;
+using FileScanResult = Arbeidstilsynet.Common.Altinn.Model.Api.Response.FileScanResult;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 
@@ -20,7 +20,7 @@ internal class AltinnAdapter(
 ) : IAltinnAdapter
 {
     public async Task<AltinnInstanceSummary> GetSummary(
-        CloudEvent cloudEvent,
+        AltinnCloudEvent cloudEvent,
         AltinnAppConfiguration? appConfig = null
     )
     {
@@ -31,11 +31,11 @@ internal class AltinnAdapter(
         return await GetInstanceSummaryAsync(instance, appConfig.MainDocumentDataTypeName);
     }
 
-    public Task<Subscription> SubscribeForCompletedProcessEvents(
+    public Task<AltinnSubscription> SubscribeForCompletedProcessEvents(
         SubscriptionRequestDto subscriptionRequestDto
     )
     {
-        var mappedRequest = new SubscriptionRequest()
+        var mappedRequest = new AltinnSubscriptionRequest()
         {
             SourceFilter = new Uri(
                 altinnApiConfigurationOptions.Value.AppBaseUrl,
@@ -85,7 +85,7 @@ internal class AltinnAdapter(
     }
 
     private async Task<AltinnInstanceSummary> GetInstanceSummaryAsync(
-        Instance instance,
+        AltinnInstance instance,
         string mainDocumentDataTypeName
     )
     {
@@ -105,7 +105,7 @@ internal class AltinnAdapter(
 
     private async Task<AltinnDocument> GetAltinnDocument(
         DataElement dataElement,
-        Instance instance,
+        AltinnInstance instance,
         string mainDocumentDataTypeName
     )
     {
@@ -136,29 +136,11 @@ file static class Extensions
             Filename = string.Equals(mainDocumentDataTypeName, dataElement.DataType)
                 ? "MainDocument"
                 : dataElement.Filename,
-            FileScanResult = dataElement.FileScanResult.MapToInternalModel(),
+            FileScanResult = dataElement.FileScanResult,
         };
     }
 
-    public static FileScanResult MapToInternalModel(
-        this global::Altinn.Platform.Storage.Interface.Enums.FileScanResult fileScanResult
-    )
-    {
-        return fileScanResult switch
-        {
-            global::Altinn.Platform.Storage.Interface.Enums.FileScanResult.NotApplicable =>
-                FileScanResult.NotApplicable,
-            global::Altinn.Platform.Storage.Interface.Enums.FileScanResult.Pending =>
-                FileScanResult.Pending,
-            global::Altinn.Platform.Storage.Interface.Enums.FileScanResult.Clean =>
-                FileScanResult.Clean,
-            global::Altinn.Platform.Storage.Interface.Enums.FileScanResult.Infected =>
-                FileScanResult.Infected,
-            _ => throw new NotImplementedException(),
-        };
-    }
-
-    public static InstanceRequest CreateInstanceRequest(this Instance instance)
+    public static InstanceRequest CreateInstanceRequest(this AltinnInstance instance)
     {
         return new InstanceRequest
         {
@@ -170,7 +152,7 @@ file static class Extensions
     }
 
     public static InstanceDataRequest CreateInstanceDataRequest(
-        this Instance instance,
+        this AltinnInstance instance,
         DataElement dataElement
     )
     {

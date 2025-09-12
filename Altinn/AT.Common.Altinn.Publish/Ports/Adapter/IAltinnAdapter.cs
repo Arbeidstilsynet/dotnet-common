@@ -1,7 +1,7 @@
-using Altinn.App.Core.Infrastructure.Clients.Events;
-using Altinn.App.Core.Models;
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 
 namespace Arbeidstilsynet.Common.Altinn.Ports.Adapter;
 
@@ -17,7 +17,7 @@ public interface IAltinnAdapter
     /// <param name="appConfig">Optional Altinn app configuration.</param>
     /// <returns>The summary of the Altinn instance.</returns>
     public Task<AltinnInstanceSummary> GetSummary(
-        CloudEvent cloudEvent,
+        AltinnCloudEvent cloudEvent,
         AltinnAppConfiguration? appConfig = null
     );
 
@@ -26,14 +26,14 @@ public interface IAltinnAdapter
     /// </summary>
     /// <param name="subscriptionRequestDto">The subscription request details.</param>
     /// <returns>The created subscription.</returns>
-    public Task<Subscription> SubscribeForCompletedProcessEvents(
+    public Task<AltinnSubscription> SubscribeForCompletedProcessEvents(
         SubscriptionRequestDto subscriptionRequestDto
     );
 
     /// <summary>
     /// Gets all non-completed Altinn instances for a given app.
     /// </summary>
-    /// <param name="appId">The Altinn app ID. E.g. "dat/ulykkesvarsel"</param>
+    /// <param name="appId">The Altinn app ID. E.g. "ulykkesvarsel" will be treated as "dat/ulykkesvarsel"</param>
     /// <param name="ProcessIsComplete">Whether the process is complete (default true).</param>
     /// <param name="ExcludeConfirmedBy">Exclude instances which are already confirmed by the specified org identifier. Default: "dat"</param>
     /// <param name="appConfig">Optional Altinn app configuration.</param>

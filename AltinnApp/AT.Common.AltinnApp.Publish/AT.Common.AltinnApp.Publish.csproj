@@ -3,31 +3,27 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>Arbeidstilsynet.Common.Altinn</RootNamespace>
-    <PackageId>Arbeidstilsynet.Common.Altinn</PackageId>
-    <Product>Arbeidstilsynet.Common.Altinn</Product>
+    <RootNamespace>Arbeidstilsynet.Common.AltinnApp</RootNamespace>
+    <PackageId>Arbeidstilsynet.Common.AltinnApp</PackageId>
+    <Product>Arbeidstilsynet.Common.AltinnApp</Product>
     <Authors>Digital Samhandling</Authors>
     <Company>Arbeidstilsynet</Company>
-    <Description>Useful methods and classes for cross-cutting concerns in Altinn applications</Description>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Description>Provides common functionality for usage in Altinn Apps</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Version>1.3.0</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference
-      Include="Arbeidstilsynet.Common.AspNetCore.Extensions"
-      Version="[1.4.1, 2.0)"
-    />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="[8, 9)" />
-    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="[8, 9)" />
-    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="[8, 9)" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    <PackageReference Include="Altinn.App.Core" Version="[8.6.5, 9)"></PackageReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Files\landskoder.json" />
+    <EmbeddedResource Include="Files\landskoder.json" />
   </ItemGroup>
   <Target
     Name="InjectPackageReleaseNotesFromFile"

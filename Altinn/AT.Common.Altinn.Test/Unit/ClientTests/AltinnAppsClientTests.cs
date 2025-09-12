@@ -1,5 +1,3 @@
-using Altinn.App.Core.Models;
-using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Arbeidstilsynet.Common.Altinn.Test.Unit.Setup;
 using Shouldly;

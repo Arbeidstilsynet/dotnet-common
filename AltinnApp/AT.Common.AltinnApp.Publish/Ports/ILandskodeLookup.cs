@@ -1,6 +1,6 @@
-using Arbeidstilsynet.Common.Altinn.Model;
+using Arbeidstilsynet.Common.AltinnApp.Model;
 
-namespace Arbeidstilsynet.Common.Altinn.Ports;
+namespace Arbeidstilsynet.Common.AltinnApp.Ports;
 
 /// <summary>
 /// Interface for looking up country codes and names based on 3-letter ISO values.

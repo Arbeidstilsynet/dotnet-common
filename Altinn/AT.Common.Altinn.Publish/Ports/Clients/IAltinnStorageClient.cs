@@ -1,6 +1,5 @@
-using Altinn.App.Core.Models;
-using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 
 namespace Arbeidstilsynet.Common.Altinn.Ports.Clients;
 
@@ -13,15 +12,15 @@ public interface IAltinnStorageClient
     /// Gets an instance by its address.
     /// </summary>
     /// <param name="instanceAddress">The instance address request.</param>
-    /// <returns>The instance matching the address.</returns>
-    Task<Instance> GetInstance(InstanceRequest instanceAddress);
+    /// <returns>The instance matching the address mapped to our own model.</returns>
+    Task<AltinnInstance> GetInstance(InstanceRequest instanceAddress);
 
     /// <summary>
     /// Gets an instance from a CloudEvent.
     /// </summary>
     /// <param name="cloudEvent">The cloud event containing instance information.</param>
-    /// <returns>The instance referenced by the event.</returns>
-    Task<Instance> GetInstance(CloudEvent cloudEvent);
+    /// <returns>The instance referenced by the event mapped to our own model.</returns>
+    Task<AltinnInstance> GetInstance(AltinnCloudEvent cloudEvent);
 
     /// <summary>
     /// Gets instance data as a stream by request.
@@ -41,6 +40,6 @@ public interface IAltinnStorageClient
     /// Gets instances matching the specified query parameters.
     /// </summary>
     /// <param name="queryParameters">The query parameters for searching instances.</param>
-    /// <returns>A query response containing matching instances.</returns>
-    Task<QueryResponse<Instance>> GetInstances(InstanceQueryParameters queryParameters);
+    /// <returns>A query response containing matching instances mapped to our own model.</returns>
+    Task<AltinnQueryResponse<AltinnInstance>> GetInstances(InstanceQueryParameters queryParameters);
 }

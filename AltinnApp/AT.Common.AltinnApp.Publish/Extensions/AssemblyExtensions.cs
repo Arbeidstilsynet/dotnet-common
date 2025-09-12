@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Text.Json;
 
-namespace Arbeidstilsynet.Common.Altinn.Extensions;
+namespace Arbeidstilsynet.Common.AltinnApp.Extensions;
 
 /// <summary>
 /// Provides methods to read and deserialize embedded JSON resources from an assembly.

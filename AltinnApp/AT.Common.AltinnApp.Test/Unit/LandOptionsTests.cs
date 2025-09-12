@@ -1,13 +1,14 @@
-using Arbeidstilsynet.Common.Altinn.DependencyInjection;
-using Arbeidstilsynet.Common.Altinn.Implementation;
-using Arbeidstilsynet.Common.Altinn.Model;
-using Arbeidstilsynet.Common.Altinn.Ports;
+using Arbeidstilsynet.Common.AltinnApp.DependencyInjection;
+using Arbeidstilsynet.Common.AltinnApp.Implementation;
+using Arbeidstilsynet.Common.AltinnApp.Model;
+using Arbeidstilsynet.Common.AltinnApp.Ports;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 using Shouldly;
+using Xunit;
 
-namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
+namespace Arbeidstilsynet.Common.AltinnApp.Test.Unit;
 
 public class LandOptionsTests
 {
