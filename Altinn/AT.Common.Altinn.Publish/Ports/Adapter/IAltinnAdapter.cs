@@ -33,7 +33,7 @@ public interface IAltinnAdapter
     /// <summary>
     /// Gets all non-completed Altinn instances for a given app.
     /// </summary>
-    /// <param name="appId">The Altinn app ID. E.g. "dat/ulykkesvarsel"</param>
+    /// <param name="appId">The Altinn app ID. E.g. "ulykkesvarsel" will be treated as "dat/ulykkesvarsel"</param>
     /// <param name="ProcessIsComplete">Whether the process is complete (default true).</param>
     /// <param name="ExcludeConfirmedBy">Exclude instances which are already confirmed by the specified org identifier. Default: "dat"</param>
     /// <param name="appConfig">Optional Altinn app configuration.</param>

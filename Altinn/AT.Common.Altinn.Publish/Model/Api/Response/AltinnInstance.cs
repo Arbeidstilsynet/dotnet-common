@@ -6,6 +6,9 @@ using System.Text.Json.Serialization;
 */
 namespace Arbeidstilsynet.Common.Altinn.Model.Api.Response
 {
+    /// <summary>
+    /// Represents an Altinn instance. Colloquially known as "Altinn-skjema".
+    /// </summary>
     public class AltinnInstance
     {
         /// <summary>
@@ -87,6 +90,9 @@ namespace Arbeidstilsynet.Common.Altinn.Model.Api.Response
         public Dictionary<string, string> DataValues { get; set; }
     }
 
+    /// <summary>
+    /// Represents the owner of an Altinn instance. This is usually the user that sent the "Altinn-skjema" (or the organization they did it on behalf of).
+    /// </summary>
     public class InstanceOwner
     {
         /// <summary>
@@ -156,6 +162,9 @@ namespace Arbeidstilsynet.Common.Altinn.Model.Api.Response
         public string EndEvent { get; set; }
     }
 
+    /// <summary>
+    /// Represents a data element (file) associated with an Altinn instance. This can be the data model itself or attachments uploaded by the user.
+    /// </summary>
     public class DataElement
     {
         /// <summary>
