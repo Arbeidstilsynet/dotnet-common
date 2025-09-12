@@ -1,4 +1,4 @@
-using Altinn.App.Core.Infrastructure.Clients.Events;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Arbeidstilsynet.Common.Altinn.Test.Unit.Setup;
 using Shouldly;
@@ -26,7 +26,7 @@ public class AltinnEventsClientTests : TestBed<AltinnApiTestFixture>
         //arrange
         //act
         var result = await _sut.Subscribe(
-            new SubscriptionRequest { TypeFilter = "app.instance.process.completed" }
+            new AltinnSubscriptionRequest { TypeFilter = "app.instance.process.completed" }
         );
         //assert
         result.ShouldNotBeNull();

@@ -1,28 +1,18 @@
 using System.ComponentModel.DataAnnotations;
-using Altinn.App.Core.Features;
 using Arbeidstilsynet.Common.Altinn.Extensions;
-using Arbeidstilsynet.Common.Altinn.Implementation;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Implementation.Clients;
 using Arbeidstilsynet.Common.Altinn.Implementation.Token;
-using Arbeidstilsynet.Common.Altinn.Ports;
 using Arbeidstilsynet.Common.Altinn.Ports.Adapter;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Arbeidstilsynet.Common.Altinn.Ports.Token;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace Arbeidstilsynet.Common.Altinn.DependencyInjection;
-
-/// <summary>
-/// Configuration for the LandOptions feature.
-/// </summary>
-/// <param name="OptionsId">The Altinn optionsId, default is "land".</param>
-public record LandOptionsConfiguration(string OptionsId = "land");
 
 /// <summary>
 /// Configuration for Altinn 3 APIs.
@@ -103,38 +93,6 @@ public static class DependencyInjectionExtensions
     internal const string AltinnAuthenticationApiClientKey = "AltinnAuthenticationApiClient";
 
     internal const string MaskinportenApiClientKey = "MaskinportenApiClient";
-
-    /// <summary>
-    /// Adds a <see cref="ILandskodeLookup"/> to look up countries and their dial codes based on 3-letter ISO values.
-    /// </summary>
-    /// <param name="services"></param>
-    /// <returns>Service collection for chaining</returns>
-    public static IServiceCollection AddLandskoder(this IServiceCollection services)
-    {
-        services.TryAddSingleton<ILandskodeLookup, LandskodeLookup>();
-        return services;
-    }
-
-    /// <summary>
-    /// Adds the LandOptions feature to the service collection. This also adds <see cref="ILandskodeLookup"/>.
-    /// </summary>
-    /// <param name="services"></param>
-    /// <param name="optionsConfiguration"></param>
-    /// <returns></returns>
-    public static IServiceCollection AddLandOptions(
-        this IServiceCollection services,
-        LandOptionsConfiguration? optionsConfiguration = null
-    )
-    {
-        optionsConfiguration ??= new LandOptionsConfiguration();
-
-        services.AddLandskoder();
-
-        services.TryAddSingleton(Options.Create(optionsConfiguration));
-        services.TryAddSingleton<IAppOptionsProvider, LandOptions>();
-
-        return services;
-    }
 
     /// <summary>
     /// Adds an adapter which contains convenience services for altinn communication. It also adds all available Altinn Clients to communicate with the Altinn 3 Apis.

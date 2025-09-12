@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.3.0
+
+### Changed
+
+- changed: split up package to only contain logic to communicate with Altinns API. All logic with is only relevant for altinn apps was moved to the new AltinnApp package.
+
 ## 1.2.0
 
 ### Changed

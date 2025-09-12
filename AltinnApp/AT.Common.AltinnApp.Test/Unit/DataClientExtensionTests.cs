@@ -1,10 +1,11 @@
 using Altinn.App.Core.Internal.Data;
 using Altinn.Platform.Storage.Interface.Models;
-using Arbeidstilsynet.Common.Altinn.Extensions;
+using Arbeidstilsynet.Common.AltinnApp.Extensions;
 using NSubstitute;
 using Shouldly;
+using Xunit;
 
-namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
+namespace Arbeidstilsynet.Common.AltinnApp.Test.Unit;
 
 public class DataClientExtensionsTests
 {

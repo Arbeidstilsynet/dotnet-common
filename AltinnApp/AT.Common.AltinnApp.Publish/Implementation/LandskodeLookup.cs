@@ -1,9 +1,9 @@
 using System.Reflection;
-using Arbeidstilsynet.Common.Altinn.Extensions;
-using Arbeidstilsynet.Common.Altinn.Model;
-using Arbeidstilsynet.Common.Altinn.Ports;
+using Arbeidstilsynet.Common.AltinnApp.Extensions;
+using Arbeidstilsynet.Common.AltinnApp.Model;
+using Arbeidstilsynet.Common.AltinnApp.Ports;
 
-namespace Arbeidstilsynet.Common.Altinn.Implementation;
+namespace Arbeidstilsynet.Common.AltinnApp.Implementation;
 
 internal class LandskodeLookup : ILandskodeLookup
 {

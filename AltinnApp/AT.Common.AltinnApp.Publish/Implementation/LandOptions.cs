@@ -1,10 +1,10 @@
 using Altinn.App.Core.Features;
 using Altinn.App.Core.Models;
-using Arbeidstilsynet.Common.Altinn.DependencyInjection;
-using Arbeidstilsynet.Common.Altinn.Ports;
+using Arbeidstilsynet.Common.AltinnApp.DependencyInjection;
+using Arbeidstilsynet.Common.AltinnApp.Ports;
 using Microsoft.Extensions.Options;
 
-namespace Arbeidstilsynet.Common.Altinn.Implementation;
+namespace Arbeidstilsynet.Common.AltinnApp.Implementation;
 
 internal class LandOptions : IAppOptionsProvider
 {

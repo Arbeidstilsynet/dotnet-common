@@ -1,4 +1,3 @@
-using Altinn.App.Core.Models;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Arbeidstilsynet.Common.Altinn.Test.Unit.Setup;
@@ -64,7 +63,7 @@ public class AltinnStorageClientTests : TestBed<AltinnApiTestFixture>
         //arrange
         //act
         var result = await _sut.GetInstance(
-            new CloudEvent()
+            new AltinnCloudEvent()
             {
                 Source = new Uri(
                     $"https://altinnapp/instances/{DynamicDataGeneration.DefaultIntValue}/{DynamicDataGeneration.DefaultPathUuid}"

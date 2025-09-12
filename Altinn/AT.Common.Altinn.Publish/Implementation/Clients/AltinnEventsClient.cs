@@ -1,6 +1,7 @@
 using System.Text.Json;
-using Altinn.App.Core.Infrastructure.Clients.Events;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Arbeidstilsynet.Common.Altinn.Ports.Token;
 using static Arbeidstilsynet.Common.Altinn.DependencyInjection.DependencyInjectionExtensions;
@@ -27,12 +28,12 @@ internal class AltinnEventsClient : IAltinnEventsClient
         };
     }
 
-    public async Task<Subscription> Subscribe(SubscriptionRequest request)
+    public async Task<AltinnSubscription> Subscribe(AltinnSubscriptionRequest request)
     {
         return await _httpClient
                 .PostAsJson("subscriptions", request)
                 .WithBearerToken(await _altinnTokenProvider.GetToken())
-                .ReceiveContent<Subscription>(_jsonSerializerOptions)
+                .ReceiveContent<AltinnSubscription>(_jsonSerializerOptions)
             ?? throw new Exception("Failed to subscribe to Altinn");
     }
 }

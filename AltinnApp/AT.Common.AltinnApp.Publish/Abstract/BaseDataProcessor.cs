@@ -1,7 +1,7 @@
 using Altinn.App.Core.Features;
 using Altinn.Platform.Storage.Interface.Models;
 
-namespace Arbeidstilsynet.Common.Altinn.Abstract.Processing;
+namespace Arbeidstilsynet.Common.AltinnApp.Abstract.Processing;
 
 /// <summary>
 /// Base class for data processors that handle specific data types.

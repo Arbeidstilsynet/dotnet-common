@@ -1,9 +1,10 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
-using Arbeidstilsynet.Common.Altinn.Extensions;
+using Arbeidstilsynet.Common.AltinnApp.Extensions;
 using Shouldly;
+using Xunit;
 
-namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
+namespace Arbeidstilsynet.Common.AltinnApp.Test.Unit;
 
 public record TestKeyValue
 {

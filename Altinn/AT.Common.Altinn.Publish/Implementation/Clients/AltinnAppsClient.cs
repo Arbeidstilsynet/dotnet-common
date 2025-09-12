@@ -1,9 +1,7 @@
 using System.Text.Json;
-using Altinn.App.Core.Infrastructure.Clients.Events;
-using Altinn.Platform.Storage.Interface.Models;
-using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Arbeidstilsynet.Common.Altinn.Ports.Token;
 using static Arbeidstilsynet.Common.Altinn.DependencyInjection.DependencyInjectionExtensions;
@@ -30,14 +28,17 @@ internal class AltinnAppsClient : IAltinnAppsClient
         };
     }
 
-    public async Task<Instance> CompleteInstance(string appId, InstanceRequest instanceAddress)
+    public async Task<AltinnInstance> CompleteInstance(
+        string appId,
+        InstanceRequest instanceAddress
+    )
     {
         var instanceUri = instanceAddress.ToInstanceUri("complete");
 
         return await _httpClient
                 .PostAsJson($"{AltinnOrgIdentifier}/{appId}/{instanceUri}", new { })
                 .WithBearerToken(await _altinnTokenProvider.GetToken())
-                .ReceiveContent<Instance>(_jsonSerializerOptions)
+                .ReceiveContent<AltinnInstance>(_jsonSerializerOptions)
             ?? throw new Exception("Failed to complete instance");
     }
 }

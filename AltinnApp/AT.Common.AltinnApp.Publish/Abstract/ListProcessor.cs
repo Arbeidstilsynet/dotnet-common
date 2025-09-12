@@ -1,4 +1,4 @@
-namespace Arbeidstilsynet.Common.Altinn.Abstract.Processing;
+namespace Arbeidstilsynet.Common.AltinnApp.Abstract.Processing;
 
 /// <summary>
 /// Processes changes in a list of items within a data model.

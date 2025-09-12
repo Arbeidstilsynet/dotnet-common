@@ -1,4 +1,4 @@
-namespace Arbeidstilsynet.Common.Altinn.Abstract.Processing;
+namespace Arbeidstilsynet.Common.AltinnApp.Abstract.Processing;
 
 /// <summary>
 /// Base class for processing members of a data model.

@@ -1,8 +1,9 @@
-using Arbeidstilsynet.Common.Altinn.Implementation;
-using Arbeidstilsynet.Common.Altinn.Model;
+using Arbeidstilsynet.Common.AltinnApp.Implementation;
+using Arbeidstilsynet.Common.AltinnApp.Model;
 using Shouldly;
+using Xunit;
 
-namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
+namespace Arbeidstilsynet.Common.AltinnApp.Test.Unit;
 
 public class LandskodeLookupTests
 {

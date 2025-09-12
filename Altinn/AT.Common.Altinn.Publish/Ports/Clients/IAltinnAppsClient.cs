@@ -1,7 +1,5 @@
-using Altinn.App.Core.Infrastructure.Clients.Events;
-using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
-using SubscriptionRequest = Altinn.App.Core.Infrastructure.Clients.Events.SubscriptionRequest;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 
 namespace Arbeidstilsynet.Common.Altinn.Ports.Clients;
 
@@ -15,6 +13,6 @@ public interface IAltinnAppsClient
     /// </summary>
     /// <param name="appId">The appId which should be queried</param>
     /// <param name="instanceAddress">The instance address request.</param>
-    /// <returns>The completed instance.</returns>
-    Task<Instance> CompleteInstance(string appId, InstanceRequest instanceAddress);
+    /// <returns>The completed instance mapped to our own model.</returns>
+    Task<AltinnInstance> CompleteInstance(string appId, InstanceRequest instanceAddress);
 }

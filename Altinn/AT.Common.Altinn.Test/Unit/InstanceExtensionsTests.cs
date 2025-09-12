@@ -1,5 +1,5 @@
-using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.Altinn.Extensions;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Shouldly;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
@@ -12,42 +12,12 @@ public class InstanceExtensionsTests
         var guid = Guid.NewGuid();
 
         // Arrange
-        var instance = new Instance { Id = $"dat/{guid}" };
+        var instance = new AltinnInstance { Id = $"dat/{guid}" };
 
         // Act
         var result = instance.GetInstanceGuid();
 
         // Assert
         result.ShouldBe(guid);
-    }
-
-    [Fact]
-    public void GetAppName_ReturnsAppName()
-    {
-        var appName = "appName";
-
-        // Arrange
-        var instance = new Instance { AppId = $"dat/{appName}" };
-
-        // Act
-        var result = instance.GetAppName();
-
-        // Assert
-        result.ShouldBe(appName);
-    }
-
-    [Fact]
-    public void GetInstanceOwnerPartyId_ReturnsPartyId()
-    {
-        var partyId = "1337";
-
-        // Arrange
-        var instance = new Instance { InstanceOwner = new InstanceOwner { PartyId = partyId } };
-
-        // Act
-        var result = instance.GetInstanceOwnerPartyId();
-
-        // Assert
-        result.ShouldBe(int.Parse(partyId));
     }
 }

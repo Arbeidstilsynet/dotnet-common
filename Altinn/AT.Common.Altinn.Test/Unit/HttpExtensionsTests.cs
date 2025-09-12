@@ -1,4 +1,3 @@
-using Altinn.App.Core.Models;
 using Arbeidstilsynet.Common.Altinn.Implementation;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
@@ -88,7 +87,7 @@ public class HttpExtensionsTests
     )
     {
         //arrange
-        var sut = new CloudEvent { Source = new Uri(validUrl) };
+        var sut = new AltinnCloudEvent { Source = new Uri(validUrl) };
         //act
         var result = sut.ToInstanceUri();
         //assert
@@ -99,7 +98,7 @@ public class HttpExtensionsTests
     public void CloudEventToInstanceUri_WhenCalledWithUnexpectedSource_ThrowsException()
     {
         //arrange
-        var sut = new CloudEvent
+        var sut = new AltinnCloudEvent
         {
             Source = new Uri(
                 "https://ttd.apps.at22.altinn.cloud/ttd/apps-test/50019855/6b3323c8-7baf-4612-b8a6-5eac407f4d0c?foo=bar"
