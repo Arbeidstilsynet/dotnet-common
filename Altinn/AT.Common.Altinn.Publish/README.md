@@ -13,10 +13,8 @@ dotnet add package Arbeidstilsynet.Common.Altinn
 ## 🚀 Features
 
 - **Extension Methods** for common Altinn operations
-- **Abstract Data Processors** for handling data changes
-- **Country Code Lookup** with country dialing codes and names
-- **Altinn Options Provider** for country dropdowns
-- **Embedded Resource Utilities** for JSON data
+- **Altinn Adapter**  Provides a high-level abstraction for Arbeidstilsynet’s integration needs, streamlining communication with Altinn instances.
+- **Altinn API Clients** Robust REST API clients for direct and flexible interaction with Altinn’s services, supporting both general and advanced use cases.
 
 ## 🧑‍💻 Usage
 

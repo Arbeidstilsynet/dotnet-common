@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.3.1
+
+### Fixed
+
+- fix: add nullable declarations to `AltinnCloudEvent` dto to enable usage in a dotnet Controller.
+
 ## 1.3.0
 
 ### Changed
