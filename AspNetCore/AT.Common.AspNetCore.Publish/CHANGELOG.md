@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.4.2
+
+### Changed
+
+- chore(health-checks): Replaced simple health report (Healthy/Unhealthy) with more details for each check.
+
 ## 1.4.1
 
 ### Fixed

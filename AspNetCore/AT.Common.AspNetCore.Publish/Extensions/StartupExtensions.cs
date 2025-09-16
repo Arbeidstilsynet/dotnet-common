@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -150,7 +151,10 @@ public static partial class StartupExtensions
 
         app.MapControllers();
 
-        app.UseHealthChecks("/healthz");
+        app.UseHealthChecks(
+            "/healthz",
+            new HealthCheckOptions() { ResponseWriter = CustomHealthReport.WriteHealthCheckDetails }
+        );
 
         return app;
     }
