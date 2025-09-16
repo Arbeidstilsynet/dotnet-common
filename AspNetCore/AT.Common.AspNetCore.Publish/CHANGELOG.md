@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 1.4.1
 
+### Changed
+
+- feat(health-checks): Replaced simple health report (Healthy/Unhealthy) with more details for each check.
+
 ### Fixed
 
 - fix(deps): update opentelemetry package range to support Microsoft.* v8 packages
