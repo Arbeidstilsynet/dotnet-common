@@ -22,14 +22,16 @@ internal static class CustomHealthReport
 
         var response = new
         {
-            status = report.Status.ToSummary(),
-            checks = entriesBySeverity.Select(entry => $"{entry.Key}: {entry.Value.ToStatus()}"),
+            status = report.Status.ToSummaryString(),
+            checks = entriesBySeverity.Select(entry =>
+                $"{entry.Key}: {entry.Value.ToDetailsString()}"
+            ),
         };
 
         return context.Response.WriteAsJsonAsync(response);
     }
 
-    private static string ToSummary(this HealthStatus status)
+    private static string ToSummaryString(this HealthStatus status)
     {
         var icon = status switch
         {
@@ -42,9 +44,9 @@ internal static class CustomHealthReport
         return $"{icon} {status.ToString()}";
     }
 
-    private static string ToStatus(this HealthReportEntry report)
+    private static string ToDetailsString(this HealthReportEntry report)
     {
-        var statusSb = new StringBuilder(report.Status.ToSummary());
+        var statusSb = new StringBuilder(report.Status.ToSummaryString());
         if (report.Description is { Length: > 0 } description)
         {
             statusSb.Append($" - {description}");
