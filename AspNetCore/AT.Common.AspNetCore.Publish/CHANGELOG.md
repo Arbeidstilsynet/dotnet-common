@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- feat(health-checks): Replaced simple health report (Healthy/Unhealthy) with more details for each check.
+- chore(health-checks): Replaced simple health report (Healthy/Unhealthy) with more details for each check.
 
 ## 1.4.1
 
