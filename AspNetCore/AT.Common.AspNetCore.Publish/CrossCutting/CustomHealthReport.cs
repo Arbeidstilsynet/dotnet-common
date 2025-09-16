@@ -45,9 +45,9 @@ internal static class CustomHealthReport
     private static string ToStatus(this HealthReportEntry report)
     {
         var statusSb = new StringBuilder(report.Status.ToSummary());
-        if (report.Description is { Length: > 0 } desc)
+        if (report.Description is { Length: > 0 } description)
         {
-            statusSb.Append($" - {desc}");
+            statusSb.Append($" - {description}");
         }
 
         return statusSb.ToString();
