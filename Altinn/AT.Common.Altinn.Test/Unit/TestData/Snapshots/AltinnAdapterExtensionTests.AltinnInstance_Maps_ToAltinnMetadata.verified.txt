@@ -1,0 +1,9 @@
+﻿{
+  InstanceGuid: Guid_1,
+  InstanceOwnerPartyId: 51644866,
+  Org: dat,
+  App: test,
+  OrganisationNumber: 313546071,
+  ProcessStarted: DateTime_1,
+  ProcessEnded: DateTime_2
+}
