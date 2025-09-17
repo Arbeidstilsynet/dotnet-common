@@ -1,9 +1,9 @@
 ﻿{
-  InstanceGuid: Guid_1,
+  InstanceGuid: 651375fb-4f0f-4857-9f8d-a37d82a3aeb6,
   InstanceOwnerPartyId: 51644866,
   Org: dat,
   App: test,
   OrganisationNumber: 313546071,
-  ProcessStarted: DateTime_1,
-  ProcessEnded: DateTime_2
+  ProcessStarted: 2025-09-01 12:00,
+  ProcessEnded: 2025-09-01 13:00
 }

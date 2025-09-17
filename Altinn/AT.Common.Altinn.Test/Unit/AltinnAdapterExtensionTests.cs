@@ -31,6 +31,8 @@ public class AltinnAdapterExtensionTests
 
     public AltinnAdapterExtensionTests()
     {
+        _verifySettings.DontScrubDateTimes();
+        _verifySettings.DontScrubGuids();
         _verifySettings.UseDirectory("TestData/Snapshots");
     }
 
@@ -77,6 +79,17 @@ public class AltinnAdapterExtensionTests
             Attachments = [],
             Metadata = SampleAltinnMetadata,
         };
+        //act
+        var result = metadata.ToMetadataDictionary();
+        //assert
+        await Verifier.Verify(result, _verifySettings);
+    }
+
+    [Fact]
+    public async Task AltinnMetadata_Maps_ToMetadataDictionary()
+    {
+        //arrange
+        var metadata = SampleAltinnMetadata;
         //act
         var result = metadata.ToMetadataDictionary();
         //assert

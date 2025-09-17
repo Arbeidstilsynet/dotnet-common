@@ -62,6 +62,11 @@ public static class AdapterExtensions
         };
     }
 
+    /// <summary>
+    /// Converts an <see cref="AltinnInstanceSummary"/> to a metadata dictionary with an Altinn reference.
+    /// </summary>
+    /// <param name="altinnInstanceSummary">The Altinn instance summary to convert.</param>
+    /// <returns>A dictionary containing metadata and the Altinn reference.</returns>
     public static Dictionary<string, string> ToMetadataDictionary(
         this AltinnInstanceSummary altinnInstanceSummary
     )
@@ -74,11 +79,38 @@ public static class AdapterExtensions
         return dict;
     }
 
+    /// <summary>
+    /// Converts <see cref="AltinnMetadata"/> to a metadata dictionary with an Altinn reference.
+    /// </summary>
+    /// <param name="altinnMetadata">The Altinn metadata to convert.</param>
+    /// <returns>A dictionary containing metadata and the Altinn reference.</returns>
+    public static Dictionary<string, string> ToMetadataDictionary(
+        this AltinnMetadata altinnMetadata
+    )
+    {
+        var dict = altinnMetadata.ToDict();
+
+        dict["altinnReference"] = altinnMetadata.InstanceGuid?.ToAltinnReference() ?? "";
+
+        return dict;
+    }
+
+    /// <summary>
+    /// Converts a <see cref="Guid"/> to an Altinn reference string (last segment of the GUID).
+    /// </summary>
+    /// <param name="guid">The GUID to convert.</param>
+    /// <returns>The Altinn reference string.</returns>
     public static string? ToAltinnReference(this Guid guid)
     {
         return guid.ToString().Split('-').LastOrDefault();
     }
 
+    /// <summary>
+    /// Converts an object's public properties to a dictionary using camelCase keys.
+    /// </summary>
+    /// <typeparam name="T">The type of the source object.</typeparam>
+    /// <param name="source">The source object.</param>
+    /// <returns>A dictionary of property names and values.</returns>
     private static Dictionary<string, string> ToDict<T>(this T source)
     {
         return typeof(T)
