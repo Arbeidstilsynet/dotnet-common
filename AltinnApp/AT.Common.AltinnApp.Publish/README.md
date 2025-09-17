@@ -10,6 +10,14 @@ To install the package, you can use the following command in your terminal:
 dotnet add package Arbeidstilsynet.Common.AltinnApp
 ```
 
+## 🚀 Features
+
+- **Extension Methods** for common Altinn operations
+- **Abstract Data Processors** for handling data changes
+- **Country Code Lookup** with country dialing codes and names
+- **Altinn Options Provider** for country dropdowns
+- **Embedded Resource Utilities** for JSON data
+
 ## 🧑‍💻 Usage
 
 ### Dependency Injection Setup
