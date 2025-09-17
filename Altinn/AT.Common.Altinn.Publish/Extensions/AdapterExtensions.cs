@@ -68,12 +68,12 @@ public static class AdapterExtensions
         var dict = altinnInstanceSummary.Metadata.ToDict();
 
         dict["altinnReference"] =
-            altinnInstanceSummary.Metadata.InstanceGuid?.ToAltinnReferanse() ?? "";
+            altinnInstanceSummary.Metadata.InstanceGuid?.ToAltinnReference() ?? "";
 
         return dict;
     }
 
-    public static string? ToAltinnReferanse(this Guid guid)
+    public static string? ToAltinnReference(this Guid guid)
     {
         return guid.ToString().Split('-').LastOrDefault();
     }
