@@ -1,0 +1,10 @@
+﻿{
+  altinnReference: a37d82a3aeb6,
+  app: test,
+  instanceGuid: 651375fb-4f0f-4857-9f8d-a37d82a3aeb6,
+  instanceOwnerPartyId: 51644866,
+  org: dat,
+  organisationNumber: 313546071,
+  processEnded: 09/01/2025 13:00:00,
+  processStarted: 09/01/2025 12:00:00
+}
