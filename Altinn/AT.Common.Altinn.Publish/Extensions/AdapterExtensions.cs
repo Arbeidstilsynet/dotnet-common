@@ -60,4 +60,31 @@ public static class AdapterExtensions
             InstanceOwnerPartyId = altinnMetadata.InstanceOwnerPartyId ?? "",
         };
     }
+
+    public static Dictionary<string, string> ToMetadataDictionary(
+        this AltinnInstanceSummary altinnInstanceSummary
+    )
+    {
+        var dict = altinnInstanceSummary.Metadata.ToDict();
+
+        dict["altinnReference"] =
+            altinnInstanceSummary.Metadata.InstanceGuid?.ToAltinnReferanse() ?? "";
+
+        return dict;
+    }
+
+    public static string? ToAltinnReferanse(this Guid guid)
+    {
+        return guid.ToString().Split('-').LastOrDefault();
+    }
+
+    private static Dictionary<string, string> ToDict<T>(this T source)
+    {
+        return typeof(T)
+            .GetProperties()
+            .ToDictionary(
+                p => JsonNamingPolicy.CamelCase.ConvertName(p.Name),
+                p => p.GetValue(source)?.ToString() ?? ""
+            );
+    }
 }
