@@ -19,6 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 0.3.0
+
+### Added
+
+- Added support for query parameter `navnMetodeForSoek`
+- Added validation for invalid `pagination` (max 10_000 items can be paginated)
+- Added validation for search string `navn` length (max 180 characters)
+
 ## 0.2.0
 
 ### Changed
