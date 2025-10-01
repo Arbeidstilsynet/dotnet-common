@@ -5,7 +5,6 @@ namespace Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
 
 internal static class QueryExtensions
 {
-
     public static IReadOnlyDictionary<string, string> ToMap(this SearchEnheterQuery query)
     {
         var parameterMap = new Dictionary<string, string>();
@@ -31,7 +30,7 @@ internal static class QueryExtensions
         {
             parameterMap.Add("overordnetEnhet", query.OverordnetEnhetOrganisasjonsnummer);
         }
-        
+
         if (query is { StrictSearch: true })
         {
             parameterMap.Add("navnMetodeForSoek", "FORTLOEPENDE");

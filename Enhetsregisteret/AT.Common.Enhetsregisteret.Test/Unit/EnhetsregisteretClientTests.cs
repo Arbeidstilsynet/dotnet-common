@@ -21,11 +21,12 @@ public class EnhetsregisteretClientUnitTests
     {
         CacheOptions = new CacheOptions { Disabled = false },
     };
-    
-    private readonly List<IValidator> _validators = [
+
+    private readonly List<IValidator> _validators =
+    [
         new PaginationValidator(),
         new GetOppdateringerQueryValidator(),
-        new SearchEnheterQueryValidator()
+        new SearchEnheterQueryValidator(),
     ];
 
     public EnhetsregisteretClientUnitTests()
@@ -157,7 +158,7 @@ public class EnhetsregisteretClientUnitTests
         // Assert
         await act.ShouldThrowAsync<ArgumentException>();
     }
-    
+
     [Fact]
     public async Task Pagination_Over_10_000_ThrowsArgumentException()
     {
@@ -168,11 +169,7 @@ public class EnhetsregisteretClientUnitTests
             Organisasjonsform = ["AS"],
         };
 
-        var pagination = new Pagination
-        {
-            Size = 10001,
-            Page = 0,
-        };
+        var pagination = new Pagination { Size = 10001, Page = 0 };
 
         // Act
         var act = () => _sut.SearchUnderenheter(searchParameters, pagination);
@@ -180,7 +177,7 @@ public class EnhetsregisteretClientUnitTests
         // Assert
         await act.ShouldThrowAsync<ArgumentException>();
     }
-    
+
     [Fact]
     public async Task SearchUnderenheter_NameLength_Over_180_ThrowsArgumentException()
     {
@@ -209,11 +206,7 @@ public class EnhetsregisteretClientUnitTests
             Organisasjonsform = ["AS"],
         };
 
-        var pagination = new Pagination
-        {
-            Size = 10001,
-            Page = 0,
-        };
+        var pagination = new Pagination { Size = 10001, Page = 0 };
 
         // Act
         var act = () => _sut.SearchEnheter(searchParameters, pagination);
@@ -243,7 +236,9 @@ public class EnhetsregisteretClientUnitTests
     [Theory]
     [InlineData("12345678")] // Too short
     [InlineData("1234567890")] // Too long
-    public async Task SearchEnheter_InvalidOrganisasjonsnummer_ThrowsArgumentException(string invalidOrgnummer)
+    public async Task SearchEnheter_InvalidOrganisasjonsnummer_ThrowsArgumentException(
+        string invalidOrgnummer
+    )
     {
         // Arrange
         var searchParameters = new SearchEnheterQuery
@@ -262,7 +257,9 @@ public class EnhetsregisteretClientUnitTests
     [Theory]
     [InlineData("12345678")] // Too short
     [InlineData("1234567890")] // Too long
-    public async Task SearchEnheter_InvalidOverordnetEnhetOrganisasjonsnummer_ThrowsArgumentException(string invalidOrgnummer)
+    public async Task SearchEnheter_InvalidOverordnetEnhetOrganisasjonsnummer_ThrowsArgumentException(
+        string invalidOrgnummer
+    )
     {
         // Arrange
         var searchParameters = new SearchEnheterQuery
@@ -281,16 +278,9 @@ public class EnhetsregisteretClientUnitTests
     public async Task SearchEnheter_NegativePage_ThrowsArgumentException()
     {
         // Arrange
-        var searchParameters = new SearchEnheterQuery
-        {
-            Organisasjonsnummer = ["123456789"],
-        };
+        var searchParameters = new SearchEnheterQuery { Organisasjonsnummer = ["123456789"] };
 
-        var pagination = new Pagination
-        {
-            Size = 100,
-            Page = -1,
-        };
+        var pagination = new Pagination { Size = 100, Page = -1 };
 
         // Act
         var act = () => _sut.SearchEnheter(searchParameters, pagination);
@@ -303,7 +293,9 @@ public class EnhetsregisteretClientUnitTests
     [Theory]
     [InlineData("12345678")] // Too short
     [InlineData("1234567890")] // Too long
-    public async Task SearchUnderenheter_InvalidOrganisasjonsnummer_ThrowsArgumentException(string invalidOrgnummer)
+    public async Task SearchUnderenheter_InvalidOrganisasjonsnummer_ThrowsArgumentException(
+        string invalidOrgnummer
+    )
     {
         // Arrange
         var searchParameters = new SearchEnheterQuery
@@ -322,7 +314,9 @@ public class EnhetsregisteretClientUnitTests
     [Theory]
     [InlineData("12345678")] // Too short
     [InlineData("1234567890")] // Too long
-    public async Task SearchUnderenheter_InvalidOverordnetEnhetOrganisasjonsnummer_ThrowsArgumentException(string invalidOrgnummer)
+    public async Task SearchUnderenheter_InvalidOverordnetEnhetOrganisasjonsnummer_ThrowsArgumentException(
+        string invalidOrgnummer
+    )
     {
         // Arrange
         var searchParameters = new SearchEnheterQuery
@@ -341,16 +335,9 @@ public class EnhetsregisteretClientUnitTests
     public async Task SearchUnderenheter_NegativePage_ThrowsArgumentException()
     {
         // Arrange
-        var searchParameters = new SearchEnheterQuery
-        {
-            Organisasjonsnummer = ["123456789"],
-        };
+        var searchParameters = new SearchEnheterQuery { Organisasjonsnummer = ["123456789"] };
 
-        var pagination = new Pagination
-        {
-            Size = 100,
-            Page = -1,
-        };
+        var pagination = new Pagination { Size = 100, Page = -1 };
 
         // Act
         var act = () => _sut.SearchUnderenheter(searchParameters, pagination);
@@ -364,15 +351,8 @@ public class EnhetsregisteretClientUnitTests
     public async Task GetOppdateringerEnheter_Pagination_Over_10_000_ThrowsArgumentException()
     {
         // Arrange
-        var query = new GetOppdateringerQuery()
-        {
-            Dato = DateTime.UtcNow,
-        };
-        var pagination = new Pagination
-        {
-            Size = 10001,
-            Page = 0,
-        };
+        var query = new GetOppdateringerQuery() { Dato = DateTime.UtcNow };
+        var pagination = new Pagination { Size = 10001, Page = 0 };
 
         // Act
         var act = () => _sut.GetOppdateringerEnheter(query, pagination);
@@ -384,7 +364,9 @@ public class EnhetsregisteretClientUnitTests
     [Theory]
     [InlineData("12345678")] // Too short
     [InlineData("1234567890")] // Too long
-    public async Task GetOppdateringerEnheter_InvalidOrganisasjonsnummer_ThrowsArgumentException(string invalidOrgnummer)
+    public async Task GetOppdateringerEnheter_InvalidOrganisasjonsnummer_ThrowsArgumentException(
+        string invalidOrgnummer
+    )
     {
         // Arrange
         var query = new GetOppdateringerQuery
@@ -400,21 +382,13 @@ public class EnhetsregisteretClientUnitTests
         await act.ShouldThrowAsync<ArgumentException>();
     }
 
-
     // GetOppdateringerUnderenheter validation tests
     [Fact]
     public async Task GetOppdateringerUnderenheter_Pagination_Over_10_000_ThrowsArgumentException()
     {
         // Arrange
-        var query = new GetOppdateringerQuery()
-        {
-            Dato = DateTime.UtcNow,
-        };
-        var pagination = new Pagination
-        {
-            Size = 10001,
-            Page = 0,
-        };
+        var query = new GetOppdateringerQuery() { Dato = DateTime.UtcNow };
+        var pagination = new Pagination { Size = 10001, Page = 0 };
 
         // Act
         var act = () => _sut.GetOppdateringerUnderenheter(query, pagination);
@@ -427,19 +401,15 @@ public class EnhetsregisteretClientUnitTests
     [Theory]
     [InlineData(9999, 1)] // Page 1, Size 9999 = 9999 * 2 = 19998 > 10000
     [InlineData(3334, 2)] // Page 2, Size 3334 = 3334 * 3 = 10002 > 10000
-    public async Task SearchEnheter_PaginationCalculationEdgeCases_ThrowsArgumentException(int size, int page)
+    public async Task SearchEnheter_PaginationCalculationEdgeCases_ThrowsArgumentException(
+        int size,
+        int page
+    )
     {
         // Arrange
-        var searchParameters = new SearchEnheterQuery
-        {
-            Organisasjonsnummer = ["123456789"],
-        };
+        var searchParameters = new SearchEnheterQuery { Organisasjonsnummer = ["123456789"] };
 
-        var pagination = new Pagination
-        {
-            Size = size,
-            Page = page,
-        };
+        var pagination = new Pagination { Size = size, Page = page };
 
         // Act
         var act = () => _sut.SearchEnheter(searchParameters, pagination);
@@ -451,16 +421,15 @@ public class EnhetsregisteretClientUnitTests
     [Theory]
     [InlineData(9999, 1)] // Page 1, Size 9999 = 9999 * 2 = 19998 > 10000
     [InlineData(3334, 2)] // Page 2, Size 3334 = 3334 * 3 = 10002 > 10000
-    public async Task SearchUnderenheter_PaginationCalculationEdgeCases_ThrowsArgumentException(int size, int page)
+    public async Task SearchUnderenheter_PaginationCalculationEdgeCases_ThrowsArgumentException(
+        int size,
+        int page
+    )
     {
         // Arrange
         var searchParameters = new SearchEnheterQuery();
 
-        var pagination = new Pagination
-        {
-            Size = size,
-            Page = page,
-        };
+        var pagination = new Pagination { Size = size, Page = page };
 
         // Act
         var act = () => _sut.SearchUnderenheter(searchParameters, pagination);
@@ -472,18 +441,14 @@ public class EnhetsregisteretClientUnitTests
     [Theory]
     [InlineData(9999, 1)] // Page 1, Size 9999 = 9999 * 2 = 19998 > 10000
     [InlineData(3334, 2)] // Page 2, Size 3334 = 3334 * 3 = 10002 > 10000
-    public async Task GetOppdateringerEnheter_PaginationCalculationEdgeCases_ThrowsArgumentException(int size, int page)
+    public async Task GetOppdateringerEnheter_PaginationCalculationEdgeCases_ThrowsArgumentException(
+        int size,
+        int page
+    )
     {
         // Arrange
-        var query = new GetOppdateringerQuery()
-        {
-            Dato = DateTime.UtcNow,
-        };
-        var pagination = new Pagination
-        {
-            Size = size,
-            Page = page,
-        };
+        var query = new GetOppdateringerQuery() { Dato = DateTime.UtcNow };
+        var pagination = new Pagination { Size = size, Page = page };
 
         // Act
         var act = () => _sut.GetOppdateringerEnheter(query, pagination);
@@ -495,18 +460,14 @@ public class EnhetsregisteretClientUnitTests
     [Theory]
     [InlineData(9999, 1)] // Page 1, Size 9999 = 9999 * 2 = 19998 > 10000
     [InlineData(3334, 2)] // Page 2, Size 3334 = 3334 * 3 = 10002 > 10000
-    public async Task GetOppdateringerUnderenheter_PaginationCalculationEdgeCases_ThrowsArgumentException(int size, int page)
+    public async Task GetOppdateringerUnderenheter_PaginationCalculationEdgeCases_ThrowsArgumentException(
+        int size,
+        int page
+    )
     {
         // Arrange
-        var query = new GetOppdateringerQuery()
-        {
-            Dato = DateTime.UtcNow,
-        };
-        var pagination = new Pagination
-        {
-            Size = size,
-            Page = page,
-        };
+        var query = new GetOppdateringerQuery() { Dato = DateTime.UtcNow };
+        var pagination = new Pagination { Size = size, Page = page };
 
         // Act
         var act = () => _sut.GetOppdateringerUnderenheter(query, pagination);

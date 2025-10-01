@@ -21,7 +21,7 @@ public class EnhetsregisteretConfig
     /// <summary>
     /// Settings for caching mechanism.
     /// </summary>
-    public CacheOptions CacheOptions { get; set; } = new ();
+    public CacheOptions CacheOptions { get; set; } = new();
 }
 
 /// <summary>
@@ -113,9 +113,8 @@ public static class DependencyInjectionExtensions
         var clientBuilder = config.CacheOptions.Disabled
             ? services.AddHttpClient(Clientkey, configureClient)
             : services.AddMemoryCachedClient(Clientkey, configureClient);
-        
-        clientBuilder
-            .AddStandardResilienceHandler();
+
+        clientBuilder.AddStandardResilienceHandler();
 
         services.AddTransient<IEnhetsregisteret, EnhetsregisteretClient>();
     }

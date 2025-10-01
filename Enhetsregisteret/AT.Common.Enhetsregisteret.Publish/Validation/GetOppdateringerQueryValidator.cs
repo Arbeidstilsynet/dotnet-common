@@ -11,5 +11,4 @@ internal class GetOppdateringerQueryValidator : AbstractValidator<GetOppdatering
             .Must(orgnummer => string.IsNullOrEmpty(orgnummer) || orgnummer.Length == 9)
             .WithMessage("Each Organisasjonsnummer must be exactly 9 characters long.");
     }
-    
 }

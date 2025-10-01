@@ -15,13 +15,12 @@ internal static partial class ValidationExtensions
             throw new ArgumentException($"Invalid organisasjonsnummer: {orgnummer}", paramName);
         }
     }
-    
+
     public static bool IsValidOrgnummer(this string? orgnummer)
     {
         return !string.IsNullOrWhiteSpace(orgnummer) && OrganisasjonsnummerRegex.IsMatch(orgnummer);
     }
 
-    
     public static void ValidateAndThrow<T>(this IEnumerable<IValidator> validators, T instance)
     {
         if (!validators.TryValidate(instance, out var errors))
@@ -29,8 +28,12 @@ internal static partial class ValidationExtensions
             throw new ArgumentException(string.Join("; ", errors));
         }
     }
-    
-    private static bool TryValidate<T>(this IEnumerable<IValidator> validators, T instance, out List<string> errors)
+
+    private static bool TryValidate<T>(
+        this IEnumerable<IValidator> validators,
+        T instance,
+        out List<string> errors
+    )
     {
         var validationErrors = new List<string>();
         foreach (var validator in validators.Where(v => v.CanValidateInstancesOfType(typeof(T))))
@@ -46,7 +49,7 @@ internal static partial class ValidationExtensions
         errors = validationErrors;
         return errors.Count == 0;
     }
-    
+
     [GeneratedRegex(
         @"^\d{9}$",
         RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant

@@ -13,7 +13,10 @@ public class DependencyInjectionTests
     [InlineData("Development", "https://data.ppe.brreg.no/")]
     [InlineData("Staging", "https://data.ppe.brreg.no/")]
     [InlineData("Production", "https://data.brreg.no/")]
-    public void AddEnhetsregisteret_SetsCorrectBaseUrlBasedOnEnvironment(string envName, string expectedBaseUrl)
+    public void AddEnhetsregisteret_SetsCorrectBaseUrlBasedOnEnvironment(
+        string envName,
+        string expectedBaseUrl
+    )
     {
         // Arrange
         var services = new ServiceCollection();
@@ -31,12 +34,15 @@ public class DependencyInjectionTests
         httpClient.ShouldNotBeNull();
         httpClient.BaseAddress!.AbsoluteUri.ShouldBe(expectedBaseUrl);
     }
-    
+
     [Theory]
     [InlineData("Development", "https://data.ppe.brreg.no/")]
     [InlineData("Staging", "https://data.ppe.brreg.no/")]
     [InlineData("Production", "https://data.brreg.no/")]
-    public void AddEnhetsregisteret_Overload_SetsCorrectBaseUrlBasedOnEnvironment(string envName, string expectedBaseUrl)
+    public void AddEnhetsregisteret_Overload_SetsCorrectBaseUrlBasedOnEnvironment(
+        string envName,
+        string expectedBaseUrl
+    )
     {
         // Arrange
         var services = new ServiceCollection();
@@ -44,7 +50,7 @@ public class DependencyInjectionTests
         environment.EnvironmentName.Returns(envName);
 
         // Act
-        services.AddEnhetsregisteret(environment, _ => {});
+        services.AddEnhetsregisteret(environment, _ => { });
 
         var serviceProvider = services.BuildServiceProvider();
         var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
@@ -54,39 +60,43 @@ public class DependencyInjectionTests
         httpClient.ShouldNotBeNull();
         httpClient.BaseAddress!.AbsoluteUri.ShouldBe(expectedBaseUrl);
     }
-    
+
     [Fact]
     public void AddEnhetsregisteret_AddsAllValidators()
     {
         // Arrange
         var services = new ServiceCollection();
-        var expectedValidators =
-            typeof(Enhetsregisteret.IAssemblyInfo).Assembly.GetTypes().Where(t => t.IsAssignableTo(typeof(IValidator))).ToList();
+        var expectedValidators = typeof(Enhetsregisteret.IAssemblyInfo)
+            .Assembly.GetTypes()
+            .Where(t => t.IsAssignableTo(typeof(IValidator)))
+            .ToList();
 
         // Act
         services.AddEnhetsregisteret(Substitute.For<IWebHostEnvironment>());
 
         var serviceProvider = services.BuildServiceProvider();
         var validators = serviceProvider.GetServices<IValidator>();
-        
+
         // Assert
         validators.ShouldAllBe(v => expectedValidators.Contains(v.GetType()));
     }
-    
+
     [Fact]
     public void AddEnhetsregisteret_Overload_AddsAllValidators()
     {
         // Arrange
         var services = new ServiceCollection();
-        var expectedValidators =
-            typeof(Enhetsregisteret.IAssemblyInfo).Assembly.GetTypes().Where(t => t.IsAssignableTo(typeof(IValidator))).ToList();
+        var expectedValidators = typeof(Enhetsregisteret.IAssemblyInfo)
+            .Assembly.GetTypes()
+            .Where(t => t.IsAssignableTo(typeof(IValidator)))
+            .ToList();
 
         // Act
-        services.AddEnhetsregisteret(Substitute.For<IWebHostEnvironment>(), _ => {});
+        services.AddEnhetsregisteret(Substitute.For<IWebHostEnvironment>(), _ => { });
 
         var serviceProvider = services.BuildServiceProvider();
         var validators = serviceProvider.GetServices<IValidator>();
-        
+
         // Assert
         validators.ShouldAllBe(v => expectedValidators.Contains(v.GetType()));
     }

@@ -45,7 +45,7 @@ public record SearchEnheterQuery
     /// Organizational form of the <see cref="Enhet"/>/<see cref="Underenhet"/>.
     /// </summary>
     public string[] Organisasjonsform { get; set; } = [];
-    
+
     /// <summary>
     /// This parameter (navnMetodeForSoek) is not very well documented, but presumably the words in <see cref="Navn"/> will be ANDed, rather than ORed. Defaults to false.
     /// </summary>

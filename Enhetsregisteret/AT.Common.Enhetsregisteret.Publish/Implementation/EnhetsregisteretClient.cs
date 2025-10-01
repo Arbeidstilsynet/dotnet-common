@@ -91,7 +91,7 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
     {
         _validators.ValidateAndThrow(searchParameters);
         _validators.ValidateAndThrow(pagination);
-        
+
         var uri = new Uri("enhetsregisteret/api/underenheter", UriKind.Relative)
             .AddQueryParameters(searchParameters.ToMap())
             .AddQueryParameters(pagination.ToMap());
@@ -108,7 +108,7 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
     {
         _validators.ValidateAndThrow(searchParameters);
         _validators.ValidateAndThrow(pagination);
-        
+
         var uri = new Uri("enhetsregisteret/api/enheter", UriKind.Relative)
             .AddQueryParameters(searchParameters.ToMap())
             .AddQueryParameters(pagination.ToMap());
@@ -125,7 +125,7 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
     {
         _validators.ValidateAndThrow(query);
         _validators.ValidateAndThrow(pagination);
-        
+
         var uri = new Uri("enhetsregisteret/api/oppdateringer/underenheter", UriKind.Relative)
             .AddQueryParameters(query.ToMap())
             .AddQueryParameters(pagination.ToMap());
@@ -142,7 +142,7 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
     {
         _validators.ValidateAndThrow(query);
         _validators.ValidateAndThrow(pagination);
-        
+
         var uri = new Uri("enhetsregisteret/api/oppdateringer/enheter", UriKind.Relative)
             .AddQueryParameters(query.ToMap())
             .AddQueryParameters(pagination.ToMap());

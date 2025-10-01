@@ -183,13 +183,13 @@ public static class EnhetsregisteretExtensions
         for (var nextPage = FIRST_PAGE + 1; nextPage <= lastPage; nextPage++)
         {
             var nextPagination = pagination with { Page = nextPage };
-            
+
             if (nextPagination.Size * (nextPagination.Page + 1) > Constants.MaxSearchResultSize)
             {
                 // Prevent known validation exception
                 yield break;
             }
-            
+
             result = await fetchFunction(nextPagination);
 
             if (result == null)
