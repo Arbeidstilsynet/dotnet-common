@@ -1,3 +1,5 @@
+using Arbeidstilsynet.Common.Enhetsregisteret.Model.Brreg;
+
 namespace Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 
 /// <summary>

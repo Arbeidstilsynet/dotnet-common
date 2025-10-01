@@ -8,6 +8,8 @@ using Arbeidstilsynet.Common.Enhetsregisteret.Model.Brreg;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Response;
 using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
+using Arbeidstilsynet.Common.Enhetsregisteret.Validation.Extensions;
+using FluentValidation;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -23,6 +25,7 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
     private readonly IHttpClientFactory? _httpClientFactory;
     private readonly IMemoryCache _memoryCache;
     private readonly ILogger<EnhetsregisteretClient> _logger;
+    private readonly List<IValidator> _validators = [];
     private readonly CacheOptions _cacheOptions;
 
     private readonly HttpClient? _optionalClient;
@@ -38,12 +41,14 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
         IHttpClientFactory httpClientFactory,
         IMemoryCache memoryCache,
         EnhetsregisteretConfig config,
-        ILogger<EnhetsregisteretClient> logger
+        ILogger<EnhetsregisteretClient> logger,
+        IEnumerable<IValidator> validators
     )
     {
         _httpClientFactory = httpClientFactory;
         _memoryCache = memoryCache;
         _logger = logger;
+        _validators = validators.ToList();
         _cacheOptions = config.CacheOptions;
     }
 
@@ -84,6 +89,9 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
         Pagination pagination
     )
     {
+        _validators.ValidateAndThrow(searchParameters);
+        _validators.ValidateAndThrow(pagination);
+        
         var uri = new Uri("enhetsregisteret/api/underenheter", UriKind.Relative)
             .AddQueryParameters(searchParameters.ToMap())
             .AddQueryParameters(pagination.ToMap());
@@ -98,6 +106,9 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
         Pagination pagination
     )
     {
+        _validators.ValidateAndThrow(searchParameters);
+        _validators.ValidateAndThrow(pagination);
+        
         var uri = new Uri("enhetsregisteret/api/enheter", UriKind.Relative)
             .AddQueryParameters(searchParameters.ToMap())
             .AddQueryParameters(pagination.ToMap());
@@ -112,6 +123,9 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
         Pagination pagination
     )
     {
+        _validators.ValidateAndThrow(query);
+        _validators.ValidateAndThrow(pagination);
+        
         var uri = new Uri("enhetsregisteret/api/oppdateringer/underenheter", UriKind.Relative)
             .AddQueryParameters(query.ToMap())
             .AddQueryParameters(pagination.ToMap());
@@ -126,6 +140,9 @@ internal class EnhetsregisteretClient : IEnhetsregisteret
         Pagination pagination
     )
     {
+        _validators.ValidateAndThrow(query);
+        _validators.ValidateAndThrow(pagination);
+        
         var uri = new Uri("enhetsregisteret/api/oppdateringer/enheter", UriKind.Relative)
             .AddQueryParameters(query.ToMap())
             .AddQueryParameters(pagination.ToMap());

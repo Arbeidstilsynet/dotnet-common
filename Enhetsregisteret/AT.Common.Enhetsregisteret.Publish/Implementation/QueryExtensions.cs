@@ -1,19 +1,10 @@
-using System.Text.RegularExpressions;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
+using Arbeidstilsynet.Common.Enhetsregisteret.Validation.Extensions;
 
 namespace Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
 
-internal static partial class QueryExtensions
+internal static class QueryExtensions
 {
-    private static readonly Regex OrganisasjonsnummerRegex = OrgnummerRegex();
-
-    public static void ValidateOrgnummerOrThrow(this string? orgnummer, string paramName)
-    {
-        if (!orgnummer.IsValidOrgnummer())
-        {
-            throw new ArgumentException($"Invalid organisasjonsnummer: {orgnummer}", paramName);
-        }
-    }
 
     public static IReadOnlyDictionary<string, string> ToMap(this SearchEnheterQuery query)
     {
@@ -24,7 +15,7 @@ internal static partial class QueryExtensions
             parameterMap.Add("navn", query.Navn);
         }
 
-        var validOrgnumre = query.Organisasjonsnummer.Where(IsValidOrgnummer).ToArray();
+        var validOrgnumre = query.Organisasjonsnummer.Where(o => o.IsValidOrgnummer()).ToArray();
 
         if (validOrgnumre.Length != 0)
         {
@@ -39,6 +30,11 @@ internal static partial class QueryExtensions
         if (query is { OverordnetEnhetOrganisasjonsnummer.Length: 9 })
         {
             parameterMap.Add("overordnetEnhet", query.OverordnetEnhetOrganisasjonsnummer);
+        }
+        
+        if (query is { StrengtSøk: true })
+        {
+            parameterMap.Add("navnMetodeForSoek", "FORTLOEPENDE");
         }
 
         var sortDirection = query.SortDirection.ToString().ToLower();
@@ -74,7 +70,7 @@ internal static partial class QueryExtensions
     {
         var parameterMap = new Dictionary<string, string>();
 
-        var validOrgnumre = query.Organisasjonsnummer.Where(IsValidOrgnummer).ToArray();
+        var validOrgnumre = query.Organisasjonsnummer.Where(o => o.IsValidOrgnummer()).ToArray();
 
         if (validOrgnumre.Length != 0)
         {
@@ -86,15 +82,4 @@ internal static partial class QueryExtensions
 
         return parameterMap;
     }
-
-    internal static bool IsValidOrgnummer(this string? orgnummer)
-    {
-        return !string.IsNullOrWhiteSpace(orgnummer) && OrganisasjonsnummerRegex.IsMatch(orgnummer);
-    }
-
-    [GeneratedRegex(
-        @"^\d{9}$",
-        RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant
-    )]
-    private static partial Regex OrgnummerRegex();
 }

@@ -2,6 +2,7 @@ using Arbeidstilsynet.Common.Enhetsregisteret.DependencyInjection;
 using Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Brreg;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
+using FluentValidation;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -15,10 +16,12 @@ public class EnhetsregisteretClientUnitTests
 
     private readonly IMemoryCache _memoryCache = Substitute.For<IMemoryCache>();
 
-    private readonly EnhetsregisteretConfig _cacheOptions = new EnhetsregisteretConfig
+    private readonly EnhetsregisteretConfig _cacheOptions = new()
     {
         CacheOptions = new CacheOptions { Disabled = false },
     };
+    
+    private readonly List<IValidator> _validators = [];
 
     public EnhetsregisteretClientUnitTests()
     {
@@ -31,7 +34,8 @@ public class EnhetsregisteretClientUnitTests
             httpClientFactory,
             _memoryCache,
             _cacheOptions,
-            Substitute.For<ILogger<EnhetsregisteretClient>>()
+            Substitute.For<ILogger<EnhetsregisteretClient>>(),
+            _validators
         );
     }
 

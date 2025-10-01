@@ -1,3 +1,5 @@
+using Arbeidstilsynet.Common.Enhetsregisteret.Model.Brreg;
+
 namespace Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 
 /// <summary>
@@ -23,6 +25,9 @@ public record SearchEnheterQuery
 
     /// <summary>
     /// Search text for finding <see cref="Enhet"/> and <see cref="Underenhet"/> based on name.
+    /// <remarks>
+    /// Maximum of 180 characters.
+    /// </remarks>
     /// </summary>
     public string? Navn { get; set; }
 
@@ -40,6 +45,11 @@ public record SearchEnheterQuery
     /// Organizational form of the <see cref="Enhet"/>/<see cref="Underenhet"/>.
     /// </summary>
     public string[] Organisasjonsform { get; set; } = [];
+    
+    /// <summary>
+    /// This parameter (navnMetodeForSoek) is not very well documented, but presumably the words in <see cref="Navn"/> will be ANDed, rather than ORed. Defaults to false.
+    /// </summary>
+    public bool StrengtSøk { get; set; } = false;
 
     /// <summary>
     /// Sort order for the results.

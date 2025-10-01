@@ -19,6 +19,8 @@
       Include="Arbeidstilsynet.Common.AspNetCore.Extensions"
       Version="[1.4.1, 2.0)"
     />
+    <PackageReference Include="FluentValidation" Version="12.0.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
     <PackageReference
       Include="Microsoft.Extensions.DependencyInjection.Abstractions"
       Version="[8,10)"

@@ -3,6 +3,7 @@ using Arbeidstilsynet.Common.Enhetsregisteret.Model.Brreg;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Response;
 using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
+using Arbeidstilsynet.Common.Enhetsregisteret.Validation.Extensions;
 
 namespace Arbeidstilsynet.Common.Enhetsregisteret.Extensions;
 
