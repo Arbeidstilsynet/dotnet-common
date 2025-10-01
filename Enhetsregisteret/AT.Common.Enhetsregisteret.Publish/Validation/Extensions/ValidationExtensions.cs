@@ -26,7 +26,7 @@ internal static partial class ValidationExtensions
     {
         if (!validators.TryValidate(instance, out var errors))
         {
-            throw new ValidationException(string.Join("; ", errors));
+            throw new ArgumentException(string.Join("; ", errors));
         }
     }
     

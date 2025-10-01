@@ -32,7 +32,7 @@ internal static class QueryExtensions
             parameterMap.Add("overordnetEnhet", query.OverordnetEnhetOrganisasjonsnummer);
         }
         
-        if (query is { StrengtSøk: true })
+        if (query is { StrictSearch: true })
         {
             parameterMap.Add("navnMetodeForSoek", "FORTLOEPENDE");
         }

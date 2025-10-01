@@ -61,7 +61,7 @@ public class QueryExtensionsTests
             Organisasjonsform = ["AS", "ENK"],
             OverordnetEnhetOrganisasjonsnummer = "123456789",
             SortBy = "navn",
-            StrengtSøk = true,
+            StrictSearch = true,
             SortDirection = SearchEnheterQuery.Sort.Asc,
         };
 

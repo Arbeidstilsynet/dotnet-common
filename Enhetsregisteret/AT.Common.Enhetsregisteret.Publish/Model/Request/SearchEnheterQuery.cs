@@ -49,7 +49,7 @@ public record SearchEnheterQuery
     /// <summary>
     /// This parameter (navnMetodeForSoek) is not very well documented, but presumably the words in <see cref="Navn"/> will be ANDed, rather than ORed. Defaults to false.
     /// </summary>
-    public bool StrengtSøk { get; set; } = false;
+    public bool StrictSearch { get; set; } = false;
 
     /// <summary>
     /// Sort order for the results.

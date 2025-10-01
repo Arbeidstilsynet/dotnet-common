@@ -9,7 +9,7 @@ internal class PaginationValidator : AbstractValidator<Pagination>
     public PaginationValidator()
     {
         RuleFor(x => x)
-            .Must(model => model.Page+1 * model.Size <= Constants.MaxSearchResultSize)
+            .Must(model => (model.Page + 1) * model.Size <= Constants.MaxSearchResultSize)
             .WithMessage($"The product of (Page + 1) and Size must not exceed {Constants.MaxSearchResultSize}.");
 
         RuleFor(x => x.Page)
