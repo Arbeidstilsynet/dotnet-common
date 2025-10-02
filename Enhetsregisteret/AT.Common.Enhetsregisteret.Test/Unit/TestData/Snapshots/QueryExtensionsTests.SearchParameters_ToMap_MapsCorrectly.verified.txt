@@ -1,5 +1,6 @@
 ﻿{
   navn: Test,
+  navnMetodeForSoek: FORTLOEPENDE,
   organisasjonsform: AS,ENK,
   organisasjonsnummer: 123456789,987654321,
   overordnetEnhet: 123456789,

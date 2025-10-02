@@ -1,5 +1,6 @@
 using Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
+using Arbeidstilsynet.Common.Enhetsregisteret.Validation.Extensions;
 using Shouldly;
 
 namespace Arbeidstilsynet.Common.Enhetsregisteret.Test;
@@ -60,6 +61,7 @@ public class QueryExtensionsTests
             Organisasjonsform = ["AS", "ENK"],
             OverordnetEnhetOrganisasjonsnummer = "123456789",
             SortBy = "navn",
+            StrictSearch = true,
             SortDirection = SearchEnheterQuery.Sort.Asc,
         };
 

@@ -1,5 +1,7 @@
+using Arbeidstilsynet.Common.AspNetCore.DependencyInjection;
 using Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
 using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
+using FluentValidation;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -19,7 +21,7 @@ public class EnhetsregisteretConfig
     /// <summary>
     /// Settings for caching mechanism.
     /// </summary>
-    public CacheOptions CacheOptions { get; set; }
+    public CacheOptions CacheOptions { get; set; } = new();
 }
 
 /// <summary>
@@ -96,23 +98,24 @@ public static class DependencyInjectionExtensions
         EnhetsregisteretConfig config
     )
     {
+        services.AddValidatorsFromAssemblyContaining<IAssemblyInfo>();
         services.AddSingleton(config!);
 
-        services
-            .AddHttpClient(
-                Clientkey,
-                httpClient =>
-                {
-                    httpClient.BaseAddress = new Uri(
-                        string.IsNullOrEmpty(config.BrregApiBaseUrlOverwrite)
-                            ? GetBrregUrlBasedOnEnvironment(webHostEnvironment)
-                            : config.BrregApiBaseUrlOverwrite
-                    );
-                }
-            )
-            .AddStandardResilienceHandler();
+        Action<HttpClient> configureClient = (httpClient) =>
+        {
+            httpClient.BaseAddress = new Uri(
+                string.IsNullOrEmpty(config.BrregApiBaseUrlOverwrite)
+                    ? GetBrregUrlBasedOnEnvironment(webHostEnvironment)
+                    : config.BrregApiBaseUrlOverwrite
+            );
+        };
 
-        services.AddMemoryCache();
+        var clientBuilder = config.CacheOptions.Disabled
+            ? services.AddHttpClient(Clientkey, configureClient)
+            : services.AddMemoryCachedClient(Clientkey, configureClient);
+
+        clientBuilder.AddStandardResilienceHandler();
+
         services.AddTransient<IEnhetsregisteret, EnhetsregisteretClient>();
     }
 }

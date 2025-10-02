@@ -3,6 +3,9 @@ namespace Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 /// <summary>
 /// Represents pagination and sorting for searches in the Enhetsregisteret.
 /// </summary>
+/// <remarks>
+/// The search max result size for Enhetsregisteret/Brreg is 10_000. Any page extent (page+1 * size) exceeding this will throw an exception.
+/// </remarks>
 public record Pagination
 {
     /// <summary>

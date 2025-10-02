@@ -10,7 +10,7 @@
     <Company>Arbeidstilsynet</Company>
     <Description>A http client which interfaces with enhetsregisteret (Brønnøysundregistrene)</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
   </PropertyGroup>
@@ -19,6 +19,8 @@
       Include="Arbeidstilsynet.Common.AspNetCore.Extensions"
       Version="[1.4.1, 2.0)"
     />
+    <PackageReference Include="FluentValidation" Version="[12,13)" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="[12,13)" />
     <PackageReference
       Include="Microsoft.Extensions.DependencyInjection.Abstractions"
       Version="[8,10)"
