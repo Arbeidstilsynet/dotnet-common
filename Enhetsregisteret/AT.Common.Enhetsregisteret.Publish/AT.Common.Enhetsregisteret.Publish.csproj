@@ -10,7 +10,7 @@
     <Company>Arbeidstilsynet</Company>
     <Description>A http client which interfaces with enhetsregisteret (Brønnøysundregistrene)</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>0.3.0-alpha1</Version>
+    <Version>0.3.0-alpha2</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
   </PropertyGroup>

@@ -26,7 +26,7 @@ public record SearchEnheterQuery
     /// <summary>
     /// Search text for finding <see cref="Enhet"/> and <see cref="Underenhet"/> based on name.
     /// <remarks>
-    /// Maximum of 180 characters.
+    /// Maximum of 180 characters. Exceeding this will throw an exception.
     /// </remarks>
     /// </summary>
     public string? Navn { get; set; }

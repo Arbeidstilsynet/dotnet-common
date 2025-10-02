@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
+using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 using FluentValidation;
 
 namespace Arbeidstilsynet.Common.Enhetsregisteret.Validation.Extensions;
@@ -7,6 +8,11 @@ namespace Arbeidstilsynet.Common.Enhetsregisteret.Validation.Extensions;
 internal static partial class ValidationExtensions
 {
     private static readonly Regex OrganisasjonsnummerRegex = OrgnummerRegex();
+
+    public static long PageExtents(this Pagination pagination)
+    {
+        return (pagination.Page + 1) * pagination.Size;
+    }
 
     public static void ValidateOrgnummerOrThrow(this string? orgnummer, string paramName)
     {

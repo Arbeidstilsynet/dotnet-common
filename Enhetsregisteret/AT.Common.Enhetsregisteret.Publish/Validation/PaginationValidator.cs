@@ -1,5 +1,6 @@
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Brreg;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
+using Arbeidstilsynet.Common.Enhetsregisteret.Validation.Extensions;
 using FluentValidation;
 
 namespace Arbeidstilsynet.Common.Enhetsregisteret.Validation;
@@ -9,10 +10,8 @@ internal class PaginationValidator : AbstractValidator<Pagination>
     public PaginationValidator()
     {
         RuleFor(x => x)
-            .Must(model => (model.Page + 1) * model.Size <= Constants.MaxSearchResultSize)
-            .WithMessage(
-                $"The product of (Page + 1) and Size must not exceed {Constants.MaxSearchResultSize}."
-            );
+            .Must(x => x.PageExtents() <= Constants.MaxSearchResultSize)
+            .WithMessage($"The page extent must not exceed {Constants.MaxSearchResultSize}.");
 
         RuleFor(x => x.Page)
             .GreaterThanOrEqualTo(0)
