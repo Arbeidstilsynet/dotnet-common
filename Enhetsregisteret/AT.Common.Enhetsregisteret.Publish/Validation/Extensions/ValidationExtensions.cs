@@ -20,7 +20,7 @@ internal static partial class ValidationExtensions
     {
         return !string.IsNullOrWhiteSpace(orgnummer) && OrganisasjonsnummerRegex.IsMatch(orgnummer);
     }
-    
+
     public static bool IsNullOrValidOrgnummer(this string? orgnummer)
     {
         return orgnummer == null || orgnummer.IsValidOrgnummer();
