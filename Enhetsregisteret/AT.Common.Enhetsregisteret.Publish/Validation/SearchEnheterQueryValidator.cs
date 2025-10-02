@@ -18,7 +18,7 @@ internal class SearchEnheterQueryValidator : AbstractValidator<SearchEnheterQuer
             .WithMessage("Each Organisasjonsnummer must be exactly 9 characters long.");
 
         RuleFor(x => x.OverordnetEnhetOrganisasjonsnummer)
-            .Must(orgnummer => orgnummer.IsValidOrgnummer())
+            .Must(orgnummer => orgnummer.IsNullOrValidOrgnummer())
             .WithMessage(
                 "OverordnetEnhetOrganisasjonsnummer must be exactly 9 characters long if provided."
             );
