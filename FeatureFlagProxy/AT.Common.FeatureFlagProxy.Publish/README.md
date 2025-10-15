@@ -12,14 +12,16 @@ dotnet add package Arbeidstilsynet.Common.FeatureFlagProxy
 
 ### Setup
 
-First, configure your Unleash client and register the FeatureFlagProxy:
+### Setup Options
+
+#### Option 1: Simple setup with UnleashSettings (Recommended)
 
 ```csharp
 public static IServiceCollection AddServices(
     this IServiceCollection services,
     WebApplicationBuilder builder)
 {
-    // Configure Unleash
+    // Configure Unleash settings
     var unleashSettings = new UnleashSettings
     {
         AppName = IAssemblyInfo.AppName,
@@ -38,9 +40,63 @@ public static IServiceCollection AddServices(
         },
     };
 
-    var unleash = new DefaultUnleash(unleashSettings);
+    // Register FeatureFlagProxy - uses modern ClientFactory internally
+    services.AddFeatureFlagProxy(unleashSettings);
 
-    // Register FeatureFlagProxy
+    return services;
+}
+```
+
+#### Option 1b: Async setup (if you prefer async initialization)
+
+```csharp
+public static async Task<IServiceCollection> AddServices(
+    this IServiceCollection services,
+    WebApplicationBuilder builder)
+{
+    var unleashSettings = new UnleashSettings
+    {
+        // ... same configuration as above
+    };
+
+    // Register FeatureFlagProxy using async ClientFactory
+    await services.AddFeatureFlagProxyAsync(unleashSettings);
+
+    return services;
+}
+```
+
+#### Option 2: Advanced setup with custom IUnleash instance
+
+```csharp
+public static IServiceCollection AddServices(
+    this IServiceCollection services,
+    WebApplicationBuilder builder)
+{
+    // Configure Unleash settings
+    var unleashSettings = new UnleashSettings
+    {
+        AppName = IAssemblyInfo.AppName,
+        InstanceTag = builder.Environment.EnvironmentName,
+        UnleashApi = new Uri(
+            builder.Configuration["Unleash:Url"]
+                ?? throw new InvalidOperationException("Unleash:Url is not configured")
+        ),
+        CustomHttpHeaders = new Dictionary<string, string>
+        {
+            {
+                "Authorization",
+                builder.Configuration["Unleash:ApiKey"]
+                    ?? throw new InvalidOperationException("Unleash:ApiKey is not configured")
+            },
+        },
+    };
+
+    // Create custom Unleash instance using modern ClientFactory (or use legacy DefaultUnleash if needed)
+    var unleash = new UnleashClientFactory().CreateClient(unleashSettings);
+    // Alternative: var unleash = new DefaultUnleash(unleashSettings); // Legacy approach
+
+    // Register FeatureFlagProxy with custom instance
     services.AddFeatureFlagProxy(unleash);
 
     return services;
@@ -137,33 +193,45 @@ public class AdvancedService
 }
 ```
 
+## 🗑️ Resource Management
+
+### Automatic Disposal (Recommended - Option 1 & 1b)
+
+When using `services.AddFeatureFlagProxy(unleashSettings)` or `services.AddFeatureFlagProxyAsync(unleashSettings)`, the Unleash client is created using the modern `ClientFactory` and automatically managed by the DI container. It will be properly disposed when the application shuts down.
+
+```csharp
+// ✅ Automatic disposal - DI container handles cleanup
+services.AddFeatureFlagProxy(unleashSettings);
+// OR
+await services.AddFeatureFlagProxyAsync(unleashSettings);
+```
+
+**Benefits of using ClientFactory:**
+
+- Modern Unleash client creation (recommended since v1.5.0)
+- Optimal resource management
+- Better performance characteristics
+- Automatic disposal by DI container
+
+### Manual Disposal (Option 2)
+
+When providing your own `IUnleash` instance, **you are responsible for disposal**:
+
+```csharp
+// ⚠️ Manual disposal required
+var unleash = new DefaultUnleash(unleashSettings);
+services.AddFeatureFlagProxy(unleash);
+
+// In application shutdown or when disposing the service provider:
+// unleash.Dispose(); // You must handle this
+```
+
+**Important**: If you register your own `IUnleash` instance, ensure it's properly disposed to avoid resource leaks. The DI container will only dispose objects it creates itself.
+
 ## 🏗️ Architecture
 
 - **IFeatureFlagProxy**: Simple interface with `IsEnabled()` methods
 - **FeatureFlagProxy**: Implementation using Unleash as backing service
 - **FeatureFlagProxyBase**: Abstract base class for custom implementations
 - **Model**: Contains `FeatureFlagContext` and `FeatureFlagResult` for structured data
-- **Extensions**: Additional convenience methods for advanced scenariosAI COPYPASTA
-
-```csharp
-var unleashSettings = new UnleashSettings
-{
-    AppName = IAssemblyInfo.AppName,
-    InstanceTag = builder.Environment.EnvironmentName,
-    UnleashApi = new Uri(
-        builder.Configuration["Unleash:Url"]
-            ?? throw new InvalidOperationException("Unleash:Url is not configured")
-    ),
-    CustomHttpHeaders = new Dictionary<string, string>
-    {
-        {
-            "Authorization",
-            builder.Configuration["Unleash:ApiKey"]
-                ?? throw new InvalidOperationException("Unleash:ApiKey is not configured")
-        },
-    },
-};
-
-var unleash = new DefaultUnleash(unleashSettings);
-services.AddFeatureFlagProxyWithUnleash(unleash); // ✨ Your new extension method
-```
+- **Extensions**: Additional convenience methods for advanced scenarios
