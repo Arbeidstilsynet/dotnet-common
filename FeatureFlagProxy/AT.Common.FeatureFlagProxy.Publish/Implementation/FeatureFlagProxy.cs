@@ -37,7 +37,11 @@ internal class FeatureFlagProxyImplementation : FeatureFlagProxyBase
     /// <param name="userId">Optional user ID for context.</param>
     /// <param name="properties">Optional additional properties for context.</param>
     /// <returns>True if the feature flag is enabled, false otherwise.</returns>
-    public override bool IsEnabled(string featureName, string? userId = null, IDictionary<string, string>? properties = null)
+    public override bool IsEnabled(
+        string featureName,
+        string? userId = null,
+        IDictionary<string, string>? properties = null
+    )
     {
         ValidateFeatureName(featureName);
 
@@ -49,7 +53,7 @@ internal class FeatureFlagProxyImplementation : FeatureFlagProxyBase
         var context = new UnleashContext
         {
             UserId = userId,
-            Properties = new Dictionary<string, string>()
+            Properties = new Dictionary<string, string>(),
         };
 
         if (properties != null)

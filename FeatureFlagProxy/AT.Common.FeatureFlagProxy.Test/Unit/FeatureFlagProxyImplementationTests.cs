@@ -49,7 +49,8 @@ public class FeatureFlagProxyTests
     public void IsEnabled_WithNullFeatureName_ThrowsArgumentException()
     {
         // Act & Assert
-        Should.Throw<ArgumentException>(() => _sut.IsEnabled(null!))
+        Should
+            .Throw<ArgumentException>(() => _sut.IsEnabled(null!))
             .Message.ShouldContain("Feature name cannot be null or empty");
     }
 
@@ -68,10 +69,18 @@ public class FeatureFlagProxyTests
 
         // Assert
         result.ShouldBeTrue();
-        _unleashMock.Verify(x => x.IsEnabled(featureName, It.Is<UnleashContext>(c =>
-            c.UserId == userId &&
-            c.Properties != null &&
-            c.Properties.ContainsKey("region") &&
-            c.Properties["region"] == "norway")), Times.Once);
+        _unleashMock.Verify(
+            x =>
+                x.IsEnabled(
+                    featureName,
+                    It.Is<UnleashContext>(c =>
+                        c.UserId == userId
+                        && c.Properties != null
+                        && c.Properties.ContainsKey("region")
+                        && c.Properties["region"] == "norway"
+                    )
+                ),
+            Times.Once
+        );
     }
 }

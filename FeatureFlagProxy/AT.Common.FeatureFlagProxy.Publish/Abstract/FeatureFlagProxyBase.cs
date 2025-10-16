@@ -20,7 +20,11 @@ internal abstract class FeatureFlagProxyBase : IFeatureFlagProxy
     /// <param name="userId">Optional user ID for context.</param>
     /// <param name="properties">Optional additional properties for context.</param>
     /// <returns>True if the feature flag is enabled, false otherwise.</returns>
-    public abstract bool IsEnabled(string featureName, string? userId = null, IDictionary<string, string>? properties = null);
+    public abstract bool IsEnabled(
+        string featureName,
+        string? userId = null,
+        IDictionary<string, string>? properties = null
+    );
 
     /// <summary>
     /// Validates that a feature name is not null or empty.
@@ -31,7 +35,10 @@ internal abstract class FeatureFlagProxyBase : IFeatureFlagProxy
     {
         if (string.IsNullOrWhiteSpace(featureName))
         {
-            throw new ArgumentException("Feature name cannot be null or empty.", nameof(featureName));
+            throw new ArgumentException(
+                "Feature name cannot be null or empty.",
+                nameof(featureName)
+            );
         }
     }
 }

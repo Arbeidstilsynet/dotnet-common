@@ -16,7 +16,10 @@ public static class DependencyInjectionExtensions
     /// <param name="services"><see cref="IServiceCollection"/> som tjenesten skal legges til i.</param>
     /// <param name="unleash">Unleash singleton instance som skal brukes for feature flag evaluering. Må håndtere disposal selv.</param>
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
-    public static IServiceCollection AddFeatureFlagProxy(this IServiceCollection services, IUnleash unleash)
+    public static IServiceCollection AddFeatureFlagProxy(
+        this IServiceCollection services,
+        IUnleash unleash
+    )
     {
         ArgumentNullException.ThrowIfNull(unleash);
 
@@ -33,12 +36,17 @@ public static class DependencyInjectionExtensions
     /// <param name="services"><see cref="IServiceCollection"/> som tjenesten skal legges til i.</param>
     /// <param name="unleashSettings">Unleash-innstillinger som skal brukes for å konfigurere Unleash-klienten.</param>
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
-    public static IServiceCollection AddFeatureFlagProxy(this IServiceCollection services, UnleashSettings unleashSettings)
+    public static IServiceCollection AddFeatureFlagProxy(
+        this IServiceCollection services,
+        UnleashSettings unleashSettings
+    )
     {
         ArgumentNullException.ThrowIfNull(unleashSettings);
 
         // Register Unleash as singleton using modern ClientFactory (recommended since v1.5.0)
-        services.AddSingleton<IUnleash>(provider => new UnleashClientFactory().CreateClient(unleashSettings));
+        services.AddSingleton<IUnleash>(provider =>
+            new UnleashClientFactory().CreateClient(unleashSettings)
+        );
         services.AddSingleton<IFeatureFlagProxy, FeatureFlagProxyImplementation>();
 
         return services;
@@ -51,7 +59,10 @@ public static class DependencyInjectionExtensions
     /// <param name="services"><see cref="IServiceCollection"/> som tjenesten skal legges til i.</param>
     /// <param name="unleashSettings">Unleash-innstillinger som skal brukes for å konfigurere Unleash-klienten.</param>
     /// <returns>Task som representerer den asynkrone operasjonen som returnerer <see cref="IServiceCollection"/> for chaining.</returns>
-    public static async Task<IServiceCollection> AddFeatureFlagProxyAsync(this IServiceCollection services, UnleashSettings unleashSettings)
+    public static async Task<IServiceCollection> AddFeatureFlagProxyAsync(
+        this IServiceCollection services,
+        UnleashSettings unleashSettings
+    )
     {
         ArgumentNullException.ThrowIfNull(unleashSettings);
 

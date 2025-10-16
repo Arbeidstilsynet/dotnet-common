@@ -19,5 +19,9 @@ public interface IFeatureFlagProxy
     /// <param name="userId">Optional user ID for context.</param>
     /// <param name="properties">Optional additional properties for context.</param>
     /// <returns>True if the feature flag is enabled, false otherwise.</returns>
-    bool IsEnabled(string featureName, string? userId = null, IDictionary<string, string>? properties = null);
+    bool IsEnabled(
+        string featureName,
+        string? userId = null,
+        IDictionary<string, string>? properties = null
+    );
 }

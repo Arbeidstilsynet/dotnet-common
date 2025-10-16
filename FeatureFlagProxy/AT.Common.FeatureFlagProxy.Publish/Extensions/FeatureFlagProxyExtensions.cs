@@ -14,7 +14,11 @@ public static class FeatureFlagProxyExtensions
     /// <param name="featureName">The name of the feature flag to check.</param>
     /// <param name="context">The context for feature flag evaluation.</param>
     /// <returns>True if the feature flag is enabled, false otherwise.</returns>
-    public static bool IsEnabled(this IFeatureFlagProxy featureFlagProxy, string featureName, FeatureFlagContext context)
+    public static bool IsEnabled(
+        this IFeatureFlagProxy featureFlagProxy,
+        string featureName,
+        FeatureFlagContext context
+    )
     {
         return featureFlagProxy.IsEnabled(featureName, context.UserId, context.Properties);
     }
@@ -26,17 +30,22 @@ public static class FeatureFlagProxyExtensions
     /// <param name="featureName">The name of the feature flag to check.</param>
     /// <param name="context">Optional context for feature flag evaluation.</param>
     /// <returns>A detailed result of the feature flag evaluation.</returns>
-    public static FeatureFlagResult GetResult(this IFeatureFlagProxy featureFlagProxy, string featureName, FeatureFlagContext? context = null)
+    public static FeatureFlagResult GetResult(
+        this IFeatureFlagProxy featureFlagProxy,
+        string featureName,
+        FeatureFlagContext? context = null
+    )
     {
-        var isEnabled = context != null
-            ? featureFlagProxy.IsEnabled(featureName, context.UserId, context.Properties)
-            : featureFlagProxy.IsEnabled(featureName);
+        var isEnabled =
+            context != null
+                ? featureFlagProxy.IsEnabled(featureName, context.UserId, context.Properties)
+                : featureFlagProxy.IsEnabled(featureName);
 
         return new FeatureFlagResult
         {
             FeatureName = featureName,
             IsEnabled = isEnabled,
-            Context = context
+            Context = context,
         };
     }
 }

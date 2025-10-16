@@ -46,8 +46,16 @@ By convention you will get three new projects within this directory:
 If you want to test your changes by importing them into another project, you can use [Prerelease Packages](https://learn.microsoft.com/en-us/nuget/create-packages/prerelease-packages). To do this, simply update the version number with an `alpha`, `beta`, or `rc` suffix. For example, if you want to release a new version `0.0.2`, a valid prerelease version would be `0.0.2-alpha`. You can find the current version number in `AT.Common.NewFancyClient.Publish.csproj`.
 
 ## 🚀 Publish
+
 Create a new branch and pull request. Remember to increment the version in `AT.Common.NewFancyClient.Adapters.csproj`. When the pull request is merged, a new release pipeline will start automatically.
 
 ## 🛠️ Update Dependencies
 
 Renovate is configured to group all non-major versions together. Check Renovate's PR, update the version and changelog for the affected packages according to the updates, then commit & merge.
+
+## Commands to run before PR
+
+dotnet format
+
+dotnet csharpier check .
+dotnet csharpier format .
