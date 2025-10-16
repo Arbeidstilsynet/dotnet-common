@@ -199,20 +199,6 @@ public class AdvancedService
 
 When using `services.AddFeatureFlagProxy(unleashSettings)` or `services.AddFeatureFlagProxyAsync(unleashSettings)`, the Unleash client is created using the modern `ClientFactory` and automatically managed by the DI container. It will be properly disposed when the application shuts down.
 
-```csharp
-// ✅ Automatic disposal - DI container handles cleanup
-services.AddFeatureFlagProxy(unleashSettings);
-// OR
-await services.AddFeatureFlagProxyAsync(unleashSettings);
-```
-
-**Benefits of using ClientFactory:**
-
-- Modern Unleash client creation (recommended since v1.5.0)
-- Optimal resource management
-- Better performance characteristics
-- Automatic disposal by DI container
-
 ### Manual Disposal (Option 2)
 
 When providing your own `IUnleash` instance, **you are responsible for disposal**:
@@ -223,7 +209,7 @@ var unleash = new DefaultUnleash(unleashSettings);
 services.AddFeatureFlagProxy(unleash);
 
 // In application shutdown or when disposing the service provider:
-// unleash.Dispose(); // You must handle this
+unleash.Dispose(); // You must handle this
 ```
 
 **Important**: If you register your own `IUnleash` instance, ensure it's properly disposed to avoid resource leaks. The DI container will only dispose objects it creates itself.
