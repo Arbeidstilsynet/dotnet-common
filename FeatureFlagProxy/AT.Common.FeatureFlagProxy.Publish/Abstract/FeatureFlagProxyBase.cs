@@ -1,3 +1,5 @@
+using Arbeidstilsynet.Common.FeatureFlagProxy.Model;
+
 namespace Arbeidstilsynet.Common.FeatureFlagProxy.Abstract;
 
 /// <summary>
@@ -17,14 +19,9 @@ internal abstract class FeatureFlagProxyBase : IFeatureFlagProxy
     /// Checks if a feature flag is enabled with context.
     /// </summary>
     /// <param name="featureName">The name of the feature flag to check.</param>
-    /// <param name="userId">Optional user ID for context.</param>
-    /// <param name="properties">Optional additional properties for context.</param>
+    /// <param name="context">Optional context for feature flag evaluation.</param>
     /// <returns>True if the feature flag is enabled, false otherwise.</returns>
-    public abstract bool IsEnabled(
-        string featureName,
-        string? userId = null,
-        IDictionary<string, string>? properties = null
-    );
+    public abstract bool IsEnabled(string featureName, FeatureFlagContext? context = null);
 
     /// <summary>
     /// Validates that a feature name is not null or empty.

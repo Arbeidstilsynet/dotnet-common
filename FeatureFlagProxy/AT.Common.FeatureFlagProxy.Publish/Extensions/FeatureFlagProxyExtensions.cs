@@ -9,6 +9,8 @@ public static class FeatureFlagProxyExtensions
 {
     /// <summary>
     /// Extension method to check if a feature flag is enabled with a context object.
+    /// This is now redundant since the main interface accepts FeatureFlagContext directly,
+    /// but kept for backward compatibility if needed.
     /// </summary>
     /// <param name="featureFlagProxy">The feature flag proxy instance.</param>
     /// <param name="featureName">The name of the feature flag to check.</param>
@@ -20,7 +22,7 @@ public static class FeatureFlagProxyExtensions
         FeatureFlagContext context
     )
     {
-        return featureFlagProxy.IsEnabled(featureName, context.UserId, context.Properties);
+        return featureFlagProxy.IsEnabled(featureName, context);
     }
 
     /// <summary>
@@ -36,10 +38,7 @@ public static class FeatureFlagProxyExtensions
         FeatureFlagContext? context = null
     )
     {
-        var isEnabled =
-            context != null
-                ? featureFlagProxy.IsEnabled(featureName, context.UserId, context.Properties)
-                : featureFlagProxy.IsEnabled(featureName);
+        var isEnabled = featureFlagProxy.IsEnabled(featureName, context);
 
         return new FeatureFlagResult
         {

@@ -1,4 +1,5 @@
 using Arbeidstilsynet.Common.FeatureFlagProxy.Implementation;
+using Arbeidstilsynet.Common.FeatureFlagProxy.Model;
 using Moq;
 using Shouldly;
 using Unleash;
@@ -60,12 +61,18 @@ public class FeatureFlagProxyTests
         // Arrange
         const string featureName = "test-feature";
         const string userId = "user123";
-        var properties = new Dictionary<string, string> { { "region", "norway" } };
+        var context = new FeatureFlagContext
+        {
+            UserId = userId,
+            SessionId = "session123",
+            Environment = "test",
+            Properties = new Dictionary<string, string> { { "region", "norway" } },
+        };
 
         _unleashMock.Setup(x => x.IsEnabled(featureName, It.IsAny<UnleashContext>())).Returns(true);
 
         // Act
-        var result = _sut.IsEnabled(featureName, userId, properties);
+        var result = _sut.IsEnabled(featureName, context);
 
         // Assert
         result.ShouldBeTrue();
@@ -75,6 +82,8 @@ public class FeatureFlagProxyTests
                     featureName,
                     It.Is<UnleashContext>(c =>
                         c.UserId == userId
+                        && c.SessionId == "session123"
+                        && c.Environment == "test"
                         && c.Properties != null
                         && c.Properties.ContainsKey("region")
                         && c.Properties["region"] == "norway"

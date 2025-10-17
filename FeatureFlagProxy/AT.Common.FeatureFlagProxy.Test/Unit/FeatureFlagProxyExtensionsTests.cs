@@ -17,22 +17,19 @@ public class FeatureFlagProxyExtensionsTests
         var context = new FeatureFlagContext
         {
             UserId = "user123",
+            SessionId = "session456",
+            Environment = "test",
             Properties = new Dictionary<string, string> { { "region", "norway" } },
         };
 
-        mockProxy
-            .Setup(x => x.IsEnabled(featureName, context.UserId, context.Properties))
-            .Returns(true);
+        mockProxy.Setup(x => x.IsEnabled(featureName, context)).Returns(true);
 
         // Act
         var result = mockProxy.Object.IsEnabled(featureName, context);
 
         // Assert
         result.ShouldBeTrue();
-        mockProxy.Verify(
-            x => x.IsEnabled(featureName, context.UserId, context.Properties),
-            Times.Once
-        );
+        mockProxy.Verify(x => x.IsEnabled(featureName, context), Times.Once);
     }
 
     [Fact]
@@ -44,12 +41,12 @@ public class FeatureFlagProxyExtensionsTests
         var context = new FeatureFlagContext
         {
             UserId = "user123",
+            SessionId = "session456",
+            Environment = "test",
             Properties = new Dictionary<string, string> { { "region", "norway" } },
         };
 
-        mockProxy
-            .Setup(x => x.IsEnabled(featureName, context.UserId, context.Properties))
-            .Returns(true);
+        mockProxy.Setup(x => x.IsEnabled(featureName, context)).Returns(true);
 
         // Act
         var result = mockProxy.Object.GetResult(featureName, context);
