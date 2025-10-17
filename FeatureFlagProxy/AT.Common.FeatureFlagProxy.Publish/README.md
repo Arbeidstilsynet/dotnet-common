@@ -12,8 +12,6 @@ dotnet add package Arbeidstilsynet.Common.FeatureFlagProxy
 
 ### Setup
 
-### Setup Options
-
 #### Option 1: Simple setup with UnleashSettings (Recommended)
 
 ```csharp
@@ -47,7 +45,7 @@ public static IServiceCollection AddServices(
 }
 ```
 
-#### Option 1b: Async setup (if you prefer async initialization)
+#### Option 2: Async setup (if you prefer async initialization)
 
 ```csharp
 public static async Task<IServiceCollection> AddServices(
@@ -66,48 +64,13 @@ public static async Task<IServiceCollection> AddServices(
 }
 ```
 
-#### Option 2: Advanced setup with custom IUnleash instance
-
-```csharp
-public static IServiceCollection AddServices(
-    this IServiceCollection services,
-    WebApplicationBuilder builder)
-{
-    // Configure Unleash settings
-    var unleashSettings = new UnleashSettings
-    {
-        AppName = IAssemblyInfo.AppName,
-        InstanceTag = builder.Environment.EnvironmentName,
-        UnleashApi = new Uri(
-            builder.Configuration["Unleash:Url"]
-                ?? throw new InvalidOperationException("Unleash:Url is not configured")
-        ),
-        CustomHttpHeaders = new Dictionary<string, string>
-        {
-            {
-                "Authorization",
-                builder.Configuration["Unleash:ApiKey"]
-                    ?? throw new InvalidOperationException("Unleash:ApiKey is not configured")
-            },
-        },
-    };
-
-    // Create custom Unleash instance using modern ClientFactory (or use legacy DefaultUnleash if needed)
-    var unleash = new UnleashClientFactory().CreateClient(unleashSettings);
-    // Alternative: var unleash = new DefaultUnleash(unleashSettings); // Legacy approach
-
-    // Register FeatureFlagProxy with custom instance
-    services.AddFeatureFlagProxy(unleash);
-
-    return services;
-}
-```
-
 ### Using in Your Code
 
 Simple feature flag checking:
 
 ```csharp
+using Arbeidstilsynet.Common.FeatureFlagProxy.Model;
+
 public class MyService
 {
     private readonly IFeatureFlagProxy _featureFlags;
@@ -132,19 +95,25 @@ public class MyService
         }
 
         // With user context
-        if (_featureFlags.IsEnabled("user-specific-feature", "user123"))
+        var userContext = new FeatureFlagContext { UserId = "user123" };
+        if (_featureFlags.IsEnabled("user-specific-feature", userContext))
         {
             await ExecuteUserSpecificFeature();
         }
 
         // With additional context
-        var properties = new Dictionary<string, string>
+        var fullContext = new FeatureFlagContext
         {
-            { "region", "norway" },
-            { "role", "admin" }
+            UserId = "user123",
+            Environment = "production",
+            Properties = new Dictionary<string, string>
+            {
+                { "region", "norway" },
+                { "role", "admin" }
+            }
         };
 
-        if (_featureFlags.IsEnabled("region-feature", "user123", properties))
+        if (_featureFlags.IsEnabled("region-feature", fullContext))
         {
             await ExecuteRegionSpecificFeature();
         }
@@ -195,29 +164,13 @@ public class AdvancedService
 
 ## 🗑️ Resource Management
 
-### Automatic Disposal (Recommended - Option 1 & 1b)
+The FeatureFlagProxy automatically manages the Unleash client lifecycle. When using `services.AddFeatureFlagProxy(unleashSettings)` or `services.AddFeatureFlagProxyAsync(unleashSettings)`, the Unleash client is created using the modern `ClientFactory` and automatically disposed by the DI container when the application shuts down.
 
-When using `services.AddFeatureFlagProxy(unleashSettings)` or `services.AddFeatureFlagProxyAsync(unleashSettings)`, the Unleash client is created using the modern `ClientFactory` and automatically managed by the DI container. It will be properly disposed when the application shuts down.
-
-### Manual Disposal (Option 2)
-
-When providing your own `IUnleash` instance, **you are responsible for disposal**:
-
-```csharp
-// ⚠️ Manual disposal required
-var unleash = new DefaultUnleash(unleashSettings);
-services.AddFeatureFlagProxy(unleash);
-
-// In application shutdown or when disposing the service provider:
-unleash.Dispose(); // You must handle this
-```
-
-**Important**: If you register your own `IUnleash` instance, ensure it's properly disposed to avoid resource leaks. The DI container will only dispose objects it creates itself.
+No manual disposal is required - everything is handled automatically.
 
 ## 🏗️ Architecture
 
 - **IFeatureFlagProxy**: Simple interface with `IsEnabled()` methods
-- **FeatureFlagProxy**: Implementation using Unleash as backing service
-- **FeatureFlagProxyBase**: Abstract base class for custom implementations
+- **FeatureFlagProxyImplementation**: Implementation using Unleash as backing service
 - **Model**: Contains `FeatureFlagContext` and `FeatureFlagResult` for structured data
 - **Extensions**: Additional convenience methods for advanced scenarios
