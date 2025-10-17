@@ -57,5 +57,5 @@ Renovate is configured to group all non-major versions together. Check Renovate'
 
 dotnet format
 
-dotnet csharpier check .
 dotnet csharpier format .
+dotnet csharpier check .
