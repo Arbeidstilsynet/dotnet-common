@@ -37,4 +37,3 @@ public record FeatureFlagContext
     /// </summary>
     public IDictionary<string, string> Properties { get; init; } = new Dictionary<string, string>();
 }
-
