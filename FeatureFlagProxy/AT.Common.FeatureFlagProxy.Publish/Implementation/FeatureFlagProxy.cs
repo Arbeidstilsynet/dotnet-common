@@ -15,7 +15,7 @@ internal class FeatureFlagProxyImplementation : IFeatureFlagProxy
     /// <param name="unleash">The Unleash client instance.</param>
     public FeatureFlagProxyImplementation(IUnleash unleash)
     {
-        _unleash = unleash ?? throw new ArgumentNullException(nameof(unleash));
+        _unleash = unleash;
     }
 
     /// <summary>
