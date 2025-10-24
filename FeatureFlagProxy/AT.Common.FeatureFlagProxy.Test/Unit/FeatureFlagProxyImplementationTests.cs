@@ -1,5 +1,4 @@
 using Arbeidstilsynet.Common.FeatureFlagProxy.Implementation;
-using Arbeidstilsynet.Common.FeatureFlagProxy.Model;
 using Moq;
 using Shouldly;
 using Unleash;
@@ -47,21 +46,12 @@ public class FeatureFlagProxyTests
     }
 
     [Fact]
-    public void IsEnabled_WithNullFeatureName_ThrowsArgumentException()
-    {
-        // Act & Assert
-        Should
-            .Throw<ArgumentException>(() => _sut.IsEnabled(null!))
-            .Message.ShouldContain("Feature name cannot be null or empty");
-    }
-
-    [Fact]
     public void IsEnabled_WithContext_CallsUnleashWithContext()
     {
         // Arrange
         const string featureName = "test-feature";
         const string userId = "user123";
-        var context = new FeatureFlagContext
+        var context = new UnleashContext
         {
             UserId = userId,
             SessionId = "session123",

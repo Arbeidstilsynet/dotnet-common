@@ -1,4 +1,4 @@
-using Arbeidstilsynet.Common.FeatureFlagProxy.Model;
+using Unleash;
 
 namespace Arbeidstilsynet.Common.FeatureFlagProxy;
 
@@ -11,14 +11,7 @@ public interface IFeatureFlagProxy
     /// Checks if a feature flag is enabled.
     /// </summary>
     /// <param name="featureName">The name of the feature flag to check.</param>
+    /// <param name="context">Optional Unleash context for feature flag evaluation.</param>
     /// <returns>True if the feature flag is enabled, false otherwise.</returns>
-    bool IsEnabled(string featureName);
-
-    /// <summary>
-    /// Checks if a feature flag is enabled with context.
-    /// </summary>
-    /// <param name="featureName">The name of the feature flag to check.</param>
-    /// <param name="context">Optional context for feature flag evaluation.</param>
-    /// <returns>True if the feature flag is enabled, false otherwise.</returns>
-    bool IsEnabled(string featureName, FeatureFlagContext? context = null);
+    bool IsEnabled(string featureName, UnleashContext? context = null);
 }

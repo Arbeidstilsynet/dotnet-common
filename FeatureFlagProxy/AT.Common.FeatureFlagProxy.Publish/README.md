@@ -69,7 +69,7 @@ public static async Task<IServiceCollection> AddServices(
 Simple feature flag checking:
 
 ```csharp
-using Arbeidstilsynet.Common.FeatureFlagProxy.Model;
+using Unleash;
 
 public class MyService
 {
@@ -94,18 +94,21 @@ public class MyService
             await ExecuteDefaultBehavior();
         }
 
-        // With user context
-        var userContext = new FeatureFlagContext { UserId = "user123" };
+        // With user context using Unleash's UnleashContext
+        var userContext = new UnleashContext { UserId = "user123" };
         if (_featureFlags.IsEnabled("user-specific-feature", userContext))
         {
             await ExecuteUserSpecificFeature();
         }
 
         // With additional context
-        var fullContext = new FeatureFlagContext
+        var fullContext = new UnleashContext
         {
             UserId = "user123",
+            SessionId = "session-abc",
+            RemoteAddress = "192.168.1.1",
             Environment = "production",
+            AppName = "MyApp",
             Properties = new Dictionary<string, string>
             {
                 { "region", "norway" },
@@ -124,42 +127,7 @@ public class MyService
 ### Using Extension Methods
 
 ```csharp
-using Arbeidstilsynet.Common.FeatureFlagProxy.Extensions;
-using Arbeidstilsynet.Common.FeatureFlagProxy.Model;
 
-public class AdvancedService
-{
-    private readonly IFeatureFlagProxy _featureFlags;
-
-    public AdvancedService(IFeatureFlagProxy featureFlags)
-    {
-        _featureFlags = featureFlags;
-    }
-
-    public async Task DoAdvancedStuff()
-    {
-        // Using context object
-        var context = new FeatureFlagContext
-        {
-            UserId = "user123",
-            Properties = new Dictionary<string, string>
-            {
-                { "subscription", "premium" },
-                { "region", "europe" }
-            }
-        };
-
-        if (_featureFlags.IsEnabled("premium-feature", context))
-        {
-            await ExecutePremiumFeature();
-        }
-
-        // Get detailed result
-        var result = _featureFlags.GetResult("analytics-feature", context);
-
-        Console.WriteLine($"Feature '{result.FeatureName}' is {(result.IsEnabled ? "enabled" : "disabled")}");
-    }
-}
 ```
 
 ## 🗑️ Resource Management
@@ -170,7 +138,7 @@ No manual disposal is required - everything is handled automatically.
 
 ## 🏗️ Architecture
 
-- **IFeatureFlagProxy**: Simple interface with `IsEnabled()` methods
-- **FeatureFlagProxyImplementation**: Implementation using Unleash as backing service
-- **Model**: Contains `FeatureFlagContext` and `FeatureFlagResult` for structured data
-- **Extensions**: Additional convenience methods for advanced scenarios
+- **IFeatureFlagProxy**: Simple interface with `IsEnabled()` methods - a thin wrapper around Unleash
+- **FeatureFlagProxyImplementation**: Minimal implementation that delegates directly to `IUnleash`
+- **Uses Unleash models directly**: `UnleashContext` from the Unleash library for feature flag evaluation
+- **Extensions**: Optional extension methods for convenience
