@@ -24,6 +24,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AT.Common.FeatureFlagProxy.Publish\AT.Common.FeatureFlagProxy.Publish.csproj" />
+    <ProjectReference Include="..\AT.Common.FeatureFlagProxy.Publish\AT.Common.FeatureFlag.Publish.csproj" />
   </ItemGroup>
 </Project>

@@ -5,7 +5,7 @@ namespace Arbeidstilsynet.Common.FeatureFlag;
 /// <summary>
 /// Interface for feature flag operations
 /// </summary>
-public interface IFeatureFlagProxy
+public interface IFeatureFlag
 {
     /// <summary>
     /// Checks if a feature flag is enabled.

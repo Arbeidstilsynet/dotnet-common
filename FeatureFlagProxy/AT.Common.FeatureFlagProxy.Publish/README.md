@@ -38,8 +38,8 @@ public static IServiceCollection AddServices(
         },
     };
 
-    // Register FeatureFlagProxy - uses modern ClientFactory internally
-    services.AddFeatureFlagProxy(unleashSettings);
+    // Register FeatureFlag service - uses modern ClientFactory internally
+    services.AddFeatureFlag(unleashSettings);
 
     return services;
 }
@@ -57,8 +57,8 @@ public static async Task<IServiceCollection> AddServices(
         // ... same configuration as above
     };
 
-    // Register FeatureFlagProxy using async ClientFactory
-    await services.AddFeatureFlagProxyAsync(unleashSettings);
+    // Register FeatureFlag service using async ClientFactory
+    await services.AddFeatureFlagAsync(unleashSettings);
 
     return services;
 }
@@ -69,13 +69,13 @@ public static async Task<IServiceCollection> AddServices(
 Simple feature flag checking:
 
 ```csharp
-using Arbeidstilsynet.Common.FeatureFlagProxy.Model;
+using Arbeidstilsynet.Common.FeatureFlag.Model;
 
 public class MyService
 {
-    private readonly IFeatureFlagProxy _featureFlags;
+    private readonly IFeatureFlag _featureFlags;
 
-    public MyService(IFeatureFlagProxy featureFlags)
+    public MyService(IFeatureFlag featureFlags)
     {
         _featureFlags = featureFlags;
     }
@@ -131,19 +131,124 @@ public class MyService
 
 ```
 
+## 🌐 HTTP Endpoint
+
+You can expose a MinimalAPI endpoint for checking feature flags via HTTP requests.
+
+### Setup in Program.cs
+
+```csharp
+using Arbeidstilsynet.Common.FeatureFlag.DependencyInjection;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Configure services (see Setup section above)
+builder.Services.AddFeatureFlag(unleashSettings);
+
+var app = builder.Build();
+
+// Map the feature flag endpoint
+app.MapFeatureFlagEndpoint(); // Default route: POST /featureflag
+
+// Or customize the route
+app.MapFeatureFlagEndpoint("/api/features/check");
+
+app.Run();
+```
+
+### Making HTTP Requests
+
+**Request:**
+
+```http
+POST /featureflag
+Content-Type: application/json
+
+{
+  "featureName": "my-feature",
+  "context": {
+    "userId": "user123",
+    "sessionId": "session-abc",
+    "environment": "production",
+    "properties": {
+      "region": "norway",
+      "role": "admin"
+    }
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "featureName": "my-feature",
+  "isEnabled": true
+}
+```
+
+**Simple request without context:**
+
+```http
+POST /featureflag
+Content-Type: application/json
+
+{
+  "featureName": "simple-feature"
+}
+```
+
+### Using with HttpClient
+
+```csharp
+using System.Net.Http.Json;
+
+public class FeatureFlagClient
+{
+    private readonly HttpClient _httpClient;
+
+    public FeatureFlagClient(HttpClient httpClient)
+    {
+        _httpClient = httpClient;
+    }
+
+    public async Task<bool> IsFeatureEnabledAsync(string featureName, FeatureFlagContext? context = null)
+    {
+        var request = new FeatureFlagRequest
+        {
+            FeatureName = featureName,
+            Context = context
+        };
+
+        var response = await _httpClient.PostAsJsonAsync("/featureflag", request);
+        response.EnsureSuccessStatusCode();
+
+        var result = await response.Content.ReadFromJsonAsync<FeatureFlagResponse>();
+        return result?.IsEnabled ?? false;
+    }
+}
+
+// Usage
+var isEnabled = await featureFlagClient.IsFeatureEnabledAsync("my-feature", new FeatureFlagContext
+{
+    UserId = "user123",
+    Properties = new Dictionary<string, string> { { "region", "norway" } }
+});
+```
+
 ## 🗑️ Resource Management
 
-The FeatureFlagProxy automatically manages the Unleash client lifecycle. When using `services.AddFeatureFlagProxy(unleashSettings)` or `services.AddFeatureFlagProxyAsync(unleashSettings)`, the Unleash client is created using the modern `ClientFactory` and automatically disposed by the DI container when the application shuts down.
+The FeatureFlag service automatically manages the Unleash client lifecycle. When using `services.AddFeatureFlag(unleashSettings)` or `services.AddFeatureFlagAsync(unleashSettings)`, the Unleash client is created using the modern `ClientFactory` and automatically disposed by the DI container when the application shuts down.
 
 No manual disposal is required - everything is handled automatically.
 
 ## 🏗️ Architecture
 
-- **IFeatureFlagProxy**: Simple interface with `IsEnabled()` method - a thin wrapper around Unleash
-- **FeatureFlagProxyImplementation**: Internal implementation that delegates to `IUnleash` with context mapping
-- **FeatureFlagContext**: Custom model that mirrors Unleash's context - consumers don't need to reference Unleash directly
+- **IFeatureFlag**: Simple interface with `IsEnabled()` method - a thin wrapper around Unleash
+- **FeatureFlagImplementation**: Internal implementation that delegates to `IUnleash` with context mapping
+- **FeatureFlagContext**: Custom model that extends Unleash's `UnleashContext` - consumers don't need to reference Unleash directly
 - **Unleash as internal dependency**: Unleash is used internally but not exposed in public API surface
 
 ## 📦 Dependencies
 
-Consumers of this package only need to reference `Arbeidstilsynet.Common.FeatureFlagProxy`. The Unleash dependency is internal and doesn't need to be referenced in consuming applications.
+Consumers of this package only need to reference `Arbeidstilsynet.Common.FeatureFlag`. The Unleash dependency is internal and doesn't need to be referenced in consuming applications.

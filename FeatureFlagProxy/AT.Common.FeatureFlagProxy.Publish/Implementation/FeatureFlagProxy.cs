@@ -4,17 +4,17 @@ using Unleash;
 namespace Arbeidstilsynet.Common.FeatureFlag.Implementation;
 
 /// <summary>
-/// Feature flag proxy implementation using Unleash as the backing service.
+/// Feature flag implementation using Unleash as the backing service.
 /// </summary>
-internal class FeatureFlagProxyImplementation : IFeatureFlagProxy
+internal class FeatureFlagImplementation : IFeatureFlag
 {
     private readonly IUnleash _unleash;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="FeatureFlagProxyImplementation"/> class.
+    /// Initializes a new instance of the <see cref="FeatureFlagImplementation"/> class.
     /// </summary>
     /// <param name="unleash">The Unleash client instance.</param>
-    public FeatureFlagProxyImplementation(IUnleash unleash)
+    public FeatureFlagImplementation(IUnleash unleash)
     {
         _unleash = unleash;
     }

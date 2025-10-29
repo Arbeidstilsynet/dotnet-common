@@ -11,13 +11,13 @@ namespace Arbeidstilsynet.Common.FeatureFlag.DependencyInjection;
 public static class DependencyInjectionExtensions
 {
     /// <summary>
-    /// Registrerer en implementasjon av IFeatureFlagProxy med Unleash som backing service i den spesifiserte <see cref="IServiceCollection"/>.
+    /// Registrerer en implementasjon av IFeatureFlag med Unleash som backing service i den spesifiserte <see cref="IServiceCollection"/>.
     /// Oppretter Unleash-klient ved hjelp av modern ClientFactory basert på de oppgitte innstillingene. Unleash-instansen blir automatisk disposed når DI-containeren blir disposed.
     /// </summary>
     /// <param name="services"><see cref="IServiceCollection"/> som tjenesten skal legges til i.</param>
     /// <param name="unleashSettings">Unleash-innstillinger som skal brukes for å konfigurere Unleash-klienten.</param>
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
-    public static IServiceCollection AddFeatureFlagProxy(
+    public static IServiceCollection AddFeatureFlag(
         this IServiceCollection services,
         UnleashSettings unleashSettings
     )
@@ -28,19 +28,19 @@ public static class DependencyInjectionExtensions
         services.AddSingleton<IUnleash>(provider =>
             new UnleashClientFactory().CreateClient(unleashSettings)
         );
-        services.AddSingleton<IFeatureFlagProxy, FeatureFlagProxyImplementation>();
+        services.AddSingleton<IFeatureFlag, FeatureFlagImplementation>();
 
         return services;
     }
 
     /// <summary>
-    /// Registrerer en implementasjon av IFeatureFlagProxy med Unleash som backing service i den spesifiserte <see cref="IServiceCollection"/> asynkront.
+    /// Registrerer en implementasjon av IFeatureFlag med Unleash som backing service i den spesifiserte <see cref="IServiceCollection"/> asynkront.
     /// Oppretter Unleash-klient ved hjelp av modern ClientFactory.CreateClientAsync basert på de oppgitte innstillingene. Unleash-instansen blir automatisk disposed når DI-containeren blir disposed.
     /// </summary>
     /// <param name="services"><see cref="IServiceCollection"/> som tjenesten skal legges til i.</param>
     /// <param name="unleashSettings">Unleash-innstillinger som skal brukes for å konfigurere Unleash-klienten.</param>
     /// <returns>Task som representerer den asynkrone operasjonen som returnerer <see cref="IServiceCollection"/> for chaining.</returns>
-    public static async Task<IServiceCollection> AddFeatureFlagProxyAsync(
+    public static async Task<IServiceCollection> AddFeatureFlagAsync(
         this IServiceCollection services,
         UnleashSettings unleashSettings
     )
@@ -51,7 +51,7 @@ public static class DependencyInjectionExtensions
         var unleashClient = await new UnleashClientFactory().CreateClientAsync(unleashSettings);
 
         services.AddSingleton<IUnleash>(unleashClient);
-        services.AddSingleton<IFeatureFlagProxy, FeatureFlagProxyImplementation>();
+        services.AddSingleton<IFeatureFlag, FeatureFlagImplementation>();
 
         return services;
     }

@@ -7,15 +7,15 @@ using Xunit;
 
 namespace Arbeidstilsynet.Common.FeatureFlag.Test;
 
-public class FeatureFlagProxyTests
+public class FeatureFlagTests
 {
-    private readonly FeatureFlagProxyImplementation _sut;
+    private readonly FeatureFlagImplementation _sut;
     private readonly Mock<IUnleash> _unleashMock;
 
-    public FeatureFlagProxyTests()
+    public FeatureFlagTests()
     {
         _unleashMock = new Mock<IUnleash>();
-        _sut = new FeatureFlagProxyImplementation(_unleashMock.Object);
+        _sut = new FeatureFlagImplementation(_unleashMock.Object);
     }
 
     [Fact]
