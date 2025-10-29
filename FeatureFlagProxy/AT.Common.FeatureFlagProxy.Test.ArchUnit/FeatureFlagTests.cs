@@ -5,20 +5,20 @@ using ArchUnitNET.xUnit;
 //add a using directive to ArchUnitNET.Fluent.ArchRuleDefinition to easily define ArchRules
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 
-namespace FeatureFlagProxy.ArchUnit.Tests;
+namespace FeatureFlag.ArchUnit.Tests;
 
-public class FeatureFlagProxyAdapterLayerTests
+public class FeatureFlagAdapterLayerTests
 {
     static readonly Architecture Architecture = new ArchLoader()
-        .LoadAssemblies(Layers.FeatureFlagProxyAssembly, Layers.SystemConsoleAssembly)
+        .LoadAssemblies(Layers.FeatureFlagAssembly, Layers.SystemConsoleAssembly)
         .Build();
 
     [Fact]
-    public void TypesInFeatureFlagProxy_HaveCorrectNamespace()
+    public void TypesInFeatureFlag_HaveCorrectNamespace()
     {
         IArchRule archRule = Types()
             .That()
-            .Are(Layers.FeatureFlagProxyLayer)
+            .Are(Layers.FeatureFlagLayer)
             .Should()
             .ResideInNamespaceMatching(Constants.RootNamespace)
             .WithoutRequiringPositiveResults();
@@ -27,7 +27,7 @@ public class FeatureFlagProxyAdapterLayerTests
     }
 
     [Fact]
-    public void InterfaceImplementationsInFeatureFlagProxy_AreNotPublic()
+    public void InterfaceImplementationsInFeatureFlag_AreNotPublic()
     {
         IArchRule archRule = Types()
             .That()
@@ -60,11 +60,11 @@ public class FeatureFlagProxyAdapterLayerTests
     }
 
     [Fact]
-    public void TypesInFeatureFlagProxyAdapterLayer_DoNotDependOnAWS()
+    public void TypesInFeatureFlagAdapterLayer_DoNotDependOnAWS()
     {
         IArchRule archRule = Types()
             .That()
-            .Are(Layers.FeatureFlagProxyLayer)
+            .Are(Layers.FeatureFlagLayer)
             .Should()
             .NotDependOnAny(Types().That().ResideInNamespaceMatching("^Amazon.*$"));
 
@@ -72,11 +72,11 @@ public class FeatureFlagProxyAdapterLayerTests
     }
 
     [Fact]
-    public void TypesInFeatureFlagProxyAdapterLayer_UseCorrectLogger()
+    public void TypesInFeatureFlagAdapterLayer_UseCorrectLogger()
     {
         IArchRule archRule = Types()
             .That()
-            .Are(Layers.FeatureFlagProxyLayer)
+            .Are(Layers.FeatureFlagLayer)
             .Should()
             .NotDependOnAny(typeof(System.Console))
             .Because(

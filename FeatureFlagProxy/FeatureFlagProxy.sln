@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AT.Common.FeatureFlagProxy.Test.ArchUnit", "AT.Common.FeatureFlagProxy.Test.ArchUnit\AT.Common.FeatureFlagProxy.Test.ArchUnit.csproj", "{88F3DCE2-F110-49C8-85A9-10FD4F7CFF14}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AT.Common.FeatureFlag.Test.ArchUnit", "AT.Common.FeatureFlagProxy.Test.ArchUnit\AT.Common.FeatureFlag.Test.ArchUnit.csproj", "{88F3DCE2-F110-49C8-85A9-10FD4F7CFF14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AT.Common.FeatureFlagProxy.Test", "AT.Common.FeatureFlagProxy.Test\AT.Common.FeatureFlagProxy.Test.csproj", "{666FC51B-55A8-4F6E-84ED-84EA44D86B69}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AT.Common.FeatureFlag.Test", "AT.Common.FeatureFlagProxy.Test\AT.Common.FeatureFlag.Test.csproj", "{666FC51B-55A8-4F6E-84ED-84EA44D86B69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AT.Common.FeatureFlagProxy.Publish", "AT.Common.FeatureFlagProxy.Publish\AT.Common.FeatureFlagProxy.Publish.csproj", "{C8175CD1-D3BB-41B1-BB33-D30708FDF91B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AT.Common.FeatureFlag.Publish", "AT.Common.FeatureFlagProxy.Publish\AT.Common.FeatureFlag.Publish.csproj", "{C8175CD1-D3BB-41B1-BB33-D30708FDF91B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

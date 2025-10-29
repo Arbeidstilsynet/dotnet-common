@@ -1,11 +1,11 @@
-# FeatureFlagProxy
+# FeatureFlag
 
 A clean, simple abstraction over Unleash feature flags for .NET applications.
 
 ## 📖 Installation
 
 ```bash
-dotnet add package Arbeidstilsynet.Common.FeatureFlagProxy
+dotnet add package Arbeidstilsynet.Common.FeatureFlag
 ```
 
 ## 🧑‍💻 Usage
@@ -69,7 +69,7 @@ public static async Task<IServiceCollection> AddServices(
 Simple feature flag checking:
 
 ```csharp
-using Unleash;
+using Arbeidstilsynet.Common.FeatureFlagProxy.Model;
 
 public class MyService
 {
@@ -82,7 +82,7 @@ public class MyService
 
     public async Task DoSomething()
     {
-        // Simple check
+        // Simple check - no context needed
         if (_featureFlags.IsEnabled("my-feature"))
         {
             // Execute new feature
@@ -94,15 +94,15 @@ public class MyService
             await ExecuteDefaultBehavior();
         }
 
-        // With user context using Unleash's UnleashContext
-        var userContext = new UnleashContext { UserId = "user123" };
+        // With user context
+        var userContext = new FeatureFlagContext { UserId = "user123" };
         if (_featureFlags.IsEnabled("user-specific-feature", userContext))
         {
             await ExecuteUserSpecificFeature();
         }
 
-        // With additional context
-        var fullContext = new UnleashContext
+        // With full context - all properties available
+        var fullContext = new FeatureFlagContext
         {
             UserId = "user123",
             SessionId = "session-abc",
@@ -112,7 +112,8 @@ public class MyService
             Properties = new Dictionary<string, string>
             {
                 { "region", "norway" },
-                { "role", "admin" }
+                { "role", "admin" },
+                { "subscription", "premium" }
             }
         };
 
@@ -138,7 +139,11 @@ No manual disposal is required - everything is handled automatically.
 
 ## 🏗️ Architecture
 
-- **IFeatureFlagProxy**: Simple interface with `IsEnabled()` methods - a thin wrapper around Unleash
-- **FeatureFlagProxyImplementation**: Minimal implementation that delegates directly to `IUnleash`
-- **Uses Unleash models directly**: `UnleashContext` from the Unleash library for feature flag evaluation
-- **Extensions**: Optional extension methods for convenience
+- **IFeatureFlagProxy**: Simple interface with `IsEnabled()` method - a thin wrapper around Unleash
+- **FeatureFlagProxyImplementation**: Internal implementation that delegates to `IUnleash` with context mapping
+- **FeatureFlagContext**: Custom model that mirrors Unleash's context - consumers don't need to reference Unleash directly
+- **Unleash as internal dependency**: Unleash is used internally but not exposed in public API surface
+
+## 📦 Dependencies
+
+Consumers of this package only need to reference `Arbeidstilsynet.Common.FeatureFlagProxy`. The Unleash dependency is internal and doesn't need to be referenced in consuming applications.

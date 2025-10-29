@@ -1,10 +1,11 @@
-using Arbeidstilsynet.Common.FeatureFlagProxy.Implementation;
+using Arbeidstilsynet.Common.FeatureFlag.Implementation;
+using Arbeidstilsynet.Common.FeatureFlag.Model;
 using Moq;
 using Shouldly;
 using Unleash;
 using Xunit;
 
-namespace Arbeidstilsynet.Common.FeatureFlagProxy.Test;
+namespace Arbeidstilsynet.Common.FeatureFlag.Test;
 
 public class FeatureFlagProxyTests
 {
@@ -51,7 +52,7 @@ public class FeatureFlagProxyTests
         // Arrange
         const string featureName = "test-feature";
         const string userId = "user123";
-        var context = new UnleashContext
+        var context = new FeatureFlagContext
         {
             UserId = userId,
             SessionId = "session123",

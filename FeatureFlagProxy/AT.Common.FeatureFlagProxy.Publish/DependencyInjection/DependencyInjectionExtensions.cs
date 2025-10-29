@@ -1,9 +1,9 @@
-using Arbeidstilsynet.Common.FeatureFlagProxy.Implementation;
+using Arbeidstilsynet.Common.FeatureFlag.Implementation;
 using Microsoft.Extensions.DependencyInjection;
 using Unleash;
 using Unleash.ClientFactory;
 
-namespace Arbeidstilsynet.Common.FeatureFlagProxy.DependencyInjection;
+namespace Arbeidstilsynet.Common.FeatureFlag.DependencyInjection;
 
 /// <summary>
 /// Extensions for Dependency Injection.

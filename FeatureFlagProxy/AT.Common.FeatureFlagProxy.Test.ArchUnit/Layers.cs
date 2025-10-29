@@ -1,11 +1,11 @@
 using ArchUnitNET.Domain;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 
-namespace FeatureFlagProxy.ArchUnit.Tests
+namespace FeatureFlag.ArchUnit.Tests
 {
     internal static class Constants
     {
-        internal static string NameSpacePrefix = @"Arbeidstilsynet\.Common\.FeatureFlagProxy";
+        internal static string NameSpacePrefix = @"Arbeidstilsynet\.Common\.FeatureFlag";
         internal static string RootNamespace = $"^({NameSpacePrefix}|{NameSpacePrefix}\\..*)$";
         internal static string ExtensionsNamespace = CreateNamespaceRegex("Extensions");
         internal static string DependencyInjectionNamespace = CreateNamespaceRegex(
@@ -21,29 +21,29 @@ namespace FeatureFlagProxy.ArchUnit.Tests
 
     internal static class Layers
     {
-        internal static readonly System.Reflection.Assembly FeatureFlagProxyAssembly =
-            typeof(Arbeidstilsynet.Common.FeatureFlagProxy.IAssemblyInfo).Assembly;
+        internal static readonly System.Reflection.Assembly FeatureFlagAssembly =
+            typeof(Arbeidstilsynet.Common.FeatureFlag.IAssemblyInfo).Assembly;
 
         internal static readonly System.Reflection.Assembly SystemConsoleAssembly =
             typeof(System.Console).Assembly;
 
-        internal static readonly IObjectProvider<IType> FeatureFlagProxyLayer = Types()
+        internal static readonly IObjectProvider<IType> FeatureFlagLayer = Types()
             .That()
-            .ResideInAssembly(FeatureFlagProxyAssembly)
+            .ResideInAssembly(FeatureFlagAssembly)
             .And()
             .DoNotResideInNamespaceMatching("Coverlet.Core.Instrumentation.Tracker")
-            .As("FeatureFlagProxy Layer");
+            .As("FeatureFlag Layer");
 
         internal static readonly IObjectProvider<IType> PublicInterfaces = Interfaces()
             .That()
-            .Are(FeatureFlagProxyLayer)
+            .Are(FeatureFlagLayer)
             .And()
             .ArePublic()
             .As("public interfaces");
 
         internal static readonly IObjectProvider<IType> InterfaceImplementations = Classes()
             .That()
-            .Are(FeatureFlagProxyLayer)
+            .Are(FeatureFlagLayer)
             .And()
             .AreAssignableTo(PublicInterfaces)
             .And()
@@ -52,7 +52,7 @@ namespace FeatureFlagProxy.ArchUnit.Tests
 
         internal static readonly IObjectProvider<IType> PublicAbstractClasses = Classes()
             .That()
-            .Are(FeatureFlagProxyLayer)
+            .Are(FeatureFlagLayer)
             .And()
             .AreAbstract()
             .And()
@@ -70,7 +70,7 @@ namespace FeatureFlagProxy.ArchUnit.Tests
 
         internal static readonly IObjectProvider<IType> TypesInInternalNamespaces = Types()
             .That()
-            .Are(FeatureFlagProxyLayer)
+            .Are(FeatureFlagLayer)
             .And()
             .AreNot(ExportableTypes)
             .As("outside exportable namespaces");

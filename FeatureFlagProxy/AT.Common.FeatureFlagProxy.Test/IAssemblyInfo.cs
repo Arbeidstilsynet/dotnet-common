@@ -1,3 +1,3 @@
-namespace Arbeidstilsynet.Common.FeatureFlagProxy.Adapters.Test;
+namespace Arbeidstilsynet.Common.FeatureFlag.Adapters.Test;
 
 public interface IAssemblyInfo { }
