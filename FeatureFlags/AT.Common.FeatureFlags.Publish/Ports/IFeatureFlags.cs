@@ -9,8 +9,10 @@ namespace Arbeidstilsynet.Common.FeatureFlags.Ports;
 public interface IFeatureFlags
 {
     /// <summary>
-    /// Required XML summary of the Get method
+    /// Checks if a feature flag is enabled.
     /// </summary>
-    /// <returns></returns>
-    public Task<FeatureFlagsDto> Get();
+    /// <param name="featureName">The name of the feature flag to check</param>
+    /// <param name="context">Optional context for feature flag evaluation</param>
+    /// <returns>True if the feature flag is enabled, false otherwise</returns>
+    bool IsEnabled(string featureName, FeatureFlagContext? context = null);
 }

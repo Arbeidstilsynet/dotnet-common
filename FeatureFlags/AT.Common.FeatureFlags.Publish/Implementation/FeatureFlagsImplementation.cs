@@ -1,15 +1,33 @@
 using Arbeidstilsynet.Common.FeatureFlags.Model;
 using Arbeidstilsynet.Common.FeatureFlags.Ports;
+using Unleash;
 
 namespace Arbeidstilsynet.Common.FeatureFlags.Implementation;
 
 /// <summary>
-/// Implementations should not be public.
+/// Feature flag implementation using Unleash as the backing service.S
 /// </summary>
 internal class FeatureFlagsImplementation : IFeatureFlags
 {
-    public Task<FeatureFlagsDto> Get()
+    private readonly IUnleash _unleash;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FeatureFlagsImplementation"/> class.
+    /// </summary>
+    /// <param name="unleash"></param>
+    public FeatureFlagsImplementation(IUnleash unleash)
     {
-        return Task.FromResult(new FeatureFlagsDto { Foo = "Bar" });
+        _unleash = unleash;
     }
+
+    /// <summary>
+    /// Checks if a feature flag is enabled.
+    /// </summary>
+    /// <param name="featureName">Name of feature flag.</param>
+    /// <param name="context">Optional context.</param>
+    /// <returns></returns>
+    public bool IsEnabled(string featureName, FeatureFlagContext? context = null) =>
+        context == null
+            ? _unleash.IsEnabled(featureName)
+            : _unleash.IsEnabled(featureName, context);
 }

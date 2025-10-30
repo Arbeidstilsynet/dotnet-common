@@ -21,6 +21,7 @@
       Include="Microsoft.Extensions.DependencyInjection.Abstractions"
       Version="8.0.2"
     />
+    <PackageReference Include="Unleash.Client" Version="5.5.1" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
