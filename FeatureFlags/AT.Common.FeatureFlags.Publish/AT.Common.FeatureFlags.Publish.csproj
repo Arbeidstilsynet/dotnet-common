@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Arbeidstilsynet.Common.FeatureFlags</RootNamespace>
+    <PackageId>Arbeidstilsynet.Common.FeatureFlags</PackageId>
+    <Product>Arbeidstilsynet.Common.FeatureFlags</Product>
+    <Authors>Digital Samhandling</Authors>
+    <Company>Arbeidstilsynet</Company>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Description></Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Version>0.0.1</Version>
+    <IsPublishable>true</IsPublishable>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference
+      Include="Microsoft.Extensions.DependencyInjection.Abstractions"
+      Version="8.0.2"
+    />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+  <Target
+    Name="InjectPackageReleaseNotesFromFile"
+    BeforeTargets="GenerateNuspec"
+    Condition="Exists('CHANGELOG.md')"
+  >
+    <PropertyGroup>
+      <PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/CHANGELOG.md"))</PackageReleaseNotes>
+    </PropertyGroup>
+  </Target>
+</Project>
