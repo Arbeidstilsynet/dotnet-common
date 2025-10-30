@@ -1,6 +1,8 @@
 using Arbeidstilsynet.Common.FeatureFlags.Implementation;
 using Arbeidstilsynet.Common.FeatureFlags.Ports;
 using Microsoft.Extensions.DependencyInjection;
+using Arbeidstilsynet.Common.FeatureFlags.Model;
+using Microsoft.AspNetCore.Hosting;
 using Unleash;
 using Unleash.ClientFactory;
 
@@ -15,17 +17,37 @@ public static class DependencyInjectionExtensions
     /// Registers an implementation av <see cref="IFeatureFlags"/> in <paramref name="services"/>.
     /// </summary>
     /// <param name="services"><see cref="IServiceCollection"/> to register the service in.</param>
-    /// <param name="unleashSettings">Unleash settings to use for configuring the Unleash client.</param>
+    /// <param name="webHostEnvironment">The web host environment.</param>
+    /// <param name="config">Feature flag settings.</param>
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
-    public static IServiceCollection AddFeatureFlags(this IServiceCollection services, UnleashSettings unleashSettings)
+    public static IServiceCollection AddFeatureFlags(
+        this IServiceCollection services,
+        IWebHostEnvironment webHostEnvironment,
+        FeatureFlagSettings? config)
     {
-        ArgumentNullException.ThrowIfNull(unleashSettings);
+        services.AddSingleton<IFeatureFlags, FeatureFlagsImplementation>();
+
+        if (config is null || string.IsNullOrWhiteSpace(config.Url) || string.IsNullOrWhiteSpace(config.ApiKey))
+        {
+            services.AddSingleton<IUnleash, FakeUnleash>();
+            return services;
+        }
+
+        var unleashSettings = new UnleashSettings
+        {
+            AppName = config.AppName,
+            InstanceTag = webHostEnvironment.EnvironmentName,
+            UnleashApi = new Uri(config.Url),
+            CustomHttpHeaders =
+            {
+                { "Authorization", config.ApiKey }
+            }
+        };
 
 
         services.AddSingleton<IUnleash>(provider =>
             new UnleashClientFactory().CreateClient(unleashSettings)
         );
-        services.AddSingleton<IFeatureFlags, FeatureFlagsImplementation>();
         return services;
 
     }
