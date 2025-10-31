@@ -1,15 +1,12 @@
 using Arbeidstilsynet.Common.FeatureFlags.Implementation;
-using Unleash;
 using Shouldly;
+using Unleash;
 using Xunit;
 
 namespace Arbeidstilsynet.Common.FeatureFlags.Test.Unit;
 
 public class FeatureFlagsTests
 {
-
-
-
     [Fact]
     public void IsEnabled_WhenAllFeaturesIsEnabled_ReturnsTrue()
     {
@@ -20,5 +17,4 @@ public class FeatureFlagsTests
         var result = unleash.IsEnabled(featureName);
         result.ShouldBeTrue();
     }
-
 }

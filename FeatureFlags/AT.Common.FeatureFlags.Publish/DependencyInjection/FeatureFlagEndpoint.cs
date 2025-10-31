@@ -17,13 +17,19 @@ public static class FeatureFlagEndpoint
     /// <param name="endpoints"></param>
     /// <param name="pattern"></param>
     /// <returns></returns>
-    public static RouteHandlerBuilder MapFeatureFlagEndpoint(this IEndpointRouteBuilder endpoints, string pattern = "/feature-flags")
+    public static RouteHandlerBuilder MapFeatureFlagEndpoint(
+        this IEndpointRouteBuilder endpoints,
+        string pattern = "/feature-flags"
+    )
     {
-        return endpoints.MapPost(pattern, (FeatureFlagRequest request, IFeatureFlags featureFlag) =>
-        {
-            bool isEnabled = featureFlag.IsEnabled(request.FeatureName, request.Context);
-            return Results.Ok(new { IsEnabled = isEnabled });
-        });
+        return endpoints.MapPost(
+            pattern,
+            (FeatureFlagRequest request, IFeatureFlags featureFlag) =>
+            {
+                bool isEnabled = featureFlag.IsEnabled(request.FeatureName, request.Context);
+                return Results.Ok(new { IsEnabled = isEnabled });
+            }
+        );
     }
 }
 

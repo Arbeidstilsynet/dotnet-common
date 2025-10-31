@@ -1,8 +1,8 @@
 using Arbeidstilsynet.Common.FeatureFlags.Implementation;
-using Arbeidstilsynet.Common.FeatureFlags.Ports;
-using Microsoft.Extensions.DependencyInjection;
 using Arbeidstilsynet.Common.FeatureFlags.Model;
+using Arbeidstilsynet.Common.FeatureFlags.Ports;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Unleash;
 using Unleash.ClientFactory;
 
@@ -23,11 +23,16 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddFeatureFlags(
         this IServiceCollection services,
         IWebHostEnvironment webHostEnvironment,
-        FeatureFlagSettings? config)
+        FeatureFlagSettings? config
+    )
     {
         services.AddSingleton<IFeatureFlags, FeatureFlagsImplementation>();
 
-        if (config is null || string.IsNullOrWhiteSpace(config.Url) || string.IsNullOrWhiteSpace(config.ApiKey))
+        if (
+            config is null
+            || string.IsNullOrWhiteSpace(config.Url)
+            || string.IsNullOrWhiteSpace(config.ApiKey)
+        )
         {
             services.AddSingleton<IUnleash, FakeUnleash>();
             return services;
@@ -38,17 +43,12 @@ public static class DependencyInjectionExtensions
             AppName = config.AppName,
             InstanceTag = webHostEnvironment.EnvironmentName,
             UnleashApi = new Uri(config.Url),
-            CustomHttpHeaders =
-            {
-                { "Authorization", config.ApiKey }
-            }
+            CustomHttpHeaders = { { "Authorization", config.ApiKey } },
         };
-
 
         services.AddSingleton<IUnleash>(provider =>
             new UnleashClientFactory().CreateClient(unleashSettings)
         );
         return services;
-
     }
 }

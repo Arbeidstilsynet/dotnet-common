@@ -6,7 +6,6 @@ namespace Arbeidstilsynet.Common.FeatureFlags.Model;
 /// <summary>
 /// Settings for Feature Flags using Unleash.
 /// </summary>
-
 public record FeatureFlagSettings
 {
     /// <summary>

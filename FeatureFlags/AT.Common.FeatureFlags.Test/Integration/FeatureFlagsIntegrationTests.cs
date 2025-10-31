@@ -1,10 +1,10 @@
-using Xunit;
 using Arbeidstilsynet.Common.FeatureFlags.Model;
 using Arbeidstilsynet.Common.FeatureFlags.Ports;
 using Arbeidstilsynet.Common.FeatureFlags.Test.Integration.Setup;
+using Unleash;
+using Xunit;
 using Xunit.Abstractions;
 using Xunit.Microsoft.DependencyInjection.Abstracts;
-using Unleash;
 
 namespace Arbeidstilsynet.Common.FeatureFlags.Test.Integration;
 
@@ -14,10 +14,10 @@ public class FeatureFlagsIntegrationTests : TestBed<FeatureFlagsTestFixture>
     private readonly FakeUnleash _fakeUnleash;
 
     public FeatureFlagsIntegrationTests(
-      ITestOutputHelper testOutputHelper,
-      FeatureFlagsTestFixture fixture
+        ITestOutputHelper testOutputHelper,
+        FeatureFlagsTestFixture fixture
     )
-      : base(testOutputHelper, fixture)
+        : base(testOutputHelper, fixture)
     {
         _sut = fixture.GetService<IFeatureFlags>(testOutputHelper)!;
         _fakeUnleash = (FakeUnleash)fixture.GetService<IUnleash>(testOutputHelper)!;
@@ -35,7 +35,6 @@ public class FeatureFlagsIntegrationTests : TestBed<FeatureFlagsTestFixture>
         // Assert
         Assert.False(isEnabled);
     }
-
 
     [Fact]
     public void IsEnabled_DefaultSetup_ReturnsTrue()
