@@ -69,4 +69,68 @@ public class LandOptionsTests
         result.Options[0].Label.ShouldBe("Norway");
         result.Options[0].Value.ShouldBe("NOR");
     }
+    
+    [Fact]
+    public async Task GetAppOptionsAsync_ShouldUseCustomOrder()
+    {
+        // Arrange
+        var expectedLandskoder = new List<KeyValuePair<string, Landskode>>
+        {
+            new("NOR", new Landskode("Norway", "+47", "NO", "NOR")),
+            new("SWE", new Landskode("Sweden", "+46", "SE", "SWE")),
+            new("FIN", new Landskode("Finland", "+358", "FI", "FIN")),
+        };
+
+        _landskodeLookup.GetLandskoder().Returns(expectedLandskoder);
+
+        _configuration.Value.Returns(new LandOptionsConfiguration()
+        {
+            CustomOrderFunc = lands => lands.Reverse()
+        });
+        
+        var sut = new LandOptions(_landskodeLookup, _configuration);
+
+        // Act
+        var result = await sut.GetAppOptionsAsync(default, default!);
+
+        // Assert
+        result.Options.ShouldNotBeNull();
+        result.Options.Count.ShouldBe(expectedLandskoder.Count);
+        result.Options[0].Label.ShouldBe("Finland");
+        result.Options[1].Label.ShouldBe("Sweden");
+        result.Options[2].Label.ShouldBe("Norway");
+    }
+    
+    [Theory]
+    [InlineData(LandOptionsConfiguration.IsoType.Alpha2, "NO")]
+    [InlineData(LandOptionsConfiguration.IsoType.Alpha3, "NOR")]
+    public async Task GetAppOptionsAsync_ShouldUseConfiguredIsoType(
+        LandOptionsConfiguration.IsoType isoType,
+        string expectedValue
+    )
+    {
+        // Arrange
+        var expectedLandskoder = new List<KeyValuePair<string, Landskode>>
+        {
+            new("NOR", new Landskode("Norway", "+47", "NO", "NOR"))
+        };
+
+        _landskodeLookup.GetLandskoder().Returns(expectedLandskoder);
+
+        _configuration.Value.Returns(new LandOptionsConfiguration()
+        {
+            OptionValueIsoType = isoType
+        });
+        
+        var sut = new LandOptions(_landskodeLookup, _configuration);
+
+        // Act
+        var result = await sut.GetAppOptionsAsync(default, default!);
+
+        // Assert
+        result.Options.ShouldNotBeNull();
+        result.Options.Count.ShouldBe(expectedLandskoder.Count);
+        result.Options[0].Label.ShouldBe("Norway");
+        result.Options[0].Value.ShouldBe(expectedValue);
+    }
 }
