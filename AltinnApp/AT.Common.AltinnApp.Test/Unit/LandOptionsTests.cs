@@ -51,9 +51,9 @@ public class LandOptionsTests
         // Arrange
         var expectedLandskoder = new List<KeyValuePair<string, Landskode>>
         {
-            new("NOR", new Landskode("Norway", "+47")),
-            new("SWE", new Landskode("Sweden", "+46")),
-            new("FIN", new Landskode("Finland", "+358")),
+            new("NOR", new Landskode("Norway", "+47", "NO", "NOR")),
+            new("SWE", new Landskode("Sweden", "+46", "SE", "SWE")),
+            new("FIN", new Landskode("Finland", "+358", "FI", "FIN")),
         };
 
         _landskodeLookup.GetLandskoder().Returns(expectedLandskoder);
