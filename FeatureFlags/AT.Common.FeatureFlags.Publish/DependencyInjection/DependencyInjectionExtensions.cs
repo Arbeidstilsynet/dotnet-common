@@ -29,7 +29,7 @@ public static class DependencyInjectionExtensions
 
         if (config is null || string.IsNullOrWhiteSpace(config.Url) || string.IsNullOrWhiteSpace(config.ApiKey))
         {
-            services.AddSingleton<FakeUnleash, FakeUnleash>();
+            services.AddSingleton<IUnleash, FakeUnleash>();
             return services;
         }
 
