@@ -11,7 +11,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Description>Provides common functionality for usage in Altinn Apps</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.4.0-alpha</Version>
+    <Version>1.4.0</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
   </PropertyGroup>
