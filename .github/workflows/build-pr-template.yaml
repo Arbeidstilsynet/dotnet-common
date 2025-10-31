@@ -31,7 +31,7 @@ jobs:
         run: |
           parent_dir="${{ steps.get_parent_dir.outputs.parent_dir }}"
           echo "DEBUG: parent_dir=$parent_dir"
-          changed_files=$(git --no-pager diff --name-only origin/main...HEAD | grep "$parent_dir" || true)
+          changed_files=$(git --no-pager diff --name-only origin/main...HEAD | grep "^$parent_dir/" || true)
           # If empty, do not continue
             if [ -z "$changed_files" ]; then
             echo "should-continue=false" >> $GITHUB_OUTPUT

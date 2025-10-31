@@ -1,954 +1,1520 @@
 {
   "AFG": {
     "land": "Afghanistan",
-    "kode": "+93"
+    "kode": "+93",
+    "alpha2": "AF",
+    "alpha3": "AFG"
+  },
+  "ALA": {
+    "land": "Åland Islands",
+    "kode": "+358",
+    "alpha2": "AX",
+    "alpha3": "ALA"
   },
   "ALB": {
     "land": "Albania",
-    "kode": "+355"
+    "kode": "+355",
+    "alpha2": "AL",
+    "alpha3": "ALB"
   },
   "DZA": {
     "land": "Algeria",
-    "kode": "+213"
+    "kode": "+213",
+    "alpha2": "DZ",
+    "alpha3": "DZA"
   },
   "ASM": {
     "land": "American Samoa",
-    "kode": "+684"
+    "kode": "+684",
+    "alpha2": "AS",
+    "alpha3": "ASM"
   },
   "AND": {
     "land": "Andorra",
-    "kode": "+376"
+    "kode": "+376",
+    "alpha2": "AD",
+    "alpha3": "AND"
   },
   "AGO": {
     "land": "Angola",
-    "kode": "+244"
+    "kode": "+244",
+    "alpha2": "AO",
+    "alpha3": "AGO"
   },
   "AIA": {
     "land": "Anguilla",
-    "kode": "+264"
+    "kode": "+264",
+    "alpha2": "AI",
+    "alpha3": "AIA"
   },
   "ATA": {
     "land": "Antarctica",
-    "kode": "+672 1"
+    "kode": "+672 1",
+    "alpha2": "AQ",
+    "alpha3": "ATA"
   },
   "ATG": {
     "land": "Antigua and Barbuda",
-    "kode": "+268"
+    "kode": "+268",
+    "alpha2": "AG",
+    "alpha3": "ATG"
   },
   "ARG": {
     "land": "Argentina",
-    "kode": "+54"
+    "kode": "+54",
+    "alpha2": "AR",
+    "alpha3": "ARG"
   },
   "ARM": {
     "land": "Armenia",
-    "kode": "+374"
+    "kode": "+374",
+    "alpha2": "AM",
+    "alpha3": "ARM"
   },
   "ABW": {
     "land": "Aruba",
-    "kode": "+297"
+    "kode": "+297",
+    "alpha2": "AW",
+    "alpha3": "ABW"
   },
   "ASC": {
     "land": "Ascension",
-    "kode": "+247"
+    "kode": "+247",
+    "alpha2": "AC",
+    "alpha3": "ASC"
   },
   "AUS": {
     "land": "Australia",
-    "kode": "+61"
+    "kode": "+61",
+    "alpha2": "AU",
+    "alpha3": "AUS"
   },
   "AUT": {
     "land": "Austria",
-    "kode": "+43"
+    "kode": "+43",
+    "alpha2": "AT",
+    "alpha3": "AUT"
   },
   "AZE": {
     "land": "Azerbaijan",
-    "kode": "+994"
+    "kode": "+994",
+    "alpha2": "AZ",
+    "alpha3": "AZE"
   },
   "BHS": {
     "land": "Bahamas",
-    "kode": "+242"
+    "kode": "+242",
+    "alpha2": "BS",
+    "alpha3": "BHS"
   },
   "BHR": {
     "land": "Bahrain",
-    "kode": "+973"
+    "kode": "+973",
+    "alpha2": "BH",
+    "alpha3": "BHR"
   },
   "BGD": {
     "land": "Bangladesh",
-    "kode": "+880"
+    "kode": "+880",
+    "alpha2": "BD",
+    "alpha3": "BGD"
   },
   "BRB": {
     "land": "Barbados",
-    "kode": "+246"
+    "kode": "+246",
+    "alpha2": "BB",
+    "alpha3": "BRB"
   },
   "BLR": {
     "land": "Belarus",
-    "kode": "+375"
+    "kode": "+375",
+    "alpha2": "BY",
+    "alpha3": "BLR"
   },
   "BEL": {
     "land": "Belgium",
-    "kode": "+32"
+    "kode": "+32",
+    "alpha2": "BE",
+    "alpha3": "BEL"
   },
   "BLZ": {
     "land": "Belize",
-    "kode": "+501"
+    "kode": "+501",
+    "alpha2": "BZ",
+    "alpha3": "BLZ"
   },
   "BEN": {
     "land": "Benin",
-    "kode": "+229"
+    "kode": "+229",
+    "alpha2": "BJ",
+    "alpha3": "BEN"
   },
   "BMU": {
     "land": "Bermuda",
-    "kode": "+441"
+    "kode": "+441",
+    "alpha2": "BM",
+    "alpha3": "BMU"
   },
   "BTN": {
     "land": "Bhutan",
-    "kode": "+975"
+    "kode": "+975",
+    "alpha2": "BT",
+    "alpha3": "BTN"
   },
   "BOL": {
     "land": "Bolivia",
-    "kode": "+591"
+    "kode": "+591",
+    "alpha2": "BO",
+    "alpha3": "BOL"
+  },
+  "BVT": {
+    "land": "Bouvet Island",
+    "kode": "+47",
+    "alpha2": "BV",
+    "alpha3": "BVT"
   },
   "BES": {
     "land": "Bonaire, Sint Eustatius and Saba",
-    "kode": "+599"
+    "kode": "+599",
+    "alpha2": "BQ",
+    "alpha3": "BES"
   },
   "BIH": {
     "land": "Bosnia and Herzegovina",
-    "kode": "+387"
+    "kode": "+387",
+    "alpha2": "BA",
+    "alpha3": "BIH"
   },
   "BWA": {
     "land": "Botswana",
-    "kode": "+267"
+    "kode": "+267",
+    "alpha2": "BW",
+    "alpha3": "BWA"
   },
   "BRA": {
     "land": "Brazil",
-    "kode": "+55"
+    "kode": "+55",
+    "alpha2": "BR",
+    "alpha3": "BRA"
+  },
+  "IOT": {
+    "land": "British Indian Ocean Territory",
+    "kode": "+246",
+    "alpha2": "IO",
+    "alpha3": "IOT"
   },
   "VGB": {
     "land": "British Virgin Islands",
-    "kode": "+284"
+    "kode": "+284",
+    "alpha2": "VG",
+    "alpha3": "VGB"
   },
   "BRN": {
     "land": "Brunei",
-    "kode": "+673"
+    "kode": "+673",
+    "alpha2": "BN",
+    "alpha3": "BRN"
   },
   "BGR": {
     "land": "Bulgaria",
-    "kode": "+359"
+    "kode": "+359",
+    "alpha2": "BG",
+    "alpha3": "BGR"
   },
   "BFA": {
     "land": "Burkina Faso",
-    "kode": "+226"
+    "kode": "+226",
+    "alpha2": "BF",
+    "alpha3": "BFA"
   },
   "BDI": {
     "land": "Burundi",
-    "kode": "+257"
+    "kode": "+257",
+    "alpha2": "BI",
+    "alpha3": "BDI"
   },
   "CPV": {
     "land": "Cabo Verde",
-    "kode": "+238"
+    "kode": "+238",
+    "alpha2": "CV",
+    "alpha3": "CPV"
   },
   "KHM": {
     "land": "Cambodia",
-    "kode": "+855"
+    "kode": "+855",
+    "alpha2": "KH",
+    "alpha3": "KHM"
   },
   "CMR": {
     "land": "Cameroon",
-    "kode": "+237"
+    "kode": "+237",
+    "alpha2": "CM",
+    "alpha3": "CMR"
   },
   "CAN": {
     "land": "Canada",
-    "kode": "+1"
+    "kode": "+1",
+    "alpha2": "CA",
+    "alpha3": "CAN"
   },
   "CYM": {
     "land": "Cayman Islands",
-    "kode": "+345"
+    "kode": "+345",
+    "alpha2": "KY",
+    "alpha3": "CYM"
   },
   "CAF": {
     "land": "Central African Republic",
-    "kode": "+236"
+    "kode": "+236",
+    "alpha2": "CF",
+    "alpha3": "CAF"
   },
   "TCD": {
     "land": "Chad",
-    "kode": "+235"
+    "kode": "+235",
+    "alpha2": "TD",
+    "alpha3": "TCD"
   },
   "CHL": {
     "land": "Chile",
-    "kode": "+56"
+    "kode": "+56",
+    "alpha2": "CL",
+    "alpha3": "CHL"
   },
   "CHN": {
     "land": "China",
-    "kode": "+86"
+    "kode": "+86",
+    "alpha2": "CN",
+    "alpha3": "CHN"
+  },
+  "CXR": {
+    "land": "Christmas Island",
+    "kode": "+61",
+    "alpha2": "CX",
+    "alpha3": "CXR"
+  },
+  "CCK": {
+    "land": "Cocos (Keeling) Islands",
+    "kode": "+61",
+    "alpha2": "CC",
+    "alpha3": "CCK"
   },
   "COL": {
     "land": "Colombia",
-    "kode": "+57"
+    "kode": "+57",
+    "alpha2": "CO",
+    "alpha3": "COL"
   },
   "COM": {
     "land": "Comoros",
-    "kode": "+269"
+    "kode": "+269",
+    "alpha2": "KM",
+    "alpha3": "COM"
   },
   "COD": {
     "land": "Congo, Democratic Republic of the",
-    "kode": "+243"
+    "kode": "+243",
+    "alpha2": "CD",
+    "alpha3": "COD"
   },
   "COG": {
     "land": "Congo, Republic of the",
-    "kode": "+242"
+    "kode": "+242",
+    "alpha2": "CG",
+    "alpha3": "COG"
   },
   "COK": {
     "land": "Cook Islands",
-    "kode": "+682"
+    "kode": "+682",
+    "alpha2": "CK",
+    "alpha3": "COK"
   },
   "CRI": {
     "land": "Costa Rica",
-    "kode": "+506"
+    "kode": "+506",
+    "alpha2": "CR",
+    "alpha3": "CRI"
   },
   "CIV": {
     "land": "Cote d'Ivoire",
-    "kode": "+225"
+    "kode": "+225",
+    "alpha2": "CI",
+    "alpha3": "CIV"
   },
   "HRV": {
     "land": "Croatia",
-    "kode": "+385"
+    "kode": "+385",
+    "alpha2": "HR",
+    "alpha3": "HRV"
   },
   "CUB": {
     "land": "Cuba",
-    "kode": "+53"
+    "kode": "+53",
+    "alpha2": "CU",
+    "alpha3": "CUB"
   },
   "CUW": {
     "land": "Curaçao",
-    "kode": "+599"
+    "kode": "+599",
+    "alpha2": "CW",
+    "alpha3": "CUW"
   },
   "CYP": {
     "land": "Cyprus",
-    "kode": "+357"
+    "kode": "+357",
+    "alpha2": "CY",
+    "alpha3": "CYP"
   },
   "CZE": {
-    "land": "Czech Republic",
-    "kode": "+420"
+    "land": "Czechia",
+    "kode": "+420",
+    "alpha2": "CZ",
+    "alpha3": "CZE"
   },
   "DNK": {
     "land": "Denmark",
-    "kode": "+45"
+    "kode": "+45",
+    "alpha2": "DK",
+    "alpha3": "DNK"
   },
   "DGA": {
     "land": "Diego Garcia",
-    "kode": "+246"
+    "kode": "+246",
+    "alpha2": "DG",
+    "alpha3": "DGA"
   },
   "DJI": {
     "land": "Djibouti",
-    "kode": "+253"
+    "kode": "+253",
+    "alpha2": "DJ",
+    "alpha3": "DJI"
   },
   "DMA": {
     "land": "Dominica",
-    "kode": "+767"
+    "kode": "+767",
+    "alpha2": "DM",
+    "alpha3": "DMA"
   },
   "DOM": {
     "land": "Dominican Republic",
-    "kode": "(+809, +1829, +1849)"
+    "kode": "(+809, +1829, +1849)",
+    "alpha2": "DO",
+    "alpha3": "DOM"
   },
   "ECU": {
     "land": "Ecuador",
-    "kode": "+593"
+    "kode": "+593",
+    "alpha2": "EC",
+    "alpha3": "ECU"
   },
   "EGY": {
     "land": "Egypt",
-    "kode": "+20"
+    "kode": "+20",
+    "alpha2": "EG",
+    "alpha3": "EGY"
   },
   "SLV": {
     "land": "El Salvador",
-    "kode": "+503"
+    "kode": "+503",
+    "alpha2": "SV",
+    "alpha3": "SLV"
   },
   "GNQ": {
     "land": "Equatorial Guinea",
-    "kode": "+240"
+    "kode": "+240",
+    "alpha2": "GQ",
+    "alpha3": "GNQ"
   },
   "ERI": {
     "land": "Eritrea",
-    "kode": "+291"
+    "kode": "+291",
+    "alpha2": "ER",
+    "alpha3": "ERI"
   },
   "EST": {
     "land": "Estonia",
-    "kode": "+372"
+    "kode": "+372",
+    "alpha2": "EE",
+    "alpha3": "EST"
   },
   "SWZ": {
     "land": "Eswatini",
-    "kode": "+268"
+    "kode": "+268",
+    "alpha2": "SZ",
+    "alpha3": "SWZ"
   },
   "ETH": {
     "land": "Ethiopia",
-    "kode": "+251"
+    "kode": "+251",
+    "alpha2": "ET",
+    "alpha3": "ETH"
   },
   "FLK": {
-    "land": "Falkland Islands",
-    "kode": "+500"
+    "land": "Falkland Islands (Malvinas)",
+    "kode": "+500",
+    "alpha2": "FK",
+    "alpha3": "FLK"
   },
   "FRO": {
     "land": "Faroe Islands",
-    "kode": "+298"
+    "kode": "+298",
+    "alpha2": "FO",
+    "alpha3": "FRO"
   },
   "FJI": {
     "land": "Fiji",
-    "kode": "+679"
+    "kode": "+679",
+    "alpha2": "FJ",
+    "alpha3": "FJI"
   },
   "FIN": {
     "land": "Finland",
-    "kode": "+358"
+    "kode": "+358",
+    "alpha2": "FI",
+    "alpha3": "FIN"
   },
   "FRA": {
     "land": "France",
-    "kode": "+33"
+    "kode": "+33",
+    "alpha2": "FR",
+    "alpha3": "FRA"
+  },
+  "ATF": {
+    "land": "French Southern Territories",
+    "kode": "+262",
+    "alpha2": "TF",
+    "alpha3": "ATF"
   },
   "GUF": {
     "land": "French Guiana",
-    "kode": "+594"
+    "kode": "+594",
+    "alpha2": "GF",
+    "alpha3": "GUF"
   },
   "PYF": {
     "land": "French Polynesia",
-    "kode": "+689"
+    "kode": "+689",
+    "alpha2": "PF",
+    "alpha3": "PYF"
   },
   "GAB": {
     "land": "Gabon",
-    "kode": "+241"
+    "kode": "+241",
+    "alpha2": "GA",
+    "alpha3": "GAB"
   },
   "GMB": {
     "land": "Gambia",
-    "kode": "+220"
+    "kode": "+220",
+    "alpha2": "GM",
+    "alpha3": "GMB"
   },
   "GEO": {
     "land": "Georgia",
-    "kode": "+995"
+    "kode": "+995",
+    "alpha2": "GE",
+    "alpha3": "GEO"
   },
   "DEU": {
     "land": "Germany",
-    "kode": "+49"
+    "kode": "+49",
+    "alpha2": "DE",
+    "alpha3": "DEU"
   },
   "GHA": {
     "land": "Ghana",
-    "kode": "+233"
+    "kode": "+233",
+    "alpha2": "GH",
+    "alpha3": "GHA"
   },
   "GIB": {
     "land": "Gibraltar",
-    "kode": "+350"
+    "kode": "+350",
+    "alpha2": "GI",
+    "alpha3": "GIB"
   },
   "GRC": {
     "land": "Greece",
-    "kode": "+30"
+    "kode": "+30",
+    "alpha2": "GR",
+    "alpha3": "GRC"
   },
   "GRL": {
     "land": "Greenland",
-    "kode": "+299"
+    "kode": "+299",
+    "alpha2": "GL",
+    "alpha3": "GRL"
   },
   "GRD": {
     "land": "Grenada",
-    "kode": "+473"
+    "kode": "+473",
+    "alpha2": "GD",
+    "alpha3": "GRD"
   },
   "GLP": {
     "land": "Guadeloupe",
-    "kode": "+590"
+    "kode": "+590",
+    "alpha2": "GP",
+    "alpha3": "GLP"
   },
   "GUM": {
     "land": "Guam",
-    "kode": "+671"
+    "kode": "+671",
+    "alpha2": "GU",
+    "alpha3": "GUM"
   },
   "GTM": {
     "land": "Guatemala",
-    "kode": "+502"
+    "kode": "+502",
+    "alpha2": "GT",
+    "alpha3": "GTM"
+  },
+  "GGY": {
+    "land": "Guernsey",
+    "kode": "+44",
+    "alpha2": "GG",
+    "alpha3": "GGY"
   },
   "GIN": {
     "land": "Guinea",
-    "kode": "+224"
+    "kode": "+224",
+    "alpha2": "GN",
+    "alpha3": "GIN"
   },
   "GNB": {
     "land": "Guinea-Bissau",
-    "kode": "+245"
+    "kode": "+245",
+    "alpha2": "GW",
+    "alpha3": "GNB"
   },
   "GUY": {
     "land": "Guyana",
-    "kode": "+592"
+    "kode": "+592",
+    "alpha2": "GY",
+    "alpha3": "GUY"
   },
   "HTI": {
     "land": "Haiti",
-    "kode": "+509"
+    "kode": "+509",
+    "alpha2": "HT",
+    "alpha3": "HTI"
+  },
+  "HMD": {
+    "land": "Heard Island and McDonald Islands",
+    "kode": "+672",
+    "alpha2": "HM",
+    "alpha3": "HMD"
+  },
+  "VAT": {
+    "land": "Holy See",
+    "kode": "+39",
+    "alpha2": "VA",
+    "alpha3": "VAT"
   },
   "HND": {
     "land": "Honduras",
-    "kode": "+504"
+    "kode": "+504",
+    "alpha2": "HN",
+    "alpha3": "HND"
   },
   "HKG": {
     "land": "Hong Kong",
-    "kode": "+852"
+    "kode": "+852",
+    "alpha2": "HK",
+    "alpha3": "HKG"
   },
   "HUN": {
     "land": "Hungary",
-    "kode": "+36"
+    "kode": "+36",
+    "alpha2": "HU",
+    "alpha3": "HUN"
   },
   "ISL": {
     "land": "Iceland",
-    "kode": "+354"
+    "kode": "+354",
+    "alpha2": "IS",
+    "alpha3": "ISL"
   },
   "IND": {
     "land": "India",
-    "kode": "+91"
+    "kode": "+91",
+    "alpha2": "IN",
+    "alpha3": "IND"
   },
   "IDN": {
     "land": "Indonesia",
-    "kode": "+62"
+    "kode": "+62",
+    "alpha2": "ID",
+    "alpha3": "IDN"
   },
   "IRN": {
     "land": "Iran",
-    "kode": "+98"
+    "kode": "+98",
+    "alpha2": "IR",
+    "alpha3": "IRN"
   },
   "IRQ": {
     "land": "Iraq",
-    "kode": "+964"
+    "kode": "+964",
+    "alpha2": "IQ",
+    "alpha3": "IRQ"
   },
   "IRL": {
     "land": "Ireland",
-    "kode": "+353"
+    "kode": "+353",
+    "alpha2": "IE",
+    "alpha3": "IRL"
+  },
+  "IMN": {
+    "land": "Isle of Man",
+    "kode": "+44",
+    "alpha2": "IM",
+    "alpha3": "IMN"
   },
   "ISR": {
     "land": "Israel",
-    "kode": "+972"
+    "kode": "+972",
+    "alpha2": "IL",
+    "alpha3": "ISR"
   },
   "ITA": {
     "land": "Italy",
-    "kode": "+39"
+    "kode": "+39",
+    "alpha2": "IT",
+    "alpha3": "ITA"
   },
   "JAM": {
     "land": "Jamaica",
-    "kode": "(+658, +1876)"
+    "kode": "(+658, +1876)",
+    "alpha2": "JM",
+    "alpha3": "JAM"
   },
   "JPN": {
     "land": "Japan",
-    "kode": "+81"
+    "kode": "+81",
+    "alpha2": "JP",
+    "alpha3": "JPN"
+  },
+  "JEY": {
+    "land": "Jersey",
+    "kode": "+44",
+    "alpha2": "JE",
+    "alpha3": "JEY"
   },
   "JOR": {
     "land": "Jordan",
-    "kode": "+962"
+    "kode": "+962",
+    "alpha2": "JO",
+    "alpha3": "JOR"
   },
   "KAZ": {
     "land": "Kazakhstan",
-    "kode": "+7"
+    "kode": "+7",
+    "alpha2": "KZ",
+    "alpha3": "KAZ"
   },
   "KEN": {
     "land": "Kenya",
-    "kode": "+254"
+    "kode": "+254",
+    "alpha2": "KE",
+    "alpha3": "KEN"
   },
   "KIR": {
     "land": "Kiribati",
-    "kode": "+686"
+    "kode": "+686",
+    "alpha2": "KI",
+    "alpha3": "KIR"
   },
   "XKX": {
     "land": "Kosovo",
-    "kode": "+383"
+    "kode": "+383",
+    "alpha2": "XK",
+    "alpha3": "XKX"
   },
   "KWT": {
     "land": "Kuwait",
-    "kode": "+965"
+    "kode": "+965",
+    "alpha2": "KW",
+    "alpha3": "KWT"
   },
   "KGZ": {
     "land": "Kyrgyzstan",
-    "kode": "+996"
+    "kode": "+996",
+    "alpha2": "KG",
+    "alpha3": "KGZ"
   },
   "LAO": {
     "land": "Laos",
-    "kode": "+856"
+    "kode": "+856",
+    "alpha2": "LA",
+    "alpha3": "LAO"
   },
   "LVA": {
     "land": "Latvia",
-    "kode": "+371"
+    "kode": "+371",
+    "alpha2": "LV",
+    "alpha3": "LVA"
   },
   "LBN": {
     "land": "Lebanon",
-    "kode": "+961"
+    "kode": "+961",
+    "alpha2": "LB",
+    "alpha3": "LBN"
   },
   "LSO": {
     "land": "Lesotho",
-    "kode": "+266"
+    "kode": "+266",
+    "alpha2": "LS",
+    "alpha3": "LSO"
   },
   "LBR": {
     "land": "Liberia",
-    "kode": "+231"
+    "kode": "+231",
+    "alpha2": "LR",
+    "alpha3": "LBR"
   },
   "LBY": {
     "land": "Libya",
-    "kode": "+218"
+    "kode": "+218",
+    "alpha2": "LY",
+    "alpha3": "LBY"
   },
   "LIE": {
     "land": "Liechtenstein",
-    "kode": "+423"
+    "kode": "+423",
+    "alpha2": "LI",
+    "alpha3": "LIE"
   },
   "LTU": {
     "land": "Lithuania",
-    "kode": "+370"
+    "kode": "+370",
+    "alpha2": "LT",
+    "alpha3": "LTU"
   },
   "LUX": {
     "land": "Luxembourg",
-    "kode": "+352"
+    "kode": "+352",
+    "alpha2": "LU",
+    "alpha3": "LUX"
   },
   "MAC": {
     "land": "Macau",
-    "kode": "+853"
+    "kode": "+853",
+    "alpha2": "MO",
+    "alpha3": "MAC"
   },
   "MDG": {
     "land": "Madagascar",
-    "kode": "+261"
+    "kode": "+261",
+    "alpha2": "MG",
+    "alpha3": "MDG"
   },
   "MWI": {
     "land": "Malawi",
-    "kode": "+265"
+    "kode": "+265",
+    "alpha2": "MW",
+    "alpha3": "MWI"
   },
   "MYS": {
     "land": "Malaysia",
-    "kode": "+60"
+    "kode": "+60",
+    "alpha2": "MY",
+    "alpha3": "MYS"
   },
   "MDV": {
     "land": "Maldives",
-    "kode": "+960"
+    "kode": "+960",
+    "alpha2": "MV",
+    "alpha3": "MDV"
   },
   "MLI": {
     "land": "Mali",
-    "kode": "+223"
+    "kode": "+223",
+    "alpha2": "ML",
+    "alpha3": "MLI"
   },
   "MLT": {
     "land": "Malta",
-    "kode": "+356"
+    "kode": "+356",
+    "alpha2": "MT",
+    "alpha3": "MLT"
   },
   "MHL": {
     "land": "Marshall Islands",
-    "kode": "+692"
+    "kode": "+692",
+    "alpha2": "MH",
+    "alpha3": "MHL"
   },
   "MTQ": {
     "land": "Martinique",
-    "kode": "+596"
+    "kode": "+596",
+    "alpha2": "MQ",
+    "alpha3": "MTQ"
   },
   "MRT": {
     "land": "Mauritania",
-    "kode": "+222"
+    "kode": "+222",
+    "alpha2": "MR",
+    "alpha3": "MRT"
   },
   "MUS": {
     "land": "Mauritius",
-    "kode": "+230"
+    "kode": "+230",
+    "alpha2": "MU",
+    "alpha3": "MUS"
   },
   "MYT": {
     "land": "Mayotte",
-    "kode": "+262"
+    "kode": "+262",
+    "alpha2": "YT",
+    "alpha3": "MYT"
   },
   "MEX": {
     "land": "Mexico",
-    "kode": "+52"
+    "kode": "+52",
+    "alpha2": "MX",
+    "alpha3": "MEX"
   },
   "FSM": {
     "land": "Micronesia, Federated States of",
-    "kode": "+691"
+    "kode": "+691",
+    "alpha2": "FM",
+    "alpha3": "FSM"
   },
   "MDA": {
     "land": "Moldova",
-    "kode": "+373"
+    "kode": "+373",
+    "alpha2": "MD",
+    "alpha3": "MDA"
   },
   "MCO": {
     "land": "Monaco",
-    "kode": "+377"
+    "kode": "+377",
+    "alpha2": "MC",
+    "alpha3": "MCO"
   },
   "MNG": {
     "land": "Mongolia",
-    "kode": "+976"
+    "kode": "+976",
+    "alpha2": "MN",
+    "alpha3": "MNG"
   },
   "MNE": {
     "land": "Montenegro",
-    "kode": "+382"
+    "kode": "+382",
+    "alpha2": "ME",
+    "alpha3": "MNE"
   },
   "MSR": {
     "land": "Montserrat",
-    "kode": "+664"
+    "kode": "+664",
+    "alpha2": "MS",
+    "alpha3": "MSR"
   },
   "MAR": {
     "land": "Morocco",
-    "kode": "+212"
+    "kode": "+212",
+    "alpha2": "MA",
+    "alpha3": "MAR"
   },
   "MOZ": {
     "land": "Mozambique",
-    "kode": "+258"
+    "kode": "+258",
+    "alpha2": "MZ",
+    "alpha3": "MOZ"
   },
   "MMR": {
     "land": "Myanmar",
-    "kode": "+95"
+    "kode": "+95",
+    "alpha2": "MM",
+    "alpha3": "MMR"
   },
   "NAM": {
     "land": "Namibia",
-    "kode": "+264"
+    "kode": "+264",
+    "alpha2": "NA",
+    "alpha3": "NAM"
   },
   "NRU": {
     "land": "Nauru",
-    "kode": "+674"
+    "kode": "+674",
+    "alpha2": "NR",
+    "alpha3": "NRU"
   },
   "NPL": {
     "land": "Nepal",
-    "kode": "+977"
+    "kode": "+977",
+    "alpha2": "NP",
+    "alpha3": "NPL"
   },
   "NLD": {
     "land": "Netherlands",
-    "kode": "+31"
+    "kode": "+31",
+    "alpha2": "NL",
+    "alpha3": "NLD"
   },
   "NCL": {
     "land": "New Caledonia",
-    "kode": "+687"
+    "kode": "+687",
+    "alpha2": "NC",
+    "alpha3": "NCL"
   },
   "NZL": {
     "land": "New Zealand",
-    "kode": "+64"
+    "kode": "+64",
+    "alpha2": "NZ",
+    "alpha3": "NZL"
   },
   "NIC": {
     "land": "Nicaragua",
-    "kode": "+505"
+    "kode": "+505",
+    "alpha2": "NI",
+    "alpha3": "NIC"
   },
   "NER": {
     "land": "Niger",
-    "kode": "+227"
+    "kode": "+227",
+    "alpha2": "NE",
+    "alpha3": "NER"
   },
   "NGA": {
     "land": "Nigeria",
-    "kode": "+234"
+    "kode": "+234",
+    "alpha2": "NG",
+    "alpha3": "NGA"
   },
   "NIU": {
     "land": "Niue",
-    "kode": "+683"
+    "kode": "+683",
+    "alpha2": "NU",
+    "alpha3": "NIU"
   },
   "NFK": {
     "land": "Norfolk Island",
-    "kode": "+672 3"
+    "kode": "+672 3",
+    "alpha2": "NF",
+    "alpha3": "NFK"
   },
   "PRK": {
     "land": "North Korea",
-    "kode": "+850"
+    "kode": "+850",
+    "alpha2": "KP",
+    "alpha3": "PRK"
   },
   "MKD": {
     "land": "North Macedonia",
-    "kode": "+389"
+    "kode": "+389",
+    "alpha2": "MK",
+    "alpha3": "MKD"
   },
   "MNP": {
     "land": "Northern Mariana Islands",
-    "kode": "+670"
+    "kode": "+670",
+    "alpha2": "MP",
+    "alpha3": "MNP"
   },
   "NOR": {
     "land": "Norway",
-    "kode": "+47"
+    "kode": "+47",
+    "alpha2": "NO",
+    "alpha3": "NOR"
   },
   "OMN": {
     "land": "Oman",
-    "kode": "+968"
+    "kode": "+968",
+    "alpha2": "OM",
+    "alpha3": "OMN"
   },
   "PAK": {
     "land": "Pakistan",
-    "kode": "+92"
+    "kode": "+92",
+    "alpha2": "PK",
+    "alpha3": "PAK"
   },
   "PLW": {
     "land": "Palau",
-    "kode": "+680"
+    "kode": "+680",
+    "alpha2": "PW",
+    "alpha3": "PLW"
   },
   "PSE": {
     "land": "Palestine",
-    "kode": "+970"
+    "kode": "+970",
+    "alpha2": "PS",
+    "alpha3": "PSE"
   },
   "PAN": {
     "land": "Panama",
-    "kode": "+507"
+    "kode": "+507",
+    "alpha2": "PA",
+    "alpha3": "PAN"
   },
   "PNG": {
     "land": "Papua New Guinea",
-    "kode": "+675"
+    "kode": "+675",
+    "alpha2": "PG",
+    "alpha3": "PNG"
   },
   "PRY": {
     "land": "Paraguay",
-    "kode": "+595"
+    "kode": "+595",
+    "alpha2": "PY",
+    "alpha3": "PRY"
   },
   "PER": {
     "land": "Peru",
-    "kode": "+51"
+    "kode": "+51",
+    "alpha2": "PE",
+    "alpha3": "PER"
   },
   "PHL": {
     "land": "Philippines",
-    "kode": "+63"
+    "kode": "+63",
+    "alpha2": "PH",
+    "alpha3": "PHL"
+  },
+  "PCN": {
+    "land": "Pitcairn",
+    "kode": "+64",
+    "alpha2": "PN",
+    "alpha3": "PCN"
   },
   "POL": {
     "land": "Poland",
-    "kode": "+48"
+    "kode": "+48",
+    "alpha2": "PL",
+    "alpha3": "POL"
   },
   "PRT": {
     "land": "Portugal",
-    "kode": "+351"
+    "kode": "+351",
+    "alpha2": "PT",
+    "alpha3": "PRT"
   },
   "PRI": {
     "land": "Puerto Rico",
-    "kode": "(+787, +1939)"
+    "kode": "(+787, +1939)",
+    "alpha2": "PR",
+    "alpha3": "PRI"
   },
   "QAT": {
     "land": "Qatar",
-    "kode": "+974"
+    "kode": "+974",
+    "alpha2": "QA",
+    "alpha3": "QAT"
   },
   "REU": {
     "land": "Reunion",
-    "kode": "+262"
+    "kode": "+262",
+    "alpha2": "RE",
+    "alpha3": "REU"
   },
   "ROU": {
     "land": "Romania",
-    "kode": "+40"
+    "kode": "+40",
+    "alpha2": "RO",
+    "alpha3": "ROU"
   },
   "RUS": {
     "land": "Russia",
-    "kode": "+7"
+    "kode": "+7",
+    "alpha2": "RU",
+    "alpha3": "RUS"
   },
   "RWA": {
     "land": "Rwanda",
-    "kode": "+250"
+    "kode": "+250",
+    "alpha2": "RW",
+    "alpha3": "RWA"
   },
   "BLM": {
     "land": "Saint-Barthelemy",
-    "kode": "+590"
+    "kode": "+590",
+    "alpha2": "BL",
+    "alpha3": "BLM"
   },
   "SHN": {
     "land": "Saint Helena",
-    "kode": "+290"
+    "kode": "+290",
+    "alpha2": "SH",
+    "alpha3": "SHN"
   },
   "KNA": {
     "land": "Saint Kitts and Nevis",
-    "kode": "+869"
+    "kode": "+869",
+    "alpha2": "KN",
+    "alpha3": "KNA"
   },
   "LCA": {
     "land": "Saint Lucia",
-    "kode": "+758"
+    "kode": "+758",
+    "alpha2": "LC",
+    "alpha3": "LCA"
   },
   "MAF": {
     "land": "Saint Martin",
-    "kode": "+590"
+    "kode": "+590",
+    "alpha2": "MF",
+    "alpha3": "MAF"
   },
   "SPM": {
     "land": "Saint Pierre and Miquelon",
-    "kode": "+508"
+    "kode": "+508",
+    "alpha2": "PM",
+    "alpha3": "SPM"
   },
   "VCT": {
     "land": "Saint Vincent and the Grenadines",
-    "kode": "+784"
+    "kode": "+784",
+    "alpha2": "VC",
+    "alpha3": "VCT"
   },
   "WSM": {
     "land": "Samoa",
-    "kode": "+685"
+    "kode": "+685",
+    "alpha2": "WS",
+    "alpha3": "WSM"
   },
   "SMR": {
     "land": "San Marino",
-    "kode": "+378"
+    "kode": "+378",
+    "alpha2": "SM",
+    "alpha3": "SMR"
   },
   "STP": {
     "land": "Sao Tome and Principe",
-    "kode": "+239"
+    "kode": "+239",
+    "alpha2": "ST",
+    "alpha3": "STP"
   },
   "SAU": {
     "land": "Saudi Arabia",
-    "kode": "+966"
+    "kode": "+966",
+    "alpha2": "SA",
+    "alpha3": "SAU"
   },
   "SEN": {
     "land": "Senegal",
-    "kode": "+221"
+    "kode": "+221",
+    "alpha2": "SN",
+    "alpha3": "SEN"
   },
   "SRB": {
     "land": "Serbia",
-    "kode": "+381"
+    "kode": "+381",
+    "alpha2": "RS",
+    "alpha3": "SRB"
   },
   "SYC": {
     "land": "Seychelles",
-    "kode": "+248"
+    "kode": "+248",
+    "alpha2": "SC",
+    "alpha3": "SYC"
   },
   "SLE": {
     "land": "Sierra Leone",
-    "kode": "+232"
+    "kode": "+232",
+    "alpha2": "SL",
+    "alpha3": "SLE"
   },
   "SGP": {
     "land": "Singapore",
-    "kode": "+65"
+    "kode": "+65",
+    "alpha2": "SG",
+    "alpha3": "SGP"
   },
   "SXM": {
     "land": "Sint Maarten",
-    "kode": "+721"
+    "kode": "+721",
+    "alpha2": "SX",
+    "alpha3": "SXM"
   },
   "SVK": {
     "land": "Slovakia",
-    "kode": "+421"
+    "kode": "+421",
+    "alpha2": "SK",
+    "alpha3": "SVK"
   },
   "SVN": {
     "land": "Slovenia",
-    "kode": "+386"
+    "kode": "+386",
+    "alpha2": "SI",
+    "alpha3": "SVN"
   },
   "SLB": {
     "land": "Solomon Islands",
-    "kode": "+677"
+    "kode": "+677",
+    "alpha2": "SB",
+    "alpha3": "SLB"
   },
   "SOM": {
     "land": "Somalia",
-    "kode": "+252"
+    "kode": "+252",
+    "alpha2": "SO",
+    "alpha3": "SOM"
   },
   "ZAF": {
     "land": "South Africa",
-    "kode": "+27"
+    "kode": "+27",
+    "alpha2": "ZA",
+    "alpha3": "ZAF"
+  },
+  "SGS": {
+    "land": "South Georgia and the South Sandwich Islands",
+    "kode": "+500",
+    "alpha2": "GS",
+    "alpha3": "SGS"
   },
   "KOR": {
     "land": "South Korea",
-    "kode": "+82"
+    "kode": "+82",
+    "alpha2": "KR",
+    "alpha3": "KOR"
   },
   "SSD": {
     "land": "South Sudan",
-    "kode": "+211"
+    "kode": "+211",
+    "alpha2": "SS",
+    "alpha3": "SSD"
   },
   "ESP": {
     "land": "Spain",
-    "kode": "+34"
+    "kode": "+34",
+    "alpha2": "ES",
+    "alpha3": "ESP"
   },
   "LKA": {
     "land": "Sri Lanka",
-    "kode": "+94"
+    "kode": "+94",
+    "alpha2": "LK",
+    "alpha3": "LKA"
   },
   "SDN": {
     "land": "Sudan",
-    "kode": "+249"
+    "kode": "+249",
+    "alpha2": "SD",
+    "alpha3": "SDN"
   },
   "SUR": {
     "land": "Suriname",
-    "kode": "+597"
+    "kode": "+597",
+    "alpha2": "SR",
+    "alpha3": "SUR"
+  },
+  "SJM": {
+    "land": "Svalbard and Jan Mayen",
+    "kode": "+47",
+    "alpha2": "SJ",
+    "alpha3": "SJM"
   },
   "SWE": {
     "land": "Sweden",
-    "kode": "+46"
+    "kode": "+46",
+    "alpha2": "SE",
+    "alpha3": "SWE"
   },
   "CHE": {
     "land": "Switzerland",
-    "kode": "+41"
+    "kode": "+41",
+    "alpha2": "CH",
+    "alpha3": "CHE"
   },
   "SYR": {
     "land": "Syria",
-    "kode": "+963"
+    "kode": "+963",
+    "alpha2": "SY",
+    "alpha3": "SYR"
   },
   "TWN": {
     "land": "Taiwan",
-    "kode": "+886"
+    "kode": "+886",
+    "alpha2": "TW",
+    "alpha3": "TWN"
   },
   "TJK": {
     "land": "Tajikistan",
-    "kode": "+992"
+    "kode": "+992",
+    "alpha2": "TJ",
+    "alpha3": "TJK"
   },
   "TZA": {
     "land": "Tanzania",
-    "kode": "+255"
+    "kode": "+255",
+    "alpha2": "TZ",
+    "alpha3": "TZA"
   },
   "THA": {
     "land": "Thailand",
-    "kode": "+66"
+    "kode": "+66",
+    "alpha2": "TH",
+    "alpha3": "THA"
   },
   "TLS": {
     "land": "Timor-Leste",
-    "kode": "+670"
+    "kode": "+670",
+    "alpha2": "TL",
+    "alpha3": "TLS"
   },
   "TGO": {
     "land": "Togo",
-    "kode": "+228"
+    "kode": "+228",
+    "alpha2": "TG",
+    "alpha3": "TGO"
   },
   "TKL": {
     "land": "Tokelau",
-    "kode": "+690"
+    "kode": "+690",
+    "alpha2": "TK",
+    "alpha3": "TKL"
   },
   "TON": {
     "land": "Tonga",
-    "kode": "+676"
+    "kode": "+676",
+    "alpha2": "TO",
+    "alpha3": "TON"
   },
   "TTO": {
     "land": "Trinidad and Tobago",
-    "kode": "+868"
+    "kode": "+868",
+    "alpha2": "TT",
+    "alpha3": "TTO"
   },
   "TAA": {
     "land": "Tristan da Cunha",
-    "kode": "+290"
+    "kode": "+290",
+    "alpha2": "TA",
+    "alpha3": "TAA"
   },
   "TUN": {
     "land": "Tunisia",
-    "kode": "+216"
+    "kode": "+216",
+    "alpha2": "TN",
+    "alpha3": "TUN"
   },
   "TUR": {
-    "land": "Turkey",
-    "kode": "+90"
+    "land": "Türkiye",
+    "kode": "+90",
+    "alpha2": "TR",
+    "alpha3": "TUR"
   },
   "TKM": {
     "land": "Turkmenistan",
-    "kode": "+993"
+    "kode": "+993",
+    "alpha2": "TM",
+    "alpha3": "TKM"
   },
   "TCA": {
     "land": "Turks and Caicos Islands",
-    "kode": "+649"
+    "kode": "+649",
+    "alpha2": "TC",
+    "alpha3": "TCA"
   },
   "TUV": {
     "land": "Tuvalu",
-    "kode": "+688"
+    "kode": "+688",
+    "alpha2": "TV",
+    "alpha3": "TUV"
   },
   "UGA": {
     "land": "Uganda",
-    "kode": "+256"
+    "kode": "+256",
+    "alpha2": "UG",
+    "alpha3": "UGA"
   },
   "UKR": {
     "land": "Ukraine",
-    "kode": "+380"
+    "kode": "+380",
+    "alpha2": "UA",
+    "alpha3": "UKR"
   },
   "ARE": {
     "land": "United Arab Emirates",
-    "kode": "+971"
+    "kode": "+971",
+    "alpha2": "AE",
+    "alpha3": "ARE"
   },
   "GBR": {
     "land": "United Kingdom",
-    "kode": "+44"
+    "kode": "+44",
+    "alpha2": "GB",
+    "alpha3": "GBR"
   },
   "USA": {
     "land": "United States of America",
-    "kode": "+1"
+    "kode": "+1",
+    "alpha2": "US",
+    "alpha3": "USA"
+  },
+  "UMI": {
+    "land": "United States Minor Outlying Islands",
+    "kode": "+1",
+    "alpha2": "UM",
+    "alpha3": "UMI"
   },
   "URY": {
     "land": "Uruguay",
-    "kode": "+598"
+    "kode": "+598",
+    "alpha2": "UY",
+    "alpha3": "URY"
   },
   "UZB": {
     "land": "Uzbekistan",
-    "kode": "+998"
+    "kode": "+998",
+    "alpha2": "UZ",
+    "alpha3": "UZB"
   },
   "VUT": {
     "land": "Vanuatu",
-    "kode": "+678"
-  },
-  "VAT": {
-    "land": "Vatican City State",
-    "kode": "+39"
+    "kode": "+678",
+    "alpha2": "VU",
+    "alpha3": "VUT"
   },
   "VEN": {
     "land": "Venezuela",
-    "kode": "+58"
+    "kode": "+58",
+    "alpha2": "VE",
+    "alpha3": "VEN"
   },
   "VNM": {
     "land": "Vietnam",
-    "kode": "+84"
+    "kode": "+84",
+    "alpha2": "VN",
+    "alpha3": "VNM"
   },
   "VIR": {
     "land": "U.S. Virgin Islands",
-    "kode": "+340"
+    "kode": "+340",
+    "alpha2": "VI",
+    "alpha3": "VIR"
   },
   "WLF": {
     "land": "Wallis and Futuna",
-    "kode": "+681"
+    "kode": "+681",
+    "alpha2": "WF",
+    "alpha3": "WLF"
+  },
+  "ESH": {
+    "land": "Western Sahara",
+    "kode": "+212",
+    "alpha2": "EH",
+    "alpha3": "ESH"
   },
   "YEM": {
     "land": "Yemen",
-    "kode": "+967"
+    "kode": "+967",
+    "alpha2": "YE",
+    "alpha3": "YEM"
   },
   "ZMB": {
     "land": "Zambia",
-    "kode": "+260"
+    "kode": "+260",
+    "alpha2": "ZM",
+    "alpha3": "ZMB"
   },
   "ZWE": {
     "land": "Zimbabwe",
-    "kode": "+263"
+    "kode": "+263",
+    "alpha2": "ZW",
+    "alpha3": "ZWE"
   }
 }
