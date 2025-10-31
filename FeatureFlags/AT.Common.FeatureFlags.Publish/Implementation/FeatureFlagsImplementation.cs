@@ -5,7 +5,7 @@ using Unleash;
 namespace Arbeidstilsynet.Common.FeatureFlags.Implementation;
 
 /// <summary>
-/// Feature flag implementation using Unleash as the backing service.S
+/// Feature flag implementation using Unleash as the backing service.
 /// </summary>
 internal class FeatureFlagsImplementation : IFeatureFlags
 {

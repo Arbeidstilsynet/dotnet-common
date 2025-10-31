@@ -22,8 +22,10 @@ public static class FeatureFlagEndpoint
         string pattern = "/featureflag"
     )
     {
-        return endpoints.MapPost(
-            pattern,
+        var group = endpoints.MapGroup(pattern).WithTags("Feature Flags");
+
+        return group.MapPost(
+            "/",
             (FeatureFlagRequest request, IFeatureFlags featureFlag) =>
             {
                 bool isEnabled = featureFlag.IsEnabled(request.FeatureName, request.Context);

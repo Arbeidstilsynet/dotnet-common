@@ -14,7 +14,7 @@ namespace Arbeidstilsynet.Common.FeatureFlags.DependencyInjection;
 public static class DependencyInjectionExtensions
 {
     /// <summary>
-    /// Registers an implementation av <see cref="IFeatureFlags"/> in <paramref name="services"/>.
+    /// Registers an implementation of <see cref="IFeatureFlags"/> in <paramref name="services"/>.
     /// </summary>
     /// <param name="services"><see cref="IServiceCollection"/> to register the service in.</param>
     /// <param name="webHostEnvironment">The web host environment.</param>
