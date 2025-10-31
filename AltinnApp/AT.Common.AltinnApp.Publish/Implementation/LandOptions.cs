@@ -33,15 +33,21 @@ internal class LandOptions : IAppOptionsProvider
     {
         var landskoder = new List<AppOption>();
 
-        foreach (var landData in _orderFunc((await _landskodeLookup.GetLandskoder()).Select(kvp => kvp.Value)))
+        foreach (
+            var landData in _orderFunc(
+                (await _landskodeLookup.GetLandskoder()).Select(kvp => kvp.Value)
+            )
+        )
         {
             var value = _optionValueIsoType switch
             {
                 LandOptionsConfiguration.IsoType.Alpha2 => landData.Alpha2,
                 LandOptionsConfiguration.IsoType.Alpha3 => landData.Alpha3,
-                _ => throw new NotSupportedException($"Unsupported ISO type: {_optionValueIsoType}")
+                _ => throw new NotSupportedException(
+                    $"Unsupported ISO type: {_optionValueIsoType}"
+                ),
             };
-            
+
             landskoder.Add(new AppOption { Label = landData.Land, Value = value });
         }
 

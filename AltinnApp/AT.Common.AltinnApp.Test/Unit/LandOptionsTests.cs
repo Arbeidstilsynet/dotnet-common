@@ -69,7 +69,7 @@ public class LandOptionsTests
         result.Options[0].Label.ShouldBe("Norway");
         result.Options[0].Value.ShouldBe("NOR");
     }
-    
+
     [Fact]
     public async Task GetAppOptionsAsync_ShouldUseCustomOrder()
     {
@@ -83,11 +83,10 @@ public class LandOptionsTests
 
         _landskodeLookup.GetLandskoder().Returns(expectedLandskoder);
 
-        _configuration.Value.Returns(new LandOptionsConfiguration()
-        {
-            CustomOrderFunc = lands => lands.Reverse()
-        });
-        
+        _configuration.Value.Returns(
+            new LandOptionsConfiguration() { CustomOrderFunc = lands => lands.Reverse() }
+        );
+
         var sut = new LandOptions(_landskodeLookup, _configuration);
 
         // Act
@@ -100,7 +99,7 @@ public class LandOptionsTests
         result.Options[1].Label.ShouldBe("Sweden");
         result.Options[2].Label.ShouldBe("Norway");
     }
-    
+
     [Theory]
     [InlineData(LandOptionsConfiguration.IsoType.Alpha2, "NO")]
     [InlineData(LandOptionsConfiguration.IsoType.Alpha3, "NOR")]
@@ -112,16 +111,15 @@ public class LandOptionsTests
         // Arrange
         var expectedLandskoder = new List<KeyValuePair<string, Landskode>>
         {
-            new("NOR", new Landskode("Norway", "+47", "NO", "NOR"))
+            new("NOR", new Landskode("Norway", "+47", "NO", "NOR")),
         };
 
         _landskodeLookup.GetLandskoder().Returns(expectedLandskoder);
 
-        _configuration.Value.Returns(new LandOptionsConfiguration()
-        {
-            OptionValueIsoType = isoType
-        });
-        
+        _configuration.Value.Returns(
+            new LandOptionsConfiguration() { OptionValueIsoType = isoType }
+        );
+
         var sut = new LandOptions(_landskodeLookup, _configuration);
 
         // Act

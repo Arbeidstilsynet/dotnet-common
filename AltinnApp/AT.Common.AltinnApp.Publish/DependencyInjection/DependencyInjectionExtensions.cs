@@ -21,29 +21,28 @@ public record LandOptionsConfiguration
         /// ISO 3166-1 alpha-3, e.g. "NOR" for Norway.
         /// </summary>
         Alpha3,
+
         /// <summary>
         /// ISO 3166-1 alpha-2, e.g. "NO" for Norway.
         /// </summary>
         Alpha2,
     }
-    
+
     /// <summary>
     /// The Altinn optionsId, default is "land".
     /// </summary>
     public string OptionsId { get; init; } = "land";
-    
+
     /// <summary>
     /// Custom ordering function for the list of countries. Default is alphabetical order.
     /// </summary>
     public Func<IEnumerable<Landskode>, IEnumerable<Landskode>>? CustomOrderFunc { get; init; }
-    
+
     /// <summary>
     /// Which ISO type to use for the option value. Default is Alpha3.
     /// </summary>
     public IsoType OptionValueIsoType { get; init; } = IsoType.Alpha3;
-    
 }
-
 
 /// <summary>
 /// Extensions for Dependency Injection.

@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.4.0
+
+- added: More customization options for LandOptions
+  - Custom order function for country list in LandOptions (default is alphabetical by country name)
+  - Option for using either alpha2 or alpha3 country codes as value in dropdowns (default is alpha3)
+
 ## 1.3.0
 
 ### Changed
