@@ -11,16 +11,16 @@ namespace Arbeidstilsynet.Common.FeatureFlags.Test.Integration.Setup;
 
 public class FeatureFlagsTestFixture : TestBedFixture
 {
-  protected override void AddServices(IServiceCollection services, IConfiguration? configuration)
-  {
-    var fakeUnleash = new FakeUnleash();
-    services.AddSingleton<IUnleash>(fakeUnleash);
-    services.AddFeatureFlags(Substitute.For<IWebHostEnvironment>(), null);
-  }
+    protected override void AddServices(IServiceCollection services, IConfiguration? configuration)
+    {
+        var fakeUnleash = new FakeUnleash();
+        services.AddSingleton<IUnleash>(fakeUnleash);
+        services.AddFeatureFlags(Substitute.For<IWebHostEnvironment>(), null);
+    }
 
-  protected override IEnumerable<TestAppSettings> GetTestAppSettings() => [];
-  protected override ValueTask DisposeAsyncCore()
-  {
-    return ValueTask.CompletedTask;
-  }
+    protected override IEnumerable<TestAppSettings> GetTestAppSettings() => [];
+    protected override ValueTask DisposeAsyncCore()
+    {
+        return ValueTask.CompletedTask;
+    }
 }

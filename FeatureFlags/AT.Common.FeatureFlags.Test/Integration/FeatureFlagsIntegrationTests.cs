@@ -10,44 +10,44 @@ namespace Arbeidstilsynet.Common.FeatureFlags.Test.Integration;
 
 public class FeatureFlagsIntegrationTests : TestBed<FeatureFlagsTestFixture>
 {
-  private readonly IFeatureFlags _sut;
-  private readonly FakeUnleash _fakeUnleash;
+    private readonly IFeatureFlags _sut;
+    private readonly FakeUnleash _fakeUnleash;
 
-  public FeatureFlagsIntegrationTests(
-    ITestOutputHelper testOutputHelper,
-    FeatureFlagsTestFixture fixture
-  )
-    : base(testOutputHelper, fixture)
-  {
-    _sut = fixture.GetService<IFeatureFlags>(testOutputHelper)!;
-    _fakeUnleash = (FakeUnleash)fixture.GetService<IUnleash>(testOutputHelper)!;
-  }
+    public FeatureFlagsIntegrationTests(
+      ITestOutputHelper testOutputHelper,
+      FeatureFlagsTestFixture fixture
+    )
+      : base(testOutputHelper, fixture)
+    {
+        _sut = fixture.GetService<IFeatureFlags>(testOutputHelper)!;
+        _fakeUnleash = (FakeUnleash)fixture.GetService<IUnleash>(testOutputHelper)!;
+    }
 
-  [Fact]
-  public void IsEnabled_DefaultSetup_ReturnsFalse()
-  {
-    // Arrange
-    var featureName = "any-feature";
+    [Fact]
+    public void IsEnabled_DefaultSetup_ReturnsFalse()
+    {
+        // Arrange
+        var featureName = "any-feature";
 
-    // Act
-    var isEnabled = _sut.IsEnabled(featureName);
+        // Act
+        var isEnabled = _sut.IsEnabled(featureName);
 
-    // Assert
-    Assert.False(isEnabled);
-  }
+        // Assert
+        Assert.False(isEnabled);
+    }
 
 
-  [Fact]
-  public void IsEnabled_DefaultSetup_ReturnsTrue()
-  {
-    // Arrange
-    var featureName = "my-feature";
-    _fakeUnleash.SetToggle(featureName, true);
+    [Fact]
+    public void IsEnabled_DefaultSetup_ReturnsTrue()
+    {
+        // Arrange
+        var featureName = "my-feature";
+        _fakeUnleash.SetToggle(featureName, true);
 
-    // Act
-    var isEnabled = _sut.IsEnabled(featureName);
+        // Act
+        var isEnabled = _sut.IsEnabled(featureName);
 
-    // Assert
-    Assert.True(isEnabled);
-  }
+        // Assert
+        Assert.True(isEnabled);
+    }
 }
