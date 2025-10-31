@@ -19,7 +19,7 @@ public static class FeatureFlagEndpoint
     /// <returns></returns>
     public static RouteHandlerBuilder MapFeatureFlagEndpoint(
         this IEndpointRouteBuilder endpoints,
-        string pattern = "/feature-flags"
+        string pattern = "/featureflag"
     )
     {
         return endpoints.MapPost(
