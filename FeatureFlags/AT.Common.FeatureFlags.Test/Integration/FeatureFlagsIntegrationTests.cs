@@ -28,6 +28,7 @@ public class FeatureFlagsIntegrationTests : TestBed<FeatureFlagsTestFixture>
     {
         // Arrange
         var featureName = "any-feature";
+        _fakeUnleash.SetToggle(featureName, false);
 
         // Act
         var isEnabled = _sut.IsEnabled(featureName);
@@ -40,7 +41,7 @@ public class FeatureFlagsIntegrationTests : TestBed<FeatureFlagsTestFixture>
     public void IsEnabled_DefaultSetup_ReturnsTrue()
     {
         // Arrange
-        var featureName = "my-feature";
+        var featureName = "any-feature";
         _fakeUnleash.SetToggle(featureName, true);
 
         // Act
