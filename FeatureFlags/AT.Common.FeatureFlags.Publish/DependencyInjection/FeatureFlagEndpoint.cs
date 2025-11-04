@@ -22,7 +22,7 @@ public static class FeatureFlagEndpoint
         string pattern = "/featureflag"
     )
     {
-        var group = endpoints.MapGroup(pattern).WithTags("Feature Flags");
+        var group = endpoints.MapGroup(pattern).WithTags("FeatureFlags");
 
         return group.MapPost(
             "/",
