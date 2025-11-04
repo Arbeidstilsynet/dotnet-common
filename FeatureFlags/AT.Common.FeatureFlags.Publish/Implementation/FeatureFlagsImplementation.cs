@@ -28,10 +28,17 @@ internal class FeatureFlagsImplementation : IFeatureFlags
     /// <returns></returns>
     public FeatureFlagResponse IsEnabled(string featureName, FeatureFlagContext? context = null)
     {
-        var isEnabled =
-            context == null
-                ? _unleash.IsEnabled(featureName)
-                : _unleash.IsEnabled(featureName, context);
+        bool isEnabled;
+        if (context != null && context.UserId != null)
+        {
+            var unleashContext = new UnleashContext { UserId = context.UserId };
+            isEnabled = _unleash.IsEnabled(featureName, unleashContext);
+        }
+        else
+        {
+            isEnabled = _unleash.IsEnabled(featureName);
+        }
+
         return new FeatureFlagResponse { IsEnabled = isEnabled, FeatureName = featureName };
     }
 }
