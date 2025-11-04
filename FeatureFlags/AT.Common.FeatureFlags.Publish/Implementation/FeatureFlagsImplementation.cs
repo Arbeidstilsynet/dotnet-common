@@ -26,8 +26,12 @@ internal class FeatureFlagsImplementation : IFeatureFlags
     /// <param name="featureName">Name of feature flag.</param>
     /// <param name="context">Optional context.</param>
     /// <returns></returns>
-    public bool IsEnabled(string featureName, FeatureFlagContext? context = null) =>
-        context == null
-            ? _unleash.IsEnabled(featureName)
-            : _unleash.IsEnabled(featureName, context);
+    public FeatureFlagResponse IsEnabled(string featureName, FeatureFlagContext? context = null)
+    {
+        var isEnabled =
+            context == null
+                ? _unleash.IsEnabled(featureName)
+                : _unleash.IsEnabled(featureName, context);
+        return new FeatureFlagResponse { IsEnabled = isEnabled, FeatureName = featureName };
+    }
 }

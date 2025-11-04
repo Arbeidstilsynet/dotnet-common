@@ -14,5 +14,5 @@ public interface IFeatureFlags
     /// <param name="featureName">The name of the feature flag to check</param>
     /// <param name="context">Optional context for feature flag evaluation</param>
     /// <returns>True if the feature flag is enabled, false otherwise</returns>
-    bool IsEnabled(string featureName, FeatureFlagContext? context = null);
+    FeatureFlagResponse IsEnabled(string featureName, FeatureFlagContext? context = null);
 }

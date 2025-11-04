@@ -28,25 +28,8 @@ public static class FeatureFlagEndpoint
             "/",
             (FeatureFlagRequest request, IFeatureFlags featureFlag) =>
             {
-                bool isEnabled = featureFlag.IsEnabled(request.FeatureName, request.Context);
-                return Results.Ok(new { IsEnabled = isEnabled });
+                return featureFlag.IsEnabled(request.FeatureName, request.Context);
             }
         );
     }
-}
-
-/// <summary>
-/// Request model for feature flag check.
-/// </summary>
-public record FeatureFlagRequest
-{
-    /// <summary>
-    /// The name of the feature flag to check.
-    /// </summary>
-    public required string FeatureName { get; init; }
-
-    /// <summary>
-    /// Optional context for feature flag evaluation.
-    /// </summary>
-    public FeatureFlagContext? Context { get; init; }
 }
