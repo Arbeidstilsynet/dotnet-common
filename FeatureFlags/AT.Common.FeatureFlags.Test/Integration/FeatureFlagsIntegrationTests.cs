@@ -1,3 +1,4 @@
+using System.Reflection;
 using Arbeidstilsynet.Common.FeatureFlags.Model;
 using Arbeidstilsynet.Common.FeatureFlags.Ports;
 using Arbeidstilsynet.Common.FeatureFlags.Test.Integration.Setup;
@@ -31,10 +32,11 @@ public class FeatureFlagsIntegrationTests : TestBed<FeatureFlagsTestFixture>
         _fakeUnleash.SetToggle(featureName, false);
 
         // Act
-        var isEnabled = _sut.IsEnabled(featureName);
+        var response = _sut.IsEnabled(featureName);
 
         // Assert
-        Assert.False(isEnabled);
+        Assert.False(response.IsEnabled);
+        Assert.Equal(featureName, response.FeatureName);
     }
 
     [Fact]
@@ -45,9 +47,10 @@ public class FeatureFlagsIntegrationTests : TestBed<FeatureFlagsTestFixture>
         _fakeUnleash.SetToggle(featureName, true);
 
         // Act
-        var isEnabled = _sut.IsEnabled(featureName);
+        var response = _sut.IsEnabled(featureName);
 
         // Assert
-        Assert.True(isEnabled);
+        Assert.True(response.IsEnabled);
+        Assert.Equal(featureName, response.FeatureName);
     }
 }
