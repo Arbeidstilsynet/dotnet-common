@@ -31,7 +31,7 @@ jobs:
         run: |
           parent_dir="${{ steps.get_parent_dir.outputs.parent_dir }}"
           echo "DEBUG: parent_dir=$parent_dir"
-          changed_files=$(git --no-pager diff --name-only origin/main...HEAD | grep "$parent_dir" || true)
+          changed_files=$(git --no-pager diff --name-only origin/main...HEAD | grep "^$parent_dir/" || true)
           # If empty, do not continue
             if [ -z "$changed_files" ]; then
             echo "should-continue=false" >> $GITHUB_OUTPUT
@@ -79,7 +79,7 @@ jobs:
           working-directory: ${{ needs.check-and-prepare.outputs.package_path }}
 
       - name: Check if package version exists
-        uses: Arbeidstilsynet/action-nuget-check-published@6203a53ea4a76f45824a42c8b8d77d56eb4d2612 # v1
+        uses: Arbeidstilsynet/action-nuget-check-published@f0a54fcd5182daa294a0ac63b0fb072efda10f97 # v1
         id: nuget_version_check
         with:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}

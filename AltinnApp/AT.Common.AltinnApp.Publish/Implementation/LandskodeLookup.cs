@@ -10,11 +10,11 @@ internal class LandskodeLookup : ILandskodeLookup
     private const string Filename = "landskoder.json";
     private Dictionary<string, Landskode>? _landskoder;
 
-    public async Task<Landskode?> GetLandskode(string isoCode)
+    public async Task<Landskode?> GetLandskode(string alpha3Code)
     {
         _landskoder ??= await IngestAsync();
 
-        return _landskoder.GetValueOrDefault(isoCode);
+        return _landskoder.GetValueOrDefault(alpha3Code);
     }
 
     public async Task<IEnumerable<KeyValuePair<string, Landskode>>> GetLandskoder()
