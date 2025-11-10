@@ -28,7 +28,11 @@ public static class FeatureFlagEndpoint
             "/",
             (FeatureFlagRequest request, IFeatureFlags featureFlag) =>
             {
-                return featureFlag.IsEnabled(request.FeatureName, request.Context);
+                return new FeatureFlagResponse
+                {
+                    IsEnabled = featureFlag.IsEnabled(request.FeatureName, request.Context),
+                    FeatureName = request.FeatureName,
+                };
             }
         );
     }

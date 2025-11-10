@@ -26,7 +26,7 @@ internal class FeatureFlagsImplementation : IFeatureFlags
     /// <param name="featureName">Name of feature flag.</param>
     /// <param name="context">Optional context.</param>
     /// <returns></returns>
-    public FeatureFlagResponse IsEnabled(string featureName, FeatureFlagContext? context = null)
+    public bool IsEnabled(string featureName, FeatureFlagContext? context = null)
     {
         bool isEnabled;
         if (context != null && context.UserId != null)
@@ -39,6 +39,6 @@ internal class FeatureFlagsImplementation : IFeatureFlags
             isEnabled = _unleash.IsEnabled(featureName);
         }
 
-        return new FeatureFlagResponse { IsEnabled = isEnabled, FeatureName = featureName };
+        return isEnabled;
     }
 }
