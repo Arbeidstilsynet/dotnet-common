@@ -1,3 +1,4 @@
+using Altinn.App.Core.Features;
 using Arbeidstilsynet.Common.AltinnApp.Implementation;
 using Arbeidstilsynet.Common.AltinnApp.Model;
 using Arbeidstilsynet.Common.AltinnApp.Ports;
@@ -78,6 +79,42 @@ public static class DependencyInjectionExtensions
         services.TryAddSingleton(Options.Create(optionsConfiguration));
         services.TryAddSingleton<Altinn.App.Core.Features.IAppOptionsProvider, LandOptions>();
 
+        return services;
+    }
+    
+    /// <summary>
+    /// Adds a mechanism to map the datamodel of type <typeparamref name="TDataModel"/> to structured data of type <typeparamref name="TStructuredData"/>
+    ///
+    /// The data model is deleted right after PDF-generation so that it doesn't get transferred to storage. The structured data will be stored instead.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="mapFunc">The function responsible for mapping from <typeparamref name="TDataModel"/> to <typeparamref name="TStructuredData"/> </param>
+    /// <typeparam name="TStructuredData"></typeparam>
+    /// <typeparam name="TDataModel"></typeparam>
+    /// <returns></returns>
+    /// <remarks>
+    /// You need to add this to your App/config/applicationmetadata.json:
+    /// <br/>
+    /// {
+    /// <br/>    "id": "structured-data",
+    /// <br/>    "allowedContentTypes": [
+    /// <br/>    "application/json"
+    /// <br/>    ],
+    /// <br/>    "allowedContributors": [
+    /// <br/>    "app:owned"
+    /// <br/>    ]
+    /// <br/>},
+    /// </remarks>
+    public static IServiceCollection AddStructuredData<TDataModel, TStructuredData>(this IServiceCollection services, 
+        Func<TDataModel, TStructuredData> mapFunc)
+        where TDataModel : class
+        where TStructuredData : class
+    {
+        services.AddSingleton(new StructuredDataManager<TDataModel, TStructuredData>.Config(mapFunc));
+        services.AddSingleton<StructuredDataManager<TDataModel, TStructuredData>>();
+        services.AddTransient<IProcessEnd>(sp => sp.GetRequiredService<StructuredDataManager<TDataModel, TStructuredData>>());
+        services.AddTransient<IProcessTaskEnd>(sp => sp.GetRequiredService<StructuredDataManager<TDataModel, TStructuredData>>());
+        
         return services;
     }
 }
