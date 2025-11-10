@@ -2,6 +2,7 @@ using System.Reflection;
 using Arbeidstilsynet.Common.FeatureFlags.Model;
 using Arbeidstilsynet.Common.FeatureFlags.Ports;
 using Arbeidstilsynet.Common.FeatureFlags.Test.Integration.Setup;
+using Shouldly;
 using Unleash;
 using Xunit;
 using Xunit.Abstractions;
@@ -35,8 +36,7 @@ public class FeatureFlagsIntegrationTests : TestBed<FeatureFlagsTestFixture>
         var response = _sut.IsEnabled(featureName);
 
         // Assert
-        Assert.False(response.IsEnabled);
-        Assert.Equal(featureName, response.FeatureName);
+        response.ShouldBeFalse();
     }
 
     [Fact]
@@ -50,7 +50,6 @@ public class FeatureFlagsIntegrationTests : TestBed<FeatureFlagsTestFixture>
         var response = _sut.IsEnabled(featureName);
 
         // Assert
-        Assert.True(response.IsEnabled);
-        Assert.Equal(featureName, response.FeatureName);
+        response.ShouldBeTrue();
     }
 }
