@@ -21,16 +21,20 @@ public class StructuredDataManagerTests
     {
         _applicationClient = Substitute.For<IApplicationClient>();
         _dataClient = Substitute.For<IDataClient>();
-        _logger = Substitute.For<ILogger<StructuredDataManager<TestDataModel, TestStructuredData>>>();
-        
+        _logger = Substitute.For<
+            ILogger<StructuredDataManager<TestDataModel, TestStructuredData>>
+        >();
+
         var config = new StructuredDataManager<TestDataModel, TestStructuredData>.Config(
-            dataModel => new TestStructuredData { Name = dataModel.Name });
-        
+            dataModel => new TestStructuredData { Name = dataModel.Name }
+        );
+
         _sut = new StructuredDataManager<TestDataModel, TestStructuredData>(
             _applicationClient,
             _dataClient,
             config,
-            _logger);
+            _logger
+        );
     }
 
     [Fact]
@@ -42,7 +46,16 @@ public class StructuredDataManagerTests
         var dataModel = new TestDataModel { Name = "Test" };
 
         _applicationClient.GetApplication(instance.Org, "testApp").Returns(application);
-        _dataClient.GetFormData(Arg.Any<Guid>(), typeof(TestDataModel), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<int>(), Arg.Any<Guid>()).Returns(dataModel);
+        _dataClient
+            .GetFormData(
+                Arg.Any<Guid>(),
+                typeof(TestDataModel),
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<int>(),
+                Arg.Any<Guid>()
+            )
+            .Returns(dataModel);
 
         // Act
         await _sut.End("task1", instance);
@@ -60,20 +73,34 @@ public class StructuredDataManagerTests
         var dataModel = new TestDataModel { Name = "Test" };
         var expectedGuid = Guid.Parse(instance.Data.First().Id);
 
-        _applicationClient.GetApplication(Arg.Any<string>(), Arg.Any<string>()).Returns(application);
-        _dataClient.GetFormData(Arg.Any<Guid>(), typeof(TestDataModel), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<int>(), Arg.Any<Guid>()).Returns(dataModel);
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(application);
+        _dataClient
+            .GetFormData(
+                Arg.Any<Guid>(),
+                typeof(TestDataModel),
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<int>(),
+                Arg.Any<Guid>()
+            )
+            .Returns(dataModel);
 
         // Act
         await _sut.End("task1", instance);
 
         // Assert
-        await _dataClient.Received(1).GetFormData(
-            instance.GetInstanceGuid(),
-            typeof(TestDataModel),
-            instance.Org,
-            instance.AppId,
-            instance.GetInstanceOwnerPartyId(),
-            expectedGuid);
+        await _dataClient
+            .Received(1)
+            .GetFormData(
+                instance.GetInstanceGuid(),
+                typeof(TestDataModel),
+                instance.Org,
+                instance.AppId,
+                instance.GetInstanceOwnerPartyId(),
+                expectedGuid
+            );
     }
 
     [Fact]
@@ -84,19 +111,33 @@ public class StructuredDataManagerTests
         var application = CreateTestApplication();
         var dataModel = new TestDataModel { Name = "Test" };
 
-        _applicationClient.GetApplication(Arg.Any<string>(), Arg.Any<string>()).Returns(application);
-        _dataClient.GetFormData(Arg.Any<Guid>(), Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<int>(), Arg.Any<Guid>()).Returns(dataModel);
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(application);
+        _dataClient
+            .GetFormData(
+                Arg.Any<Guid>(),
+                Arg.Any<Type>(),
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<int>(),
+                Arg.Any<Guid>()
+            )
+            .Returns(dataModel);
 
         // Act
         await _sut.End("task1", instance);
 
         // Assert
-        await _dataClient.Received(1).InsertBinaryData(
-            instance.Id,
-            "structured-data",
-            "application/json",
-            "structured-data.json",
-            Arg.Any<Stream>());
+        await _dataClient
+            .Received(1)
+            .InsertBinaryData(
+                instance.Id,
+                "structured-data",
+                "application/json",
+                "structured-data.json",
+                Arg.Any<Stream>()
+            );
     }
 
     [Fact]
@@ -124,19 +165,24 @@ public class StructuredDataManagerTests
         var dataElement = instance.Data.First();
         var expectedGuid = Guid.Parse(dataElement.Id);
 
-        _applicationClient.GetApplication(Arg.Any<string>(), Arg.Any<string>()).Returns(application);
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(application);
 
         // Act
         await _sut.End(instance, new List<InstanceEvent>());
 
         // Assert
-        await _dataClient.Received(1).DeleteData(
-            instance.Org,
-            "testApp",
-            instance.GetInstanceOwnerPartyId(),
-            instance.GetInstanceGuid(),
-            expectedGuid,
-            false);
+        await _dataClient
+            .Received(1)
+            .DeleteData(
+                instance.Org,
+                "testApp",
+                instance.GetInstanceOwnerPartyId(),
+                instance.GetInstanceGuid(),
+                expectedGuid,
+                false
+            );
     }
 
     [Fact]
@@ -147,13 +193,15 @@ public class StructuredDataManagerTests
         var application = CreateTestApplication();
         var initialDataCount = instance.Data.Count;
 
-        _applicationClient.GetApplication(Arg.Any<string>(), Arg.Any<string>()).Returns(application);
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(application);
 
         // Act
         await _sut.End(instance, new List<InstanceEvent>());
 
         // Assert
-        instance.Data.Count.ShouldBe(initialDataCount-1);
+        instance.Data.Count.ShouldBe(initialDataCount - 1);
     }
 
     private static Instance CreateTestInstance()
@@ -166,12 +214,8 @@ public class StructuredDataManagerTests
             InstanceOwner = new InstanceOwner { PartyId = "50001234" },
             Data = new List<DataElement>
             {
-                new()
-                {
-                    Id = "12345678-1234-1234-1234-123456789012",
-                    DataType = "testDataType"
-                }
-            }
+                new() { Id = "12345678-1234-1234-1234-123456789012", DataType = "testDataType" },
+            },
         };
     }
 
@@ -184,12 +228,9 @@ public class StructuredDataManagerTests
                 new()
                 {
                     Id = "testDataType",
-                    AppLogic = new ApplicationLogic()
-                    {
-                        ClassRef = typeof(TestDataModel).FullName
-                    }
-                }
-            }
+                    AppLogic = new ApplicationLogic() { ClassRef = typeof(TestDataModel).FullName },
+                },
+            },
         };
     }
 

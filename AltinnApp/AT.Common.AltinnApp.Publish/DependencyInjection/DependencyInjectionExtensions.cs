@@ -81,7 +81,7 @@ public static class DependencyInjectionExtensions
 
         return services;
     }
-    
+
     /// <summary>
     /// Adds a mechanism to map the datamodel of type <typeparamref name="TDataModel"/> to structured data of type <typeparamref name="TStructuredData"/>
     ///
@@ -105,16 +105,24 @@ public static class DependencyInjectionExtensions
     /// <br/>    ]
     /// <br/>},
     /// </remarks>
-    public static IServiceCollection AddStructuredData<TDataModel, TStructuredData>(this IServiceCollection services, 
-        Func<TDataModel, TStructuredData> mapFunc)
+    public static IServiceCollection AddStructuredData<TDataModel, TStructuredData>(
+        this IServiceCollection services,
+        Func<TDataModel, TStructuredData> mapFunc
+    )
         where TDataModel : class
         where TStructuredData : class
     {
-        services.AddSingleton(new StructuredDataManager<TDataModel, TStructuredData>.Config(mapFunc));
+        services.AddSingleton(
+            new StructuredDataManager<TDataModel, TStructuredData>.Config(mapFunc)
+        );
         services.AddSingleton<StructuredDataManager<TDataModel, TStructuredData>>();
-        services.AddTransient<IProcessEnd>(sp => sp.GetRequiredService<StructuredDataManager<TDataModel, TStructuredData>>());
-        services.AddTransient<IProcessTaskEnd>(sp => sp.GetRequiredService<StructuredDataManager<TDataModel, TStructuredData>>());
-        
+        services.AddTransient<IProcessEnd>(sp =>
+            sp.GetRequiredService<StructuredDataManager<TDataModel, TStructuredData>>()
+        );
+        services.AddTransient<IProcessTaskEnd>(sp =>
+            sp.GetRequiredService<StructuredDataManager<TDataModel, TStructuredData>>()
+        );
+
         return services;
     }
 }

@@ -12,7 +12,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
     where TDataModel : class
     where TStructuredData : class
 {
-    public record Config 
+    public record Config
     {
         public Func<TDataModel, TStructuredData> MapFunc { get; init; }
 
@@ -21,26 +21,33 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
             MapFunc = mapFunc;
         }
     }
-    
+
     private readonly IApplicationClient _applicationClient;
     private readonly IDataClient _dataClient;
     private readonly Config _config;
     private readonly ILogger<StructuredDataManager<TDataModel, TStructuredData>> _logger;
 
-    public StructuredDataManager(IApplicationClient applicationClient, IDataClient dataClient, Config config, ILogger<StructuredDataManager<TDataModel, TStructuredData>> logger)
+    public StructuredDataManager(
+        IApplicationClient applicationClient,
+        IDataClient dataClient,
+        Config config,
+        ILogger<StructuredDataManager<TDataModel, TStructuredData>> logger
+    )
     {
         _applicationClient = applicationClient;
         _dataClient = dataClient;
         _config = config;
         _logger = logger;
     }
-    
+
     public async Task End(Instance instance, List<InstanceEvent>? events)
     {
         // Right after submission
-        
-        var dataModelElement = await _applicationClient.GetRequiredDataModelElement<TDataModel>(instance);
-        
+
+        var dataModelElement = await _applicationClient.GetRequiredDataModelElement<TDataModel>(
+            instance
+        );
+
         await _dataClient.DeleteElement(instance, dataModelElement);
     }
 
@@ -50,16 +57,22 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
 
         try
         {
-            var dataModelElement = await _applicationClient.GetRequiredDataModelElement<TDataModel>(instance);
+            var dataModelElement = await _applicationClient.GetRequiredDataModelElement<TDataModel>(
+                instance
+            );
             var dataModel = await _dataClient.GetData<TDataModel>(instance, dataModelElement);
 
-            var structuredData = _config.MapFunc.Invoke(dataModel); 
-            
+            var structuredData = _config.MapFunc.Invoke(dataModel);
+
             await _dataClient.InsertStructuredData(instance, structuredData);
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error while generating structured data for instance {InstanceId}", instance.Id);
+            _logger.LogError(
+                e,
+                "Error while generating structured data for instance {InstanceId}",
+                instance.Id
+            );
             throw new Exception("Det har skjedd en uforutsett feil. Beklager ulempen.", e);
         }
     }
@@ -67,70 +80,113 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
 
 file static class Extensions
 {
-    public static async Task<DataElement> GetRequiredDataModelElement<T>(this IApplicationClient applicationClient, Instance instance)
+    public static async Task<DataElement> GetRequiredDataModelElement<T>(
+        this IApplicationClient applicationClient,
+        Instance instance
+    )
     {
         var type = typeof(T);
-        
-        var application = await applicationClient.GetApplication(instance.Org, instance.GetAppName());
-        
+
+        var application = await applicationClient.GetApplication(
+            instance.Org,
+            instance.GetAppName()
+        );
+
         if (application == null)
         {
             throw new InvalidOperationException("Could not retrieve application metadata");
         }
-        
-        var dataType = application.DataTypes.FirstOrDefault(d => d.AppLogic?.ClassRef == type.FullName );
-        
+
+        var dataType = application.DataTypes.FirstOrDefault(d =>
+            d.AppLogic?.ClassRef == type.FullName
+        );
+
         if (dataType == null)
         {
-            throw new InvalidOperationException($"Could not find data type for {type.FullName} in application metadata");
+            throw new InvalidOperationException(
+                $"Could not find data type for {type.FullName} in application metadata"
+            );
         }
-        
+
         var dataModelElement = instance.Data.FirstOrDefault(d => d.DataType == dataType.Id);
-        
+
         if (dataModelElement == null)
         {
-            throw new InvalidOperationException($"Could not find data element for data type {dataType.Id} in instance data");
+            throw new InvalidOperationException(
+                $"Could not find data element for data type {dataType.Id} in instance data"
+            );
         }
 
         return dataModelElement;
     }
 
-    public static async Task<T> GetData<T>(this IDataClient dataClient, Instance instance, DataElement dataElement) 
+    public static async Task<T> GetData<T>(
+        this IDataClient dataClient,
+        Instance instance,
+        DataElement dataElement
+    )
         where T : class
     {
-        if (await dataClient.GetFormData(instance.GetInstanceGuid(), typeof(T),  instance.Org, instance.AppId, instance.GetInstanceOwnerPartyId(), Guid.Parse(dataElement.Id)) is not T data)
+        if (
+            await dataClient.GetFormData(
+                instance.GetInstanceGuid(),
+                typeof(T),
+                instance.Org,
+                instance.AppId,
+                instance.GetInstanceOwnerPartyId(),
+                Guid.Parse(dataElement.Id)
+            )
+            is not T data
+        )
         {
-            throw new InvalidOperationException($"Could not retrieve data model of type {typeof(T).FullName} from data element {dataElement.Id}");
+            throw new InvalidOperationException(
+                $"Could not retrieve data model of type {typeof(T).FullName} from data element {dataElement.Id}"
+            );
         }
 
         return data;
     }
-    
-    public static async Task InsertStructuredData<T>(this IDataClient dataClient, Instance instance, T structuredData)
+
+    public static async Task InsertStructuredData<T>(
+        this IDataClient dataClient,
+        Instance instance,
+        T structuredData
+    )
         where T : class
     {
         var stream = await structuredData.ToBinaryStreamAsync();
 
         await dataClient.InsertBinaryData(
             instance.Id,
-            "structured-data", 
-            "application/json", 
-            "structured-data.json", 
-            stream);
+            "structured-data",
+            "application/json",
+            "structured-data.json",
+            stream
+        );
     }
-    
-    public static async Task DeleteElement(this IDataClient dataClient, Instance instance, DataElement dataElement)
+
+    public static async Task DeleteElement(
+        this IDataClient dataClient,
+        Instance instance,
+        DataElement dataElement
+    )
     {
-        await dataClient.DeleteData(instance.Org, instance.GetAppName(), instance.GetInstanceOwnerPartyId(),
-            instance.GetInstanceGuid(), Guid.Parse(dataElement.Id), false);
+        await dataClient.DeleteData(
+            instance.Org,
+            instance.GetAppName(),
+            instance.GetInstanceOwnerPartyId(),
+            instance.GetInstanceGuid(),
+            Guid.Parse(dataElement.Id),
+            false
+        );
         instance.Data.Remove(dataElement);
     }
-    
+
     public static async Task<Stream> ToBinaryStreamAsync<T>(this T structuredData)
         where T : class
     {
         var json = JsonSerializer.Serialize(structuredData);
-        
+
         // Put the string into a memory stream
         var stream = new MemoryStream();
         var writer = new StreamWriter(stream);

@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.5.0
+
+- added: Extension to manage DataElements for structured data. It deletes the xml-based DataModel, and replaces it with application/json of a  user-provided type.
+
 ## 1.4.0
 
 - added: More customization options for LandOptions
