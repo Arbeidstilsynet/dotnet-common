@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- fix: using "structured-data" as default dataType for MainDocument.
+- changed: using "structured-data" as default dataType for MainDocument.
 
 ## 1.3.2
 
