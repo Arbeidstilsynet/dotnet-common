@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.4.1
+
+### Changed
+
+- applied new default skjema type `structured-data` as default
+
 ## 1.4.0
 
 - added: More customization options for LandOptions
