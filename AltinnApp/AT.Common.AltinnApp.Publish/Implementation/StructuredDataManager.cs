@@ -73,7 +73,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
                 "Error while generating structured data for instance {InstanceId}",
                 instance.Id
             );
-            throw new Exception("Det har skjedd en uforutsett feil. Beklager ulempen.", e);
+            throw new InvalidOperationException("An unexpected error occurred while generating structured data. Please try again later.", e);
         }
     }
 }
@@ -188,12 +188,8 @@ file static class Extensions
         var json = JsonSerializer.Serialize(structuredData);
 
         // Put the string into a memory stream
-        var stream = new MemoryStream();
-        var writer = new StreamWriter(stream);
-        await writer.WriteAsync(json);
-        await writer.FlushAsync();
-        stream.Position = 0;
-
+        var bytes = System.Text.Encoding.UTF8.GetBytes(json);
+        var stream = new MemoryStream(bytes);
         return stream;
     }
 }
