@@ -82,7 +82,7 @@ public class DataService
     
     public async Task<MyDataModel?> GetFormData(Instance instance)
     {
-        // Get form data with default data type "skjema"
+        // Get form data with default data type "structured-data"
         return await _dataClient.GetSkjemaData<MyDataModel>(instance);
         
         // Or specify custom data type

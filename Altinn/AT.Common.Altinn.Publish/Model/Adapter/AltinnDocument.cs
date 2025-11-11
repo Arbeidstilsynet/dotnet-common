@@ -5,7 +5,7 @@ public record AltinnDocument
     public required Stream DocumentContent { get; init; }
 
     /// <summary>
-    /// The skjema which was sent in as XML
+    /// The structured data of the instance
     /// </summary>
     public required bool IsMainDocument { get; init; }
     public required FileMetadata FileMetadata { get; init; }

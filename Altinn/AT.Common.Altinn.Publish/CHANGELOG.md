@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.4.0
+
+### Changed
+
+- changed: using "structured-data" as default dataType for MainDocument.
+
 ## 1.3.2
 
 ### Added

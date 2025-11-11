@@ -13,13 +13,13 @@ public static class DataClientExtensions
     /// </summary>
     /// <param name="dataClient">Interface used to retrieve the form data</param>
     /// <param name="instance">The instance where the form data is located</param>
-    /// <param name="dataType">The datatype ID for the form. Default based on Arbeidstilsynet convention: "skjema"</param>
+    /// <param name="dataType">The datatype ID for the form. Default based on Arbeidstilsynet convention: "structured-data"</param>
     /// <typeparam name="T">The type of the data model for the form</typeparam>
     /// <returns>The form data of type <typeparamref name="T"/>, or null if no element with the type <paramref name="dataType"/> was found</returns>
     public static async Task<T?> GetSkjemaData<T>(
         this IDataClient dataClient,
         Instance instance,
-        string dataType = "skjema"
+        string dataType = "structured-data"
     )
     {
         var element = instance.Data.FirstOrDefault(d => d.DataType.Equals(dataType));
