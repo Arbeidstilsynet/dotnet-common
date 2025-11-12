@@ -34,9 +34,46 @@ public void ConfigureServices(IServiceCollection services)
     
     // OR add country options for Altinn dropdowns (includes AddLandskoder)
     services.AddLandOptions();
+
 }
 ```
 
+### Structured Data
+
+#### 1. Add the structured data extension to your service collection, specifying the data model and structured data types
+
+```csharp
+    // Adds a DataElement to you instance to hold structured data of type TStructuredData
+    // Content type will be "application/json".
+    services.AddStructuredData<TDataModel, TStructuredData>((datamodel) =>
+    {
+        return new TStructuredData
+        {
+            // Property mappings here
+        };
+    });
+```
+
+#### 2. Add the data element to your App/config/applicationmetadata.json dataTypes
+
+
+```json
+{
+  "dataTypes": [
+    {
+      "id": "structured-data",
+      "allowedContentTypes": [
+        "application/json"
+      ],
+      "allowedContributors": [
+        "app:owned"
+      ]
+    },
+    /// ...Other data types
+  ]
+}
+
+```
 ### Extension Methods
 
 #### Instance Extensions
