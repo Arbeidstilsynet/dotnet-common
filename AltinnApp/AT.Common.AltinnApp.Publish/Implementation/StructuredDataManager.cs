@@ -12,7 +12,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
     where TDataModel : class
     where TStructuredData : class
 {
-    public record Config
+    internal record Config
     {
         public Func<TDataModel, TStructuredData> MapFunc { get; init; }
 
