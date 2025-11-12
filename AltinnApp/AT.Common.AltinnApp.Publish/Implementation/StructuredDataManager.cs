@@ -154,7 +154,7 @@ file static class Extensions
     )
         where T : class
     {
-        var stream = await structuredData.ToBinaryStreamAsync();
+        var stream = structuredData.ToBinaryStream();
 
         await dataClient.InsertBinaryData(
             instance.Id,
@@ -182,7 +182,7 @@ file static class Extensions
         instance.Data.Remove(dataElement);
     }
 
-    public static async Task<Stream> ToBinaryStreamAsync<T>(this T structuredData)
+    public static Stream ToBinaryStream<T>(this T structuredData)
         where T : class
     {
         var json = JsonSerializer.Serialize(structuredData);
