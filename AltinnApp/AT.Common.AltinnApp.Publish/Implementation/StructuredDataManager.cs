@@ -73,7 +73,10 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
                 "Error while generating structured data for instance {InstanceId}",
                 instance.Id
             );
-            throw new InvalidOperationException("An unexpected error occurred while generating structured data. Please try again later.", e);
+            throw new InvalidOperationException(
+                "An unexpected error occurred while generating structured data. Please try again later.",
+                e
+            );
         }
     }
 }
