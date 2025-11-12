@@ -21,13 +21,13 @@ public class DataClientExtensionsTests
     }
 
     [Fact]
-    public async Task GetSkjemaData_CallsGetFormDataForDataType_skjema_ByDefault()
+    public async Task GetSkjemaData_CallsGetFormDataForDataType_structured_data_ByDefault()
     {
         var elementGuid = Guid.NewGuid();
 
         // Arrange
         var dataElement = Substitute.For<DataElement>();
-        dataElement.DataType = "skjema";
+        dataElement.DataType = "structured-data";
         dataElement.Id = elementGuid.ToString();
         _instance.Data = [dataElement];
 
