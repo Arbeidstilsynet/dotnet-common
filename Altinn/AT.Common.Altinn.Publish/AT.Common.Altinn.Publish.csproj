@@ -21,7 +21,7 @@
     />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="[8, 9)" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="[8, 9)" />
-    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="[8, 9)" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="[8,10.0.0]" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
