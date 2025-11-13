@@ -24,25 +24,18 @@ public static class DependencyInjectionExtensions
         FeatureFlagSettings config
     )
     {
-        services.AddSingleton<IFeatureFlags, FeatureFlagsImplementation>();
-        services.AddSingleton(config);
-        if (string.IsNullOrEmpty(config.Url) || string.IsNullOrEmpty(config.ApiKey))
+        var unleashSettings = new UnleashSettings
         {
-            services.AddSingleton<IUnleash, FakeUnleash>();
-        }
-        else
-        {
-            var unleashSettings = new UnleashSettings
-            {
-                AppName = config.AppName,
-                UnleashApi = new Uri(config.Url),
-                CustomHttpHeaders = { { "Authorization", config.ApiKey } },
-            };
-            services.AddSingleton<IUnleash>(provider =>
-                new UnleashClientFactory().CreateClient(unleashSettings)
-            );
-        }
+            AppName = config.AppName,
+            UnleashApi = new Uri(config.Url),
+            CustomHttpHeaders = { { "Authorization", config.ApiKey } },
+        };
+        services.AddSingleton<IUnleash>(provider =>
+            new UnleashClientFactory().CreateClient(unleashSettings)
+        );
 
+        services.AddSingleton(config);
+        services.AddSingleton<IFeatureFlags, FeatureFlagsImplementation>();
         return services;
     }
 }
