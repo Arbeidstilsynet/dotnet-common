@@ -10,33 +10,37 @@ namespace Arbeidstilsynet.Common.FeatureFlags.Implementation;
 internal class FeatureFlagsImplementation : IFeatureFlags
 {
     private readonly IUnleash _unleash;
+    private readonly FeatureFlagSettings _featureFlagSettings;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FeatureFlagsImplementation"/> class.
     /// </summary>
     /// <param name="unleash"></param>
-    public FeatureFlagsImplementation(IUnleash unleash)
+    /// <param name="featureFlagSettings"></param>
+    public FeatureFlagsImplementation(IUnleash unleash, FeatureFlagSettings featureFlagSettings)
     {
         _unleash = unleash;
+        _featureFlagSettings = featureFlagSettings;
     }
 
     /// <summary>
     /// Checks if a feature flag is enabled.
     /// </summary>
     /// <param name="featureName">Name of feature flag.</param>
-    /// <param name="context">Optional context.</param>
+    /// <param name="featureFlagContext">Optional context.</param>
     /// <returns></returns>
-    public bool IsEnabled(string featureName, FeatureFlagContext? context = null)
+    public bool IsEnabled(string featureName, FeatureFlagContext? featureFlagContext = null)
     {
         bool isEnabled;
-        if (context != null && context.UserId != null)
+        var unleashContext = new UnleashContext { Environment = _featureFlagSettings.Environment };
+        if (featureFlagContext != null && featureFlagContext.UserId != null)
         {
-            var unleashContext = new UnleashContext { UserId = context.UserId };
+            unleashContext.UserId = featureFlagContext.UserId;
             isEnabled = _unleash.IsEnabled(featureName, unleashContext);
         }
         else
         {
-            isEnabled = _unleash.IsEnabled(featureName);
+            isEnabled = _unleash.IsEnabled(featureName, unleashContext);
         }
 
         return isEnabled;
