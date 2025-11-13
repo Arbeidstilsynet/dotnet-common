@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 0.0.3
+
+### Added
+
+- feat: provide environment setting to determine correct context
+
 ## 0.0.2
 
 ### Changed
