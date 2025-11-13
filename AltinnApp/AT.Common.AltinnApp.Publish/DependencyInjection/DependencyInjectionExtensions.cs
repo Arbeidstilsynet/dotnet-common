@@ -89,6 +89,7 @@ public static class DependencyInjectionExtensions
     /// </summary>
     /// <param name="services"></param>
     /// <param name="mapFunc">The function responsible for mapping from <typeparamref name="TDataModel"/> to <typeparamref name="TStructuredData"/> </param>
+    /// <param name="includeErrorDetails">Whether to include error details in the structured data in case of mapping errors. Default is false.</param>
     /// <typeparam name="TStructuredData"></typeparam>
     /// <typeparam name="TDataModel"></typeparam>
     /// <returns></returns>
@@ -107,13 +108,17 @@ public static class DependencyInjectionExtensions
     /// </remarks>
     public static IServiceCollection AddStructuredData<TDataModel, TStructuredData>(
         this IServiceCollection services,
-        Func<TDataModel, TStructuredData> mapFunc
+        Func<TDataModel, TStructuredData> mapFunc,
+        bool includeErrorDetails = false
     )
         where TDataModel : class
         where TStructuredData : class
     {
         services.AddSingleton(
             new StructuredDataManager<TDataModel, TStructuredData>.Config(mapFunc)
+            {
+                IncludeErrorDetails = includeErrorDetails,
+            }
         );
         services.AddSingleton<StructuredDataManager<TDataModel, TStructuredData>>();
         services.AddTransient<IProcessEnd>(sp =>
