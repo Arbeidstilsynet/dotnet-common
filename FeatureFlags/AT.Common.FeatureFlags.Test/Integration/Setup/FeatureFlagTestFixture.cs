@@ -14,16 +14,7 @@ public class FeatureFlagsTestFixture : TestBedFixture
 {
     protected override void AddServices(IServiceCollection services, IConfiguration? configuration)
     {
-        services.AddFeatureFlags(
-            new()
-            {
-                Url = "http://example.com",
-                ApiKey = "etellerannet",
-                Environment = "development",
-            }
-        );
-        services.RemoveAll<IUnleash>();
-        services.AddSingleton<IUnleash>(new FakeUnleash());
+        services.AddFeatureFlags(new() { Environment = "development" });
     }
 
     protected override IEnumerable<TestAppSettings> GetTestAppSettings() => [];
