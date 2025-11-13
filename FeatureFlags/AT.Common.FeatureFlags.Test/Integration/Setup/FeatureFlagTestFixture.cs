@@ -14,10 +14,7 @@ public class FeatureFlagsTestFixture : TestBedFixture
 {
     protected override void AddServices(IServiceCollection services, IConfiguration? configuration)
     {
-        services.AddFeatureFlags(
-            Substitute.For<IWebHostEnvironment>(),
-            new() { Environment = "development" }
-        );
+        services.AddFeatureFlags(new() { Environment = "development" });
     }
 
     protected override IEnumerable<TestAppSettings> GetTestAppSettings() => [];
