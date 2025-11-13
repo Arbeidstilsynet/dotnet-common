@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using Altinn.App.Core.Features;
 using Altinn.App.Core.Internal.App;
@@ -14,6 +15,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
 {
     internal record Config
     {
+        public bool IncludeErrorDetails { get; init; } = false;
         public Func<TDataModel, TStructuredData> MapFunc { get; init; }
 
         public Config(Func<TDataModel, TStructuredData> mapFunc)
@@ -73,10 +75,17 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
                 "Error while generating structured data for instance {InstanceId}",
                 instance.Id
             );
-            throw new InvalidOperationException(
-                "An unexpected error occurred while generating structured data. Please try again later.",
-                e
+
+            var errorMessageBuilder = new StringBuilder(
+                "An unexpected error occurred while generating structured data. Please try again later."
             );
+
+            if (_config.IncludeErrorDetails)
+            {
+                errorMessageBuilder.AppendLine().AppendLine().Append("Details: ").Append(e.Message);
+            }
+
+            throw new InvalidOperationException(errorMessageBuilder.ToString(), e);
         }
     }
 }
