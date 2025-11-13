@@ -2,6 +2,7 @@ using Arbeidstilsynet.Common.FeatureFlags.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using NSubstitute;
 using Unleash;
 using Xunit.Microsoft.DependencyInjection;
@@ -13,9 +14,10 @@ public class FeatureFlagsTestFixture : TestBedFixture
 {
     protected override void AddServices(IServiceCollection services, IConfiguration? configuration)
     {
-        var fakeUnleash = new FakeUnleash();
-        services.AddSingleton<IUnleash>(fakeUnleash);
-        services.AddFeatureFlags(Substitute.For<IWebHostEnvironment>(), null);
+        services.AddFeatureFlags(
+            Substitute.For<IWebHostEnvironment>(),
+            new() { Environment = "development" }
+        );
     }
 
     protected override IEnumerable<TestAppSettings> GetTestAppSettings() => [];

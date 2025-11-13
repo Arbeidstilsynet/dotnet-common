@@ -11,7 +11,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Description></Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>0.0.2</Version>
+    <Version>0.0.3</Version>
     <IsPublishable>true</IsPublishable>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>

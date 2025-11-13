@@ -25,4 +25,10 @@ public record FeatureFlagSettings
     /// </summary>
     [ConfigurationKeyName("AppName")]
     public string AppName { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Environment name for feature flag context.
+    /// </summary>
+    [ConfigurationKeyName("Environment")]
+    public string Environment { get; init; } = string.Empty;
 }
