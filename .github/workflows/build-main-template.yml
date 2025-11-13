@@ -21,6 +21,6 @@ jobs:
           path: ${{ inputs.package-path }}
 
       - name: Build and Test .NET solution
-        uses: Arbeidstilsynet/action-dotnet-build@46ba407f9370390d5b20f3d01f4bd9a191c78345 # v1
+        uses: Arbeidstilsynet/action-dotnet-build@d5fc49a03caa254f019fff4fd06eab4e99d877e7 # v2
         with:
           working-directory: ${{ steps.get_parent_dir.outputs.parent_dir }}
