@@ -15,10 +15,7 @@
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference
-      Include="Arbeidstilsynet.Common.AspNetCore.Extensions"
-      Version="2.0.0-alpha"
-    />
+    <PackageReference Include="Arbeidstilsynet.Common.AspNetCore.Extensions" Version="2.0.0" />
     <PackageReference Include="FluentValidation" Version="12.1.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.0" />
     <PackageReference
