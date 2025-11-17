@@ -8,7 +8,6 @@ using WireMock.Matchers;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using Xunit;
-using Xunit.Abstractions;
 using Xunit.Microsoft.DependencyInjection.Abstracts;
 
 namespace Arbeidstilsynet.Common.EraClient.Test;

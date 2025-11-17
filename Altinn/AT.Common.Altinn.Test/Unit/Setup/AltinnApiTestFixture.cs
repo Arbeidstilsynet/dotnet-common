@@ -2,7 +2,6 @@ using System.Security.Cryptography;
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Model.Api;
 using Arbeidstilsynet.Common.Altinn.Ports.Token;
-using Arbeidstilsynet.Common.TestExtensions.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -139,6 +138,6 @@ file static class Extensions
 
         using var fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
-        server.AddOpenApiMappings(fileStream, mappingVisitor, settings);
+        //server.AddOpenApiMappings(fileStream, mappingVisitor, settings);
     }
 }

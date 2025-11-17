@@ -6,6 +6,7 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <RootNamespace>Arbeidstilsynet.Common.Enhetsregisteret.Test</RootNamespace>
+    <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Arbeidstilsynet.Common.TestExtensions" Version="0.0.1" />

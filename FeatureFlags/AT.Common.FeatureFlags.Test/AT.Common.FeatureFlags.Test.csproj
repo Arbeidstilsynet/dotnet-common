@@ -8,6 +8,7 @@
     <IsTestProject>true</IsTestProject>
     <IsPublishable>false</IsPublishable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Shouldly" Version="4.3.0" />

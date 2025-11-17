@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <RootNamespace>Arbeidstilsynet.Common.TestExtensions.Test</RootNamespace>
     <IsPackable>false</IsPackable>
+    <OutputType>Exe</OutputType>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
   <ItemGroup>

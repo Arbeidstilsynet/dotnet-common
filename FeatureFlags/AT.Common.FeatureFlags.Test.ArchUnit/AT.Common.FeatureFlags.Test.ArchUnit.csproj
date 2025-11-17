@@ -8,6 +8,7 @@
     <IsTestProject>true</IsTestProject>
     <RootNamespace>Arbeidstilsynet.Common.FeatureFlags.Test.ArchUnit</RootNamespace>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
