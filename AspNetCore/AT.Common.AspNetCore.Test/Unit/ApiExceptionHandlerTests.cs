@@ -116,9 +116,8 @@ public class ApiExceptionHandlerTests
         var exceptionHandlerPathFeature = Substitute.For<IExceptionHandlerPathFeature>();
         exceptionHandlerPathFeature.Error.Returns(exception);
 
-        var context = Substitute.For<HttpContext>();
-
-        context.Features.Get<IExceptionHandlerPathFeature>().Returns(exceptionHandlerPathFeature);
+        var context = new DefaultHttpContext();
+        context.Features.Set(exceptionHandlerPathFeature);
         context.Response.Body = new MemoryStream();
 
         return context;

@@ -2,7 +2,6 @@ using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Arbeidstilsynet.Common.Altinn.Test.Unit.Setup;
 using Shouldly;
-using Xunit.Abstractions;
 using Xunit.Microsoft.DependencyInjection.Abstracts;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit.ClientTests;

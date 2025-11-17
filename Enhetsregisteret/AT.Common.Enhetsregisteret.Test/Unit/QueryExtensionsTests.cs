@@ -29,9 +29,8 @@ public class QueryExtensionsTests
         }
         else
         {
-            Assert.Throws<ArgumentException>(() =>
-                orgnummer.ValidateOrgnummerOrThrow(nameof(orgnummer))
-            );
+            var result = () => orgnummer.ValidateOrgnummerOrThrow(nameof(orgnummer));
+            result.ShouldThrow<ArgumentException>();
         }
     }
 

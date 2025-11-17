@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.0.0
+
+### Changed
+
+- changed(deps): Major dotnet updated (v10)
+
 ## 1.5.1
 
 - added: Option to include error details related to mapping structured data in the validation response. This intended for development environments.

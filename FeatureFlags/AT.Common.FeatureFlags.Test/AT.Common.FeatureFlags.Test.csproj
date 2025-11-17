@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Arbeidstilsynet.Common.FeatureFlags.Test</RootNamespace>
@@ -8,14 +8,15 @@
     <IsTestProject>true</IsTestProject>
     <IsPublishable>false</IsPublishable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Shouldly" Version="4.3.0" />
     <PackageReference Include="NSubstitute" Version="5.3.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageReference Include="xunit.v3.core" Version="3.2.0" />
     <PackageReference Include="Unleash.Client" Version="5.5.1" />
-    <PackageReference Include="Xunit.Microsoft.DependencyInjection" Version="8.2.2" />
+    <PackageReference Include="Xunit.Microsoft.DependencyInjection" Version="10.0.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>

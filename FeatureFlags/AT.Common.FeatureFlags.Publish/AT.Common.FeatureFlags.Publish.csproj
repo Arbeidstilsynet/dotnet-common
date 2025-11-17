@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Arbeidstilsynet.Common.FeatureFlags</RootNamespace>
@@ -11,7 +11,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Description></Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>0.0.4</Version>
+    <Version>1.0.0</Version>
     <IsPublishable>true</IsPublishable>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
@@ -19,13 +19,13 @@
   <ItemGroup>
     <PackageReference
       Include="Microsoft.Extensions.DependencyInjection.Abstractions"
-      Version="8.0.2"
+      Version="10.0.0"
     />
     <PackageReference
       Include="Arbeidstilsynet.Common.AspNetCore.Extensions"
-      Version="[1.4.1, 2.0)"
+      Version="2.0.0-alpha"
     />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.0" />
     <PackageReference Include="Unleash.Client" Version="5.5.1">
       <PrivateAssets>compile,build</PrivateAssets>
     </PackageReference>

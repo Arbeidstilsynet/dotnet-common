@@ -58,7 +58,7 @@ jobs:
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
       - name: Build and Test .NET solution
-        uses: Arbeidstilsynet/action-dotnet-build@46ba407f9370390d5b20f3d01f4bd9a191c78345 # v1
+        uses: Arbeidstilsynet/action-dotnet-build@d5fc49a03caa254f019fff4fd06eab4e99d877e7 # v2
         with:
           working-directory: ${{ needs.check-and-prepare.outputs.parent_dir }}
 
@@ -79,7 +79,7 @@ jobs:
           working-directory: ${{ needs.check-and-prepare.outputs.package_path }}
 
       - name: Check if package version exists
-        uses: Arbeidstilsynet/action-nuget-check-published@f0a54fcd5182daa294a0ac63b0fb072efda10f97 # v1
+        uses: Arbeidstilsynet/action-nuget-check-published@d448be83e0b0d006aad7ac77df46178b4068c500 # v2
         id: nuget_version_check
         with:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
@@ -103,7 +103,7 @@ jobs:
 
       - name: Publish prerelease package
         if: steps.prerelease_check.outputs.is_prerelease == 'true'
-        uses: Arbeidstilsynet/action-dotnet-publish@136762ebb42830b985d52cf0525bc24ec3000a57 # v1
+        uses: Arbeidstilsynet/action-dotnet-publish@1f0a759b152f5e6024fec0025db31ff4f5a0192d # v2
         with:
           working-directory: ${{ needs.check-and-prepare.outputs.package_path }}
           nuget-auth-token: ${{ secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT }}

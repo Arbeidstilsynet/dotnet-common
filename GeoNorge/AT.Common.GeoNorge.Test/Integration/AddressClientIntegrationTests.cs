@@ -2,7 +2,6 @@ using Arbeidstilsynet.Common.GeoNorge.Model.Request;
 using Arbeidstilsynet.Common.GeoNorge.Ports;
 using Arbeidstilsynet.Common.GeoNorge.Test.Integration.Setup;
 using Shouldly;
-using Xunit.Abstractions;
 using Xunit.Microsoft.DependencyInjection.Abstracts;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Adapters.Test.Integration;
