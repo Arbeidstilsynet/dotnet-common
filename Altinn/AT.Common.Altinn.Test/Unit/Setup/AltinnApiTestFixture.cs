@@ -138,6 +138,6 @@ file static class Extensions
 
         using var fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
-        //server.AddOpenApiMappings(fileStream, mappingVisitor, settings);
+        server.AddOpenApiMappings(fileStream, mappingVisitor, settings);
     }
 }
