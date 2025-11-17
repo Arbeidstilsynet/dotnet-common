@@ -65,7 +65,7 @@ public class ConfigurationExtensionsTests
         var exception = act.ShouldThrow<InvalidOperationException>();
 
         exception.Message.ShouldContain(
-            "Failed to convert configuration value at 'Nested:RenamedInt' to type 'System.Int32'."
+            "Failed to convert configuration value 'NotAnInt' at 'Nested:RenamedInt' to type 'System.Int32'."
         );
     }
 
