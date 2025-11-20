@@ -19,6 +19,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.0.1
+
+### Changed
+
+- changed(deps): Updated internal package referances (remove prerelease version)
+
+## 1.0.0
+
+### Changed
+
+- changed(deps): Major dotnet updated (v10)
+
+## 0.0.4
+
+### Changed
+
+- fix: make feature flag settings required
+
+## 0.0.3
+
+### Added
+
+- feat: provide environment setting to determine correct context
+
 ## 0.0.2
 
 ### Changed

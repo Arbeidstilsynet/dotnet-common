@@ -5,7 +5,6 @@ using Arbeidstilsynet.Common.FeatureFlags.Test.Integration.Setup;
 using Shouldly;
 using Unleash;
 using Xunit;
-using Xunit.Abstractions;
 using Xunit.Microsoft.DependencyInjection.Abstracts;
 
 namespace Arbeidstilsynet.Common.FeatureFlags.Test.Integration;

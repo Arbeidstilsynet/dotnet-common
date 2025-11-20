@@ -17,38 +17,31 @@ public static class DependencyInjectionExtensions
     /// Registers an implementation of <see cref="IFeatureFlags"/> in <paramref name="services"/>.
     /// </summary>
     /// <param name="services"><see cref="IServiceCollection"/> to register the service in.</param>
-    /// <param name="webHostEnvironment">The web host environment.</param>
     /// <param name="config">Feature flag settings.</param>
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
     public static IServiceCollection AddFeatureFlags(
         this IServiceCollection services,
-        IWebHostEnvironment webHostEnvironment,
-        FeatureFlagSettings? config
+        FeatureFlagSettings config
     )
     {
-        services.AddSingleton<IFeatureFlags, FeatureFlagsImplementation>();
-
-        if (
-            config is null
-            || string.IsNullOrWhiteSpace(config.Url)
-            || string.IsNullOrWhiteSpace(config.ApiKey)
-        )
+        if (string.IsNullOrEmpty(config.Url) || string.IsNullOrEmpty(config.ApiKey))
         {
             services.AddSingleton<IUnleash, FakeUnleash>();
-            return services;
         }
-
-        var unleashSettings = new UnleashSettings
+        else
         {
-            AppName = config.AppName,
-            InstanceTag = webHostEnvironment.EnvironmentName,
-            UnleashApi = new Uri(config.Url),
-            CustomHttpHeaders = { { "Authorization", config.ApiKey } },
-        };
-
-        services.AddSingleton<IUnleash>(provider =>
-            new UnleashClientFactory().CreateClient(unleashSettings)
-        );
+            var unleashSettings = new UnleashSettings
+            {
+                AppName = config.AppName,
+                UnleashApi = new Uri(config.Url),
+                CustomHttpHeaders = { { "Authorization", config.ApiKey } },
+            };
+            services.AddSingleton<IUnleash>(provider =>
+                new UnleashClientFactory().CreateClient(unleashSettings)
+            );
+        }
+        services.AddSingleton(config);
+        services.AddSingleton<IFeatureFlags, FeatureFlagsImplementation>();
         return services;
     }
 }
