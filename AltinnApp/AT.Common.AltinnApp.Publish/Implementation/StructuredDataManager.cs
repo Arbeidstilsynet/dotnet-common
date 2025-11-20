@@ -92,73 +92,6 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
 
 file static class Extensions
 {
-    public static async Task<DataElement> GetRequiredDataModelElement<T>(
-        this IApplicationClient applicationClient,
-        Instance instance
-    )
-    {
-        var type = typeof(T);
-
-        var application = await applicationClient.GetApplication(
-            instance.Org,
-            instance.GetAppName()
-        );
-
-        if (application == null)
-        {
-            throw new InvalidOperationException("Could not retrieve application metadata");
-        }
-
-        var dataType = application.DataTypes.FirstOrDefault(d =>
-            d.AppLogic?.ClassRef == type.FullName
-        );
-
-        if (dataType == null)
-        {
-            throw new InvalidOperationException(
-                $"Could not find data type for {type.FullName} in application metadata"
-            );
-        }
-
-        var dataModelElement = instance.Data.FirstOrDefault(d => d.DataType == dataType.Id);
-
-        if (dataModelElement == null)
-        {
-            throw new InvalidOperationException(
-                $"Could not find data element for data type {dataType.Id} in instance data"
-            );
-        }
-
-        return dataModelElement;
-    }
-
-    public static async Task<T> GetData<T>(
-        this IDataClient dataClient,
-        Instance instance,
-        DataElement dataElement
-    )
-        where T : class
-    {
-        if (
-            await dataClient.GetFormData(
-                instance.GetInstanceGuid(),
-                typeof(T),
-                instance.Org,
-                instance.AppId,
-                instance.GetInstanceOwnerPartyId(),
-                Guid.Parse(dataElement.Id)
-            )
-            is not T data
-        )
-        {
-            throw new InvalidOperationException(
-                $"Could not retrieve data model of type {typeof(T).FullName} from data element {dataElement.Id}"
-            );
-        }
-
-        return data;
-    }
-
     public static async Task InsertStructuredData<T>(
         this IDataClient dataClient,
         Instance instance,
@@ -177,24 +110,7 @@ file static class Extensions
         );
     }
 
-    public static async Task DeleteElement(
-        this IDataClient dataClient,
-        Instance instance,
-        DataElement dataElement
-    )
-    {
-        await dataClient.DeleteData(
-            instance.Org,
-            instance.GetAppName(),
-            instance.GetInstanceOwnerPartyId(),
-            instance.GetInstanceGuid(),
-            Guid.Parse(dataElement.Id),
-            false
-        );
-        instance.Data.Remove(dataElement);
-    }
-
-    public static Stream ToBinaryStream<T>(this T structuredData)
+    private static Stream ToBinaryStream<T>(this T structuredData)
         where T : class
     {
         var json = JsonSerializer.Serialize(structuredData);

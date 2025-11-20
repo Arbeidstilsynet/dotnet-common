@@ -19,6 +19,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.6.0
+
+- added: PreSubmitProcessor to make it easier to implement custom pre-submit logic in AltinnApps.
+- added: A few more extension methods for `IApplicationClient` and `IDataClient`
+
 ## 1.5.1
 
 - added: Option to include error details related to mapping structured data in the validation response. This intended for development environments.
