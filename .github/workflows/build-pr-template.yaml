@@ -27,7 +27,7 @@ jobs:
         with:
           path: ${{ inputs.package-path }}
 
-      - name: Changes for publishing?
+      - name: Changes which require build?
         uses: Arbeidstilsynet/action-check-changes@6e51077b178b819e4194f40e32bd562df0954f3f # v1
         id: check_changes_for_build
         with:
