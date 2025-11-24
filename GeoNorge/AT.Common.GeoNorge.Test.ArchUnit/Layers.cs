@@ -30,7 +30,7 @@ namespace GeoNorge.ArchUnit.Tests
             .That()
             .ResideInAssembly(GeoNorgeAssembly)
             .And()
-            .DoNotResideInNamespace("Coverlet.Core.Instrumentation.Tracker")
+            .DoNotResideInNamespace("Microsoft.CodeCoverage.Instrumentation.Static.Tracker")
             .As("GeoNorge Layer");
 
         internal static readonly IObjectProvider<IType> PublicInterfaces = Interfaces()

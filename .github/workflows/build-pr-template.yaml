@@ -12,7 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
-      should-continue: ${{ steps.check_changes.outputs.changes_detected }}
+      should-build: ${{ steps.check_changes_for_build.outputs.changes_detected }}
+      should-publish: ${{ steps.check_changes_for_publishing.outputs.changes_detected }}
       parent_dir: ${{ steps.get_parent_dir.outputs.parent_dir }}
       package_path: ${{ inputs.package-path }}
     steps:
@@ -28,11 +29,20 @@ jobs:
 
       - name: Changes for publishing?
         uses: Arbeidstilsynet/action-check-changes@6e51077b178b819e4194f40e32bd562df0954f3f # v1
-        id: check_changes
+        id: check_changes_for_build
         with:
           base-ref: origin/main
           include: |
             ${{ steps.get_parent_dir.outputs.parent_dir }}
+
+
+      - name: Changes for publishing?
+        uses: Arbeidstilsynet/action-check-changes@6e51077b178b819e4194f40e32bd562df0954f3f # v1
+        id: check_changes_for_publishing
+        with:
+          base-ref: origin/main
+          include: |
+            ${{ steps.get_parent_dir.outputs.parent_dir }}/AT.Common.*.Publish
           exclude: |
             ${{ steps.get_parent_dir.outputs.parent_dir }}/AT.Common.*.Test*
 
@@ -40,7 +50,7 @@ jobs:
     needs: check-and-prepare
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    if: needs.check-and-prepare.outputs.should-continue == 'true'
+    if: needs.check-and-prepare.outputs.should-build == 'true'
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
       - name: Build and Test .NET solution
@@ -52,7 +62,7 @@ jobs:
     needs: [check-and-prepare, build-dotnet]
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    if: needs.check-and-prepare.outputs.should-continue == 'true'
+    if: needs.check-and-prepare.outputs.should-publish == 'true'
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:

@@ -31,7 +31,7 @@ namespace Arbeidstilsynet.Common.FeatureFlags.Test.ArchUnit
             .That()
             .ResideInAssembly(FeatureFlagsAssembly)
             .And()
-            .DoNotResideInNamespaceMatching("Coverlet.Core.Instrumentation.Tracker")
+            .DoNotResideInNamespace("Microsoft.CodeCoverage.Instrumentation.Static.Tracker")
             .As("FeatureFlags Layer");
 
         internal static readonly IObjectProvider<IType> PublicInterfaces = Interfaces()

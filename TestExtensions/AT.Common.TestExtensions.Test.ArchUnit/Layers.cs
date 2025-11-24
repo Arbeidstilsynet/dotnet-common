@@ -30,7 +30,7 @@ namespace TestExtensions.ArchUnit.Tests
             .That()
             .ResideInAssembly(TestExtensionsAssembly)
             .And()
-            .DoNotResideInNamespace("Coverlet.Core.Instrumentation.Tracker")
+            .DoNotResideInNamespace("Microsoft.CodeCoverage.Instrumentation.Static.Tracker")
             .As("TestExtensions Layer");
 
         internal static readonly IObjectProvider<IType> PublicInterfaces = Interfaces()
