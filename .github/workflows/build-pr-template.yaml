@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
-      should-continue: ${{ steps.check_changes.outputs.should-continue }}
+      should-continue: ${{ steps.check_changes.outputs.changes_detected }}
       parent_dir: ${{ steps.get_parent_dir.outputs.parent_dir }}
       package_path: ${{ inputs.package-path }}
     steps:
@@ -26,29 +26,15 @@ jobs:
         with:
           path: ${{ inputs.package-path }}
 
-      - name: Check if changes are inside package path
+      - name: Changes for publishing?
+        uses: Arbeidstilsynet/action-check-changes@6e51077b178b819e4194f40e32bd562df0954f3f # v1
         id: check_changes
-        run: |
-          parent_dir="${{ steps.get_parent_dir.outputs.parent_dir }}"
-          echo "DEBUG: parent_dir=$parent_dir"
-          changed_files=$(git --no-pager diff --name-only origin/main...HEAD | grep "^$parent_dir/" || true)
-          # If empty, do not continue
-            if [ -z "$changed_files" ]; then
-            echo "should-continue=false" >> $GITHUB_OUTPUT
-            echo "No changes detected which require a version update. Exiting workflow gracefully."
-            exit 0
-          fi
-          # Check if all changed files are markdown files
-          non_md_files=$(echo "$changed_files" | grep -vE '\.md$' || true)
-          # If empty, do not continue
-          if [ -z "$non_md_files" ]; then
-            echo "should-continue=false" >> $GITHUB_OUTPUT
-            echo "No changes detected which require a version update. Exiting workflow gracefully."
-          else
-            echo "should-continue=true" >> $GITHUB_OUTPUT
-            echo "Changes detected which require a version update. The workflow will continue..."
-          fi
-          exit 0
+        with:
+          base-ref: origin/main
+          include: |
+            ${{ steps.get_parent_dir.outputs.parent_dir }}
+          exclude: |
+            ${{ steps.get_parent_dir.outputs.parent_dir }}/AT.Common.*.Test*
 
   build-dotnet:
     needs: check-and-prepare
