@@ -31,7 +31,7 @@ namespace AspNetCore.ArchUnit.Tests
             .That()
             .ResideInAssembly(AspNetCoreAssembly)
             .And()
-            .DoNotResideInNamespace("Coverlet.Core.Instrumentation.Tracker")
+            .DoNotResideInNamespace("Microsoft.CodeCoverage.Instrumentation.Static.Tracker")
             .As("AspNetCore Layer");
 
         internal static readonly IObjectProvider<IType> PublicInterfaces = Interfaces()

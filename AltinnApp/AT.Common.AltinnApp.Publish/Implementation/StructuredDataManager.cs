@@ -62,11 +62,19 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
             var dataModelElement = await _applicationClient.GetRequiredDataModelElement<TDataModel>(
                 instance
             );
-            var dataModel = await _dataClient.GetData<TDataModel>(instance, dataModelElement);
+            var dataModel = await _dataClient.GetData<TDataModel>(
+                instance,
+                dataModelElement,
+                CancellationToken.None
+            );
 
             var structuredData = _config.MapFunc.Invoke(dataModel);
 
-            await _dataClient.InsertStructuredData(instance, structuredData);
+            await _dataClient.InsertStructuredData(
+                instance,
+                structuredData,
+                CancellationToken.None
+            );
         }
         catch (Exception e)
         {
@@ -135,7 +143,8 @@ file static class Extensions
     public static async Task<T> GetData<T>(
         this IDataClient dataClient,
         Instance instance,
-        DataElement dataElement
+        DataElement dataElement,
+        CancellationToken? cancellationToken = null
     )
         where T : class
     {
@@ -146,7 +155,8 @@ file static class Extensions
                 instance.Org,
                 instance.AppId,
                 instance.GetInstanceOwnerPartyId(),
-                Guid.Parse(dataElement.Id)
+                Guid.Parse(dataElement.Id),
+                cancellationToken: cancellationToken ?? CancellationToken.None
             )
             is not T data
         )
@@ -162,7 +172,8 @@ file static class Extensions
     public static async Task InsertStructuredData<T>(
         this IDataClient dataClient,
         Instance instance,
-        T structuredData
+        T structuredData,
+        CancellationToken? cancellationToken = null
     )
         where T : class
     {
@@ -173,7 +184,8 @@ file static class Extensions
             "structured-data",
             "application/json",
             "structured-data.json",
-            stream
+            stream,
+            cancellationToken: cancellationToken ?? CancellationToken.None
         );
     }
 

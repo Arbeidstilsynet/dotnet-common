@@ -97,7 +97,9 @@ public class MemoryCachingHandlerTests
         var response = await invoker.SendAsync(request, CancellationToken.None);
 
         await Verify(response, _verifySettings);
-        var content = await response.Content.ReadAsStringAsync();
+        var content = await response.Content.ReadAsStringAsync(
+            TestContext.Current.CancellationToken
+        );
         content.ShouldBe("cached");
     }
 
@@ -198,7 +200,9 @@ public class MemoryCachingHandlerTests
         var thirdResponse = await invoker.SendAsync(request, CancellationToken.None);
 
         await Verify(thirdResponse, _verifySettings);
-        var content = await thirdResponse.Content.ReadAsStringAsync();
+        var content = await thirdResponse.Content.ReadAsStringAsync(
+            TestContext.Current.CancellationToken
+        );
         content.ShouldBe("test");
     }
 

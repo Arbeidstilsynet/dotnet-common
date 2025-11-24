@@ -53,7 +53,8 @@ public class StructuredDataManagerTests
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Any<int>(),
-                Arg.Any<Guid>()
+                Arg.Any<Guid>(),
+                cancellationToken: Arg.Any<CancellationToken>()
             )
             .Returns(dataModel);
 
@@ -83,7 +84,8 @@ public class StructuredDataManagerTests
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Any<int>(),
-                Arg.Any<Guid>()
+                Arg.Any<Guid>(),
+                cancellationToken: Arg.Any<CancellationToken>()
             )
             .Returns(dataModel);
 
@@ -99,7 +101,8 @@ public class StructuredDataManagerTests
                 instance.Org,
                 instance.AppId,
                 instance.GetInstanceOwnerPartyId(),
-                expectedGuid
+                expectedGuid,
+                cancellationToken: Arg.Any<CancellationToken>()
             );
     }
 
@@ -121,7 +124,8 @@ public class StructuredDataManagerTests
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Any<int>(),
-                Arg.Any<Guid>()
+                Arg.Any<Guid>(),
+                cancellationToken: Arg.Any<CancellationToken>()
             )
             .Returns(dataModel);
 
@@ -136,7 +140,8 @@ public class StructuredDataManagerTests
                 "structured-data",
                 "application/json",
                 "structured-data.json",
-                Arg.Any<Stream>()
+                Arg.Any<Stream>(),
+                cancellationToken: Arg.Any<CancellationToken>()
             );
     }
 
@@ -181,7 +186,8 @@ public class StructuredDataManagerTests
                 instance.GetInstanceOwnerPartyId(),
                 instance.GetInstanceGuid(),
                 expectedGuid,
-                false
+                false,
+                cancellationToken: Arg.Any<CancellationToken>()
             );
     }
 

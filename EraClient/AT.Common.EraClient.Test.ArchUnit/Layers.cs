@@ -30,7 +30,7 @@ namespace EraClient.ArchUnit.Tests
             .That()
             .ResideInAssembly(EraClientAssembly)
             .And()
-            .DoNotResideInNamespace("Coverlet.Core.Instrumentation.Tracker")
+            .DoNotResideInNamespace("Microsoft.CodeCoverage.Instrumentation.Static.Tracker")
             .As("EraClient Layer");
 
         internal static readonly IObjectProvider<IType> PublicInterfaces = Interfaces()
