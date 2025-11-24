@@ -5,15 +5,15 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.OpenApi;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Scalar.AspNetCore;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
 
@@ -109,18 +109,30 @@ public static partial class StartupExtensions
     }
 
     /// <summary>
-    /// Adds Swagger, allowing for API documentation generation.
+    /// Adds OpenAPI, allowing for API documentation generation.
     /// </summary>
     /// <param name="services"></param>
-    /// <param name="configureSwaggerGen">Configures the AddSwaggerGen() call</param>
     /// <returns></returns>
-    public static IServiceCollection ConfigureSwagger(
+    public static IServiceCollection ConfigureOpenApi(this IServiceCollection services)
+    {
+        services.AddOpenApi();
+        return services;
+    }
+
+    /// <summary>
+    /// Adds OpenAPI, allowing for API documentation generation.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="documentName"></param>
+    /// <param name="openApiOptions"></param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureOpenApi(
         this IServiceCollection services,
-        Action<SwaggerGenOptions>? configureSwaggerGen = null
+        string documentName,
+        Action<OpenApiOptions>? openApiOptions = null
     )
     {
-        services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen(configureSwaggerGen);
+        services.AddOpenApi(documentName, openApiOptions ?? (_ => { }));
 
         return services;
     }
@@ -160,18 +172,14 @@ public static partial class StartupExtensions
     }
 
     /// <summary>
-    /// Adds the Scalar API reference endpoint and configures Swagger to serve the OpenAPI document at "/openapi/{documentName}.json".
+    /// Adds the Scalar reference endpoint and configures Scalar to serve the OpenAPI document at "/openapi/{documentName}.json".
     /// </summary>
     /// <param name="app"></param>
     /// <returns></returns>
     public static WebApplication AddScalar(this WebApplication app)
     {
+        app.MapOpenApi();
         app.MapScalarApiReference();
-        app.UseSwagger(options =>
-        {
-            options.RouteTemplate = "/openapi/{documentName}.json";
-        });
-
         return app;
     }
 
