@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.1.0
+
+### Changed
+
+- feat(openapi): Use microsoft open api generation instead of swashbuckle
+
 ## 2.0.0
 
 ### Changed
