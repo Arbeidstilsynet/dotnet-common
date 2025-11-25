@@ -11,7 +11,10 @@ using Xunit;
 
 namespace Arbeidstilsynet.Common.AltinnApp.Test.Unit;
 
-[SuppressMessage("Usage", "xUnit1051:Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken")]
+[SuppressMessage(
+    "Usage",
+    "xUnit1051:Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken"
+)]
 public class PreSubmitProcessorTests
 {
     private readonly IDataClient _dataClient;
