@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Altinn.App.Core.Internal.App;
 using Altinn.App.Core.Internal.Data;
 using Altinn.Platform.Storage.Interface.Models;
@@ -10,6 +11,7 @@ using Xunit;
 
 namespace Arbeidstilsynet.Common.AltinnApp.Test.Unit;
 
+[SuppressMessage("Usage", "xUnit1051:Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken")]
 public class PreSubmitProcessorTests
 {
     private readonly IDataClient _dataClient;
@@ -42,8 +44,7 @@ public class PreSubmitProcessorTests
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Any<int>(),
-                Arg.Any<Guid>(),
-                cancellationToken: TestContext.Current.CancellationToken
+                Arg.Any<Guid>()
             )
             .Returns(dataModel);
 
@@ -77,8 +78,7 @@ public class PreSubmitProcessorTests
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Any<int>(),
-                Arg.Any<Guid>(),
-                cancellationToken: TestContext.Current.CancellationToken
+                Arg.Any<Guid>()
             )
             .Returns(dataModel);
 
@@ -94,8 +94,7 @@ public class PreSubmitProcessorTests
                 instance.Org,
                 instance.AppId,
                 instance.GetInstanceOwnerPartyId(),
-                expectedGuid,
-                cancellationToken: TestContext.Current.CancellationToken
+                expectedGuid
             );
     }
 
@@ -120,8 +119,7 @@ public class PreSubmitProcessorTests
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Any<int>(),
-                Arg.Any<Guid>(),
-                cancellationToken: TestContext.Current.CancellationToken
+                Arg.Any<Guid>()
             )
             .Returns(dataModel);
 
@@ -154,8 +152,7 @@ public class PreSubmitProcessorTests
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Any<int>(),
-                Arg.Any<Guid>(),
-                cancellationToken: TestContext.Current.CancellationToken
+                Arg.Any<Guid>()
             )
             .Returns(dataModel);
 
@@ -170,10 +167,9 @@ public class PreSubmitProcessorTests
                 Arg.Any<Guid>(),
                 typeof(TestDataModel),
                 instance.Org,
-                instance.AppId,
+                instance.GetAppName(),
                 instance.GetInstanceOwnerPartyId(),
-                Arg.Any<Guid>(),
-                cancellationToken: TestContext.Current.CancellationToken
+                Arg.Any<Guid>()
             );
     }
 
@@ -198,8 +194,7 @@ public class PreSubmitProcessorTests
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Any<int>(),
-                Arg.Any<Guid>(),
-                cancellationToken: TestContext.Current.CancellationToken
+                Arg.Any<Guid>()
             )
             .Returns(dataModel);
 
@@ -237,8 +232,7 @@ public class PreSubmitProcessorTests
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Any<int>(),
-                Arg.Any<Guid>(),
-                cancellationToken: TestContext.Current.CancellationToken
+                Arg.Any<Guid>()
             )
             .Returns(originalData);
 
@@ -255,8 +249,7 @@ public class PreSubmitProcessorTests
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Any<int>(),
-                Arg.Any<Guid>(),
-                cancellationToken: TestContext.Current.CancellationToken
+                Arg.Any<Guid>()
             );
         await _dataClient
             .Received(1)
@@ -267,8 +260,7 @@ public class PreSubmitProcessorTests
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Any<int>(),
-                Arg.Any<Guid>(),
-                cancellationToken: TestContext.Current.CancellationToken
+                Arg.Any<Guid>()
             );
     }
 
