@@ -189,24 +189,7 @@ file static class Extensions
         );
     }
 
-    public static async Task DeleteElement(
-        this IDataClient dataClient,
-        Instance instance,
-        DataElement dataElement
-    )
-    {
-        await dataClient.DeleteData(
-            instance.Org,
-            instance.GetAppName(),
-            instance.GetInstanceOwnerPartyId(),
-            instance.GetInstanceGuid(),
-            Guid.Parse(dataElement.Id),
-            false
-        );
-        instance.Data.Remove(dataElement);
-    }
-
-    public static Stream ToBinaryStream<T>(this T structuredData)
+    private static Stream ToBinaryStream<T>(this T structuredData)
         where T : class
     {
         var json = JsonSerializer.Serialize(structuredData);

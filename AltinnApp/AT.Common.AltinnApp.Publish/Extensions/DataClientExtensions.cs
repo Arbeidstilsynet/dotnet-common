@@ -41,6 +41,69 @@ public static class DataClientExtensions
     }
 
     /// <summary>
+    /// Get data of type <typeparamref name="T"/> from a specific <see cref="DataElement"/> in an <see cref="Instance"/>.
+    /// </summary>
+    /// <param name="dataClient"></param>
+    /// <param name="instance"></param>
+    /// <param name="dataElement"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static async Task<T> GetData<T>(
+        this IDataClient dataClient,
+        Instance instance,
+        DataElement dataElement
+    )
+        where T : class
+    {
+        if (
+            await dataClient.GetFormData(
+                instance.GetInstanceGuid(),
+                typeof(T),
+                instance.Org,
+                instance.AppId,
+                instance.GetInstanceOwnerPartyId(),
+                Guid.Parse(dataElement.Id)
+            )
+            is not T data
+        )
+        {
+            throw new InvalidOperationException(
+                $"Could not retrieve data model of type {typeof(T).FullName} from data element {dataElement.Id}"
+            );
+        }
+
+        return data;
+    }
+
+    /// <summary>
+    /// Update data of type <typeparamref name="T"/> in a specific <see cref="DataElement"/> in an <see cref="Instance"/>.
+    /// </summary>
+    /// <param name="dataClient"></param>
+    /// <param name="instance"></param>
+    /// <param name="dataElement"></param>
+    /// <param name="data"></param>
+    /// <typeparam name="T"></typeparam>
+    public static async Task UpdateDataElement<T>(
+        this IDataClient dataClient,
+        Instance instance,
+        DataElement dataElement,
+        T data
+    )
+        where T : class
+    {
+        await dataClient.UpdateData(
+            data,
+            instance.GetInstanceGuid(),
+            typeof(T),
+            instance.Org,
+            instance.GetAppName(),
+            instance.GetInstanceOwnerPartyId(),
+            Guid.Parse(dataElement.Id)
+        );
+    }
+
+    /// <summary>
     /// Delete an element from an <see cref="Instance"/>. Can for example be used to delete attachments that are no longer in use.
     /// </summary>
     /// <param name="dataClient">Interface used to delete the data element</param>
