@@ -12,11 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
-      should-continue: ${{ steps.check_changes.outputs.should-continue }}
+      should-build: ${{ steps.check_changes_for_build.outputs.changes_detected }}
+      should-publish: ${{ steps.check_changes_for_publishing.outputs.changes_detected }}
       parent_dir: ${{ steps.get_parent_dir.outputs.parent_dir }}
       package_path: ${{ inputs.package-path }}
     steps:
-      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
         with:
           fetch-depth: 0
 
@@ -26,39 +27,34 @@ jobs:
         with:
           path: ${{ inputs.package-path }}
 
-      - name: Check if changes are inside package path
-        id: check_changes
-        run: |
-          parent_dir="${{ steps.get_parent_dir.outputs.parent_dir }}"
-          echo "DEBUG: parent_dir=$parent_dir"
-          changed_files=$(git --no-pager diff --name-only origin/main...HEAD | grep "^$parent_dir/" || true)
-          # If empty, do not continue
-            if [ -z "$changed_files" ]; then
-            echo "should-continue=false" >> $GITHUB_OUTPUT
-            echo "No changes detected which require a version update. Exiting workflow gracefully."
-            exit 0
-          fi
-          # Check if all changed files are markdown files
-          non_md_files=$(echo "$changed_files" | grep -vE '\.md$' || true)
-          # If empty, do not continue
-          if [ -z "$non_md_files" ]; then
-            echo "should-continue=false" >> $GITHUB_OUTPUT
-            echo "No changes detected which require a version update. Exiting workflow gracefully."
-          else
-            echo "should-continue=true" >> $GITHUB_OUTPUT
-            echo "Changes detected which require a version update. The workflow will continue..."
-          fi
-          exit 0
+      - name: Changes which require build?
+        uses: Arbeidstilsynet/action-check-changes@6e51077b178b819e4194f40e32bd562df0954f3f # v1
+        id: check_changes_for_build
+        with:
+          base-ref: origin/main
+          include: |
+            ${{ steps.get_parent_dir.outputs.parent_dir }}
+
+
+      - name: Changes for publishing?
+        uses: Arbeidstilsynet/action-check-changes@6e51077b178b819e4194f40e32bd562df0954f3f # v1
+        id: check_changes_for_publishing
+        with:
+          base-ref: origin/main
+          include: |
+            ${{ steps.get_parent_dir.outputs.parent_dir }}/AT.Common.*.Publish
+          exclude: |
+            ${{ steps.get_parent_dir.outputs.parent_dir }}/AT.Common.*.Test*
 
   build-dotnet:
     needs: check-and-prepare
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    if: needs.check-and-prepare.outputs.should-continue == 'true'
+    if: needs.check-and-prepare.outputs.should-build == 'true'
     steps:
-      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
       - name: Build and Test .NET solution
-        uses: Arbeidstilsynet/action-dotnet-build@d5fc49a03caa254f019fff4fd06eab4e99d877e7 # v2
+        uses: Arbeidstilsynet/action-dotnet-build@a1f3f50f263efb55f38a48fa615e2cf77c4297fa # v3
         with:
           working-directory: ${{ needs.check-and-prepare.outputs.parent_dir }}
 
@@ -66,9 +62,9 @@ jobs:
     needs: [check-and-prepare, build-dotnet]
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    if: needs.check-and-prepare.outputs.should-continue == 'true'
+    if: needs.check-and-prepare.outputs.should-publish == 'true'
     steps:
-      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
         with:
           fetch-depth: 0
 
@@ -79,7 +75,7 @@ jobs:
           working-directory: ${{ needs.check-and-prepare.outputs.package_path }}
 
       - name: Check if package version exists
-        uses: Arbeidstilsynet/action-nuget-check-published@d448be83e0b0d006aad7ac77df46178b4068c500 # v2
+        uses: Arbeidstilsynet/action-nuget-check-published@496c4c1c088db11ed169b3ace6cffd5dd9a681fa # v2
         id: nuget_version_check
         with:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}

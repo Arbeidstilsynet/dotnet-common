@@ -30,7 +30,7 @@ namespace AT.Common.Altinn.Test.ArchUnit
             .That()
             .ResideInAssembly(AltinnAssembly)
             .And()
-            .DoNotResideInNamespace("Coverlet.Core.Instrumentation.Tracker")
+            .DoNotResideInNamespace("Microsoft.CodeCoverage.Instrumentation.Static.Tracker")
             .As("Altinn Layer");
 
         internal static readonly IObjectProvider<IType> PublicInterfaces = Interfaces()

@@ -30,7 +30,7 @@ namespace Enhetsregisteret.ArchUnit.Tests
             .That()
             .ResideInAssembly(EnhetsregisteretAssembly)
             .And()
-            .DoNotResideInNamespace("Coverlet.Core.Instrumentation.Tracker")
+            .DoNotResideInNamespace("Microsoft.CodeCoverage.Instrumentation.Static.Tracker")
             .As("Enhetsregisteret Layer");
 
         internal static readonly IObjectProvider<IType> PublicInterfaces = Interfaces()

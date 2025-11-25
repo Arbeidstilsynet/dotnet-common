@@ -31,7 +31,7 @@ namespace Arbeidstilsynet.Common.AltinnApp.Test.ArchUnit
             .That()
             .ResideInAssembly(AltinnAppAssembly)
             .And()
-            .DoNotResideInNamespaceMatching("Coverlet.Core.Instrumentation.Tracker")
+            .DoNotResideInNamespace("Microsoft.CodeCoverage.Instrumentation.Static.Tracker")
             .As("AltinnApp Layer");
 
         internal static readonly IObjectProvider<IType> PublicInterfaces = Interfaces()

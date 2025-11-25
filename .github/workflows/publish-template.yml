@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
 
       - name: Get version and name from csproj file
         id: get_metadata_from_csprojectfile
@@ -22,7 +22,7 @@ jobs:
 
       - name: Check if package version exists
         id: nuget_version_check
-        uses: Arbeidstilsynet/action-nuget-check-published@d448be83e0b0d006aad7ac77df46178b4068c500 # v2
+        uses: Arbeidstilsynet/action-nuget-check-published@496c4c1c088db11ed169b3ace6cffd5dd9a681fa # v2
         with:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
           version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
