@@ -3,6 +3,7 @@ using Altinn.App.Core.Internal.Data;
 using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.AltinnApp.Extensions;
 using Arbeidstilsynet.Common.AltinnApp.Implementation;
+using Arbeidstilsynet.Common.AltinnApp.Test.Unit.TestFixtures;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
@@ -41,8 +42,8 @@ public class StructuredDataManagerTests
     public async Task End_TaskEnd_UsesIApplicationClientCorrectly()
     {
         // Arrange
-        var instance = CreateTestInstance();
-        var application = CreateTestApplication();
+        var instance = AltinnData.CreateTestInstance();
+        var application = AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName);
         var dataModel = new TestDataModel { Name = "Test" };
 
         _applicationClient.GetApplication(instance.Org, "testApp").Returns(application);
@@ -69,8 +70,8 @@ public class StructuredDataManagerTests
     public async Task End_TaskEnd_UsesIDataClientToGetFormData()
     {
         // Arrange
-        var instance = CreateTestInstance();
-        var application = CreateTestApplication();
+        var instance = AltinnData.CreateTestInstance();
+        var application = AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName);
         var dataModel = new TestDataModel { Name = "Test" };
         var expectedGuid = Guid.Parse(instance.Data.First().Id);
 
@@ -110,8 +111,8 @@ public class StructuredDataManagerTests
     public async Task End_TaskEnd_UsesIDataClientToInsertStructuredData()
     {
         // Arrange
-        var instance = CreateTestInstance();
-        var application = CreateTestApplication();
+        var instance = AltinnData.CreateTestInstance();
+        var application = AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName);
         var dataModel = new TestDataModel { Name = "Test" };
 
         _applicationClient
@@ -149,8 +150,8 @@ public class StructuredDataManagerTests
     public async Task End_ProcessEnd_UsesIApplicationClientToGetDataElement()
     {
         // Arrange
-        var instance = CreateTestInstance();
-        var application = CreateTestApplication();
+        var instance = AltinnData.CreateTestInstance();
+        var application = AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName);
 
         _applicationClient.GetApplication(instance.Org, "testApp").Returns(application);
 
@@ -165,8 +166,8 @@ public class StructuredDataManagerTests
     public async Task End_ProcessEnd_UsesIDataClientToDeleteData()
     {
         // Arrange
-        var instance = CreateTestInstance();
-        var application = CreateTestApplication();
+        var instance = AltinnData.CreateTestInstance();
+        var application = AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName);
         var dataElement = instance.Data.First();
         var expectedGuid = Guid.Parse(dataElement.Id);
 
@@ -195,8 +196,8 @@ public class StructuredDataManagerTests
     public async Task End_ProcessEnd_RemovesDataElementFromInstance()
     {
         // Arrange
-        var instance = CreateTestInstance();
-        var application = CreateTestApplication();
+        var instance = AltinnData.CreateTestInstance();
+        var application = AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName);
         var initialDataCount = instance.Data.Count;
 
         _applicationClient
@@ -210,35 +211,7 @@ public class StructuredDataManagerTests
         instance.Data.Count.ShouldBe(initialDataCount - 1);
     }
 
-    private static Instance CreateTestInstance()
-    {
-        return new Instance
-        {
-            Id = "50001234/fa0678ad-960d-4307-aba2-ba29c9804c9d",
-            Org = "testOrg",
-            AppId = "testOrg/testApp",
-            InstanceOwner = new InstanceOwner { PartyId = "50001234" },
-            Data = new List<DataElement>
-            {
-                new() { Id = "12345678-1234-1234-1234-123456789012", DataType = "testDataType" },
-            },
-        };
-    }
 
-    private static Application CreateTestApplication()
-    {
-        return new Application
-        {
-            DataTypes = new List<DataType>
-            {
-                new()
-                {
-                    Id = "testDataType",
-                    AppLogic = new ApplicationLogic() { ClassRef = typeof(TestDataModel).FullName },
-                },
-            },
-        };
-    }
 
     public class TestDataModel
     {

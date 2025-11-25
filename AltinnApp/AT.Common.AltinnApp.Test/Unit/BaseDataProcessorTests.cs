@@ -1,5 +1,6 @@
 using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.AltinnApp.Abstract.Processing;
+using Arbeidstilsynet.Common.AltinnApp.Test.Unit.TestFixtures;
 using Shouldly;
 using Xunit;
 
@@ -15,7 +16,7 @@ public class BaseDataProcessorTests
     public BaseDataProcessorTests()
     {
         _sut = new BaseTestDataProcessor();
-        _instance = new Instance();
+        _instance = AltinnData.CreateTestInstance();
         _dataId = Guid.NewGuid();
     }
 
