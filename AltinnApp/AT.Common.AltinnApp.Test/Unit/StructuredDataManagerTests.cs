@@ -43,7 +43,9 @@ public class StructuredDataManagerTests
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
-        var application = AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName);
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+        );
         var dataModel = new TestDataModel { Name = "Test" };
 
         _applicationClient.GetApplication(instance.Org, "testApp").Returns(application);
@@ -71,7 +73,9 @@ public class StructuredDataManagerTests
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
-        var application = AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName);
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+        );
         var dataModel = new TestDataModel { Name = "Test" };
         var expectedGuid = Guid.Parse(instance.Data.First().Id);
 
@@ -112,7 +116,9 @@ public class StructuredDataManagerTests
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
-        var application = AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName);
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+        );
         var dataModel = new TestDataModel { Name = "Test" };
 
         _applicationClient
@@ -151,7 +157,9 @@ public class StructuredDataManagerTests
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
-        var application = AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName);
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+        );
 
         _applicationClient.GetApplication(instance.Org, "testApp").Returns(application);
 
@@ -167,7 +175,9 @@ public class StructuredDataManagerTests
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
-        var application = AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName);
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+        );
         var dataElement = instance.Data.First();
         var expectedGuid = Guid.Parse(dataElement.Id);
 
@@ -197,7 +207,9 @@ public class StructuredDataManagerTests
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
-        var application = AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName);
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+        );
         var initialDataCount = instance.Data.Count;
 
         _applicationClient
@@ -210,8 +222,6 @@ public class StructuredDataManagerTests
         // Assert
         instance.Data.Count.ShouldBe(initialDataCount - 1);
     }
-
-
 
     public class TestDataModel
     {

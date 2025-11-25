@@ -11,7 +11,8 @@ public static class AltinnData
         string? partyId = null,
         string? instanceId = null,
         string? dataElementId = null,
-        string? dataType = null)
+        string? dataType = null
+    )
     {
         return new Instance
         {
@@ -24,15 +25,16 @@ public static class AltinnData
                 new()
                 {
                     Id = dataElementId ?? "12345678-1234-1234-1234-123456789012",
-                    DataType = dataType ?? "testDataType"
-                }
-            }
+                    DataType = dataType ?? "testDataType",
+                },
+            },
         };
     }
 
     public static Application CreateTestApplication(
         string? dataTypeId = null,
-        string? classRef = null)
+        string? classRef = null
+    )
     {
         return new Application
         {
@@ -41,12 +43,9 @@ public static class AltinnData
                 new()
                 {
                     Id = dataTypeId ?? "testDataType",
-                    AppLogic = new ApplicationLogic
-                    {
-                        ClassRef = classRef
-                    }
-                }
-            }
+                    AppLogic = new ApplicationLogic { ClassRef = classRef },
+                },
+            },
         };
     }
 }

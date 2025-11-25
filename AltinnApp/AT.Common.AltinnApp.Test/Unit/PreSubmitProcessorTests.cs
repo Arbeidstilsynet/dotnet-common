@@ -28,13 +28,24 @@ public class PreSubmitProcessorTests
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
-        var application = AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName);
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+        );
         var dataModel = new TestDataModel { Value = "Test" };
 
-        _applicationClient.GetApplication(instance.Org, Arg.Any<string>())
-            .Returns(application);
+        _applicationClient.GetApplication(instance.Org, Arg.Any<string>()).Returns(application);
 
-        _dataClient.GetFormData(Arg.Any<Guid>(), typeof(TestDataModel), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<int>(), Arg.Any<Guid>(), cancellationToken: TestContext.Current.CancellationToken).Returns(dataModel);
+        _dataClient
+            .GetFormData(
+                Arg.Any<Guid>(),
+                typeof(TestDataModel),
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<int>(),
+                Arg.Any<Guid>(),
+                cancellationToken: TestContext.Current.CancellationToken
+            )
+            .Returns(dataModel);
 
         // Act
         await _sut.End("task1", instance);
@@ -48,21 +59,44 @@ public class PreSubmitProcessorTests
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
-        var application = AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName);
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+        );
         var dataElement = instance.Data.First();
         var dataModel = new TestDataModel { Value = "Test" };
         var expectedGuid = Guid.Parse(dataElement.Id);
 
-        _applicationClient.GetApplication(Arg.Any<string>(), Arg.Any<string>())
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
             .Returns(application);
 
-        _dataClient.GetFormData(Arg.Any<Guid>(), typeof(TestDataModel), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<int>(), Arg.Any<Guid>(), cancellationToken: TestContext.Current.CancellationToken).Returns(dataModel);
+        _dataClient
+            .GetFormData(
+                Arg.Any<Guid>(),
+                typeof(TestDataModel),
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<int>(),
+                Arg.Any<Guid>(),
+                cancellationToken: TestContext.Current.CancellationToken
+            )
+            .Returns(dataModel);
 
         // Act
         await _sut.End("task1", instance);
 
         // Assert
-        await _dataClient.Received(1).GetFormData(instance.GetInstanceGuid(), typeof(TestDataModel), instance.Org, instance.AppId, instance.GetInstanceOwnerPartyId(), expectedGuid, cancellationToken: TestContext.Current.CancellationToken);
+        await _dataClient
+            .Received(1)
+            .GetFormData(
+                instance.GetInstanceGuid(),
+                typeof(TestDataModel),
+                instance.Org,
+                instance.AppId,
+                instance.GetInstanceOwnerPartyId(),
+                expectedGuid,
+                cancellationToken: TestContext.Current.CancellationToken
+            );
     }
 
     [Fact]
@@ -70,13 +104,26 @@ public class PreSubmitProcessorTests
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
-        var application = AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName);
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+        );
         var dataModel = new TestDataModel { Value = "Original" };
 
-        _applicationClient.GetApplication(Arg.Any<string>(), Arg.Any<string>())
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
             .Returns(application);
 
-        _dataClient.GetFormData(Arg.Any<Guid>(), Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<int>(), Arg.Any<Guid>(), cancellationToken: TestContext.Current.CancellationToken).Returns(dataModel);
+        _dataClient
+            .GetFormData(
+                Arg.Any<Guid>(),
+                Arg.Any<Type>(),
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<int>(),
+                Arg.Any<Guid>(),
+                cancellationToken: TestContext.Current.CancellationToken
+            )
+            .Returns(dataModel);
 
         // Act
         await _sut.End("task1", instance);
@@ -91,19 +138,43 @@ public class PreSubmitProcessorTests
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
-        var application = AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName);
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+        );
         var dataModel = new TestDataModel { Value = "Original" };
 
-        _applicationClient.GetApplication(Arg.Any<string>(), Arg.Any<string>())
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
             .Returns(application);
 
-        _dataClient.GetFormData(Arg.Any<Guid>(), Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<int>(), Arg.Any<Guid>(), cancellationToken: TestContext.Current.CancellationToken).Returns(dataModel);
+        _dataClient
+            .GetFormData(
+                Arg.Any<Guid>(),
+                Arg.Any<Type>(),
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<int>(),
+                Arg.Any<Guid>(),
+                cancellationToken: TestContext.Current.CancellationToken
+            )
+            .Returns(dataModel);
 
         // Act
         await _sut.End("task1", instance);
 
         // Assert
-        await _dataClient.Received(1).UpdateData(Arg.Is<TestDataModel>(d => d.Value == "Processed"), Arg.Any<Guid>(), typeof(TestDataModel), instance.Org, instance.AppId, instance.GetInstanceOwnerPartyId(), Arg.Any<Guid>(), cancellationToken: TestContext.Current.CancellationToken);
+        await _dataClient
+            .Received(1)
+            .UpdateData(
+                Arg.Is<TestDataModel>(d => d.Value == "Processed"),
+                Arg.Any<Guid>(),
+                typeof(TestDataModel),
+                instance.Org,
+                instance.AppId,
+                instance.GetInstanceOwnerPartyId(),
+                Arg.Any<Guid>(),
+                cancellationToken: TestContext.Current.CancellationToken
+            );
     }
 
     [Fact]
@@ -111,21 +182,36 @@ public class PreSubmitProcessorTests
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
-        var application = AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName);
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+        );
         var dataModel = new TestDataModel { Value = "Original" };
 
-        _applicationClient.GetApplication(Arg.Any<string>(), Arg.Any<string>())
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
             .Returns(application);
 
-        _dataClient.GetFormData(Arg.Any<Guid>(), Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<int>(), Arg.Any<Guid>(), cancellationToken: TestContext.Current.CancellationToken).Returns(dataModel);
+        _dataClient
+            .GetFormData(
+                Arg.Any<Guid>(),
+                Arg.Any<Type>(),
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<int>(),
+                Arg.Any<Guid>(),
+                cancellationToken: TestContext.Current.CancellationToken
+            )
+            .Returns(dataModel);
 
         // Act
         await _sut.End("task1", instance);
 
         // Assert
-        var receivedData = _dataClient.ReceivedCalls()
-            .Single(call => call.GetMethodInfo().Name == nameof(IDataClient.UpdateData))
-            .GetArguments()[0]! as TestDataModel;
+        var receivedData =
+            _dataClient
+                .ReceivedCalls()
+                .Single(call => call.GetMethodInfo().Name == nameof(IDataClient.UpdateData))
+                .GetArguments()[0]! as TestDataModel;
 
         receivedData?.Value.ShouldBe("Processed");
     }
@@ -135,24 +221,56 @@ public class PreSubmitProcessorTests
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
-        var application = AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName);
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+        );
         var originalData = new TestDataModel { Value = "Original" };
 
-        _applicationClient.GetApplication(Arg.Any<string>(), Arg.Any<string>())
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
             .Returns(application);
 
-        _dataClient.GetFormData(Arg.Any<Guid>(), Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<int>(), Arg.Any<Guid>(), cancellationToken: TestContext.Current.CancellationToken).Returns(originalData);
+        _dataClient
+            .GetFormData(
+                Arg.Any<Guid>(),
+                Arg.Any<Type>(),
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<int>(),
+                Arg.Any<Guid>(),
+                cancellationToken: TestContext.Current.CancellationToken
+            )
+            .Returns(originalData);
 
         // Act
         await _sut.End("task1", instance);
 
         // Assert - verify the complete workflow
         await _applicationClient.Received(1).GetApplication(Arg.Any<string>(), Arg.Any<string>());
-        await _dataClient.Received(1).GetFormData(Arg.Any<Guid>(), Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<int>(), Arg.Any<Guid>(), cancellationToken: TestContext.Current.CancellationToken);
-        await _dataClient.Received(1).UpdateData(Arg.Any<TestDataModel>(), Arg.Any<Guid>(), Arg.Any<Type>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<int>(), Arg.Any<Guid>(), cancellationToken: TestContext.Current.CancellationToken);
+        await _dataClient
+            .Received(1)
+            .GetFormData(
+                Arg.Any<Guid>(),
+                Arg.Any<Type>(),
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<int>(),
+                Arg.Any<Guid>(),
+                cancellationToken: TestContext.Current.CancellationToken
+            );
+        await _dataClient
+            .Received(1)
+            .UpdateData(
+                Arg.Any<TestDataModel>(),
+                Arg.Any<Guid>(),
+                Arg.Any<Type>(),
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<int>(),
+                Arg.Any<Guid>(),
+                cancellationToken: TestContext.Current.CancellationToken
+            );
     }
-
-
 
     public class TestDataModel
     {
@@ -165,11 +283,12 @@ public class PreSubmitProcessorTests
         public Instance? LastProcessedInstance { get; private set; }
 
         public TestPreSubmitProcessor(IDataClient dataClient, IApplicationClient applicationClient)
-            : base(dataClient, applicationClient)
-        {
-        }
+            : base(dataClient, applicationClient) { }
 
-        protected override Task<TestDataModel> ProcessDataModel(TestDataModel currentDataModel, Instance instance)
+        protected override Task<TestDataModel> ProcessDataModel(
+            TestDataModel currentDataModel,
+            Instance instance
+        )
         {
             LastProcessedDataModel = currentDataModel;
             LastProcessedInstance = instance;
