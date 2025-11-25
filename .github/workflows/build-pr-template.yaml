@@ -17,7 +17,7 @@ jobs:
       parent_dir: ${{ steps.get_parent_dir.outputs.parent_dir }}
       package_path: ${{ inputs.package-path }}
     steps:
-      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
         with:
           fetch-depth: 0
 
@@ -52,7 +52,7 @@ jobs:
     timeout-minutes: 10
     if: needs.check-and-prepare.outputs.should-build == 'true'
     steps:
-      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
       - name: Build and Test .NET solution
         uses: Arbeidstilsynet/action-dotnet-build@07de1f5dd65d1ee5b33d5ac9d90babcd5b6f63e5 # v3
         with:
@@ -64,7 +64,7 @@ jobs:
     timeout-minutes: 10
     if: needs.check-and-prepare.outputs.should-publish == 'true'
     steps:
-      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
         with:
           fetch-depth: 0
 
