@@ -19,11 +19,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.1.2
+
+### Fixed
+
+- fix(scalar): Ensure scalar is using https when requested with https. Http otherwise
+
 ## 2.1.1
 
 ### Fixed
 
-- fix(scalar): Downgrade scalar because v2.11.0 has a UI bug which leads to unexpected behaviour
+- fix(scalar): Downgrade scalar because v2.11.0 has a UI bug which leads to unexpected
 
 ## 2.1.0
 
