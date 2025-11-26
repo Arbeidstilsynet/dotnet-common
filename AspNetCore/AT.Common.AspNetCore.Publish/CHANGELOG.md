@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.1.1
+
+### Fixed
+
+- fix(scalar): Downgrade scalar because v2.11.0 has a UI bug which leads to unexpected behaviour
+
 ## 2.1.0
 
 ### Changed
