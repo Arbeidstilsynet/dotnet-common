@@ -178,14 +178,10 @@ public static partial class StartupExtensions
     public static WebApplication AddScalar(this WebApplication app)
     {
         app.MapOpenApi();
-        app.MapScalarApiReference(
-            (options, context) =>
-            {
-                if (context.Request.Scheme == "https")
-                    options.AddServer(new ScalarServer($"https://{context.Request.Host}"));
-                options.AddServer(new ScalarServer($"http://{context.Request.Host}"));
-            }
-        );
+        app.MapScalarApiReference(options =>
+        {
+            options.Servers = [];
+        });
         return app;
     }
 
