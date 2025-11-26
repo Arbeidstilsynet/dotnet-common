@@ -42,7 +42,7 @@ jobs:
         with:
           base-ref: origin/main
           include: |
-            ${{ steps.get_parent_dir.outputs.parent_dir }}/AT.Common.*.Publish
+            ${{ steps.get_parent_dir.outputs.parent_dir }}/AT.Common.*.Publish/*
           exclude: |
             ${{ steps.get_parent_dir.outputs.parent_dir }}/AT.Common.*.Test*
 
