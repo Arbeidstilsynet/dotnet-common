@@ -10,7 +10,7 @@
     <Company>Arbeidstilsynet</Company>
     <Description>Useful extensions for cross-cutting concerns at Arbeidstilsynet</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.1.1</Version>
+    <Version>2.1.2</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
   </PropertyGroup>
@@ -25,7 +25,7 @@
       Version="1.14.0-beta.2"
     />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0" />
-    <PackageReference Include="Scalar.AspNetCore" Version="2.10.3" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.11.0" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />

@@ -178,7 +178,10 @@ public static partial class StartupExtensions
     public static WebApplication AddScalar(this WebApplication app)
     {
         app.MapOpenApi();
-        app.MapScalarApiReference();
+        app.MapScalarApiReference(options =>
+        {
+            options.Servers = [];
+        });
         return app;
     }
 
