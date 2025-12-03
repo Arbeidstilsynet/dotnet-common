@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
@@ -38,9 +39,14 @@ public class StartupBackgroundService : BackgroundService
     /// </summary>
     /// <param name="stoppingToken">A cancellation token to observe while waiting for tasks to complete.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
+    /// <remarks>
+    /// Creates a service scope to allow resolution of scoped services within the startup tasks.
+    /// </remarks>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        foreach (var taskBeforeStartup in _startupTasks(_serviceProvider))
+        await using var scope = _serviceProvider.CreateAsyncScope();
+
+        foreach (var taskBeforeStartup in _startupTasks(scope.ServiceProvider))
         {
             await taskBeforeStartup;
         }
