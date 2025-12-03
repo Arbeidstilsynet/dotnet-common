@@ -51,7 +51,9 @@ public static partial class StartupExtensions
                 options.JsonSerializerOptions.Converters.Add(new JsonStringUriConverter());
             });
         services.AddProblemDetails(configureProblemDetailsAction);
-        var healthChecksBuilder = services.AddHealthChecks();
+        var healthChecksBuilder = services
+            .AddHealthChecks()
+            .AddCheck<StartupHealthCheck>("Startup");
 
         buildHealthChecksAction?.Invoke(healthChecksBuilder);
 
@@ -162,10 +164,11 @@ public static partial class StartupExtensions
 
         app.MapControllers();
 
-        app.UseHealthChecks(
-            "/healthz",
+        app.MapHealthChecks(
+            "/healthz/ready",
             new HealthCheckOptions() { ResponseWriter = CustomHealthReport.WriteHealthCheckDetails }
         );
+        app.MapHealthChecks("/healthz/live", new HealthCheckOptions() { Predicate = _ => false });
 
         return app;
     }
