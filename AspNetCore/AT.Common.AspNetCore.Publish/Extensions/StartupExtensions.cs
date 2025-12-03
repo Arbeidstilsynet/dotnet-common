@@ -115,7 +115,15 @@ public static partial class StartupExtensions
                 options.AddSource("API.Adapters");
                 options.AddSource("Domain.Logic");
                 options.AddSource("Infrastructure.Adapters");
-                options.AddAspNetCoreInstrumentation();
+                options.AddAspNetCoreInstrumentation(options =>
+                {
+                    // Filter out requests to the health check endpoint
+                    options.Filter = (httpContext) =>
+                    {
+                        // Adjust the path to match your health check endpoint
+                        return !httpContext.Request.Path.StartsWithSegments("/healthz");
+                    };
+                });
                 options.AddHttpClientInstrumentation();
                 options.AddEntityFrameworkCoreInstrumentation();
                 options.AddOtlpExporter();
