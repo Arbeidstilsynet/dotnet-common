@@ -73,7 +73,7 @@ public static partial class StartupExtensions
             });
         services.AddProblemDetails(configureProblemDetailsAction);
         services.AddHostedService<StartupBackgroundService>();
-        services.AddScoped(_ => startupTasks ?? ((_) => []));
+        services.AddSingleton(_ => startupTasks ?? ((_) => []));
         services.AddSingleton<StartupHealthCheck>();
         var healthChecksBuilder = services
             .AddHealthChecks()
