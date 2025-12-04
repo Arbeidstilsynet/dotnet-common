@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
 
@@ -16,6 +17,7 @@ public class StartupBackgroundService : BackgroundService
     private readonly StartupHealthCheck _healthCheck;
     private readonly StartupChecks _startupChecks;
     private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<StartupBackgroundService> _logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StartupBackgroundService"/> class.
@@ -23,15 +25,18 @@ public class StartupBackgroundService : BackgroundService
     /// <param name="healthCheck">The health check to update when startup tasks complete.</param>
     /// <param name="startupChecks">The startup tasks delegate to execute.</param>
     /// <param name="serviceProvider">The service provider for resolving dependencies.</param>
+    /// <param name="logger"></param>
     public StartupBackgroundService(
         StartupHealthCheck healthCheck,
         StartupChecks startupChecks,
-        IServiceProvider serviceProvider
+        IServiceProvider serviceProvider,
+        ILogger<StartupBackgroundService> logger
     )
     {
         _healthCheck = healthCheck;
         _startupChecks = startupChecks;
         _serviceProvider = serviceProvider;
+        _logger = logger;
     }
 
     /// <summary>
@@ -45,12 +50,22 @@ public class StartupBackgroundService : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         await using var scope = _serviceProvider.CreateAsyncScope();
-
-        foreach (var taskBeforeStartup in _startupChecks(scope.ServiceProvider))
+        try
         {
-            await taskBeforeStartup;
+            foreach (var taskBeforeStartup in _startupChecks(scope.ServiceProvider))
+            {
+                await taskBeforeStartup;
+            }
+            _healthCheck.StartupCompleted = true;
         }
-
-        _healthCheck.StartupCompleted = true;
+        catch (Exception e)
+        {
+            _logger.LogError(
+                e,
+                "An exception occured while executing the provided startup checks/tasks."
+            );
+            _healthCheck.ExceptionOnStartup = e.Message;
+            _healthCheck.StartupCompleted = false;
+        }
     }
 }
