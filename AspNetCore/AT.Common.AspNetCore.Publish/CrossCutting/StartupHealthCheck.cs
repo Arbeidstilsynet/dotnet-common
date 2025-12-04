@@ -31,25 +31,6 @@ public class StartupHealthCheck : IHealthCheck
         set => _isReady = value;
     }
 
-    private volatile string? _exceptionOnStartup;
-
-    /// <summary>
-    /// Gets or sets the exception message from a failed startup task.
-    /// </summary>
-    /// <value>
-    /// The exception message if a startup task failed; otherwise, <c>null</c>.
-    /// </value>
-    /// <remarks>
-    /// This property is used to provide detailed error information in the health check response
-    /// when a startup task encounters an exception. The health check will report as unhealthy
-    /// with this message included in the response.
-    /// </remarks>
-    public string? ExceptionOnStartup
-    {
-        get => _exceptionOnStartup;
-        set => _exceptionOnStartup = value;
-    }
-
     /// <summary>
     /// Checks the health status of the application startup.
     /// </summary>
@@ -71,19 +52,7 @@ public class StartupHealthCheck : IHealthCheck
         {
             return Task.FromResult(HealthCheckResult.Healthy("The startup task has completed."));
         }
-        if (string.IsNullOrEmpty(ExceptionOnStartup))
-        {
-            return Task.FromResult(
-                HealthCheckResult.Unhealthy("That startup task is still running.")
-            );
-        }
-        else
-        {
-            return Task.FromResult(
-                HealthCheckResult.Unhealthy(
-                    $"The startup task failed. Reason: {ExceptionOnStartup}"
-                )
-            );
-        }
+
+        return Task.FromResult(HealthCheckResult.Unhealthy("That startup task is still running."));
     }
 }
