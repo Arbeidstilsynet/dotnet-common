@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.1.3
+
+### Added
+
+- chore(aspnetcore): Use two distinct health endpoints for readiness and liveness as default (`healthz/ready` and `healthz/live`) instead of just one for all. Also, add a default `StartupHealthCheck` which can be configured to run multiple startup tasks like e.g. a database migration before it will return a healthy state.
+
 ## 2.1.2
 
 ### Fixed

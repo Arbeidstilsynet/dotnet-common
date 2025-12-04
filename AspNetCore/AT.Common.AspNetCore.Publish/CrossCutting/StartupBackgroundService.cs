@@ -7,30 +7,30 @@ namespace Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
 /// A background service that executes startup tasks and updates the application readiness state.
 /// </summary>
 /// <remarks>
-/// This service runs during application startup and executes all tasks defined in <see cref="StartupTasks"/>.
+/// This service runs during application startup and executes all tasks defined in <see cref="StartupChecks"/>.
 /// Once all tasks complete successfully, it marks <see cref="StartupHealthCheck"/> as completed,
 /// allowing the application to receive traffic from load balancers and orchestrators.
 /// </remarks>
 public class StartupBackgroundService : BackgroundService
 {
     private readonly StartupHealthCheck _healthCheck;
-    private readonly StartupTasks _startupTasks;
+    private readonly StartupChecks _startupChecks;
     private readonly IServiceProvider _serviceProvider;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StartupBackgroundService"/> class.
     /// </summary>
     /// <param name="healthCheck">The health check to update when startup tasks complete.</param>
-    /// <param name="startupTasks">The startup tasks delegate to execute.</param>
+    /// <param name="startupChecks">The startup tasks delegate to execute.</param>
     /// <param name="serviceProvider">The service provider for resolving dependencies.</param>
     public StartupBackgroundService(
         StartupHealthCheck healthCheck,
-        StartupTasks startupTasks,
+        StartupChecks startupChecks,
         IServiceProvider serviceProvider
     )
     {
         _healthCheck = healthCheck;
-        _startupTasks = startupTasks;
+        _startupChecks = startupChecks;
         _serviceProvider = serviceProvider;
     }
 
@@ -46,7 +46,7 @@ public class StartupBackgroundService : BackgroundService
     {
         await using var scope = _serviceProvider.CreateAsyncScope();
 
-        foreach (var taskBeforeStartup in _startupTasks(scope.ServiceProvider))
+        foreach (var taskBeforeStartup in _startupChecks(scope.ServiceProvider))
         {
             await taskBeforeStartup;
         }

@@ -25,8 +25,8 @@ public static partial class StartupExtensions
     /// Adds Controllers, model validation, problem details, and health checks.
     /// </summary>
     /// <param name="services">The service collection to configure.</param>
-    /// <param name="startupTasks">
-    /// Optional <see cref="StartupTasks"/> delegate defining tasks to run before marking the application as ready.
+    /// <param name="startupChecks">
+    /// Optional <see cref="StartupChecks"/> delegate defining tasks to run before marking the application as ready.
     /// The delegate receives an <see cref="IServiceProvider"/> to resolve dependencies from the DI container.
     /// If null, no startup tasks are executed.
     /// </param>
@@ -38,7 +38,7 @@ public static partial class StartupExtensions
     /// <code>
     /// // With startup tasks using DI
     /// builder.Services.ConfigureApi(
-    ///     startupTasks: (provider) =>
+    ///     StartupChecks: (provider) =>
     ///     [
     ///         provider.GetRequiredService&lt;IDatabaseMigrator&gt;().MigrateAsync(),
     ///         provider.GetRequiredService&lt;ICacheWarmer&gt;().WarmUpAsync()
@@ -51,7 +51,7 @@ public static partial class StartupExtensions
     /// </example>
     public static IServiceCollection ConfigureApi(
         this IServiceCollection services,
-        StartupTasks? startupTasks = null,
+        StartupChecks? startupChecks = null,
         Action<MvcOptions>? configureMvcAction = null,
         Action<ProblemDetailsOptions>? configureProblemDetailsAction = null,
         Action<IHealthChecksBuilder>? buildHealthChecksAction = null
@@ -73,7 +73,7 @@ public static partial class StartupExtensions
             });
         services.AddProblemDetails(configureProblemDetailsAction);
         services.AddHostedService<StartupBackgroundService>();
-        services.AddSingleton(_ => startupTasks ?? ((_) => []));
+        services.AddSingleton(_ => startupChecks ?? ((_) => []));
         services.AddSingleton<StartupHealthCheck>();
         var healthChecksBuilder = services
             .AddHealthChecks()

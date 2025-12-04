@@ -15,23 +15,23 @@ namespace Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
 /// <example>
 /// <code>
 /// // With scoped services (e.g., DbContext)
-/// StartupTasks tasks = (provider) =>
+/// StartupChecks tasks = (provider) =>
 /// [
 ///     provider.GetRequiredService&lt;IDatabaseMigrator&gt;().MigrateAsync(),
 ///     provider.GetRequiredService&lt;MyDbContext&gt;().Database.EnsureCreatedAsync()
 /// ];
 ///
 /// // With singleton services
-/// StartupTasks tasks = (provider) =>
+/// StartupChecks tasks = (provider) =>
 /// [
 ///     provider.GetRequiredService&lt;ICacheWarmer&gt;().WarmUpAsync()
 /// ];
 ///
 /// // Simple tasks without DI
-/// StartupTasks tasks = (_) => [Task.Delay(1000)];
+/// StartupChecks tasks = (_) => [Task.Delay(1000)];
 ///
 /// // No tasks
-/// StartupTasks tasks = (_) => [];
+/// StartupChecks tasks = (_) => [];
 /// </code>
 /// </example>
-public delegate List<Task> StartupTasks(IServiceProvider serviceProvider);
+public delegate List<Task> StartupChecks(IServiceProvider serviceProvider);
