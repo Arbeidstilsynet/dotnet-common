@@ -24,13 +24,34 @@ public static partial class StartupExtensions
     /// <summary>
     /// Adds Controllers, model validation, problem details, and health checks.
     /// </summary>
-    /// <param name="services"></param>
+    /// <param name="services">The service collection to configure.</param>
+    /// <param name="startupChecks">
+    /// Optional <see cref="StartupChecks"/> delegate defining tasks to run before marking the application as ready.
+    /// The delegate receives an <see cref="IServiceProvider"/> to resolve dependencies from the DI container.
+    /// If null, no startup tasks are executed.
+    /// </param>
     /// <param name="configureMvcAction">Configures the AddControllers() call</param>
     /// <param name="configureProblemDetailsAction">Configures the AddProblemDetails() call</param>
     /// <param name="buildHealthChecksAction">Configures the IHealthCheckBuilder</param>
-    /// <returns></returns>
+    /// <returns>The service collection for method chaining.</returns>
+    /// <example>
+    /// <code>
+    /// // With startup tasks using DI
+    /// builder.Services.ConfigureApi(
+    ///     StartupChecks: (provider) =>
+    ///     [
+    ///         provider.GetRequiredService&lt;IDatabaseMigrator&gt;().MigrateAsync(),
+    ///         provider.GetRequiredService&lt;ICacheWarmer&gt;().WarmUpAsync()
+    ///     ]
+    /// );
+    ///
+    /// // Without startup tasks
+    /// builder.Services.ConfigureApi();
+    /// </code>
+    /// </example>
     public static IServiceCollection ConfigureApi(
         this IServiceCollection services,
+        StartupChecks? startupChecks = null,
         Action<MvcOptions>? configureMvcAction = null,
         Action<ProblemDetailsOptions>? configureProblemDetailsAction = null,
         Action<IHealthChecksBuilder>? buildHealthChecksAction = null
@@ -51,7 +72,12 @@ public static partial class StartupExtensions
                 options.JsonSerializerOptions.Converters.Add(new JsonStringUriConverter());
             });
         services.AddProblemDetails(configureProblemDetailsAction);
-        var healthChecksBuilder = services.AddHealthChecks();
+        services.AddHostedService<StartupBackgroundService>();
+        services.AddSingleton(_ => startupChecks ?? ((_) => []));
+        services.AddSingleton<StartupHealthCheck>();
+        var healthChecksBuilder = services
+            .AddHealthChecks()
+            .AddCheck<StartupHealthCheck>("Startup");
 
         buildHealthChecksAction?.Invoke(healthChecksBuilder);
 
@@ -89,7 +115,15 @@ public static partial class StartupExtensions
                 options.AddSource("API.Adapters");
                 options.AddSource("Domain.Logic");
                 options.AddSource("Infrastructure.Adapters");
-                options.AddAspNetCoreInstrumentation();
+                options.AddAspNetCoreInstrumentation(options =>
+                {
+                    // Filter out requests to the health check endpoint
+                    options.Filter = (httpContext) =>
+                    {
+                        // Adjust the path to match your health check endpoint
+                        return !httpContext.Request.Path.StartsWithSegments("/healthz");
+                    };
+                });
                 options.AddHttpClientInstrumentation();
                 options.AddEntityFrameworkCoreInstrumentation();
                 options.AddOtlpExporter();
@@ -162,10 +196,11 @@ public static partial class StartupExtensions
 
         app.MapControllers();
 
-        app.UseHealthChecks(
-            "/healthz",
+        app.MapHealthChecks(
+            "/healthz/ready",
             new HealthCheckOptions() { ResponseWriter = CustomHealthReport.WriteHealthCheckDetails }
         );
+        app.MapHealthChecks("/healthz/live", new HealthCheckOptions() { Predicate = _ => false });
 
         return app;
     }
