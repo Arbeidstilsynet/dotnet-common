@@ -84,6 +84,32 @@ internal class AltinnAdapter(
         return summaries;
     }
 
+    public async Task<IEnumerable<AltinnMetadata>> GetMetadataForNonCompletedInstances(
+        string appId,
+        bool processIsComplete = true,
+        string? excludeConfirmedBy = DependencyInjectionExtensions.AltinnOrgIdentifier
+    )
+    {
+        var instances = await altinnStorageClient.GetAllInstances(
+            new InstanceQueryParameters
+            {
+                AppId = $"{DependencyInjectionExtensions.AltinnOrgIdentifier}/{appId}",
+                Org = DependencyInjectionExtensions.AltinnOrgIdentifier,
+                ProcessIsComplete = processIsComplete,
+                ExcludeConfirmedBy =
+                    excludeConfirmedBy ?? DependencyInjectionExtensions.AltinnOrgIdentifier,
+            }
+        );
+
+        IList<AltinnMetadata> metadataList = [];
+        foreach (var instance in instances)
+        {
+            metadataList.Add(instance.ToAltinnMetadata());
+        }
+
+        return metadataList;
+    }
+
     private async Task<AltinnInstanceSummary> GetInstanceSummaryAsync(
         AltinnInstance instance,
         string mainDocumentDataTypeName
