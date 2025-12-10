@@ -101,13 +101,7 @@ internal class AltinnAdapter(
             }
         );
 
-        IList<AltinnMetadata> metadataList = [];
-        foreach (var instance in instances)
-        {
-            metadataList.Add(instance.ToAltinnMetadata());
-        }
-
-        return metadataList;
+        return [.. instances.Select(s => s.ToAltinnMetadata())];
     }
 
     private async Task<AltinnInstanceSummary> GetInstanceSummaryAsync(
