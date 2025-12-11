@@ -35,7 +35,7 @@ public interface IAltinnAdapter
     /// </summary>
     /// <param name="altinnSubscription">The altinn subscription details.</param>
     /// <returns>True if it could be successfully unsubscribed, false if the ID did not exist</returns>
-    public Task<bool> SubscribeForCompletedProcessEvents(AltinnSubscription altinnSubscription);
+    public Task<bool> UnsubscribeForCompletedProcessEvents(AltinnSubscription altinnSubscription);
 
     /// <summary>
     /// Gets all non-completed Altinn instances for a given app.

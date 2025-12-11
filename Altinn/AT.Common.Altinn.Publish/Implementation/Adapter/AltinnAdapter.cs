@@ -53,7 +53,7 @@ internal class AltinnAdapter(
         return altinnEventsClient.Subscribe(mappedRequest);
     }
 
-    public async Task<bool> SubscribeForCompletedProcessEvents(
+    public async Task<bool> UnsubscribeForCompletedProcessEvents(
         AltinnSubscription altinnSubscription
     )
     {
