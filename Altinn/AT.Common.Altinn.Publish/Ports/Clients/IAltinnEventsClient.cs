@@ -14,4 +14,11 @@ public interface IAltinnEventsClient
     /// <param name="request">The subscription request details.</param>
     /// <returns>The created subscription mapped to our internal model.</returns>
     Task<AltinnSubscription> Subscribe(AltinnSubscriptionRequest request);
+
+    /// <summary>
+    /// Unsubscribes an existing subscription.
+    /// </summary>
+    /// <param name="subscriptionId">The subscription id.</param>
+    /// <returns>The http response message which includes a status code to check if it was successful.</returns>
+    Task<HttpResponseMessage> Unsubscribe(int subscriptionId);
 }

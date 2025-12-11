@@ -36,4 +36,12 @@ internal class AltinnEventsClient : IAltinnEventsClient
                 .ReceiveContent<AltinnSubscription>(_jsonSerializerOptions)
             ?? throw new Exception("Failed to subscribe to Altinn");
     }
+
+    public async Task<HttpResponseMessage> Unsubscribe(int subscriptionId)
+    {
+        return await _httpClient
+                .Delete($"subscriptions/{subscriptionId}")
+                .WithBearerToken(await _altinnTokenProvider.GetToken())
+                .Send() ?? throw new Exception("Failed to subscribe to Altinn");
+    }
 }
