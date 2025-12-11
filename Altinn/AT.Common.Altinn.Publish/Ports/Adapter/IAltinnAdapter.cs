@@ -31,6 +31,13 @@ public interface IAltinnAdapter
     );
 
     /// <summary>
+    /// Unsubscribes for an already registered Altinn subscription.
+    /// </summary>
+    /// <param name="altinnSubscription">The altinn subscription details.</param>
+    /// <returns>True if it could be successfully unsubscribed, false if the ID did not exist</returns>
+    public Task<bool> UnsubscribeForCompletedProcessEvents(AltinnSubscription altinnSubscription);
+
+    /// <summary>
     /// Gets all non-completed Altinn instances for a given app.
     /// </summary>
     /// <param name="appId">The Altinn app ID. E.g. "ulykkesvarsel" will be treated as "dat/ulykkesvarsel"</param>

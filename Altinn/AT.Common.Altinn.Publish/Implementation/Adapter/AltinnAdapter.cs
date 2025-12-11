@@ -53,6 +53,14 @@ internal class AltinnAdapter(
         return altinnEventsClient.Subscribe(mappedRequest);
     }
 
+    public async Task<bool> UnsubscribeForCompletedProcessEvents(
+        AltinnSubscription altinnSubscription
+    )
+    {
+        var response = await altinnEventsClient.Unsubscribe(altinnSubscription.Id);
+        return response.StatusCode == System.Net.HttpStatusCode.OK;
+    }
+
     public async Task<IEnumerable<AltinnInstanceSummary>> GetNonCompletedInstances(
         string appId,
         bool processIsComplete = true,
