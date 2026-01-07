@@ -1,3 +1,4 @@
+using Altinn.App.Core.Helpers.DataModel;
 using Altinn.App.Core.Internal.App;
 using Altinn.App.Core.Internal.Data;
 using Altinn.Platform.Storage.Interface.Models;
@@ -48,12 +49,8 @@ public class StructuredDataManagerTests
         _applicationClient.GetApplication(instance.Org, "testApp").Returns(application);
         _dataClient
             .GetFormData(
-                Arg.Any<Guid>(),
-                typeof(TestDataModel),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<int>(),
-                Arg.Any<Guid>(),
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
                 cancellationToken: Arg.Any<CancellationToken>()
             )
             .Returns(dataModel);
@@ -79,12 +76,8 @@ public class StructuredDataManagerTests
             .Returns(application);
         _dataClient
             .GetFormData(
-                Arg.Any<Guid>(),
-                typeof(TestDataModel),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<int>(),
-                Arg.Any<Guid>(),
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
                 cancellationToken: Arg.Any<CancellationToken>()
             )
             .Returns(dataModel);
@@ -96,12 +89,8 @@ public class StructuredDataManagerTests
         await _dataClient
             .Received(1)
             .GetFormData(
-                instance.GetInstanceGuid(),
-                typeof(TestDataModel),
-                instance.Org,
-                instance.AppId,
-                instance.GetInstanceOwnerPartyId(),
-                expectedGuid,
+                instance,
+                Arg.Any<DataElement>(),
                 cancellationToken: Arg.Any<CancellationToken>()
             );
     }
@@ -119,12 +108,8 @@ public class StructuredDataManagerTests
             .Returns(application);
         _dataClient
             .GetFormData(
-                Arg.Any<Guid>(),
-                Arg.Any<Type>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<int>(),
-                Arg.Any<Guid>(),
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
                 cancellationToken: Arg.Any<CancellationToken>()
             )
             .Returns(dataModel);
@@ -181,8 +166,6 @@ public class StructuredDataManagerTests
         await _dataClient
             .Received(1)
             .DeleteData(
-                instance.Org,
-                "testApp",
                 instance.GetInstanceOwnerPartyId(),
                 instance.GetInstanceGuid(),
                 expectedGuid,
