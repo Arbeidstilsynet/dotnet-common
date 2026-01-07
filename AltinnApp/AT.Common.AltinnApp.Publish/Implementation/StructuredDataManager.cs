@@ -150,12 +150,8 @@ file static class Extensions
     {
         if (
             await dataClient.GetFormData(
-                instance.GetInstanceGuid(),
-                typeof(T),
-                instance.Org,
-                instance.AppId,
-                instance.GetInstanceOwnerPartyId(),
-                Guid.Parse(dataElement.Id),
+                instance,
+                dataElement,
                 cancellationToken: cancellationToken ?? CancellationToken.None
             )
             is not T data
@@ -196,8 +192,6 @@ file static class Extensions
     )
     {
         await dataClient.DeleteData(
-            instance.Org,
-            instance.GetAppName(),
             instance.GetInstanceOwnerPartyId(),
             instance.GetInstanceGuid(),
             Guid.Parse(dataElement.Id),

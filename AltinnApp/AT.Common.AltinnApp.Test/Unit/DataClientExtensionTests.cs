@@ -34,15 +34,7 @@ public class DataClientExtensionsTests
         _ = await _sut.GetSkjemaData<object>(_instance);
 
         await _sut.Received(1)
-            .GetFormData(
-                _instance.GetInstanceGuid(),
-                typeof(object),
-                _instance.Org!,
-                _instance.GetAppName(),
-                _instance.GetInstanceOwnerPartyId(),
-                elementGuid,
-                cancellationToken: Arg.Any<CancellationToken>()
-            );
+            .GetFormData(_instance, dataElement, cancellationToken: Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -58,10 +50,6 @@ public class DataClientExtensionsTests
 
         await _sut.DidNotReceiveWithAnyArgs()
             .GetFormData(
-                default!,
-                typeof(object),
-                default!,
-                default!,
                 default!,
                 default!,
                 cancellationToken: TestContext.Current.CancellationToken
@@ -85,8 +73,6 @@ public class DataClientExtensionsTests
 
         await _sut.Received(1)
             .DeleteData(
-                _instance.Org!,
-                _instance.GetAppName(),
                 _instance.GetInstanceOwnerPartyId(),
                 _instance.GetInstanceGuid(),
                 elementToDeleteGuid,
