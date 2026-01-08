@@ -92,4 +92,25 @@ internal class EraAsbestClient : IEraAsbestClient
             _ => throw new InvalidOperationException(),
         };
     }
+
+    public async Task<SøknadStatusResponse?> GetGodkjenningstatus(
+        AuthenticationResponseDto authenticationResponse,
+        string orgNumber
+    )
+    {
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+            authenticationResponse.TokenType,
+            authenticationResponse.AccessToken
+        );
+        // we need to update the base adress before each request because the determination of the base url is not defined at compile time
+        _httpClient.BaseAddress = new Uri(
+            GetAsbestUrl(
+                _hostEnvironment.GetRespectiveEraEnvironment(_httpContextAccessor.HttpContext),
+                _eraClientConfiguration
+            )
+        );
+        return await _httpClient.GetFromJsonAsync<SøknadStatusResponse>(
+            new Uri($"godkjenningsstatus/{orgNumber}", UriKind.Relative)
+        );
+    }
 }
