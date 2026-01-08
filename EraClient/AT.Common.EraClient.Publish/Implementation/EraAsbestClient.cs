@@ -93,7 +93,7 @@ internal class EraAsbestClient : IEraAsbestClient
         };
     }
 
-    public async Task<SøknadStatusResponse?> GetGodkjenningstatus(
+    public async Task<GodkjenningStatusResponse?> GetGodkjenningstatus(
         AuthenticationResponseDto authenticationResponse,
         string orgNumber
     )
@@ -109,7 +109,7 @@ internal class EraAsbestClient : IEraAsbestClient
                 _eraClientConfiguration
             )
         );
-        return await _httpClient.GetFromJsonAsync<SøknadStatusResponse>(
+        return await _httpClient.GetFromJsonAsync<GodkjenningStatusResponse>(
             new Uri($"godkjenningsstatus/{orgNumber}", UriKind.Relative)
         );
     }

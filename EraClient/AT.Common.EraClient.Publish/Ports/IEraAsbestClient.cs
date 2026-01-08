@@ -18,7 +18,7 @@ public interface IEraAsbestClient
         string orgNumber
     );
 
-    Task<SøknadStatusResponse?> GetGodkjenningstatus(
+    Task<GodkjenningStatusResponse?> GetGodkjenningstatus(
         AuthenticationResponseDto authenticationResponse,
         string orgNumber
     );
