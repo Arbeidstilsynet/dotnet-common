@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.2.0
+
+- added: Option to disable deletion of app datamodel after mapping structured data. This can be useful for testing and some legacy use cases.
+
 ## 2.1.0
 
 ### Changed
@@ -30,10 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - changed(deps): Major dotnet updated (v10)
-
-## 1.6.0
-
-- added: Option to disable deletion of app datamodel after mapping structured data. This can be useful for testing and some legacy use cases.
 
 ## 1.5.1
 
