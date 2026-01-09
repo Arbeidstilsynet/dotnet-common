@@ -120,7 +120,7 @@ public static class DependencyInjectionExtensions
             new StructuredDataManager<TDataModel, TStructuredData>.Config(mapFunc)
             {
                 IncludeErrorDetails = includeErrorDetails,
-                DeleteAppDataModelAfterMapping = deleteAppDataModelAfterMapping
+                DeleteAppDataModelAfterMapping = deleteAppDataModelAfterMapping,
             }
         );
         services.AddSingleton<StructuredDataManager<TDataModel, TStructuredData>>();

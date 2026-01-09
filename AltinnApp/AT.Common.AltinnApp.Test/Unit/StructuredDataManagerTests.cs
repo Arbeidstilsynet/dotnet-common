@@ -30,7 +30,7 @@ public class StructuredDataManagerTests
 
         _config = new StructuredDataManager<TestDataModel, TestStructuredData>.Config(
             dataModel => new TestStructuredData { Name = dataModel.Name }
-        ); 
+        );
 
         _sut = new StructuredDataManager<TestDataModel, TestStructuredData>(
             _applicationClient,
@@ -175,7 +175,7 @@ public class StructuredDataManagerTests
                 cancellationToken: Arg.Any<CancellationToken>()
             );
     }
-    
+
     [Fact]
     public async Task End_ProcessEnd_When_DeleteAppDataModelAfterMapping_IsFalse_ShouldNotDeleteData()
     {
@@ -188,11 +188,11 @@ public class StructuredDataManagerTests
             _dataClient,
             _config with
             {
-                DeleteAppDataModelAfterMapping = false
+                DeleteAppDataModelAfterMapping = false,
             },
             _logger
         );
-        
+
         _applicationClient
             .GetApplication(Arg.Any<string>(), Arg.Any<string>())
             .Returns(application);
