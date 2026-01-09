@@ -1,6 +1,7 @@
 using Altinn.App.Core.Internal.Data;
 using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.AltinnApp.Extensions;
+using Arbeidstilsynet.Common.AltinnApp.Test.Unit.TestFixtures;
 using NSubstitute;
 using Shouldly;
 using Xunit;
@@ -9,15 +10,17 @@ namespace Arbeidstilsynet.Common.AltinnApp.Test.Unit;
 
 public class DataClientExtensionsTests
 {
-    private readonly Instance _instance = Substitute.For<Instance>();
+    private readonly Instance _instance;
     private readonly IDataClient _sut = Substitute.For<IDataClient>();
 
     public DataClientExtensionsTests()
     {
-        _instance.Org = "org";
-        _instance.Id = $"dat/{Guid.NewGuid()}";
-        _instance.AppId = "dat/appId";
-        _instance.InstanceOwner = new InstanceOwner { PartyId = "1337" };
+        _instance = AltinnData.CreateTestInstance(
+            org: "org",
+            appId: "dat/appId",
+            partyId: "1337",
+            instanceId: $"dat/{Guid.NewGuid()}"
+        );
     }
 
     [Fact]
@@ -40,10 +43,10 @@ public class DataClientExtensionsTests
     [Fact]
     public async Task GetSkjemaData_WhenThereAreNoDataElementsOfGivenDataType_ReturnsDefault()
     {
-        var elementGuid = Guid.NewGuid();
+        Guid.NewGuid();
 
         // Arrange
-        var dataElement = Substitute.For<DataElement>();
+        Substitute.For<DataElement>();
         _instance.Data = [];
 
         var result = await _sut.GetSkjemaData<object>(_instance);
