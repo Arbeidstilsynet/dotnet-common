@@ -10,7 +10,7 @@
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Arbeidstilsynet.Common.TestExtensions" Version="1.0.0" />
+    <PackageReference Include="Arbeidstilsynet.Common.TestExtensions" Version="1.1.0" />
     <PackageReference Include="NSubstitute" Version="5.3.0" />
     <PackageReference Include="Shouldly" Version="4.3.0" />
     <PackageReference Include="WireMock.Net" Version="1.23.0" />
@@ -23,7 +23,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.3.1" />
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.3.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AT.Common.Altinn.Publish\AT.Common.Altinn.Publish.csproj" />
