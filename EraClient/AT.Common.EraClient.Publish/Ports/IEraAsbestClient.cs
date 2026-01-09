@@ -17,4 +17,9 @@ public interface IEraAsbestClient
         AuthenticationResponseDto authenticationResponse,
         string orgNumber
     );
+
+    Task<GodkjenningStatusResponse?> GetGodkjenningstatus(
+        AuthenticationResponseDto authenticationResponse,
+        string orgNumber
+    );
 }

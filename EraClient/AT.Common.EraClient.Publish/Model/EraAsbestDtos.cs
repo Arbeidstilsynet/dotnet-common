@@ -35,6 +35,14 @@ public record SøknadStatusResponse
     public List<Mangelkategori> Mangelkategorier { get; init; }
 }
 
+public record GodkjenningStatusResponse
+{
+    public string Organisasjonsnummer { get; init; }
+    public string Registerstatus { get; init; }
+    public string Godkjenningstype { get; init; }
+    public string TillatelseUtloper { get; init; }
+}
+
 public record Mangelkategori
 {
     public string Navn { get; init; }
