@@ -194,12 +194,12 @@ public class StructuredDataManagerTests
         var instance = AltinnData.CreateTestInstance();
         var application = AltinnData.CreateTestApplication(
             classRef: typeof(TestDataModel).FullName
-            );
-        
+        );
+
         _applicationClient
             .GetApplication(Arg.Any<string>(), Arg.Any<string>())
             .Returns(application);
-        
+
         var sut_withDeleteDisabled = new StructuredDataManager<TestDataModel, TestStructuredData>(
             _applicationClient,
             _dataClient,

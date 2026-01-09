@@ -85,11 +85,7 @@ public class PreSubmitProcessorTests
         // Assert
         await _dataClient
             .Received(1)
-            .GetFormData(
-                instance,
-                dataElement,
-                cancellationToken: Arg.Any<CancellationToken>()
-            );
+            .GetFormData(instance, dataElement, cancellationToken: Arg.Any<CancellationToken>());
     }
 
     [Fact]
