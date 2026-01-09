@@ -42,12 +42,9 @@ public class PreSubmitProcessorTests
 
         _dataClient
             .GetFormData(
-                Arg.Any<Guid>(),
-                typeof(TestDataModel),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<int>(),
-                Arg.Any<Guid>()
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
+                cancellationToken: Arg.Any<CancellationToken>()
             )
             .Returns(dataModel);
 
@@ -76,12 +73,9 @@ public class PreSubmitProcessorTests
 
         _dataClient
             .GetFormData(
-                Arg.Any<Guid>(),
-                typeof(TestDataModel),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<int>(),
-                Arg.Any<Guid>()
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
+                cancellationToken: Arg.Any<CancellationToken>()
             )
             .Returns(dataModel);
 
@@ -92,12 +86,9 @@ public class PreSubmitProcessorTests
         await _dataClient
             .Received(1)
             .GetFormData(
-                instance.GetInstanceGuid(),
-                typeof(TestDataModel),
-                instance.Org,
-                instance.AppId,
-                instance.GetInstanceOwnerPartyId(),
-                expectedGuid
+                instance,
+                dataElement,
+                cancellationToken: Arg.Any<CancellationToken>()
             );
     }
 
@@ -117,12 +108,9 @@ public class PreSubmitProcessorTests
 
         _dataClient
             .GetFormData(
-                Arg.Any<Guid>(),
-                Arg.Any<Type>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<int>(),
-                Arg.Any<Guid>()
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
+                cancellationToken: Arg.Any<CancellationToken>()
             )
             .Returns(dataModel);
 
@@ -150,12 +138,9 @@ public class PreSubmitProcessorTests
 
         _dataClient
             .GetFormData(
-                Arg.Any<Guid>(),
-                Arg.Any<Type>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<int>(),
-                Arg.Any<Guid>()
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
+                cancellationToken: Arg.Any<CancellationToken>()
             )
             .Returns(dataModel);
 
@@ -165,14 +150,11 @@ public class PreSubmitProcessorTests
         // Assert
         await _dataClient
             .Received(1)
-            .UpdateData(
-                Arg.Is<TestDataModel>(d => d.Value == "Processed"),
-                Arg.Any<Guid>(),
-                typeof(TestDataModel),
-                instance.Org,
-                instance.GetAppName(),
-                instance.GetInstanceOwnerPartyId(),
-                Arg.Any<Guid>()
+            .UpdateFormData(
+                instance,
+                Arg.Is<TestDataModel>(dm => dm.Value == "Processed"),
+                Arg.Any<DataElement>(),
+                cancellationToken: Arg.Any<CancellationToken>()
             );
     }
 
@@ -192,12 +174,9 @@ public class PreSubmitProcessorTests
 
         _dataClient
             .GetFormData(
-                Arg.Any<Guid>(),
-                Arg.Any<Type>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<int>(),
-                Arg.Any<Guid>()
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
+                cancellationToken: Arg.Any<CancellationToken>()
             )
             .Returns(dataModel);
 
@@ -208,8 +187,8 @@ public class PreSubmitProcessorTests
         var receivedData =
             _dataClient
                 .ReceivedCalls()
-                .Single(call => call.GetMethodInfo().Name == nameof(IDataClient.UpdateData))
-                .GetArguments()[0]! as TestDataModel;
+                .Single(call => call.GetMethodInfo().Name == nameof(IDataClient.UpdateFormData))
+                .GetArguments()[1]! as TestDataModel;
 
         receivedData?.Value.ShouldBe("Processed");
     }
@@ -230,12 +209,9 @@ public class PreSubmitProcessorTests
 
         _dataClient
             .GetFormData(
-                Arg.Any<Guid>(),
-                Arg.Any<Type>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<int>(),
-                Arg.Any<Guid>()
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
+                cancellationToken: Arg.Any<CancellationToken>()
             )
             .Returns(originalData);
 
@@ -247,23 +223,17 @@ public class PreSubmitProcessorTests
         await _dataClient
             .Received(1)
             .GetFormData(
-                Arg.Any<Guid>(),
-                Arg.Any<Type>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<int>(),
-                Arg.Any<Guid>()
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
+                cancellationToken: Arg.Any<CancellationToken>()
             );
         await _dataClient
             .Received(1)
-            .UpdateData(
-                Arg.Any<TestDataModel>(),
-                Arg.Any<Guid>(),
-                Arg.Any<Type>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<int>(),
-                Arg.Any<Guid>()
+            .UpdateFormData(
+                instance,
+                Arg.Is<TestDataModel>(dm => dm.Value == "Processed"),
+                Arg.Any<DataElement>(),
+                cancellationToken: Arg.Any<CancellationToken>()
             );
     }
 

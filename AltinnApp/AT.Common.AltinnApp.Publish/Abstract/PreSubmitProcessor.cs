@@ -42,11 +42,11 @@ public abstract class PreSubmitDataModelProcessor<TDataModel> : IProcessTaskEnd
             instance
         );
 
-        var data = await _dataClient.GetData<TDataModel>(instance, dataElement);
+        var data = await _dataClient.GetFormData<TDataModel>(instance, dataElement);
 
         var processedDataModel = await ProcessDataModel(data, instance);
 
-        await _dataClient.UpdateDataElement(instance, dataElement, processedDataModel);
+        await _dataClient.UpdateFormData(instance, processedDataModel, dataElement);
     }
 
     /// <summary>

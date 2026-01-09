@@ -191,9 +191,15 @@ public class StructuredDataManagerTests
     public async Task End_ProcessEnd_When_DeleteAppDataModelAfterMapping_IsFalse_ShouldNotDeleteData()
     {
         // Arrange
-        var instance = CreateTestInstance();
-        var application = CreateTestApplication();
-
+        var instance = AltinnData.CreateTestInstance();
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+            );
+        
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(application);
+        
         var sut_withDeleteDisabled = new StructuredDataManager<TestDataModel, TestStructuredData>(
             _applicationClient,
             _dataClient,
@@ -203,10 +209,6 @@ public class StructuredDataManagerTests
             },
             _logger
         );
-
-        _applicationClient
-            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
-            .Returns(application);
 
         // Act
         await sut_withDeleteDisabled.End(instance, new List<InstanceEvent>());
