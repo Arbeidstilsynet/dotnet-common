@@ -17,7 +17,7 @@ jobs:
       parent_dir: ${{ steps.get_parent_dir.outputs.parent_dir }}
       package_path: ${{ inputs.package-path }}
     steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
         with:
           fetch-depth: 0
 
@@ -42,7 +42,7 @@ jobs:
         with:
           base-ref: origin/main
           include: |
-            ${{ steps.get_parent_dir.outputs.parent_dir }}/AT.Common.*.Publish
+            ${{ steps.get_parent_dir.outputs.parent_dir }}/AT.Common.*.Publish/*
           exclude: |
             ${{ steps.get_parent_dir.outputs.parent_dir }}/AT.Common.*.Test*
 
@@ -52,7 +52,7 @@ jobs:
     timeout-minutes: 10
     if: needs.check-and-prepare.outputs.should-build == 'true'
     steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       - name: Build and Test .NET solution
         uses: Arbeidstilsynet/action-dotnet-build@a1f3f50f263efb55f38a48fa615e2cf77c4297fa # v3
         with:
@@ -64,7 +64,7 @@ jobs:
     timeout-minutes: 10
     if: needs.check-and-prepare.outputs.should-publish == 'true'
     steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
         with:
           fetch-depth: 0
 
@@ -99,7 +99,7 @@ jobs:
 
       - name: Publish prerelease package
         if: steps.prerelease_check.outputs.is_prerelease == 'true'
-        uses: Arbeidstilsynet/action-dotnet-publish@1f0a759b152f5e6024fec0025db31ff4f5a0192d # v2
+        uses: Arbeidstilsynet/action-dotnet-publish@ce594f5b9d76624602fb234c25c99f9a76a81848 # v2
         with:
           working-directory: ${{ needs.check-and-prepare.outputs.package_path }}
           nuget-auth-token: ${{ secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT }}

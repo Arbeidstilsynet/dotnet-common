@@ -19,6 +19,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.2.0
+
+### Changed
+
+- changed(deps): Applied minor and patch updates to dependencies
+
+## 2.1.0
+
+### Added
+
+- feat(altinn): Enhanced ``AltinnEventsClient`` to support Unsubscribing. Also updated ``IAltinnAdapter`` to implement a convenience method for unsubscribing.
+
+## 2.0.2
+
+### Added
+
+- feat(altinn): Added function to return only metadata for non completed instances (in order to not download attachments)
+
 ## 2.0.1
 
 ### Changed

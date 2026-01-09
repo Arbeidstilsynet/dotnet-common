@@ -19,10 +19,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
-## 2.1.0
+## 2.3.0
 
 - added: PreSubmitProcessor to make it easier to implement custom pre-submit logic in AltinnApps.
 - added: A few more extension methods for `IApplicationClient` and `IDataClient`
+
+## 2.2.0
+
+- added: Option to disable deletion of app datamodel after mapping structured data. This can be useful for testing and some legacy use cases.
+
+## 2.1.0
+
+### Changed
+
+- changed(deps): Applied minor and patch updates to dependencies
 
 ## 2.0.0
 

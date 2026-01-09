@@ -85,11 +85,12 @@ public static class DependencyInjectionExtensions
     /// <summary>
     /// Adds a mechanism to map the datamodel of type <typeparamref name="TDataModel"/> to structured data of type <typeparamref name="TStructuredData"/>
     ///
-    /// The data model is deleted right after PDF-generation so that it doesn't get transferred to storage. The structured data will be stored instead.
+    /// The data model is deleted right after PDF-generation so that it doesn't get transferred to storage (disable this behavior with <paramref name="keepAppDataModelAfterMapping"/>). The structured data will be stored instead.
     /// </summary>
     /// <param name="services"></param>
     /// <param name="mapFunc">The function responsible for mapping from <typeparamref name="TDataModel"/> to <typeparamref name="TStructuredData"/> </param>
     /// <param name="includeErrorDetails">Whether to include error details in the structured data in case of mapping errors. Default is false.</param>
+    /// <param name="keepAppDataModelAfterMapping">Whether to keep the App data model after mapping. Default is false.</param>
     /// <typeparam name="TStructuredData"></typeparam>
     /// <typeparam name="TDataModel"></typeparam>
     /// <returns></returns>
@@ -109,7 +110,8 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddStructuredData<TDataModel, TStructuredData>(
         this IServiceCollection services,
         Func<TDataModel, TStructuredData> mapFunc,
-        bool includeErrorDetails = false
+        bool includeErrorDetails = false,
+        bool keepAppDataModelAfterMapping = false
     )
         where TDataModel : class
         where TStructuredData : class
@@ -118,6 +120,7 @@ public static class DependencyInjectionExtensions
             new StructuredDataManager<TDataModel, TStructuredData>.Config(mapFunc)
             {
                 IncludeErrorDetails = includeErrorDetails,
+                DeleteAppDataModelAfterMapping = !keepAppDataModelAfterMapping,
             }
         );
         services.AddSingleton<StructuredDataManager<TDataModel, TStructuredData>>();

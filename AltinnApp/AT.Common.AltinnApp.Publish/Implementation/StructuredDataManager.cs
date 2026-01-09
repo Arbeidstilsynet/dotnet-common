@@ -16,6 +16,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
     internal record Config
     {
         public bool IncludeErrorDetails { get; init; } = false;
+        public bool DeleteAppDataModelAfterMapping { get; init; } = true;
         public Func<TDataModel, TStructuredData> MapFunc { get; init; }
 
         public Config(Func<TDataModel, TStructuredData> mapFunc)
@@ -50,7 +51,10 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
             instance
         );
 
-        await _dataClient.DeleteElement(instance, dataModelElement);
+        if (_config.DeleteAppDataModelAfterMapping)
+        {
+            await _dataClient.DeleteElement(instance, dataModelElement);
+        }
     }
 
     public async Task End(string taskId, Instance instance)
@@ -150,12 +154,8 @@ file static class Extensions
     {
         if (
             await dataClient.GetFormData(
-                instance.GetInstanceGuid(),
-                typeof(T),
-                instance.Org,
-                instance.AppId,
-                instance.GetInstanceOwnerPartyId(),
-                Guid.Parse(dataElement.Id),
+                instance,
+                dataElement,
                 cancellationToken: cancellationToken ?? CancellationToken.None
             )
             is not T data
@@ -189,7 +189,22 @@ file static class Extensions
         );
     }
 
-    private static Stream ToBinaryStream<T>(this T structuredData)
+    public static async Task DeleteElement(
+        this IDataClient dataClient,
+        Instance instance,
+        DataElement dataElement
+    )
+    {
+        await dataClient.DeleteData(
+            instance.GetInstanceOwnerPartyId(),
+            instance.GetInstanceGuid(),
+            Guid.Parse(dataElement.Id),
+            false
+        );
+        instance.Data.Remove(dataElement);
+    }
+
+    public static Stream ToBinaryStream<T>(this T structuredData)
         where T : class
     {
         var json = JsonSerializer.Serialize(structuredData);

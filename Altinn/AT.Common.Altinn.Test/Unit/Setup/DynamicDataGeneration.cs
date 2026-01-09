@@ -29,7 +29,8 @@ public class DynamicDataGeneration : WireMockOpenApiParserDynamicExampleValues
                     .GetRandomizer(
                         new FieldOptionsTextRegex { Pattern = $"[0-9A-Z]{{{maxLength}}}" }
                     )
-                    .Generate() ?? "example-string";
+                    .Generate()
+                ?? "example-string";
         }
     }
 }

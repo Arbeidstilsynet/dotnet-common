@@ -29,15 +29,7 @@ public static class DataClientExtensions
             return default;
         }
 
-        return (T?)
-            await dataClient.GetFormData(
-                instance.GetInstanceGuid(),
-                typeof(T),
-                instance.Org,
-                instance.GetAppName(),
-                instance.GetInstanceOwnerPartyId(),
-                Guid.Parse(element.Id)
-            );
+        return (T?)await dataClient.GetFormData(instance, element);
     }
 
     /// <summary>
@@ -118,8 +110,6 @@ public static class DataClientExtensions
     )
     {
         await dataClient.DeleteData(
-            instance.Org,
-            instance.GetAppName(),
             instance.GetInstanceOwnerPartyId(),
             instance.GetInstanceGuid(),
             Guid.Parse(element.Id),

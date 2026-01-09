@@ -53,6 +53,14 @@ internal class AltinnAdapter(
         return altinnEventsClient.Subscribe(mappedRequest);
     }
 
+    public async Task<bool> UnsubscribeForCompletedProcessEvents(
+        AltinnSubscription altinnSubscription
+    )
+    {
+        var response = await altinnEventsClient.Unsubscribe(altinnSubscription.Id);
+        return response.StatusCode == System.Net.HttpStatusCode.OK;
+    }
+
     public async Task<IEnumerable<AltinnInstanceSummary>> GetNonCompletedInstances(
         string appId,
         bool processIsComplete = true,
@@ -82,6 +90,26 @@ internal class AltinnAdapter(
         }
 
         return summaries;
+    }
+
+    public async Task<IEnumerable<AltinnMetadata>> GetMetadataForNonCompletedInstances(
+        string appId,
+        bool processIsComplete = true,
+        string? excludeConfirmedBy = DependencyInjectionExtensions.AltinnOrgIdentifier
+    )
+    {
+        var instances = await altinnStorageClient.GetAllInstances(
+            new InstanceQueryParameters
+            {
+                AppId = $"{DependencyInjectionExtensions.AltinnOrgIdentifier}/{appId}",
+                Org = DependencyInjectionExtensions.AltinnOrgIdentifier,
+                ProcessIsComplete = processIsComplete,
+                ExcludeConfirmedBy =
+                    excludeConfirmedBy ?? DependencyInjectionExtensions.AltinnOrgIdentifier,
+            }
+        );
+
+        return [.. instances.Select(s => s.ToAltinnMetadata())];
     }
 
     private async Task<AltinnInstanceSummary> GetInstanceSummaryAsync(

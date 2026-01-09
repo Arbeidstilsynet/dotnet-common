@@ -2,6 +2,10 @@ Altinn:
   - changed-files:
       - any-glob-to-any-file: "Altinn/**"
 
+AltinnApp:
+  - changed-files:
+      - any-glob-to-any-file: "AltinnApp/**"
+
 AspNetCore:
   - changed-files:
       - any-glob-to-any-file: "AspNetCore/**"
@@ -13,6 +17,10 @@ Enhetsregisteret:
 EraClient:
   - changed-files:
       - any-glob-to-any-file: "EraClient/**"
+
+FeatureFlags:
+  - changed-files:
+      - any-glob-to-any-file: "FeatureFlags/**"
 
 GeoNorge:
   - changed-files:

@@ -75,6 +75,18 @@ internal static class HttpExtensions
         );
     }
 
+    public static IHttpRequestBuilder Delete(this HttpClient client, string resource)
+    {
+        return new HttpRequestBuilder(
+            client,
+            new HttpRequestMessage()
+            {
+                RequestUri = new Uri(resource, UriKind.Relative),
+                Method = HttpMethod.Delete,
+            }
+        );
+    }
+
     public static IHttpRequestBuilder Get(this HttpClient client, string resource)
     {
         return new HttpRequestBuilder(

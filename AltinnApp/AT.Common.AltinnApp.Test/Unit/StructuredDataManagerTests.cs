@@ -1,3 +1,4 @@
+using Altinn.App.Core.Helpers.DataModel;
 using Altinn.App.Core.Internal.App;
 using Altinn.App.Core.Internal.Data;
 using Altinn.Platform.Storage.Interface.Models;
@@ -18,6 +19,8 @@ public class StructuredDataManagerTests
     private readonly ILogger<StructuredDataManager<TestDataModel, TestStructuredData>> _logger;
     private readonly StructuredDataManager<TestDataModel, TestStructuredData> _sut;
 
+    private readonly StructuredDataManager<TestDataModel, TestStructuredData>.Config _config;
+
     public StructuredDataManagerTests()
     {
         _applicationClient = Substitute.For<IApplicationClient>();
@@ -26,14 +29,14 @@ public class StructuredDataManagerTests
             ILogger<StructuredDataManager<TestDataModel, TestStructuredData>>
         >();
 
-        var config = new StructuredDataManager<TestDataModel, TestStructuredData>.Config(
+        _config = new StructuredDataManager<TestDataModel, TestStructuredData>.Config(
             dataModel => new TestStructuredData { Name = dataModel.Name }
         );
 
         _sut = new StructuredDataManager<TestDataModel, TestStructuredData>(
             _applicationClient,
             _dataClient,
-            config,
+            _config,
             _logger
         );
     }
@@ -51,12 +54,8 @@ public class StructuredDataManagerTests
         _applicationClient.GetApplication(instance.Org, "testApp").Returns(application);
         _dataClient
             .GetFormData(
-                Arg.Any<Guid>(),
-                typeof(TestDataModel),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<int>(),
-                Arg.Any<Guid>(),
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
                 cancellationToken: Arg.Any<CancellationToken>()
             )
             .Returns(dataModel);
@@ -84,12 +83,8 @@ public class StructuredDataManagerTests
             .Returns(application);
         _dataClient
             .GetFormData(
-                Arg.Any<Guid>(),
-                typeof(TestDataModel),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<int>(),
-                Arg.Any<Guid>(),
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
                 cancellationToken: Arg.Any<CancellationToken>()
             )
             .Returns(dataModel);
@@ -101,12 +96,8 @@ public class StructuredDataManagerTests
         await _dataClient
             .Received(1)
             .GetFormData(
-                instance.GetInstanceGuid(),
-                typeof(TestDataModel),
-                instance.Org,
-                instance.AppId,
-                instance.GetInstanceOwnerPartyId(),
-                expectedGuid,
+                instance,
+                Arg.Any<DataElement>(),
                 cancellationToken: Arg.Any<CancellationToken>()
             );
     }
@@ -126,12 +117,8 @@ public class StructuredDataManagerTests
             .Returns(application);
         _dataClient
             .GetFormData(
-                Arg.Any<Guid>(),
-                Arg.Any<Type>(),
-                Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Any<int>(),
-                Arg.Any<Guid>(),
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
                 cancellationToken: Arg.Any<CancellationToken>()
             )
             .Returns(dataModel);
@@ -192,12 +179,46 @@ public class StructuredDataManagerTests
         await _dataClient
             .Received(1)
             .DeleteData(
-                instance.Org,
-                "testApp",
                 instance.GetInstanceOwnerPartyId(),
                 instance.GetInstanceGuid(),
                 expectedGuid,
                 false,
+                cancellationToken: Arg.Any<CancellationToken>()
+            );
+    }
+
+    [Fact]
+    public async Task End_ProcessEnd_When_DeleteAppDataModelAfterMapping_IsFalse_ShouldNotDeleteData()
+    {
+        // Arrange
+        var instance = CreateTestInstance();
+        var application = CreateTestApplication();
+
+        var sut_withDeleteDisabled = new StructuredDataManager<TestDataModel, TestStructuredData>(
+            _applicationClient,
+            _dataClient,
+            _config with
+            {
+                DeleteAppDataModelAfterMapping = false,
+            },
+            _logger
+        );
+
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(application);
+
+        // Act
+        await sut_withDeleteDisabled.End(instance, new List<InstanceEvent>());
+
+        // Assert
+        await _dataClient
+            .DidNotReceiveWithAnyArgs()
+            .DeleteData(
+                default,
+                default,
+                default,
+                default,
                 cancellationToken: Arg.Any<CancellationToken>()
             );
     }

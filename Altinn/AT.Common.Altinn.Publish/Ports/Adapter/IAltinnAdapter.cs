@@ -31,6 +31,13 @@ public interface IAltinnAdapter
     );
 
     /// <summary>
+    /// Unsubscribes for an already registered Altinn subscription.
+    /// </summary>
+    /// <param name="altinnSubscription">The altinn subscription details.</param>
+    /// <returns>True if it could be successfully unsubscribed, false if the ID did not exist</returns>
+    public Task<bool> UnsubscribeForCompletedProcessEvents(AltinnSubscription altinnSubscription);
+
+    /// <summary>
     /// Gets all non-completed Altinn instances for a given app.
     /// </summary>
     /// <param name="appId">The Altinn app ID. E.g. "ulykkesvarsel" will be treated as "dat/ulykkesvarsel"</param>
@@ -43,5 +50,18 @@ public interface IAltinnAdapter
         bool ProcessIsComplete = true,
         string? ExcludeConfirmedBy = DependencyInjectionExtensions.AltinnOrgIdentifier,
         AltinnAppConfiguration? appConfig = null
+    );
+
+    /// <summary>
+    /// Gets all non-completed Altinn instance metadata for a given app. Does not download any attachments.
+    /// </summary>
+    /// <param name="appId">The Altinn app ID. E.g. "ulykkesvarsel" will be treated as "dat/ulykkesvarsel"</param>
+    /// <param name="ProcessIsComplete">Whether the process is complete (default true).</param>
+    /// <param name="ExcludeConfirmedBy">Exclude instances which are already confirmed by the specified org identifier. Default: "dat"</param>
+    /// <returns>A collection of non-completed instance summaries.</returns>
+    public Task<IEnumerable<AltinnMetadata>> GetMetadataForNonCompletedInstances(
+        string appId,
+        bool ProcessIsComplete = true,
+        string? ExcludeConfirmedBy = DependencyInjectionExtensions.AltinnOrgIdentifier
     );
 }
