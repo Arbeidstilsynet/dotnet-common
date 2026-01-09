@@ -31,6 +31,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - changed(deps): Major dotnet updated (v10)
 
+## 1.6.0
+
+- added: Option to disable deletion of app datamodel after mapping structured data. This can be useful for testing and some legacy use cases.
+
 ## 1.5.1
 
 - added: Option to include error details related to mapping structured data in the validation response. This intended for development environments.

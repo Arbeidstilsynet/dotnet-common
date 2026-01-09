@@ -90,6 +90,7 @@ public static class DependencyInjectionExtensions
     /// <param name="services"></param>
     /// <param name="mapFunc">The function responsible for mapping from <typeparamref name="TDataModel"/> to <typeparamref name="TStructuredData"/> </param>
     /// <param name="includeErrorDetails">Whether to include error details in the structured data in case of mapping errors. Default is false.</param>
+    /// <param name="deleteAppDataModelAfterMapping">Whether to delete the App data model after mapping. Default is true.</param>
     /// <typeparam name="TStructuredData"></typeparam>
     /// <typeparam name="TDataModel"></typeparam>
     /// <returns></returns>
@@ -109,7 +110,8 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddStructuredData<TDataModel, TStructuredData>(
         this IServiceCollection services,
         Func<TDataModel, TStructuredData> mapFunc,
-        bool includeErrorDetails = false
+        bool includeErrorDetails = false,
+        bool deleteAppDataModelAfterMapping = true
     )
         where TDataModel : class
         where TStructuredData : class
@@ -118,6 +120,7 @@ public static class DependencyInjectionExtensions
             new StructuredDataManager<TDataModel, TStructuredData>.Config(mapFunc)
             {
                 IncludeErrorDetails = includeErrorDetails,
+                DeleteAppDataModelAfterMapping = deleteAppDataModelAfterMapping
             }
         );
         services.AddSingleton<StructuredDataManager<TDataModel, TStructuredData>>();

@@ -16,6 +16,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
     internal record Config
     {
         public bool IncludeErrorDetails { get; init; } = false;
+        public bool DeleteAppDataModelAfterMapping { get; init; } = true;
         public Func<TDataModel, TStructuredData> MapFunc { get; init; }
 
         public Config(Func<TDataModel, TStructuredData> mapFunc)
@@ -50,7 +51,10 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
             instance
         );
 
-        await _dataClient.DeleteElement(instance, dataModelElement);
+        if (_config.DeleteAppDataModelAfterMapping)
+        {
+            await _dataClient.DeleteElement(instance, dataModelElement);
+        }
     }
 
     public async Task End(string taskId, Instance instance)
