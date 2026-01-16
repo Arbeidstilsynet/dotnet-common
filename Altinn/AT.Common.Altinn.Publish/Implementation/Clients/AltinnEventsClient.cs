@@ -1,3 +1,4 @@
+using System.Net.Http.Json;
 using System.Text.Json;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
@@ -26,6 +27,14 @@ internal class AltinnEventsClient : IAltinnEventsClient
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         };
+    }
+
+    public async Task<AltinnSubscription> GetAltinnSubscription(int subscriptionId)
+    {
+        return await _httpClient
+            .Get($"subscriptions/{subscriptionId}")
+            .WithBearerToken(await _altinnTokenProvider.GetToken())
+            .ReceiveContent<AltinnSubscription>(_jsonSerializerOptions);
     }
 
     public async Task<AltinnSubscription> Subscribe(AltinnSubscriptionRequest request)

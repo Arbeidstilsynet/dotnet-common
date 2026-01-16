@@ -22,6 +22,13 @@ public interface IAltinnAdapter
     );
 
     /// <summary>
+    /// Returns an subscription if it exists
+    /// </summary>
+    /// <param name="subscriptionId">The subscription id.</param>
+    /// <returns>The existing subscription, null if not found.</returns>
+    public Task<AltinnSubscription?> GetAltinnSubscription(int subscriptionId);
+
+    /// <summary>
     /// Subscribes for completed process events in Altinn.
     /// </summary>
     /// <param name="subscriptionRequestDto">The subscription request details.</param>
