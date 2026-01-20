@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.3.0
+
+### Added
+
+- feat(extensions): add extension `System.Security.Claims.ClaimsPrincipal.HasAnyAllowedGroup` for creating custom policies mapping claim groups to roles.
+
 ## 2.2.0
 
 ### Changed
