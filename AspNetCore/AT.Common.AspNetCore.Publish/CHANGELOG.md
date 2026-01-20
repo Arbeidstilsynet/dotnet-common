@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- feat(extensions): add extension `System.Security.Claims.ClaimsPrincipal.HasAnyAllowedGroup` for creating custom policies mapping claim groups to roles.
+- feat(extensions): add `Microsoft.Extensions.DependencyInjection.IServiceCollection.AddGroupRoleMappings` for creating custom policies mapping claim groups to roles.
 
 ## 2.2.0
 

@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
 
-internal static class AuthorizationExtensions
+public static class AuthorizationExtensions
 {
     /// <summary>
     /// Adds authorization policies based on role to group ID mappings.<br />
