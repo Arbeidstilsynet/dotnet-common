@@ -22,7 +22,7 @@ public interface IAltinnAdapter
     );
 
     /// <summary>
-    /// Returns an subscription if it exists
+    /// Returns a subscription if it exists
     /// </summary>
     /// <param name="subscriptionId">The subscription id.</param>
     /// <returns>The existing subscription, null if not found.</returns>
