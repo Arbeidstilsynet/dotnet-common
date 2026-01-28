@@ -148,6 +148,22 @@ internal class AltinnAdapter(
             FileMetadata = dataElement.ToFileMetadata(mainDocumentDataTypeName),
         };
     }
+
+    public async Task<AltinnSubscription?> GetAltinnSubscription(int subscriptionId)
+    {
+        try
+        {
+            return await altinnEventsClient.GetAltinnSubscription(subscriptionId);
+        }
+        catch (HttpRequestException e)
+        {
+            if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+            throw;
+        }
+    }
 }
 
 file static class Extensions

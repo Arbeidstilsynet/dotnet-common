@@ -28,6 +28,14 @@ internal class AltinnEventsClient : IAltinnEventsClient
         };
     }
 
+    public async Task<AltinnSubscription> GetAltinnSubscription(int subscriptionId)
+    {
+        return await _httpClient
+            .Get($"subscriptions/{subscriptionId}")
+            .WithBearerToken(await _altinnTokenProvider.GetToken())
+            .ReceiveContent<AltinnSubscription>(_jsonSerializerOptions);
+    }
+
     public async Task<AltinnSubscription> Subscribe(AltinnSubscriptionRequest request)
     {
         return await _httpClient

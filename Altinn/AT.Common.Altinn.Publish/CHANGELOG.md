@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.3.0
+
+### Added
+
+- feat(altinn): Enhanced ``AltinnEventsClient`` to support retrieving details for a subscriptions. Also updated ``IAltinnAdapter`` to implement a convenience method for getting these details.
+
 ## 2.2.0
 
 ### Changed

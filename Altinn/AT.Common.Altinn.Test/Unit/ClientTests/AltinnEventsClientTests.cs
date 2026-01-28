@@ -31,4 +31,26 @@ public class AltinnEventsClientTests : TestBed<AltinnApiTestFixture>
         result.ShouldNotBeNull();
         result.TypeFilter.ShouldBe("app.instance.process.completed");
     }
+
+    [Fact]
+    public async Task Unsubscribe_WhenCalledWithValidId_ReturnsExampleResponse()
+    {
+        //arrange
+        //act
+        var result = await _sut.Unsubscribe(42);
+        //assert
+        result.ShouldNotBeNull();
+        result.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task GetAltinnSubscription_WhenCalledWithValidId_ReturnsExampleResponse()
+    {
+        //arrange
+        //act
+        var result = await _sut.GetAltinnSubscription(42);
+        //assert
+        result.ShouldNotBeNull();
+        result.TypeFilter.ShouldBe("app.instance.process.completed");
+    }
 }
