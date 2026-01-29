@@ -61,7 +61,7 @@ public class AltinnAppSpecificationTests
     {
         var instance = CreateInstance();
         Action act = () => _ = _defaultSpec.GetDataElementsBySignificance(instance);
-        
+
         act.ShouldThrow<InvalidOperationException>();
     }
 
@@ -69,66 +69,77 @@ public class AltinnAppSpecificationTests
     public async Task GetDataElementsBySignificance_WhenCompliant_DoesNotThrow()
     {
         var compliantInstance = CreateCompliantInstance(_defaultSpec);
-        
+
         var (mainData, _, _) = _defaultSpec.GetDataElementsBySignificance(compliantInstance);
-        
+
         await Verify(mainData, _verifySettings);
     }
-    
+
     [Fact]
     public void GetDataElementsBySignificance_WhenFull_DoesNotThrow()
     {
-        var compliantInstance = CreateCompliantInstance(_defaultSpec, [
-            CreateDataElement(_defaultSpec.StructuredDataTypeId, "application/json"),
-            CreateDataElement("attachment1.pdf", "application/pdf"),
-            CreateDataElement("attachment2.xml", "application/xml")
-        ]);
-        
-        var (mainData, structuredData, attachmentData) = _defaultSpec.GetDataElementsBySignificance(compliantInstance);
-        
+        var compliantInstance = CreateCompliantInstance(
+            _defaultSpec,
+            [
+                CreateDataElement(_defaultSpec.StructuredDataTypeId, "application/json"),
+                CreateDataElement("attachment1.pdf", "application/pdf"),
+                CreateDataElement("attachment2.xml", "application/xml"),
+            ]
+        );
+
+        var (mainData, structuredData, attachmentData) = _defaultSpec.GetDataElementsBySignificance(
+            compliantInstance
+        );
+
         mainData.DataType.ShouldBe(_defaultSpec.MainPdfDataTypeId);
         structuredData.ShouldNotBeNull();
         structuredData.DataType.ShouldBe(_defaultSpec.StructuredDataTypeId);
         attachmentData.ToList().Count.ShouldBe(2);
     }
-    
+
     [Theory]
     [InlineData("attachment-type-1", "application/pdf")]
     [InlineData("structured-data", "application/json")]
     [InlineData("ref-data-as-pdf", "application/pdf")]
-    public async Task CreateFileMetadata_AttachmentDataElement_CreatesExpectedMetadata(string dataType, string contentType)
+    public async Task CreateFileMetadata_AttachmentDataElement_CreatesExpectedMetadata(
+        string dataType,
+        string contentType
+    )
     {
         var dataElement = CreateDataElement(dataType, contentType);
-        
+
         var fileMetadata = _defaultSpec.CreateFileMetadata(dataElement);
-        
-        await Verify(fileMetadata, _verifySettings)
-            .UseParameters(dataType, contentType);
+
+        await Verify(fileMetadata, _verifySettings).UseParameters(dataType, contentType);
     }
-    
-    private static AltinnInstance CreateCompliantInstance(AltinnAppSpecification spec, params DataElement[] additionalDataElements)
+
+    private static AltinnInstance CreateCompliantInstance(
+        AltinnAppSpecification spec,
+        params DataElement[] additionalDataElements
+    )
     {
         return CreateInstance(
             [
-                CreateDataElement(spec.MainPdfDataTypeId, "application/pdf"), 
-                ..additionalDataElements
+                CreateDataElement(spec.MainPdfDataTypeId, "application/pdf"),
+                .. additionalDataElements,
             ]
         );
     }
-    
 
     private static AltinnInstance CreateInstance(params List<DataElement> dataElements)
     {
-        
         return new AltinnInstance()
         {
             Id = new Guid("11111111-1111-1111-1111-111111111111").ToString(),
             AppId = "some-app-id",
-            Data = dataElements.ToList()
+            Data = dataElements.ToList(),
         };
     }
 
-    private static DataElement CreateDataElement(string dataType, string contentType="application/json")
+    private static DataElement CreateDataElement(
+        string dataType,
+        string contentType = "application/json"
+    )
     {
         return new DataElement()
         {
@@ -136,8 +147,7 @@ public class AltinnAppSpecificationTests
             Filename = "some-filename",
             DataType = dataType,
             ContentType = contentType,
-            FileScanResult = FileScanResult.Clean
-
+            FileScanResult = FileScanResult.Clean,
         };
     }
 }
