@@ -1,0 +1,6 @@
+﻿{
+  DataType: ref-data-as-pdf,
+  FileScanResult: Clean,
+  ContentType: application/pdf,
+  Filename: main-document.pdf
+}
