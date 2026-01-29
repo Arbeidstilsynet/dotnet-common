@@ -1,3 +1,4 @@
+using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Arbeidstilsynet.Common.Altinn.Test.Unit.Setup;
 using Shouldly;
@@ -24,7 +25,7 @@ public class AltinnAppsClientTests : TestBed<AltinnApiTestFixture>
         //arrange
         //act
         var result = await _sut.CompleteInstance(
-            "testapp",
+            new AltinnAppSpecification("testapp"),
             new Model.Api.Request.InstanceRequest
             {
                 InstanceGuid = DynamicDataGeneration.DefaultPathUuid,

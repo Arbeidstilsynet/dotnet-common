@@ -16,7 +16,7 @@ public static class HostEnvironmentExtensions
     private const string AltinnStorageApiSuffix = "storage/api/v1/";
 
     /// <summary>
-    /// Creates a default <see cref="AltinnApiConfiguration"/> for the current web host environment.
+    /// Creates a default <see cref="AltinnConfiguration"/> for the current web host environment.
     /// <br/>
     /// - Development: Uses local.altinn.cloud.
     /// <br/>
@@ -25,18 +25,16 @@ public static class HostEnvironmentExtensions
     /// - Production: Uses production Altinn URLs.
     /// </summary>
     /// <param name="webHostEnvironment">The web host environment.</param>
-    /// <param name="appConfig">Optional Altinn app configuration.</param>
+    /// <param name="orgId">Used to build the <see cref="AltinnConfiguration.AppBaseUrl"/>. Defaults to "dat" (Arbeidstilsynet)</param>
     /// <returns>A default Altinn API configuration for the environment.</returns>
-    public static AltinnApiConfiguration CreateDefaultAltinnApiConfiguration(
+    public static AltinnConfiguration CreateDefaultAltinnApiConfiguration(
         this IWebHostEnvironment webHostEnvironment,
-        AltinnAppConfiguration? appConfig = null
+        string orgId = "dat"
     )
     {
-        appConfig ??= new AltinnAppConfiguration();
-        var orgIdentifier = appConfig.AltinnOrgIdentifier;
-
-        return new AltinnApiConfiguration()
+        return new AltinnConfiguration()
         {
+            OrgId = orgId,
             AuthenticationUrl = new Uri(
                 new Uri(webHostEnvironment.GetAltinnPlattformUrl()),
                 AltinnAuthenticationApiSuffix
@@ -49,7 +47,7 @@ public static class HostEnvironmentExtensions
                 new Uri(webHostEnvironment.GetAltinnPlattformUrl()),
                 AltinnStorageApiSuffix
             ),
-            AppBaseUrl = new Uri(webHostEnvironment.GetAltinnAppBaseUrl(orgIdentifier)),
+            AppBaseUrl = new Uri(webHostEnvironment.GetAltinnAppBaseUrl(orgId)),
         };
     }
 
@@ -88,7 +86,7 @@ public static class HostEnvironmentExtensions
 
     private static string GetAltinnAppBaseUrl(
         this IWebHostEnvironment webHostEnvironment,
-        string org
+        string orgId
     )
     {
         if (webHostEnvironment.IsDevelopment())
@@ -97,11 +95,11 @@ public static class HostEnvironmentExtensions
         }
         else if (webHostEnvironment.IsProduction())
         {
-            return $"https://{org}.apps.altinn.no/";
+            return $"https://{orgId}.apps.altinn.no/";
         }
         else
         {
-            return $"https://{org}.apps.tt02.altinn.no/";
+            return $"https://{orgId}.apps.tt02.altinn.no/";
         }
     }
 }

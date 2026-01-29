@@ -12,13 +12,11 @@ public interface IAltinnAppsClient
     /// <summary>
     /// Completes an instance (marks as complete in Altinn).
     /// </summary>
-    /// <param name="appId">The appId which should be queried</param>
+    /// <param name="appSpec">Altinn app specification.</param>
     /// <param name="instanceAddress">The instance address request.</param>
-    /// <param name="appConfig">Optional Altinn app configuration.</param>
     /// <returns>The completed instance mapped to our own model.</returns>
     Task<AltinnInstance> CompleteInstance(
-        string appId,
-        InstanceRequest instanceAddress,
-        AltinnAppConfiguration? appConfig = null
+        AltinnAppSpecification? appSpec,
+        InstanceRequest instanceAddress
     );
 }

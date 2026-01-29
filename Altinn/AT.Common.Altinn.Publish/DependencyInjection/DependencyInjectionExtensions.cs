@@ -17,8 +17,13 @@ namespace Arbeidstilsynet.Common.Altinn.DependencyInjection;
 /// <summary>
 /// Configuration for Altinn 3 APIs.
 /// </summary>
-public record AltinnApiConfiguration
+public record AltinnConfiguration
 {
+    /// <summary>
+    /// The organization ID in Altinn. Default is "dat" (Arbeidstilsynet).
+    /// </summary>
+    public string OrgId { get; init; } = "dat";
+    
     /// <summary>
     /// The base URL for Altinn authentication endpoints. See https://docs.altinn.studio/nb/api/authentication/spec/
     /// </summary>
@@ -35,8 +40,9 @@ public record AltinnApiConfiguration
     public required Uri EventUrl { get; init; }
 
     /// <summary>
-    /// The base URL for the Altinn application.
+    /// The base URL for Altinn applications. 
     /// </summary>
+    /// <remarks>This will be static to one org, though we will most likely only interact with our own (dat) organzation's Altinn Applications</remarks>
     public required Uri AppBaseUrl { get; init; }
 }
 
@@ -105,7 +111,7 @@ public static class DependencyInjectionExtensions
         this IServiceCollection services,
         IWebHostEnvironment hostEnvironment,
         MaskinportenConfiguration maskinportenConfiguration,
-        AltinnApiConfiguration? altinnApiConfiguration = null
+        AltinnConfiguration? altinnApiConfiguration = null
     )
     {
         ArgumentNullException.ThrowIfNull(hostEnvironment);
@@ -132,7 +138,7 @@ public static class DependencyInjectionExtensions
         this IServiceCollection services,
         IWebHostEnvironment hostEnvironment,
         MaskinportenConfiguration maskinportenConfiguration,
-        AltinnApiConfiguration? altinnApiConfiguration = null
+        AltinnConfiguration? altinnApiConfiguration = null
     )
     {
         ArgumentNullException.ThrowIfNull(hostEnvironment);
@@ -160,7 +166,7 @@ public static class DependencyInjectionExtensions
         this IServiceCollection services,
         IWebHostEnvironment hostEnvironment,
         MaskinportenConfiguration maskinportenConfiguration,
-        AltinnApiConfiguration altinnApiConfiguration
+        AltinnConfiguration altinnConfiguration
     )
     {
         services
@@ -168,7 +174,7 @@ public static class DependencyInjectionExtensions
                 AltinnAppsApiClientKey,
                 client =>
                 {
-                    client.BaseAddress = altinnApiConfiguration.AppBaseUrl;
+                    client.BaseAddress = altinnConfiguration.AppBaseUrl;
                 }
             )
             .AddStandardResilienceHandler();
@@ -177,7 +183,7 @@ public static class DependencyInjectionExtensions
                 AltinnEventsApiClientKey,
                 client =>
                 {
-                    client.BaseAddress = altinnApiConfiguration.EventUrl;
+                    client.BaseAddress = altinnConfiguration.EventUrl;
                 }
             )
             .AddStandardResilienceHandler();
@@ -186,7 +192,7 @@ public static class DependencyInjectionExtensions
                 AltinnStorageApiClientKey,
                 client =>
                 {
-                    client.BaseAddress = altinnApiConfiguration.StorageUrl;
+                    client.BaseAddress = altinnConfiguration.StorageUrl;
                 }
             )
             .AddStandardResilienceHandler();
@@ -196,7 +202,7 @@ public static class DependencyInjectionExtensions
                 AltinnAuthenticationApiClientKey,
                 client =>
                 {
-                    client.BaseAddress = altinnApiConfiguration.AuthenticationUrl;
+                    client.BaseAddress = altinnConfiguration.AuthenticationUrl;
                 }
             )
             .AddStandardResilienceHandler();

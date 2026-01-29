@@ -75,7 +75,7 @@ public class AltinnAdapterExtensionTests
         //arrange
         var metadata = new AltinnInstanceSummary
         {
-            AltinnSkjema = null,
+            SkjemaAsPdf = null,
             Attachments = [],
             Metadata = SampleAltinnMetadata,
         };

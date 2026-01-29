@@ -104,7 +104,7 @@ public class AltinnApiTestFixture : TestBedFixture
                 IntegrationId = "integration",
                 Scopes = ["test:read"],
             },
-            new AltinnApiConfiguration()
+            new AltinnConfiguration()
             {
                 AuthenticationUrl = new Uri($"{_server.Urls[0]}/authentication/api/v1/"),
                 StorageUrl = new Uri($"{_server.Urls[0]}/storage/api/v1/"),

@@ -17,7 +17,7 @@ public interface IAltinnAdapter
     /// <returns>The summary of the Altinn instance.</returns>
     public Task<AltinnInstanceSummary> GetSummary(
         AltinnCloudEvent cloudEvent,
-        AltinnAppConfiguration? appConfig = null
+        AltinnAppSpecification appConfig
     );
 
     /// <summary>
@@ -31,11 +31,9 @@ public interface IAltinnAdapter
     /// Subscribes for completed process events in Altinn.
     /// </summary>
     /// <param name="subscriptionRequestDto">The subscription request details.</param>
-    /// <param name="appConfig">Optional Altinn app configuration.</param>
     /// <returns>The created subscription.</returns>
     public Task<AltinnSubscription> SubscribeForCompletedProcessEvents(
-        SubscriptionRequestDto subscriptionRequestDto,
-        AltinnAppConfiguration? appConfig = null
+        SubscriptionRequestDto subscriptionRequestDto
     );
 
     /// <summary>
@@ -49,25 +47,23 @@ public interface IAltinnAdapter
     /// Gets all non-completed Altinn instances for a given app.
     /// </summary>
     /// <param name="appId">The Altinn app ID. E.g. "ulykkesvarsel" will be treated as "dat/ulykkesvarsel"</param>
-    /// <param name="ProcessIsComplete">Whether the process is complete (default true).</param>
+    /// <param name="processIsComplete">Whether the process is complete (default true).</param>
     /// <param name="appConfig">Optional Altinn app configuration.</param>
     /// <returns>A collection of non-completed instance summaries.</returns>
     public Task<IEnumerable<AltinnInstanceSummary>> GetNonCompletedInstances(
-        string appId,
-        bool ProcessIsComplete = true,
-        AltinnAppConfiguration? appConfig = null
+        AltinnAppSpecification appConfig,
+        bool processIsComplete = true
     );
 
     /// <summary>
     /// Gets all non-completed Altinn instance metadata for a given app. Does not download any attachments.
     /// </summary>
     /// <param name="appId">The Altinn app ID. E.g. "ulykkesvarsel" will be treated as "dat/ulykkesvarsel"</param>
-    /// <param name="ProcessIsComplete">Whether the process is complete (default true).</param>
+    /// <param name="processIsComplete">Whether the process is complete (default true).</param>
     /// <param name="appConfig">Optional Altinn app configuration.</param>
     /// <returns>A collection of non-completed instance summaries.</returns>
     public Task<IEnumerable<AltinnMetadata>> GetMetadataForNonCompletedInstances(
-        string appId,
-        bool ProcessIsComplete = true,
-        AltinnAppConfiguration? appConfig = null
+        AltinnAppSpecification appConfig,
+        bool processIsComplete = true
     );
 }
