@@ -37,7 +37,7 @@ internal class AltinnAdapter(
     {
         var baseUrl = altinnApiConfigurationOptions.Value.AppBaseUrl;
         var orgId = altinnApiConfigurationOptions.Value.OrgId;
-        var appId = subscriptionRequestDto.AppSpecification.AppId;
+        var appId = subscriptionRequestDto.AppId;
 
         var mappedRequest = new AltinnSubscriptionRequest()
         {
@@ -81,6 +81,7 @@ internal class AltinnAdapter(
         );
 
         IList<AltinnInstanceSummary> summaries = [];
+        
         foreach (var instance in instances)
         {
             summaries.Add(
@@ -92,12 +93,11 @@ internal class AltinnAdapter(
     }
 
     public async Task<IEnumerable<AltinnMetadata>> GetMetadataForNonCompletedInstances(
-        AltinnAppSpecification appSpec,
+        string appId,
         bool processIsComplete = true
     )
     {
         var orgId = altinnApiConfigurationOptions.Value.OrgId;
-        var appId = appSpec.AppId;
 
         var instances = await altinnStorageClient.GetAllInstances(
             new InstanceQueryParameters

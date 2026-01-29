@@ -46,24 +46,22 @@ public interface IAltinnAdapter
     /// <summary>
     /// Gets all non-completed Altinn instances for a given app.
     /// </summary>
-    /// <param name="appId">The Altinn app ID. E.g. "ulykkesvarsel" will be treated as "dat/ulykkesvarsel"</param>
+    /// <param name="appSpec">The altinn app specification</param>
     /// <param name="processIsComplete">Whether the process is complete (default true).</param>
-    /// <param name="appConfig">Optional Altinn app configuration.</param>
     /// <returns>A collection of non-completed instance summaries.</returns>
     public Task<IEnumerable<AltinnInstanceSummary>> GetNonCompletedInstances(
-        AltinnAppSpecification appConfig,
+        AltinnAppSpecification appSpec,
         bool processIsComplete = true
     );
 
     /// <summary>
-    /// Gets all non-completed Altinn instance metadata for a given app. Does not download any attachments.
+    /// Gets all non-completed Altinn instance metadata for a given app. Does not download any documents.
     /// </summary>
-    /// <param name="appId">The Altinn app ID. E.g. "ulykkesvarsel" will be treated as "dat/ulykkesvarsel"</param>
+    /// <param name="appId">The Altinn App Id. E.g. "ulykkesvarsel" (sans "dat/")</param>
     /// <param name="processIsComplete">Whether the process is complete (default true).</param>
-    /// <param name="appConfig">Optional Altinn app configuration.</param>
     /// <returns>A collection of non-completed instance summaries.</returns>
     public Task<IEnumerable<AltinnMetadata>> GetMetadataForNonCompletedInstances(
-        AltinnAppSpecification appConfig,
+        string appId,
         bool processIsComplete = true
     );
 }

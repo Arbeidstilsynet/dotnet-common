@@ -1,3 +1,4 @@
+using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 
 namespace Arbeidstilsynet.Common.Altinn.Model.Adapter;
@@ -8,6 +9,12 @@ namespace Arbeidstilsynet.Common.Altinn.Model.Adapter;
 /// <param name="AppId">e.g. ulykkesvarsel. Any organization prefix is removed.</param>
 public record AltinnAppSpecification(string AppId)
 {
+    /// <summary>
+    /// The application identifier of the Altinn application.
+    /// </summary>
+    /// <remarks>Any organization prefix is removed.</remarks>
+    public string AppId { get; } = AppId.SanitizeAppId() ?? throw new ArgumentException("AppId cannot be null or empty", nameof(AppId));
+    
     /// <summary>
     /// The <see cref="DataElement.DataType"/> of the main PDF document in <see cref="AltinnInstance.Data"/>. Defaults to "ref-data-as-pdf".
     /// </summary>
@@ -27,10 +34,4 @@ public record AltinnAppSpecification(string AppId)
     /// The <see cref="FileMetadata.Filename"/> of the structured data (if any). This will be used instead of <see cref="DataElement.Filename"/> in the <see cref="AltinnDocument"/>.
     /// </summary>
     public string StructuredDataFileName { get; init; } = "structured-data.json";
-    
-    /// <summary>
-    /// The application identifier of the Altinn application.
-    /// </summary>
-    /// <remarks>Any organization prefix is removed.</remarks>
-    public string AppId { get; } = AppId.Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault() ?? throw new ArgumentException("AppId cannot be null or empty", nameof(AppId));
 }

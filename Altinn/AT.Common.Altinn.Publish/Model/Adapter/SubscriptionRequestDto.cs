@@ -4,5 +4,5 @@ public record SubscriptionRequestDto
 {
     public required Uri CallbackUrl { get; init; }
     
-    public required AltinnAppSpecification AppSpecification { get; init; }
+    public required string AppId { get; init; }
 }

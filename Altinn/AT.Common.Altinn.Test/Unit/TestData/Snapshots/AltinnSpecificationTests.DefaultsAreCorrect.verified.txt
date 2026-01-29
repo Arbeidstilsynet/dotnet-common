@@ -1,0 +1,7 @@
+﻿{
+  AppId: default,
+  MainPdfDataTypeId: ref-data-as-pdf,
+  MainPdfFileName: main-document.pdf,
+  StructuredDataTypeId: structured-data,
+  StructuredDataFileName: structured-data.json
+}

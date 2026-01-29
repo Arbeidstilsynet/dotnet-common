@@ -5,6 +5,13 @@ namespace Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 
 internal static class AltinnSpecificationExtensions
 {
+    public static string? SanitizeAppId(this string? appId)
+    {
+        return appId?.Split('/').LastOrDefault() is {Length: > 0} sanitizedAppId
+            ? sanitizedAppId
+            : null;
+    }
+    
     extension(AltinnAppSpecification appSpec)
     {
         public FileMetadata CreateFileMetadata(DataElement dataElement)
@@ -41,7 +48,6 @@ internal static class AltinnSpecificationExtensions
             }
 
             return (mainData, structuredData, attachmentData);
-        
         }
 
         private string GetFilename(DataElement dataElement)
