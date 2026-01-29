@@ -50,6 +50,7 @@ internal class AltinnEventsClient : IAltinnEventsClient
         return await _httpClient
                 .Delete($"subscriptions/{subscriptionId}")
                 .WithBearerToken(await _altinnTokenProvider.GetToken())
-                .Send() ?? throw new Exception("Failed to unsubscribe from Altinn");
+                .Send()
+            ?? throw new Exception("Failed to unsubscribe from Altinn");
     }
 }

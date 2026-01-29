@@ -118,12 +118,10 @@ public class AltinnAppSpecificationTests
         params DataElement[] additionalDataElements
     )
     {
-        return CreateInstance(
-            [
-                CreateDataElement(spec.MainPdfDataTypeId, "application/pdf"),
-                .. additionalDataElements,
-            ]
-        );
+        return CreateInstance([
+            CreateDataElement(spec.MainPdfDataTypeId, "application/pdf"),
+            .. additionalDataElements,
+        ]);
     }
 
     private static AltinnInstance CreateInstance(params List<DataElement> dataElements)

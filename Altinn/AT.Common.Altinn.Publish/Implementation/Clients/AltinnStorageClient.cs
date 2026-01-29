@@ -37,7 +37,8 @@ internal class AltinnStorageClient : IAltinnStorageClient
         return await _httpClient
                 .Get(uri)
                 .WithBearerToken(await _altinnTokenProvider.GetToken())
-                .ReceiveStream() ?? throw new Exception("Failed to get instance data");
+                .ReceiveStream()
+            ?? throw new Exception("Failed to get instance data");
     }
 
     public async Task<Stream> GetInstanceData(Uri absoluteUri)
