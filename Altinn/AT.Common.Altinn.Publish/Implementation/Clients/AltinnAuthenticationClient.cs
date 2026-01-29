@@ -23,7 +23,6 @@ internal class AltinnAuthenticationClient : IAltinnAuthenticationClient
                 .Get($"exchange/{tokenProvider.ToString().ToLower()}")
                 .WithBearerToken(tokenProviderToken)
                 .WithAcceptHeader("text/plain", 1.0)
-                .ReceiveString()
-            ?? throw new Exception("Failed to exchange token with Altinn");
+                .ReceiveString() ?? throw new Exception("Failed to exchange token with Altinn");
     }
 }

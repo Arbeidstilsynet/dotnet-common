@@ -23,7 +23,8 @@ internal class AltinnAppsClient : IAltinnAppsClient
     public AltinnAppsClient(
         IHttpClientFactory httpClientFactory,
         IAltinnTokenProvider altinnTokenProvider,
-        IOptions<AltinnConfiguration> config)
+        IOptions<AltinnConfiguration> config
+    )
     {
         _altinnTokenProvider = altinnTokenProvider;
         _config = config;
@@ -39,7 +40,6 @@ internal class AltinnAppsClient : IAltinnAppsClient
         InstanceRequest instanceAddress
     )
     {
-        
         var orgId = _config.Value.OrgId;
         var appId = appSpec.AppId;
 

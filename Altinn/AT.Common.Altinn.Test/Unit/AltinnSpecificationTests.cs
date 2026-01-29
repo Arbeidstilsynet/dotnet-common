@@ -6,23 +6,21 @@ namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 
 public class AltinnSpecificationTests
 {
-    private readonly AltinnAppSpecification _defaultSpec = new ("default");
+    private readonly AltinnAppSpecification _defaultSpec = new("default");
 
-    private readonly VerifySettings _verifySettings = new ();
-    
+    private readonly VerifySettings _verifySettings = new();
+
     public AltinnSpecificationTests()
     {
         _verifySettings.UseDirectory("TestData/Snapshots");
-        
     }
-    
+
     [Fact]
     public async Task DefaultsAreCorrect()
     {
         await Verify(_defaultSpec, _verifySettings);
     }
-    
-    
+
     [Theory]
     [InlineData("")]
     [InlineData("orgButNoApp/")]
@@ -42,7 +40,7 @@ public class AltinnSpecificationTests
         var spec = new AltinnAppSpecification(validAppId);
         spec.AppId.ShouldBe(expectedAppId);
     }
-    
+
     [Theory]
     [InlineData(null, null)]
     [InlineData("", null)]

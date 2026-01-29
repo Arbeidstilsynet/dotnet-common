@@ -81,12 +81,10 @@ internal class AltinnAdapter(
         );
 
         IList<AltinnInstanceSummary> summaries = [];
-        
+
         foreach (var instance in instances)
         {
-            summaries.Add(
-                await GetInstanceSummaryAsync(instance, appSpec)
-            );
+            summaries.Add(await GetInstanceSummaryAsync(instance, appSpec));
         }
 
         return summaries;
@@ -116,7 +114,9 @@ internal class AltinnAdapter(
         AltinnAppSpecification appSpec
     )
     {
-        var (mainData, structuredData, attachmentData) = appSpec.GetDataElementsBySignificance(instance);
+        var (mainData, structuredData, attachmentData) = appSpec.GetDataElementsBySignificance(
+            instance
+        );
 
         var attachments = new List<AltinnDocument>();
 
@@ -124,7 +124,7 @@ internal class AltinnAdapter(
         {
             attachments.Add(await GetAltinnDocument(dataElement, instance, appSpec));
         }
-        
+
         return new AltinnInstanceSummary
         {
             Metadata = instance.ToAltinnMetadata(),

@@ -9,6 +9,7 @@ public record AltinnDocument
     /// The content of the document as a stream
     /// </summary>
     public required Stream DocumentContent { get; init; }
+
     /// <summary>
     /// Metadata about the document
     /// </summary>

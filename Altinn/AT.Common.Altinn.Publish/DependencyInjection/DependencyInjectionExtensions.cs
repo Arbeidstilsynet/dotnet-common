@@ -23,7 +23,7 @@ public record AltinnConfiguration
     /// The organization ID in Altinn. Default is "dat" (Arbeidstilsynet).
     /// </summary>
     public string OrgId { get; init; } = "dat";
-    
+
     /// <summary>
     /// The base URL for Altinn authentication endpoints. See https://docs.altinn.studio/nb/api/authentication/spec/
     /// </summary>
@@ -40,7 +40,7 @@ public record AltinnConfiguration
     public required Uri EventUrl { get; init; }
 
     /// <summary>
-    /// The base URL for Altinn applications. 
+    /// The base URL for Altinn applications.
     /// </summary>
     /// <remarks>This will be static to one org, though we will most likely only interact with our own (dat) organzation's Altinn Applications</remarks>
     public required Uri AppBaseUrl { get; init; }

@@ -7,62 +7,67 @@ internal static class AltinnSpecificationExtensions
 {
     public static string? SanitizeAppId(this string? appId)
     {
-        return appId?.Split('/').LastOrDefault() is {Length: > 0} sanitizedAppId
+        return appId?.Split('/').LastOrDefault() is { Length: > 0 } sanitizedAppId
             ? sanitizedAppId
             : null;
     }
-    
-    extension(AltinnAppSpecification appSpec)
-    {
-        public FileMetadata CreateFileMetadata(DataElement dataElement)
-        {
-            return new FileMetadata
-            {
-                ContentType = dataElement.ContentType,
-                DataType = dataElement.DataType,
-                Filename = appSpec.GetFilename(dataElement),
-                FileScanResult = dataElement.FileScanResult,
-            };
-        }
 
-        public (DataElement mainData, DataElement? structuredData, IEnumerable<DataElement> attachmentData)
-            GetDataElementsBySignificance(AltinnInstance instance)
+    public static FileMetadata CreateFileMetadata(
+        this AltinnAppSpecification appSpec,
+        DataElement dataElement
+    )
+    {
+        return new FileMetadata
         {
-            var mainData = instance.Data.FirstOrDefault(d => d.DataType == appSpec.MainPdfDataTypeId) ?? throw new InvalidOperationException(
+            ContentType = dataElement.ContentType,
+            DataType = dataElement.DataType,
+            Filename = appSpec.GetFilename(dataElement),
+            FileScanResult = dataElement.FileScanResult,
+        };
+    }
+
+    public static (
+        DataElement mainData,
+        DataElement? structuredData,
+        IEnumerable<DataElement> attachmentData
+    ) GetDataElementsBySignificance(this AltinnAppSpecification appSpec, AltinnInstance instance)
+    {
+        var mainData =
+            instance.Data.FirstOrDefault(d => d.DataType == appSpec.MainPdfDataTypeId)
+            ?? throw new InvalidOperationException(
                 $"Main document with data type '{appSpec.MainPdfDataTypeId}' not found in instance '{instance.Id}'. The instance was from app '{instance.AppId}'. Existing data types: [{string.Join(", ", instance.Data.Select(d => d.DataType))}]"
             );
-        
-            DataElement? structuredData = null;
-            List<DataElement> attachmentData = [];
 
-            foreach (var dataElement in instance.Data.Where(d => d.Id != mainData.Id))
-            {
-                if (dataElement.DataType == appSpec.StructuredDataTypeId)
-                {
-                    structuredData = dataElement;
-                }
-                else
-                {
-                    attachmentData.Add(dataElement);
-                }
-            }
+        DataElement? structuredData = null;
+        List<DataElement> attachmentData = [];
 
-            return (mainData, structuredData, attachmentData);
-        }
-
-        private string GetFilename(DataElement dataElement)
+        foreach (var dataElement in instance.Data.Where(d => d.Id != mainData.Id))
         {
-            if (appSpec.MainPdfDataTypeId == dataElement.DataType)
+            if (dataElement.DataType == appSpec.StructuredDataTypeId)
             {
-                return appSpec.MainPdfFileName;
+                structuredData = dataElement;
             }
-        
-            if (appSpec.StructuredDataTypeId == dataElement.DataType)
+            else
             {
-                return appSpec.StructuredDataFileName;
+                attachmentData.Add(dataElement);
             }
-        
-            return dataElement.Filename;
         }
+
+        return (mainData, structuredData, attachmentData);
+    }
+
+    private static string GetFilename(this AltinnAppSpecification appSpec, DataElement dataElement)
+    {
+        if (appSpec.MainPdfDataTypeId == dataElement.DataType)
+        {
+            return appSpec.MainPdfFileName;
+        }
+
+        if (appSpec.StructuredDataTypeId == dataElement.DataType)
+        {
+            return appSpec.StructuredDataFileName;
+        }
+
+        return dataElement.Filename;
     }
 }
