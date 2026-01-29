@@ -118,12 +118,16 @@ public static class AdapterExtensions
             .GetProperties()
             .ToDictionary(
                 p => JsonNamingPolicy.CamelCase.ConvertName(p.Name),
-                p => p.GetValue(source) switch
-                {
-                    null => "",
-                    IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
-                    var value => value.ToString() ?? ""
-                }
+                p =>
+                    p.GetValue(source) switch
+                    {
+                        null => "",
+                        IFormattable formattable => formattable.ToString(
+                            null,
+                            CultureInfo.InvariantCulture
+                        ),
+                        var value => value.ToString() ?? "",
+                    }
             );
     }
 }
