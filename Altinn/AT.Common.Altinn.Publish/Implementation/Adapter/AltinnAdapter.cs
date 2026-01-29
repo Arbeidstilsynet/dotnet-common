@@ -32,14 +32,18 @@ internal class AltinnAdapter(
     }
 
     public Task<AltinnSubscription> SubscribeForCompletedProcessEvents(
-        SubscriptionRequestDto subscriptionRequestDto
+        SubscriptionRequestDto subscriptionRequestDto,
+        AltinnAppConfiguration? appConfig = null
     )
     {
+        appConfig ??= new AltinnAppConfiguration();
+        var orgIdentifier = appConfig.AltinnOrgIdentifier;
+
         var mappedRequest = new AltinnSubscriptionRequest()
         {
             SourceFilter = new Uri(
                 altinnApiConfigurationOptions.Value.AppBaseUrl,
-                $"{DependencyInjectionExtensions.AltinnOrgIdentifier}/{subscriptionRequestDto.AltinnAppIdentifier}"
+                $"{orgIdentifier}/{subscriptionRequestDto.AltinnAppIdentifier}"
             ),
             EndPoint = subscriptionRequestDto.CallbackUrl,
             TypeFilter = "app.instance.process.completed",
@@ -63,21 +67,20 @@ internal class AltinnAdapter(
 
     public async Task<IEnumerable<AltinnInstanceSummary>> GetNonCompletedInstances(
         string appId,
-        bool processIsComplete = true,
-        string? excludeConfirmedBy = DependencyInjectionExtensions.AltinnOrgIdentifier,
+        bool ProcessIsComplete = true,
         AltinnAppConfiguration? appConfig = null
     )
     {
         appConfig ??= new AltinnAppConfiguration();
+        var orgIdentifier = appConfig.AltinnOrgIdentifier;
 
         var instances = await altinnStorageClient.GetAllInstances(
             new InstanceQueryParameters
             {
-                AppId = $"{DependencyInjectionExtensions.AltinnOrgIdentifier}/{appId}",
-                Org = DependencyInjectionExtensions.AltinnOrgIdentifier,
-                ProcessIsComplete = processIsComplete,
-                ExcludeConfirmedBy =
-                    excludeConfirmedBy ?? DependencyInjectionExtensions.AltinnOrgIdentifier,
+                AppId = $"{orgIdentifier}/{appId}",
+                Org = orgIdentifier,
+                ProcessIsComplete = ProcessIsComplete,
+                ExcludeConfirmedBy = orgIdentifier,
             }
         );
 
@@ -94,21 +97,22 @@ internal class AltinnAdapter(
 
     public async Task<IEnumerable<AltinnMetadata>> GetMetadataForNonCompletedInstances(
         string appId,
-        bool processIsComplete = true,
-        string? excludeConfirmedBy = DependencyInjectionExtensions.AltinnOrgIdentifier
+        bool ProcessIsComplete = true,
+        AltinnAppConfiguration? appConfig = null
     )
     {
+        appConfig ??= new AltinnAppConfiguration();
+        var orgIdentifier = appConfig.AltinnOrgIdentifier;
+
         var instances = await altinnStorageClient.GetAllInstances(
             new InstanceQueryParameters
             {
-                AppId = $"{DependencyInjectionExtensions.AltinnOrgIdentifier}/{appId}",
-                Org = DependencyInjectionExtensions.AltinnOrgIdentifier,
-                ProcessIsComplete = processIsComplete,
-                ExcludeConfirmedBy =
-                    excludeConfirmedBy ?? DependencyInjectionExtensions.AltinnOrgIdentifier,
+                AppId = $"{orgIdentifier}/{appId}",
+                Org = orgIdentifier,
+                ProcessIsComplete = ProcessIsComplete,
+                ExcludeConfirmedBy = orgIdentifier,
             }
         );
-
         return [.. instances.Select(s => s.ToAltinnMetadata())];
     }
 

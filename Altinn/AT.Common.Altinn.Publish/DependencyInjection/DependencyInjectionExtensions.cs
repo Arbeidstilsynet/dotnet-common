@@ -84,7 +84,6 @@ public record MaskinportenConfiguration
 /// </summary>
 public static class DependencyInjectionExtensions
 {
-    internal const string AltinnOrgIdentifier = "dat";
     internal const string AltinnStorageApiClientKey = "AltinnStorageApiClient";
     internal const string AltinnEventsApiClientKey = "AltinnEventsApiClient";
 

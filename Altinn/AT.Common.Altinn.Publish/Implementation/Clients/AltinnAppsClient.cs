@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
+using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
@@ -30,15 +31,19 @@ internal class AltinnAppsClient : IAltinnAppsClient
 
     public async Task<AltinnInstance> CompleteInstance(
         string appId,
-        InstanceRequest instanceAddress
+        InstanceRequest instanceAddress,
+        AltinnAppConfiguration? appConfig = null
     )
     {
+        appConfig ??= new AltinnAppConfiguration();
+        var orgIdentifier = appConfig.AltinnOrgIdentifier;
+
         var instanceUri = instanceAddress.ToInstanceUri("complete");
 
         return await _httpClient
-                .PostAsJson($"{AltinnOrgIdentifier}/{appId}/{instanceUri}", new { })
+                .PostAsJson($"{orgIdentifier}/{appId}/{instanceUri}", new { })
                 .WithBearerToken(await _altinnTokenProvider.GetToken())
                 .ReceiveContent<AltinnInstance>(_jsonSerializerOptions)
-            ?? throw new Exception("Failed to complete instance");
+            ?? throw new InvalidOperationException("Failed to complete instance");
     }
 }

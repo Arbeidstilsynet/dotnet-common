@@ -1,9 +1,13 @@
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
+using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
 namespace Arbeidstilsynet.Common.Altinn.Extensions;
 
+/// <summary>
+/// Helper methods for creating default Altinn configuration based on the current host environment.
+/// </summary>
 public static class HostEnvironmentExtensions
 {
     private const string AltinnAuthenticationApiSuffix = "authentication/api/v1/";
@@ -21,11 +25,16 @@ public static class HostEnvironmentExtensions
     /// - Production: Uses production Altinn URLs.
     /// </summary>
     /// <param name="webHostEnvironment">The web host environment.</param>
+    /// <param name="appConfig">Optional Altinn app configuration.</param>
     /// <returns>A default Altinn API configuration for the environment.</returns>
     public static AltinnApiConfiguration CreateDefaultAltinnApiConfiguration(
-        this IWebHostEnvironment webHostEnvironment
+        this IWebHostEnvironment webHostEnvironment,
+        AltinnAppConfiguration? appConfig = null
     )
     {
+        appConfig ??= new AltinnAppConfiguration();
+        var orgIdentifier = appConfig.AltinnOrgIdentifier;
+
         return new AltinnApiConfiguration()
         {
             AuthenticationUrl = new Uri(
@@ -40,14 +49,15 @@ public static class HostEnvironmentExtensions
                 new Uri(webHostEnvironment.GetAltinnPlattformUrl()),
                 AltinnStorageApiSuffix
             ),
-            AppBaseUrl = new Uri(
-                webHostEnvironment.GetAltinnAppBaseUrl(
-                    DependencyInjectionExtensions.AltinnOrgIdentifier
-                )
-            ),
+            AppBaseUrl = new Uri(webHostEnvironment.GetAltinnAppBaseUrl(orgIdentifier)),
         };
     }
 
+    /// <summary>
+    /// Returns the base URL for Maskinporten for the current environment.
+    /// </summary>
+    /// <param name="webHostEnvironment">The web host environment.</param>
+    /// <returns>Maskinporten base URL.</returns>
     public static string GetMaskinportenUrl(this IWebHostEnvironment webHostEnvironment)
     {
         if (webHostEnvironment.IsProduction())
@@ -88,7 +98,6 @@ public static class HostEnvironmentExtensions
         else if (webHostEnvironment.IsProduction())
         {
             return $"https://{org}.apps.altinn.no/";
-            ;
         }
         else
         {
