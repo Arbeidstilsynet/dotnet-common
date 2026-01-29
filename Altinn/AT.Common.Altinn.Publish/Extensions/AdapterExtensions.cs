@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
