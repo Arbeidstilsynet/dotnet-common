@@ -1,10 +1,49 @@
+using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 
-namespace Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
+namespace Arbeidstilsynet.Common.Altinn.Extensions;
 
 internal static class AltinnSpecificationExtensions
 {
+    internal const string StructuredDataTypeIdKey = "StructuredDataTypeId";
+    internal const string MainPdfDataTypeId = "MainPdfDataTypeId";
+
+    /// <summary>
+    /// Gets the <see cref="AltinnAppSpecification"/> for the given <see cref="AltinnInstance"/>.
+    /// </summary>
+    /// <param name="instance"></param>
+    /// <returns>A default altinn specification, overridden by <see cref="AltinnInstance.DataValues"/> from the altinn instance.</returns>
+    /// <exception cref="ArgumentException">if the appId cannot be parsed from the instance</exception>
+    public static AltinnAppSpecification GetSpecification(this AltinnInstance instance)
+    {
+        var sanitizedAppId =
+            instance.AppId.SanitizeAppId()
+            ?? throw new ArgumentException(
+                $"AppId '{instance.AppId}' could not be sanitized to a valid format."
+            );
+
+        var resolvedSpec = new AltinnAppSpecification(sanitizedAppId);
+
+        if (
+            instance.DataValues.TryGetValue(StructuredDataTypeIdKey, out var val)
+            && val is { Length: > 0 } structuredDataTypeId
+        )
+        {
+            resolvedSpec = resolvedSpec with { StructuredDataTypeId = structuredDataTypeId };
+        }
+
+        if (
+            instance.DataValues.TryGetValue(MainPdfDataTypeId, out val)
+            && val is { Length: > 0 } mainPdfDataTypeId
+        )
+        {
+            resolvedSpec = resolvedSpec with { MainPdfDataTypeId = mainPdfDataTypeId };
+        }
+
+        return resolvedSpec;
+    }
+
     public static string? SanitizeAppId(this string? appId)
     {
         return appId?.Split('/').LastOrDefault() is { Length: > 0 } sanitizedAppId
@@ -30,8 +69,10 @@ internal static class AltinnSpecificationExtensions
         DataElement mainData,
         DataElement? structuredData,
         IEnumerable<DataElement> attachmentData
-    ) GetDataElementsBySignificance(this AltinnAppSpecification appSpec, AltinnInstance instance)
+    ) GetDataElementsBySignificance(this AltinnInstance instance)
     {
+        var appSpec = instance.GetSpecification();
+
         var mainData =
             instance.Data.FirstOrDefault(d => d.DataType == appSpec.MainPdfDataTypeId)
             ?? throw new InvalidOperationException(

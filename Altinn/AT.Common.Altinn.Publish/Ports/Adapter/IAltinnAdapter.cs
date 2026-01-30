@@ -13,8 +13,8 @@ public interface IAltinnAdapter
     /// Gets a summary of an Altinn instance from a CloudEvent.
     /// </summary>
     /// <param name="cloudEvent">The cloud event containing instance information.</param>
-    /// <returns>The <see cref="AltinnInstance"/> that the <paramref name="cloudEvent"/> pertains to.</returns>
-    public Task<AltinnInstance> GetAssociatedAltinnInstance(AltinnCloudEvent cloudEvent);
+    /// <returns>The summary of the Altinn instance.</returns>
+    public Task<AltinnInstanceSummary> GetSummary(AltinnCloudEvent cloudEvent);
 
     /// <summary>
     /// Returns a subscription if it exists
@@ -38,17 +38,6 @@ public interface IAltinnAdapter
     /// <param name="altinnSubscription">The altinn subscription details.</param>
     /// <returns>True if it could be successfully unsubscribed, false if the ID did not exist</returns>
     public Task<bool> UnsubscribeForCompletedProcessEvents(AltinnSubscription altinnSubscription);
-
-    /// <summary>
-    /// Gets all non-completed Altinn instances for a given app.
-    /// </summary>
-    /// <param name="appSpec">The altinn app specification</param>
-    /// <param name="processIsComplete">Whether the process is complete (default true).</param>
-    /// <returns>A collection of non-completed instance summaries.</returns>
-    public Task<IEnumerable<AltinnInstanceSummary>> GetNonCompletedInstances(
-        AltinnAppSpecification appSpec,
-        bool processIsComplete = true
-    );
 
     /// <summary>
     /// Gets all non-completed Altinn instances for a given app.

@@ -1,4 +1,6 @@
 using System.Runtime.InteropServices;
+using Arbeidstilsynet.Common.Altinn.Extensions;
+using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
@@ -59,8 +61,8 @@ public class AltinnAppSpecificationTests
     [Fact]
     public void GetDataElementsBySignificance_WhenMainPdfIsMissing_Throws()
     {
-        var instance = CreateInstance();
-        Action act = () => _ = _defaultSpec.GetDataElementsBySignificance(instance);
+        var instance = CreateInstance([]);
+        Action act = () => _ = instance.GetDataElementsBySignificance();
 
         act.ShouldThrow<InvalidOperationException>();
     }
@@ -70,7 +72,7 @@ public class AltinnAppSpecificationTests
     {
         var compliantInstance = CreateCompliantInstance(_defaultSpec);
 
-        var (mainData, _, _) = _defaultSpec.GetDataElementsBySignificance(compliantInstance);
+        var (mainData, _, _) = compliantInstance.GetDataElementsBySignificance();
 
         await Verify(mainData, _verifySettings);
     }
@@ -87,9 +89,8 @@ public class AltinnAppSpecificationTests
             ]
         );
 
-        var (mainData, structuredData, attachmentData) = _defaultSpec.GetDataElementsBySignificance(
-            compliantInstance
-        );
+        var (mainData, structuredData, attachmentData) =
+            compliantInstance.GetDataElementsBySignificance();
 
         mainData.DataType.ShouldBe(_defaultSpec.MainPdfDataTypeId);
         structuredData.ShouldNotBeNull();
@@ -118,19 +119,33 @@ public class AltinnAppSpecificationTests
         params DataElement[] additionalDataElements
     )
     {
-        return CreateInstance([
-            CreateDataElement(spec.MainPdfDataTypeId, "application/pdf"),
-            .. additionalDataElements,
-        ]);
+        return CreateInstance(
+            new Dictionary<string, string>()
+            {
+                {
+                    AltinnSpecificationExtensions.StructuredDataTypeIdKey,
+                    spec.StructuredDataTypeId
+                },
+                { AltinnSpecificationExtensions.MainPdfDataTypeId, spec.MainPdfDataTypeId },
+            },
+            [
+                CreateDataElement(spec.MainPdfDataTypeId, "application/pdf"),
+                .. additionalDataElements,
+            ]
+        );
     }
 
-    private static AltinnInstance CreateInstance(params List<DataElement> dataElements)
+    private static AltinnInstance CreateInstance(
+        Dictionary<string, string> dataValues,
+        params List<DataElement> dataElements
+    )
     {
         return new AltinnInstance()
         {
             Id = new Guid("11111111-1111-1111-1111-111111111111").ToString(),
             AppId = "some-app-id",
             Data = dataElements.ToList(),
+            DataValues = dataValues,
         };
     }
 

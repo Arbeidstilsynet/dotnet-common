@@ -20,9 +20,13 @@ internal class AltinnAdapter(
     ILogger<AltinnAdapter> logger
 ) : IAltinnAdapter
 {
-    public Task<AltinnInstance> GetAssociatedAltinnInstance(AltinnCloudEvent cloudEvent)
+    public async Task<AltinnInstanceSummary> GetSummary(AltinnCloudEvent cloudEvent)
     {
-        return altinnStorageClient.GetInstance(cloudEvent);
+        var instance = await altinnStorageClient.GetInstance(cloudEvent);
+
+        var appSpec = instance.GetSpecification();
+
+        return await GetInstanceSummaryAsync(instance);
     }
 
     public Task<AltinnSubscription> SubscribeForCompletedProcessEvents(
@@ -56,42 +60,6 @@ internal class AltinnAdapter(
         return response.StatusCode == System.Net.HttpStatusCode.OK;
     }
 
-    public async Task<IEnumerable<AltinnInstanceSummary>> GetNonCompletedInstances(
-        AltinnAppSpecification appSpec,
-        bool processIsComplete = true
-    )
-    {
-        var orgId = altinnApiConfigurationOptions.Value.OrgId;
-        var appId = appSpec.AppId;
-
-        var instances = await altinnStorageClient.GetAllInstances(
-            new InstanceQueryParameters
-            {
-                AppId = $"{orgId}/{appId}",
-                Org = orgId,
-                ProcessIsComplete = processIsComplete,
-                ExcludeConfirmedBy = orgId,
-            }
-        );
-
-        IList<AltinnInstanceSummary> summaries = [];
-
-        foreach (var instance in instances)
-        {
-            summaries.Add(await GetInstanceSummaryAsync(instance, appSpec));
-        }
-
-        return summaries;
-    }
-
-    public Task<IEnumerable<AltinnInstanceSummary>> GetNonCompletedInstances(
-        string appId,
-        bool processIsComplete = true
-    )
-    {
-        return GetNonCompletedInstances(new AltinnAppSpecification(appId), processIsComplete);
-    }
-
     public async Task<IEnumerable<AltinnMetadata>> GetMetadataForNonCompletedInstances(
         string appId,
         bool processIsComplete = true
@@ -111,28 +79,50 @@ internal class AltinnAdapter(
         return [.. instances.Select(s => s.ToAltinnMetadata())];
     }
 
-    private async Task<AltinnInstanceSummary> GetInstanceSummaryAsync(
-        AltinnInstance instance,
-        AltinnAppSpecification appSpec
+    public async Task<IEnumerable<AltinnInstanceSummary>> GetNonCompletedInstances(
+        string appId,
+        bool processIsComplete = true
     )
     {
-        var (mainData, structuredData, attachmentData) = appSpec.GetDataElementsBySignificance(
-            instance
+        var orgId = altinnApiConfigurationOptions.Value.OrgId;
+
+        var instances = await altinnStorageClient.GetAllInstances(
+            new InstanceQueryParameters
+            {
+                AppId = $"{orgId}/{appId}",
+                Org = orgId,
+                ProcessIsComplete = processIsComplete,
+                ExcludeConfirmedBy = orgId,
+            }
         );
+
+        IList<AltinnInstanceSummary> summaries = [];
+
+        foreach (var instance in instances)
+        {
+            summaries.Add(await GetInstanceSummaryAsync(instance));
+        }
+
+        return summaries;
+    }
+
+    private async Task<AltinnInstanceSummary> GetInstanceSummaryAsync(AltinnInstance instance)
+    {
+        var (mainData, structuredData, attachmentData) = instance.GetDataElementsBySignificance();
 
         var attachments = new List<AltinnDocument>();
 
         foreach (var dataElement in attachmentData)
         {
-            attachments.Add(await GetAltinnDocument(dataElement, instance, appSpec));
+            attachments.Add(await GetAltinnDocument(dataElement, instance));
         }
 
         return new AltinnInstanceSummary
         {
             Metadata = instance.ToAltinnMetadata(),
-            SkjemaAsPdf = await GetAltinnDocument(mainData, instance, appSpec),
+            SkjemaAsPdf = await GetAltinnDocument(mainData, instance),
             StructuredData = structuredData is not null
-                ? await GetAltinnDocument(structuredData, instance, appSpec)
+                ? await GetAltinnDocument(structuredData, instance)
                 : null,
             Attachments = attachments,
         };
@@ -140,10 +130,11 @@ internal class AltinnAdapter(
 
     private async Task<AltinnDocument> GetAltinnDocument(
         DataElement dataElement,
-        AltinnInstance instance,
-        AltinnAppSpecification appSpec
+        AltinnInstance instance
     )
     {
+        var appSpec = instance.GetSpecification();
+
         var document = await altinnStorageClient.GetInstanceData(
             instance.CreateInstanceDataRequest(dataElement)
         );

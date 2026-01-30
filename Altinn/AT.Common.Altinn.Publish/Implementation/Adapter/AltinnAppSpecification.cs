@@ -1,13 +1,15 @@
+using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
+using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 
-namespace Arbeidstilsynet.Common.Altinn.Model.Adapter;
+namespace Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 
 /// <summary>
 /// Specification for an Altinn application
 /// </summary>
 /// <param name="AppId">e.g. ulykkesvarsel. Any organization prefix is removed.</param>
-public record AltinnAppSpecification(string AppId)
+internal record AltinnAppSpecification(string AppId)
 {
     /// <summary>
     /// The application identifier of the Altinn application.

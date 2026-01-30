@@ -15,22 +15,6 @@ namespace Arbeidstilsynet.Common.Altinn.Extensions;
 public static class AdapterExtensions
 {
     /// <summary>
-    /// Fetches the AppId from an AltinnCloudEvent using the provided adapter.
-    /// </summary>
-    /// <param name="adapter"></param>
-    /// <param name="cloudEvent"></param>
-    /// <returns>The altinn Application id, sans orgId (e.g. "ulykkesvarsel")</returns>
-    public static async Task<string?> FetchAltinnAppId(
-        this IAltinnAdapter adapter,
-        AltinnCloudEvent cloudEvent
-    )
-    {
-        var instance = await adapter.GetAssociatedAltinnInstance(cloudEvent);
-
-        return instance.AppId.SanitizeAppId();
-    }
-
-    /// <summary>
     /// Converts an Altinn <see cref="AltinnInstance"/> to <see cref="AltinnMetadata"/>.
     /// </summary>
     /// <param name="altinnInstance">The Altinn instance to convert.</param>
