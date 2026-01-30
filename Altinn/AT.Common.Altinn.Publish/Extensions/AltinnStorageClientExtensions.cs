@@ -5,8 +5,17 @@ using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 
 namespace Arbeidstilsynet.Common.Altinn.Extensions;
 
+/// <summary>
+/// Extension methods for IAltinnStorageClient
+/// </summary>
 public static class AltinnStorageClientExtensions
 {
+    /// <summary>
+    /// Retrieves all Altinn instances matching the given query parameters, handling pagination internally.
+    /// </summary>
+    /// <param name="altinnStorageClient"></param>
+    /// <param name="queryParameters"></param>
+    /// <returns></returns>
     public static async Task<IEnumerable<AltinnInstance>> GetAllInstances(
         this IAltinnStorageClient altinnStorageClient,
         InstanceQueryParameters queryParameters

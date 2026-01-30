@@ -6,10 +6,13 @@ using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 
 namespace Arbeidstilsynet.Common.Altinn.Extensions;
 
+/// <summary>
+/// Extension methods for Altinn adapter models.
+/// </summary>
 public static class AdapterExtensions
 {
     /// <summary>
-    /// Converts an Altinn <see cref="Instance"/> to <see cref="AltinnMetadata"/>.
+    /// Converts an Altinn <see cref="AltinnInstance"/> to <see cref="AltinnMetadata"/>.
     /// </summary>
     /// <param name="altinnInstance">The Altinn instance to convert.</param>
     /// <returns>The corresponding <see cref="AltinnMetadata"/> object.</returns>

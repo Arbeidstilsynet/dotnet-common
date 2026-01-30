@@ -42,7 +42,7 @@ internal class AltinnAdapter(
     {
         var baseUrl = altinnApiConfigurationOptions.Value.AppBaseUrl;
         var orgId = altinnApiConfigurationOptions.Value.OrgId;
-        var appId = subscriptionRequestDto.AppId;
+        var appId = subscriptionRequestDto.AltinnAppId;
 
         var mappedRequest = new AltinnSubscriptionRequest()
         {
