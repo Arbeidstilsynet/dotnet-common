@@ -1,7 +1,9 @@
 using Altinn.App.Core.Helpers.DataModel;
 using Altinn.App.Core.Internal.App;
 using Altinn.App.Core.Internal.Data;
+using Altinn.App.Core.Internal.Instances;
 using Altinn.Platform.Storage.Interface.Models;
+using Arbeidstilsynet.Common.AltinnApp.DependencyInjection;
 using Arbeidstilsynet.Common.AltinnApp.Extensions;
 using Arbeidstilsynet.Common.AltinnApp.Implementation;
 using Arbeidstilsynet.Common.AltinnApp.Test.Unit.TestFixtures;
@@ -16,6 +18,7 @@ public class StructuredDataManagerTests
 {
     private readonly IApplicationClient _applicationClient;
     private readonly IDataClient _dataClient;
+    private readonly IInstanceClient _instanceClient;
     private readonly ILogger<StructuredDataManager<TestDataModel, TestStructuredData>> _logger;
     private readonly StructuredDataManager<TestDataModel, TestStructuredData> _sut;
 
@@ -24,6 +27,7 @@ public class StructuredDataManagerTests
     public StructuredDataManagerTests()
     {
         _applicationClient = Substitute.For<IApplicationClient>();
+        _instanceClient = Substitute.For<IInstanceClient>();
         _dataClient = Substitute.For<IDataClient>();
         _logger = Substitute.For<
             ILogger<StructuredDataManager<TestDataModel, TestStructuredData>>
@@ -36,6 +40,7 @@ public class StructuredDataManagerTests
         _sut = new StructuredDataManager<TestDataModel, TestStructuredData>(
             _applicationClient,
             _dataClient,
+            _instanceClient,
             _config,
             _logger
         );
@@ -140,6 +145,60 @@ public class StructuredDataManagerTests
     }
 
     [Fact]
+    public async Task End_TaskEnd_UpdatesDataValuesBasedOnConfig()
+    {
+        // Arrange
+        var instance = AltinnData.CreateTestInstance();
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+        );
+        var dataModel = new TestDataModel { Name = "Test" };
+
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(application);
+        _dataClient
+            .GetFormData(
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
+                cancellationToken: Arg.Any<CancellationToken>()
+            )
+            .Returns(dataModel);
+
+        // Act
+        await _sut.End("task1", instance);
+
+        // Assert
+        await _instanceClient
+            .Received(1)
+            .UpdateDataValues(
+                instance,
+                Arg.Is<Dictionary<string, string?>>(d =>
+                    Enumerable.SequenceEqual(
+                        d,
+                        new Dictionary<string, string?>()
+                        {
+                            {
+                                StructuredDataManager<
+                                    TestDataModel,
+                                    TestStructuredData
+                                >.StructuredDataTypeIdKey,
+                                _config.StructuredDataConfiguration.StructuredDataTypeId
+                            },
+                            {
+                                StructuredDataManager<
+                                    TestDataModel,
+                                    TestStructuredData
+                                >.MainPdfDataTypeId,
+                                _config.StructuredDataConfiguration.MainPdfDataTypeId
+                            },
+                        }
+                    )
+                )
+            );
+    }
+
+    [Fact]
     public async Task End_ProcessEnd_UsesIApplicationClientToGetDataElement()
     {
         // Arrange
@@ -188,7 +247,7 @@ public class StructuredDataManagerTests
     }
 
     [Fact]
-    public async Task End_ProcessEnd_When_DeleteAppDataModelAfterMapping_IsFalse_ShouldNotDeleteData()
+    public async Task End_ProcessEnd_When_KeepAppDataModelAfterMapping_IsTrue_ShouldNotDeleteData()
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
@@ -203,9 +262,13 @@ public class StructuredDataManagerTests
         var sut_withDeleteDisabled = new StructuredDataManager<TestDataModel, TestStructuredData>(
             _applicationClient,
             _dataClient,
+            _instanceClient,
             _config with
             {
-                DeleteAppDataModelAfterMapping = false,
+                StructuredDataConfiguration = _config.StructuredDataConfiguration with
+                {
+                    KeepAppDataModelAfterMapping = true,
+                },
             },
             _logger
         );

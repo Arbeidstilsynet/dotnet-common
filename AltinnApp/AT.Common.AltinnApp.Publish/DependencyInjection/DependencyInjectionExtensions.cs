@@ -1,4 +1,5 @@
 using Altinn.App.Core.Features;
+using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.AltinnApp.Implementation;
 using Arbeidstilsynet.Common.AltinnApp.Model;
 using Arbeidstilsynet.Common.AltinnApp.Ports;
@@ -46,6 +47,34 @@ public record LandOptionsConfiguration
 }
 
 /// <summary>
+/// Configuration for structured data mapping.
+/// </summary>
+public record StructuredDataConfiguration
+{
+    /// <summary>
+    /// The <see cref="DataElement.DataType"/> of the structured data (if any) in <see cref="Instance.Data"/>. Defaults to "structured-data".
+    /// </summary>
+    /// <remarks>This id default for Arbeidstilsynet and should be unnecessary to override.</remarks>
+    public string StructuredDataTypeId { get; init; } = "structured-data";
+
+    /// <summary>
+    /// The <see cref="DataElement.DataType"/> of the main PDF document in <see cref="Instance.Data"/>. Defaults to "ref-data-as-pdf".
+    /// </summary>
+    /// <remarks>This is default for Altinn Apps and should never be overridden.</remarks>
+    public string MainPdfDataTypeId { get; init; } = "ref-data-as-pdf";
+
+    /// <summary>
+    /// Whether to include error details in the structured data in case of mapping errors. Default is false.
+    /// </summary>
+    public bool IncludeErrorDetails { get; init; } = false;
+
+    /// <summary>
+    /// Whether to keep the App data model after mapping. Default is false.
+    /// </summary>
+    public bool KeepAppDataModelAfterMapping { get; init; } = false;
+}
+
+/// <summary>
 /// Extensions for Dependency Injection.
 /// </summary>
 public static class DependencyInjectionExtensions
@@ -85,12 +114,11 @@ public static class DependencyInjectionExtensions
     /// <summary>
     /// Adds a mechanism to map the datamodel of type <typeparamref name="TDataModel"/> to structured data of type <typeparamref name="TStructuredData"/>
     ///
-    /// The data model is deleted right after PDF-generation so that it doesn't get transferred to storage (disable this behavior with <paramref name="keepAppDataModelAfterMapping"/>). The structured data will be stored instead.
+    /// The data model is deleted right after PDF-generation so that it doesn't get transferred to storage (control this behavior with <see cref="StructuredDataConfiguration.KeepAppDataModelAfterMapping"/>). The structured data will be stored instead.
     /// </summary>
     /// <param name="services"></param>
-    /// <param name="mapFunc">The function responsible for mapping from <typeparamref name="TDataModel"/> to <typeparamref name="TStructuredData"/> </param>
-    /// <param name="includeErrorDetails">Whether to include error details in the structured data in case of mapping errors. Default is false.</param>
-    /// <param name="keepAppDataModelAfterMapping">Whether to keep the App data model after mapping. Default is false.</param>
+    /// <param name="mapFunc">The function responsible for mapping from <typeparamref name="TDataModel"/> to <typeparamref name="TStructuredData"/>.</param>
+    /// <param name="configuration">The structured data configuration.</param>
     /// <typeparam name="TStructuredData"></typeparam>
     /// <typeparam name="TDataModel"></typeparam>
     /// <returns></returns>
@@ -110,19 +138,17 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddStructuredData<TDataModel, TStructuredData>(
         this IServiceCollection services,
         Func<TDataModel, TStructuredData> mapFunc,
-        bool includeErrorDetails = false,
-        bool keepAppDataModelAfterMapping = false
+        StructuredDataConfiguration? configuration = null
     )
         where TDataModel : class
         where TStructuredData : class
     {
-        services.AddSingleton(
-            new StructuredDataManager<TDataModel, TStructuredData>.Config(mapFunc)
-            {
-                IncludeErrorDetails = includeErrorDetails,
-                DeleteAppDataModelAfterMapping = !keepAppDataModelAfterMapping,
-            }
-        );
+        var config = new StructuredDataManager<TDataModel, TStructuredData>.Config(mapFunc)
+        {
+            StructuredDataConfiguration = configuration ?? new StructuredDataConfiguration(),
+        };
+
+        services.AddSingleton(config);
         services.AddSingleton<StructuredDataManager<TDataModel, TStructuredData>>();
         services.AddTransient<IProcessEnd>(sp =>
             sp.GetRequiredService<StructuredDataManager<TDataModel, TStructuredData>>()
