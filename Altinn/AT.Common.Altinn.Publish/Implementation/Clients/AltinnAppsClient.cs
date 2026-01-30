@@ -36,12 +36,11 @@ internal class AltinnAppsClient : IAltinnAppsClient
     }
 
     public async Task<AltinnInstance> CompleteInstance(
-        AltinnAppSpecification appSpec,
+        string appId,
         InstanceRequest instanceAddress
     )
     {
         var orgId = _config.Value.OrgId;
-        var appId = appSpec.AppId;
 
         var instanceUri = instanceAddress.ToInstanceUri("complete");
 

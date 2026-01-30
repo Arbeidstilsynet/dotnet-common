@@ -25,7 +25,7 @@ public class AltinnAppsClientTests : TestBed<AltinnApiTestFixture>
         //arrange
         //act
         var result = await _sut.CompleteInstance(
-            new AltinnAppSpecification("testapp"),
+            "testapp",
             new Model.Api.Request.InstanceRequest
             {
                 InstanceGuid = DynamicDataGeneration.DefaultPathUuid,

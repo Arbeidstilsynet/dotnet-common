@@ -31,6 +31,11 @@ internal class AltinnAdapter(
         return await GetInstanceSummaryAsync(instance, appSpec);
     }
 
+    public Task<AltinnInstanceSummary> GetSummary(AltinnCloudEvent cloudEvent, string appId)
+    {
+        return GetSummary(cloudEvent, new AltinnAppSpecification(appId));
+    }
+
     public Task<AltinnSubscription> SubscribeForCompletedProcessEvents(
         SubscriptionRequestDto subscriptionRequestDto
     )
@@ -88,6 +93,14 @@ internal class AltinnAdapter(
         }
 
         return summaries;
+    }
+
+    public Task<IEnumerable<AltinnInstanceSummary>> GetNonCompletedInstances(
+        string appId,
+        bool processIsComplete = true
+    )
+    {
+        return GetNonCompletedInstances(new AltinnAppSpecification(appId), processIsComplete);
     }
 
     public async Task<IEnumerable<AltinnMetadata>> GetMetadataForNonCompletedInstances(
