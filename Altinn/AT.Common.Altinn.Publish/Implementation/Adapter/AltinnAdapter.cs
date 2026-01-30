@@ -20,20 +20,9 @@ internal class AltinnAdapter(
     ILogger<AltinnAdapter> logger
 ) : IAltinnAdapter
 {
-    public async Task<AltinnInstanceSummary> GetSummary(
-        AltinnCloudEvent cloudEvent,
-        AltinnAppSpecification appSpec
-    )
+    public Task<AltinnInstance> GetAssociatedAltinnInstance(AltinnCloudEvent cloudEvent)
     {
-        // get instans basert på cloud event data
-        var instance = await altinnStorageClient.GetInstance(cloudEvent);
-
-        return await GetInstanceSummaryAsync(instance, appSpec);
-    }
-
-    public Task<AltinnInstanceSummary> GetSummary(AltinnCloudEvent cloudEvent, string appId)
-    {
-        return GetSummary(cloudEvent, new AltinnAppSpecification(appId));
+        return altinnStorageClient.GetInstance(cloudEvent);
     }
 
     public Task<AltinnSubscription> SubscribeForCompletedProcessEvents(

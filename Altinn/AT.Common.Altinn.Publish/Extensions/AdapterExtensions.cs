@@ -1,8 +1,11 @@
 using System.Globalization;
 using System.Text.Json;
+using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
+using Arbeidstilsynet.Common.Altinn.Ports.Adapter;
+using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 
 namespace Arbeidstilsynet.Common.Altinn.Extensions;
 
@@ -11,6 +14,22 @@ namespace Arbeidstilsynet.Common.Altinn.Extensions;
 /// </summary>
 public static class AdapterExtensions
 {
+    /// <summary>
+    /// Fetches the AppId from an AltinnCloudEvent using the provided adapter.
+    /// </summary>
+    /// <param name="adapter"></param>
+    /// <param name="cloudEvent"></param>
+    /// <returns>The altinn Application id, sans orgId (e.g. "ulykkesvarsel")</returns>
+    public static async Task<string?> FetchAltinnAppId(
+        this IAltinnAdapter adapter,
+        AltinnCloudEvent cloudEvent
+    )
+    {
+        var instance = await adapter.GetAssociatedAltinnInstance(cloudEvent);
+
+        return instance.AppId.SanitizeAppId();
+    }
+
     /// <summary>
     /// Converts an Altinn <see cref="AltinnInstance"/> to <see cref="AltinnMetadata"/>.
     /// </summary>
