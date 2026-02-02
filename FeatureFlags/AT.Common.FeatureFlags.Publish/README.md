@@ -88,7 +88,6 @@ public class MyService
         var context = new FeatureFlagContext
         {
             UserId = userId,
-            Environment = "production"
         };
 
         if (_featureFlags.IsEnabled("user-specific-feature", context))
@@ -128,7 +127,7 @@ Content-Type: application/json
 {
   "featureName": "my-new-feature",
   "context": {
-    "userId": "user123",
+    "userId": "user123"
   }
 }
 ```
@@ -137,6 +136,7 @@ Content-Type: application/json
 
 ```json
 {
+  "featureName": "my-new-feature",
   "isEnabled": true
 }
 ```
