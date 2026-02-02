@@ -13,7 +13,7 @@ public class FeatureFlagContext
     public string? UserId { get; set; }
 
     /// <summary>
-    /// Gets og sets the AppName for feature flag evaluation.
+    /// Gets or sets the AppName for feature flag evaluation.
     /// </summary>
     public string? AppName { get; set; }
 
