@@ -129,7 +129,6 @@ Content-Type: application/json
   "featureName": "my-new-feature",
   "context": {
     "userId": "user123",
-    "environment": "production"
   }
 }
 ```
