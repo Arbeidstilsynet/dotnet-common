@@ -54,7 +54,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - name: Build and Test .NET solution
-        uses: Arbeidstilsynet/action-dotnet-build@a1f3f50f263efb55f38a48fa615e2cf77c4297fa # v3
+        uses: Arbeidstilsynet/action-dotnet-build@de0c8a04f5db83cd01c03bf8b7056e00b6e014d3 # v4
         with:
           working-directory: ${{ needs.check-and-prepare.outputs.parent_dir }}
 
