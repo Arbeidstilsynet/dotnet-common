@@ -11,6 +11,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Arbeidstilsynet.Common.TestExtensions" Version="1.0.0" />
+    <PackageReference Include="Bogus" Version="35.6.5" />
     <PackageReference Include="NSubstitute" Version="5.3.0" />
     <PackageReference Include="Shouldly" Version="4.3.0" />
     <PackageReference Include="WireMock.Net" Version="1.23.0" />

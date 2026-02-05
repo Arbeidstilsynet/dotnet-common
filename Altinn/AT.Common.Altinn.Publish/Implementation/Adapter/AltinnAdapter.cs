@@ -24,8 +24,6 @@ internal class AltinnAdapter(
     {
         var instance = await altinnStorageClient.GetInstance(cloudEvent);
 
-        var appSpec = instance.GetSpecification();
-
         return await GetInstanceSummaryAsync(instance);
     }
 
