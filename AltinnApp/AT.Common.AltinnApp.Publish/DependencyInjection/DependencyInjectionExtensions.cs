@@ -132,7 +132,7 @@ public static class DependencyInjectionExtensions
     {
         var config = new StructuredDataManager<TDataModel, TStructuredData>.Config(mapFunc)
         {
-            StructuredDataConfiguration = configuration
+            StructuredDataConfiguration = configuration,
         };
 
         return services.AddStructuredDataInternal(config);
@@ -177,12 +177,12 @@ public static class DependencyInjectionExtensions
             StructuredDataConfiguration = new StructuredDataConfiguration()
             {
                 IncludeErrorDetails = !env.IsProduction(),
-            }
+            },
         };
 
         return services.AddStructuredDataInternal(config);
     }
-    
+
     private static IServiceCollection AddStructuredDataInternal<TDataModel, TStructuredData>(
         this IServiceCollection services,
         StructuredDataManager<TDataModel, TStructuredData>.Config config
