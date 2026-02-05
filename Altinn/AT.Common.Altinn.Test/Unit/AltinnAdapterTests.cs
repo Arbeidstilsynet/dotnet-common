@@ -1,4 +1,6 @@
+using System.Net;
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
+using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
@@ -9,8 +11,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using Shouldly;
-using System.Net;
-using Arbeidstilsynet.Common.Altinn.Extensions;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 
@@ -27,15 +27,17 @@ public class AltinnAdapterTests
         _storageClient = Substitute.For<IAltinnStorageClient>();
         _eventsClient = Substitute.For<IAltinnEventsClient>();
         _logger = Substitute.For<ILogger<AltinnAdapter>>();
-        
-        _configuration = Options.Create(new AltinnConfiguration
-        {
-            OrgId = "dat",
-            AuthenticationUrl = new Uri("https://platform.altinn.no/authentication/api/v1"),
-            StorageUrl = new Uri("https://platform.altinn.no/storage/api/v1"),
-            EventUrl = new Uri("https://platform.altinn.no/events/api/v1"),
-            AppBaseUrl = new Uri("https://dat.apps.altinn.no")
-        });
+
+        _configuration = Options.Create(
+            new AltinnConfiguration
+            {
+                OrgId = "dat",
+                AuthenticationUrl = new Uri("https://platform.altinn.no/authentication/api/v1"),
+                StorageUrl = new Uri("https://platform.altinn.no/storage/api/v1"),
+                EventUrl = new Uri("https://platform.altinn.no/events/api/v1"),
+                AppBaseUrl = new Uri("https://dat.apps.altinn.no"),
+            }
+        );
 
         _adapter = new AltinnAdapter(_storageClient, _eventsClient, _configuration, _logger);
     }
@@ -50,9 +52,10 @@ public class AltinnAdapterTests
         var instance = AltinnTestData.CreateAltinnInstance(
             dataElements: AltinnTestData.CreateDefaultDataElements()
         );
-        
+
         _storageClient.GetInstance(cloudEvent).Returns(instance);
-        _storageClient.GetInstanceData(Arg.Any<InstanceDataRequest>())
+        _storageClient
+            .GetInstanceData(Arg.Any<InstanceDataRequest>())
             .Returns(new MemoryStream([1, 2, 3]));
 
         // Act
@@ -64,7 +67,7 @@ public class AltinnAdapterTests
         summary.SkjemaAsPdf.ShouldNotBeNull();
         summary.StructuredData.ShouldBeNull();
         summary.Attachments.ShouldBeEmpty();
-        
+
         await _storageClient.Received(1).GetInstance(cloudEvent);
         await _storageClient.Received(1).GetInstanceData(Arg.Any<InstanceDataRequest>());
     }
@@ -79,14 +82,12 @@ public class AltinnAdapterTests
                 structuredDataTypeId: "model",
                 attachmentCount: 2
             ),
-            dataValues: new Dictionary<string, string>
-            {
-                { "StructuredDataTypeId", "model" }
-            }
+            dataValues: new Dictionary<string, string> { { "StructuredDataTypeId", "model" } }
         );
-        
+
         _storageClient.GetInstance(cloudEvent).Returns(instance);
-        _storageClient.GetInstanceData(Arg.Any<InstanceDataRequest>())
+        _storageClient
+            .GetInstanceData(Arg.Any<InstanceDataRequest>())
             .Returns(callInfo => new MemoryStream([1, 2, 3]));
 
         // Act
@@ -98,7 +99,7 @@ public class AltinnAdapterTests
         summary.SkjemaAsPdf.ShouldNotBeNull();
         summary.StructuredData.ShouldNotBeNull();
         summary.Attachments.Count.ShouldBe(2);
-        
+
         await _storageClient.Received(1).GetInstance(cloudEvent);
         // 1 for main PDF + 1 for structured data + 2 for attachments = 4 calls
         await _storageClient.Received(4).GetInstanceData(Arg.Any<InstanceDataRequest>());
@@ -117,9 +118,10 @@ public class AltinnAdapterTests
             partyId: partyId,
             organisationNumber: "987654321"
         );
-        
+
         _storageClient.GetInstance(cloudEvent).Returns(instance);
-        _storageClient.GetInstanceData(Arg.Any<InstanceDataRequest>())
+        _storageClient
+            .GetInstanceData(Arg.Any<InstanceDataRequest>())
             .Returns(new MemoryStream([1, 2, 3]));
 
         // Act
@@ -145,7 +147,7 @@ public class AltinnAdapterTests
         var appId = "test-app";
         var subscriptionRequest = AltinnTestData.CreateSubscriptionRequestDto(callbackUrl, appId);
         var expectedSubscription = AltinnTestData.CreateAltinnSubscription();
-        
+
         _eventsClient.Subscribe(Arg.Any<AltinnSubscriptionRequest>()).Returns(expectedSubscription);
 
         // Act
@@ -153,29 +155,39 @@ public class AltinnAdapterTests
 
         // Assert
         result.ShouldBe(expectedSubscription);
-        await _eventsClient.Received(1).Subscribe(Arg.Is<AltinnSubscriptionRequest>(req =>
-            req.EndPoint == callbackUrl &&
-            req.TypeFilter == "app.instance.process.completed" &&
-            req.SourceFilter.ToString() == "https://dat.apps.altinn.no/dat/test-app"
-        ));
+        await _eventsClient
+            .Received(1)
+            .Subscribe(
+                Arg.Is<AltinnSubscriptionRequest>(req =>
+                    req.EndPoint == callbackUrl
+                    && req.TypeFilter == "app.instance.process.completed"
+                    && req.SourceFilter.ToString() == "https://dat.apps.altinn.no/dat/test-app"
+                )
+            );
     }
 
     [Fact]
     public async Task SubscribeForCompletedProcessEvents_UsesConfiguredOrgId()
     {
         // Arrange
-        var subscriptionRequest = AltinnTestData.CreateSubscriptionRequestDto(altinnAppId: "my-app");
+        var subscriptionRequest = AltinnTestData.CreateSubscriptionRequestDto(
+            altinnAppId: "my-app"
+        );
         var expectedSubscription = AltinnTestData.CreateAltinnSubscription();
-        
+
         _eventsClient.Subscribe(Arg.Any<AltinnSubscriptionRequest>()).Returns(expectedSubscription);
 
         // Act
         await _adapter.SubscribeForCompletedProcessEvents(subscriptionRequest);
 
         // Assert
-        await _eventsClient.Received(1).Subscribe(Arg.Is<AltinnSubscriptionRequest>(req =>
-            req.SourceFilter.ToString().Contains("dat/my-app")
-        ));
+        await _eventsClient
+            .Received(1)
+            .Subscribe(
+                Arg.Is<AltinnSubscriptionRequest>(req =>
+                    req.SourceFilter.ToString().Contains("dat/my-app")
+                )
+            );
     }
 
     #endregion
@@ -188,7 +200,7 @@ public class AltinnAdapterTests
         // Arrange
         var subscription = AltinnTestData.CreateAltinnSubscription(id: 123);
         var response = new HttpResponseMessage(HttpStatusCode.OK);
-        
+
         _eventsClient.Unsubscribe(123).Returns(response);
 
         // Act
@@ -205,7 +217,7 @@ public class AltinnAdapterTests
         // Arrange
         var subscription = AltinnTestData.CreateAltinnSubscription(id: 123);
         var response = new HttpResponseMessage(HttpStatusCode.BadRequest);
-        
+
         _eventsClient.Unsubscribe(123).Returns(response);
 
         // Act
@@ -228,12 +240,12 @@ public class AltinnAdapterTests
         {
             AltinnTestData.CreateAltinnInstance(appId: "dat/test-app"),
             AltinnTestData.CreateAltinnInstance(appId: "dat/test-app"),
-            AltinnTestData.CreateAltinnInstance(appId: "dat/test-app")
+            AltinnTestData.CreateAltinnInstance(appId: "dat/test-app"),
         };
         var response = new AltinnQueryResponse<AltinnInstance>()
         {
             Instances = instances,
-            Count = instances.Count
+            Count = instances.Count,
         };
 
         _storageClient.GetInstances(default!).ReturnsForAnyArgs(response);
@@ -255,18 +267,24 @@ public class AltinnAdapterTests
         // Arrange
         var appId = "test-app";
 
-        _storageClient.GetInstances(default!).ReturnsForAnyArgs(new AltinnQueryResponse<AltinnInstance>());
+        _storageClient
+            .GetInstances(default!)
+            .ReturnsForAnyArgs(new AltinnQueryResponse<AltinnInstance>());
 
         // Act
         await _adapter.GetMetadataForNonCompletedInstances(appId, processIsComplete: false);
 
         // Assert
-        await _storageClient.Received(1).GetInstances(Arg.Is<InstanceQueryParameters>(p =>
-            p.AppId == "dat/test-app" &&
-            p.Org == "dat" &&
-            p.ProcessIsComplete == false &&
-            p.ExcludeConfirmedBy == "dat"
-        ));
+        await _storageClient
+            .Received(1)
+            .GetInstances(
+                Arg.Is<InstanceQueryParameters>(p =>
+                    p.AppId == "dat/test-app"
+                    && p.Org == "dat"
+                    && p.ProcessIsComplete == false
+                    && p.ExcludeConfirmedBy == "dat"
+                )
+            );
     }
 
     #endregion
@@ -281,15 +299,20 @@ public class AltinnAdapterTests
         var instances = new List<AltinnInstance>
         {
             AltinnTestData.CreateAltinnInstance(),
-            AltinnTestData.CreateAltinnInstance()
+            AltinnTestData.CreateAltinnInstance(),
         };
 
-        _storageClient.GetInstances(Arg.Any<InstanceQueryParameters>()).Returns(new AltinnQueryResponse<AltinnInstance>
-        {
-            Instances = instances,
-            Count = instances.Count
-        });
-        _storageClient.GetInstanceData(Arg.Any<InstanceDataRequest>())
+        _storageClient
+            .GetInstances(Arg.Any<InstanceQueryParameters>())
+            .Returns(
+                new AltinnQueryResponse<AltinnInstance>
+                {
+                    Instances = instances,
+                    Count = instances.Count,
+                }
+            );
+        _storageClient
+            .GetInstanceData(Arg.Any<InstanceDataRequest>())
             .Returns(new MemoryStream([1, 2, 3]));
 
         // Act
@@ -309,15 +332,20 @@ public class AltinnAdapterTests
         var instances = new List<AltinnInstance>
         {
             AltinnTestData.CreateAltinnInstance(),
-            AltinnTestData.CreateAltinnInstance()
+            AltinnTestData.CreateAltinnInstance(),
         };
 
-        _storageClient.GetInstances(Arg.Any<InstanceQueryParameters>()).Returns(new AltinnQueryResponse<AltinnInstance>
-        {
-            Instances = instances,
-            Count = instances.Count
-        });
-        _storageClient.GetInstanceData(Arg.Any<InstanceDataRequest>())
+        _storageClient
+            .GetInstances(Arg.Any<InstanceQueryParameters>())
+            .Returns(
+                new AltinnQueryResponse<AltinnInstance>
+                {
+                    Instances = instances,
+                    Count = instances.Count,
+                }
+            );
+        _storageClient
+            .GetInstanceData(Arg.Any<InstanceDataRequest>())
             .Returns(new MemoryStream([1, 2, 3]));
 
         // Act
@@ -338,7 +366,7 @@ public class AltinnAdapterTests
         // Arrange
         var subscriptionId = 123;
         var expectedSubscription = AltinnTestData.CreateAltinnSubscription(id: subscriptionId);
-        
+
         _eventsClient.GetAltinnSubscription(subscriptionId).Returns(expectedSubscription);
 
         // Act
@@ -354,9 +382,12 @@ public class AltinnAdapterTests
     {
         // Arrange
         var subscriptionId = 123;
-        
-        _eventsClient.GetAltinnSubscription(subscriptionId)
-            .Returns<AltinnSubscription>(x => throw new HttpRequestException("Not found", null, HttpStatusCode.NotFound));
+
+        _eventsClient
+            .GetAltinnSubscription(subscriptionId)
+            .Returns<AltinnSubscription>(x =>
+                throw new HttpRequestException("Not found", null, HttpStatusCode.NotFound)
+            );
 
         // Act
         var result = await _adapter.GetAltinnSubscription(subscriptionId);
@@ -370,13 +401,21 @@ public class AltinnAdapterTests
     {
         // Arrange
         var subscriptionId = 123;
-        
-        _eventsClient.GetAltinnSubscription(subscriptionId)
-            .Returns<AltinnSubscription>(x => throw new HttpRequestException("Server error", null, HttpStatusCode.InternalServerError));
+
+        _eventsClient
+            .GetAltinnSubscription(subscriptionId)
+            .Returns<AltinnSubscription>(x =>
+                throw new HttpRequestException(
+                    "Server error",
+                    null,
+                    HttpStatusCode.InternalServerError
+                )
+            );
 
         // Act & Assert
-        await Should.ThrowAsync<HttpRequestException>(async () => 
-            await _adapter.GetAltinnSubscription(subscriptionId));
+        await Should.ThrowAsync<HttpRequestException>(async () =>
+            await _adapter.GetAltinnSubscription(subscriptionId)
+        );
     }
 
     #endregion
@@ -391,15 +430,16 @@ public class AltinnAdapterTests
         var instance = AltinnTestData.CreateAltinnInstance(
             dataElements: new List<DataElement>
             {
-                AltinnTestData.CreateDataElement("not-a-pdf", "application/json")
+                AltinnTestData.CreateDataElement("not-a-pdf", "application/json"),
             }
         );
-        
+
         _storageClient.GetInstance(cloudEvent).Returns(instance);
 
         // Act & Assert
         await Should.ThrowAsync<InvalidOperationException>(async () =>
-            await _adapter.GetSummary(cloudEvent));
+            await _adapter.GetSummary(cloudEvent)
+        );
     }
 
     [Fact]
@@ -409,12 +449,13 @@ public class AltinnAdapterTests
         var cloudEvent = AltinnTestData.CreateAltinnCloudEvent();
         var instance = AltinnTestData.CreateAltinnInstance();
         instance.Data[0].Id = null;
-        
+
         _storageClient.GetInstance(cloudEvent).Returns(instance);
 
         // Act & Assert
         await Should.ThrowAsync<InvalidOperationException>(async () =>
-            await _adapter.GetSummary(cloudEvent));
+            await _adapter.GetSummary(cloudEvent)
+        );
     }
 
     #endregion

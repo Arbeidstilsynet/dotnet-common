@@ -26,10 +26,10 @@ internal static class AltinnTestData
         var actualPartyId = partyId ?? Faker.Random.Number(10000, 99999).ToString();
         var actualOrg = org ?? "dat";
         var actualAppId = appId ?? $"{actualOrg}/{Faker.Lorem.Word()}-app";
-        
+
         var processStart = processStarted ?? Faker.Date.Recent(30);
         var processEnd = processEnded ?? Faker.Date.Between(processStart, DateTime.UtcNow);
-        
+
         return new AltinnInstance
         {
             Id = $"{actualPartyId}/{instanceGuid}",
@@ -38,20 +38,18 @@ internal static class AltinnTestData
             InstanceOwner = new InstanceOwner
             {
                 PartyId = actualPartyId,
-                OrganisationNumber = organisationNumber ?? Faker.Company.Ein()
+                OrganisationNumber = organisationNumber ?? Faker.Company.Ein(),
             },
-            Process = new ProcessState
-            {
-                Started = processStart,
-                Ended = processEnd
-            },
+            Process = new ProcessState { Started = processStart, Ended = processEnd },
             Data = dataElements ?? CreateDefaultDataElements(),
             DataValues = dataValues ?? new Dictionary<string, string>(),
             SelfLinks = new ResourceLinks
             {
-                Apps = $"https://{actualOrg}.apps.altinn.no/{actualAppId}/instances/{actualPartyId}/{instanceGuid}",
-                Platform = $"https://platform.altinn.no/storage/api/v1/instances/{actualPartyId}/{instanceGuid}"
-            }
+                Apps =
+                    $"https://{actualOrg}.apps.altinn.no/{actualAppId}/instances/{actualPartyId}/{instanceGuid}",
+                Platform =
+                    $"https://platform.altinn.no/storage/api/v1/instances/{actualPartyId}/{instanceGuid}",
+            },
         };
     }
 
@@ -63,7 +61,7 @@ internal static class AltinnTestData
     {
         var dataElements = new List<DataElement>
         {
-            CreateDataElement(mainPdfDataTypeId ?? "ref-data-as-pdf", "application/pdf")
+            CreateDataElement(mainPdfDataTypeId ?? "ref-data-as-pdf", "application/pdf"),
         };
 
         if (structuredDataTypeId != null)
@@ -73,7 +71,12 @@ internal static class AltinnTestData
 
         for (int i = 0; i < attachmentCount; i++)
         {
-            dataElements.Add(CreateDataElement($"attachment-{i}", Faker.PickRandom("application/pdf", "application/xml", "image/jpeg")));
+            dataElements.Add(
+                CreateDataElement(
+                    $"attachment-{i}",
+                    Faker.PickRandom("application/pdf", "application/xml", "image/jpeg")
+                )
+            );
         }
 
         return dataElements;
@@ -95,7 +98,7 @@ internal static class AltinnTestData
             FileScanResult = fileScanResult,
             Size = Faker.Random.Long(1024, 10485760), // 1KB to 10MB
             Locked = Faker.Random.Bool(0.1f), // 10% chance of being locked
-            IsRead = Faker.Random.Bool(0.8f) // 80% chance of being read
+            IsRead = Faker.Random.Bool(0.8f), // 80% chance of being read
         };
     }
 
@@ -108,7 +111,7 @@ internal static class AltinnTestData
     {
         var actualPartyId = partyId ?? Faker.Random.Number(10000, 99999).ToString();
         var actualAppId = appId ?? $"dat/{Faker.Lorem.Word()}-app";
-        
+
         return new AltinnCloudEvent
         {
             Id = Faker.Random.Guid().ToString(),
@@ -129,14 +132,15 @@ internal static class AltinnTestData
     )
     {
         var subscriptionId = id > 0 ? id : Faker.Random.Number(1, 10000);
-        
+
         return new AltinnSubscription
         {
             Id = subscriptionId,
             EndPoint = endPoint ?? new Uri($"https://{Faker.Internet.DomainName()}/callback"),
-            SourceFilter = sourceFilter ?? new Uri($"https://dat.apps.altinn.no/dat/{Faker.Lorem.Word()}-app"),
+            SourceFilter =
+                sourceFilter ?? new Uri($"https://dat.apps.altinn.no/dat/{Faker.Lorem.Word()}-app"),
             TypeFilter = typeFilter ?? "app.instance.process.completed",
-            Consumer = consumer ?? $"/org/{Faker.Company.CompanyName().ToLower()}"
+            Consumer = consumer ?? $"/org/{Faker.Company.CompanyName().ToLower()}",
         };
     }
 
@@ -147,8 +151,9 @@ internal static class AltinnTestData
     {
         return new SubscriptionRequestDto
         {
-            CallbackUrl = callbackUrl ?? new Uri($"https://{Faker.Internet.DomainName()}/webhook/altinn"),
-            AltinnAppId = altinnAppId ?? $"{Faker.Lorem.Word()}-app"
+            CallbackUrl =
+                callbackUrl ?? new Uri($"https://{Faker.Internet.DomainName()}/webhook/altinn"),
+            AltinnAppId = altinnAppId ?? $"{Faker.Lorem.Word()}-app",
         };
     }
 
@@ -160,13 +165,13 @@ internal static class AltinnTestData
     )
     {
         var actualOrg = org ?? "dat";
-        
+
         return new InstanceQueryParameters
         {
             AppId = appId ?? $"{actualOrg}/{Faker.Lorem.Word()}-app",
             Org = actualOrg,
             ProcessIsComplete = processIsComplete,
-            ExcludeConfirmedBy = excludeConfirmedBy ?? actualOrg
+            ExcludeConfirmedBy = excludeConfirmedBy ?? actualOrg,
         };
     }
 
@@ -177,32 +182,44 @@ internal static class AltinnTestData
     {
         var actualOrg = org ?? "dat";
         var actualAppId = appId ?? $"{actualOrg}/{{appName}}-app";
-        
+
         return new Faker<AltinnInstance>()
             .RuleFor(x => x.Id, f => $"{f.Random.Number(10000, 99999)}/{f.Random.Guid()}")
             .RuleFor(x => x.AppId, f => actualAppId.Replace("{appName}", f.Lorem.Word()))
             .RuleFor(x => x.Org, actualOrg)
-            .RuleFor(x => x.InstanceOwner, f => new InstanceOwner
-            {
-                PartyId = f.Random.Number(10000, 99999).ToString(),
-                OrganisationNumber = f.Company.Ein()
-            })
-            .RuleFor(x => x.Process, f =>
-            {
-                var start = f.Date.Recent(30);
-                return new ProcessState
+            .RuleFor(
+                x => x.InstanceOwner,
+                f => new InstanceOwner
                 {
-                    Started = start,
-                    Ended = f.Date.Between(start, DateTime.UtcNow)
-                };
-            })
+                    PartyId = f.Random.Number(10000, 99999).ToString(),
+                    OrganisationNumber = f.Company.Ein(),
+                }
+            )
+            .RuleFor(
+                x => x.Process,
+                f =>
+                {
+                    var start = f.Date.Recent(30);
+                    return new ProcessState
+                    {
+                        Started = start,
+                        Ended = f.Date.Between(start, DateTime.UtcNow),
+                    };
+                }
+            )
             .RuleFor(x => x.Data, f => CreateDefaultDataElements())
             .RuleFor(x => x.DataValues, f => new Dictionary<string, string>())
-            .RuleFor(x => x.SelfLinks, (f, instance) => new ResourceLinks
-            {
-                Apps = $"https://{actualOrg}.apps.altinn.no/{instance.AppId}/instances/{instance.Id}",
-                Platform = $"https://platform.altinn.no/storage/api/v1/instances/{instance.Id}"
-            });
+            .RuleFor(
+                x => x.SelfLinks,
+                (f, instance) =>
+                    new ResourceLinks
+                    {
+                        Apps =
+                            $"https://{actualOrg}.apps.altinn.no/{instance.AppId}/instances/{instance.Id}",
+                        Platform =
+                            $"https://platform.altinn.no/storage/api/v1/instances/{instance.Id}",
+                    }
+            );
     }
 
     private static string GetExtensionFromContentType(string contentType)
@@ -214,7 +231,7 @@ internal static class AltinnTestData
             "application/xml" => "xml",
             "image/jpeg" => "jpg",
             "image/png" => "png",
-            _ => "bin"
+            _ => "bin",
         };
     }
 }
