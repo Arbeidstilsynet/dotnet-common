@@ -61,7 +61,7 @@ public record StructuredDataConfiguration
     /// <summary>
     /// The <see cref="DataElement.DataType"/> of the main PDF document in <see cref="Instance.Data"/>. Defaults to "ref-data-as-pdf".
     /// </summary>
-    /// <remarks>This is default for Altinn Apps and should never be overridden.</remarks>
+    /// <remarks>This is default for Altinn Apps and should basically never be overridden.</remarks>
     public string MainPdfDataTypeId { get; init; } = "ref-data-as-pdf";
 
     /// <summary>
