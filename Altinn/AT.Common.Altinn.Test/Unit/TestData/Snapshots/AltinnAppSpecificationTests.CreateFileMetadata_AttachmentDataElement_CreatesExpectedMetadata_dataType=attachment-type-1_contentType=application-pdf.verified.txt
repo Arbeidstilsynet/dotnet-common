@@ -1,0 +1,6 @@
+﻿{
+  DataType: attachment-type-1,
+  FileScanResult: Clean,
+  ContentType: application/pdf,
+  Filename: some-filename
+}

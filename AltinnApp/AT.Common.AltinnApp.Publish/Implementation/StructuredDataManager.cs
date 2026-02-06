@@ -3,7 +3,9 @@ using System.Text.Json;
 using Altinn.App.Core.Features;
 using Altinn.App.Core.Internal.App;
 using Altinn.App.Core.Internal.Data;
+using Altinn.App.Core.Internal.Instances;
 using Altinn.Platform.Storage.Interface.Models;
+using Arbeidstilsynet.Common.AltinnApp.DependencyInjection;
 using Arbeidstilsynet.Common.AltinnApp.Extensions;
 using Microsoft.Extensions.Logging;
 
@@ -13,10 +15,13 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
     where TDataModel : class
     where TStructuredData : class
 {
+    internal const string StructuredDataTypeIdKey = "StructuredDataTypeId";
+    internal const string MainPdfDataTypeId = "MainPdfDataTypeId";
+
     internal record Config
     {
-        public bool IncludeErrorDetails { get; init; } = false;
-        public bool DeleteAppDataModelAfterMapping { get; init; } = true;
+        public StructuredDataConfiguration StructuredDataConfiguration { get; init; } =
+            new StructuredDataConfiguration();
         public Func<TDataModel, TStructuredData> MapFunc { get; init; }
 
         public Config(Func<TDataModel, TStructuredData> mapFunc)
@@ -27,18 +32,21 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
 
     private readonly IApplicationClient _applicationClient;
     private readonly IDataClient _dataClient;
+    private readonly IInstanceClient _instanceClient;
     private readonly Config _config;
     private readonly ILogger<StructuredDataManager<TDataModel, TStructuredData>> _logger;
 
     public StructuredDataManager(
         IApplicationClient applicationClient,
         IDataClient dataClient,
+        IInstanceClient instanceClient,
         Config config,
         ILogger<StructuredDataManager<TDataModel, TStructuredData>> logger
     )
     {
         _applicationClient = applicationClient;
         _dataClient = dataClient;
+        _instanceClient = instanceClient;
         _config = config;
         _logger = logger;
     }
@@ -51,7 +59,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
             instance
         );
 
-        if (_config.DeleteAppDataModelAfterMapping)
+        if (!_config.StructuredDataConfiguration.KeepAppDataModelAfterMapping)
         {
             await _dataClient.DeleteElement(instance, dataModelElement);
         }
@@ -60,25 +68,10 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
     public async Task End(string taskId, Instance instance)
     {
         // Just before submission
-
         try
         {
-            var dataModelElement = await _applicationClient.GetRequiredDataModelElement<TDataModel>(
-                instance
-            );
-            var dataModel = await _dataClient.GetData<TDataModel>(
-                instance,
-                dataModelElement,
-                CancellationToken.None
-            );
-
-            var structuredData = _config.MapFunc.Invoke(dataModel);
-
-            await _dataClient.InsertStructuredData(
-                instance,
-                structuredData,
-                CancellationToken.None
-            );
+            await CreateStructuredData(instance);
+            await CreateAppSpecification(instance);
         }
         catch (Exception e)
         {
@@ -92,13 +85,44 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
                 "An unexpected error occurred while generating structured data. Please try again later."
             );
 
-            if (_config.IncludeErrorDetails)
+            if (_config.StructuredDataConfiguration.IncludeErrorDetails)
             {
                 errorMessageBuilder.AppendLine().AppendLine().Append("Details: ").Append(e.Message);
             }
 
             throw new InvalidOperationException(errorMessageBuilder.ToString(), e);
         }
+    }
+
+    private async Task CreateStructuredData(Instance instance)
+    {
+        var dataModelElement = await _applicationClient.GetRequiredDataModelElement<TDataModel>(
+            instance
+        );
+        var dataModel = await _dataClient.GetData<TDataModel>(
+            instance,
+            dataModelElement,
+            CancellationToken.None
+        );
+
+        var structuredData = _config.MapFunc.Invoke(dataModel);
+
+        await _dataClient.InsertStructuredData(instance, structuredData, CancellationToken.None);
+    }
+
+    private async Task CreateAppSpecification(Instance instance)
+    {
+        await _instanceClient.UpdateDataValues(
+            instance,
+            new Dictionary<string, string?>()
+            {
+                {
+                    StructuredDataTypeIdKey,
+                    _config.StructuredDataConfiguration.StructuredDataTypeId
+                },
+                { MainPdfDataTypeId, _config.StructuredDataConfiguration.MainPdfDataTypeId },
+            }
+        );
     }
 }
 

@@ -7,6 +7,12 @@ namespace Arbeidstilsynet.Common.Altinn.Extensions;
 /// </summary>
 public static class InstanceExtensions
 {
+    /// <summary>
+    /// Extracts the instance Guid from the instance Id
+    /// </summary>
+    /// <param name="instance"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public static Guid GetInstanceGuid(this AltinnInstance instance)
     {
         // Split the Id by '/' and parse the second part as a Guid

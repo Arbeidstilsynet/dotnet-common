@@ -1,12 +1,17 @@
 namespace Arbeidstilsynet.Common.Altinn.Model.Adapter;
 
+/// <summary>
+/// Represents a document from Altinn
+/// </summary>
 public record AltinnDocument
 {
+    /// <summary>
+    /// The content of the document as a stream
+    /// </summary>
     public required Stream DocumentContent { get; init; }
 
     /// <summary>
-    /// The structured data of the instance
+    /// Metadata about the document
     /// </summary>
-    public required bool IsMainDocument { get; init; }
     public required FileMetadata FileMetadata { get; init; }
 }
