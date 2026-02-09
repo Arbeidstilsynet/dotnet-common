@@ -58,8 +58,9 @@ internal static class AltinnSpecificationExtensions
     {
         return new FileMetadata
         {
+            AltinnId = Guid.Parse(dataElement.Id),
             ContentType = dataElement.ContentType,
-            DataType = dataElement.DataType,
+            AltinnDataType = dataElement.DataType,
             Filename = appSpec.GetFilename(dataElement),
             FileScanResult = dataElement.FileScanResult,
         };

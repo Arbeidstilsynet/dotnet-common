@@ -1,4 +1,5 @@
 ﻿{
+  AltinnId: Guid_1,
   DataType: attachment-type-1,
   FileScanResult: Clean,
   ContentType: application/pdf,
