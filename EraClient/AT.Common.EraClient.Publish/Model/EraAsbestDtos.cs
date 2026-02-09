@@ -35,6 +35,12 @@ public record SøknadStatusResponse
     public List<Mangelkategori> Mangelkategorier { get; init; }
 }
 
+public record Mangelkategori
+{
+    public string Navn { get; init; }
+    public List<string> Mangelbeskrivelser { get; init; }
+}
+
 public record GodkjenningStatusResponse
 {
     public string Organisasjonsnummer { get; init; }
@@ -44,10 +50,11 @@ public record GodkjenningStatusResponse
     public string TillatelseUtloper { get; init; }
 }
 
-public record Mangelkategori
+public record BehandlingsstatusResponse
 {
-    public string Navn { get; init; }
-    public List<string> Mangelbeskrivelser { get; init; }
+    public string Organisasjonsnummer { get; set; }
+    public bool KanSendeSoknad { get; set; }
+    public string Aarsak { get; set; }
 }
 
 public enum Godkjenningstype
