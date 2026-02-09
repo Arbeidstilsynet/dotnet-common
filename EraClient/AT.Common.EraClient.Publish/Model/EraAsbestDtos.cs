@@ -38,8 +38,9 @@ public record SøknadStatusResponse
 public record GodkjenningStatusResponse
 {
     public string Organisasjonsnummer { get; init; }
-    public string Registerstatus { get; init; }
-    public string Godkjenningstype { get; init; }
+    public Registerstatus Registerstatus { get; init; }
+    public Godkjenningstype Godkjenningstype { get; init; }
+    public string GodkjenningstypeBeskrivelse { get; init; }
     public string TillatelseUtloper { get; init; }
 }
 
@@ -47,6 +48,21 @@ public record Mangelkategori
 {
     public string Navn { get; init; }
     public List<string> Mangelbeskrivelser { get; init; }
+}
+
+public enum Godkjenningstype
+{
+    Ingen,
+    HåndverkArbeid,
+    Rør,
+    Utvendig,
+    Innvendig,
+}
+
+public enum Registerstatus
+{
+    IkkeRegistrert,
+    Registrert,
 }
 
 public enum Søknadstatus
