@@ -1,6 +1,6 @@
 ﻿{
   AltinnId: Guid_1,
-  DataType: structured-data,
+  AltinnDataType: structured-data,
   FileScanResult: Clean,
   ContentType: application/json,
   Filename: structured-data.json
