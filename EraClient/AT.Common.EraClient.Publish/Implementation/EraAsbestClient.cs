@@ -110,16 +110,7 @@ internal class EraAsbestClient : IEraAsbestClient
             )
         );
         return await _httpClient.GetFromJsonAsync<GodkjenningStatusResponse>(
-            new Uri($"melding/virksomheter/{orgNumber}", UriKind.Relative),
-            new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition = System
-                    .Text
-                    .Json
-                    .Serialization
-                    .JsonIgnoreCondition
-                    .WhenWritingNull,
-            }
+            new Uri($"melding/virksomheter/{orgNumber}", UriKind.Relative)
         );
     }
 

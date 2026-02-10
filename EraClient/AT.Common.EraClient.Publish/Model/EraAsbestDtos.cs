@@ -4,58 +4,58 @@ namespace Arbeidstilsynet.Common.EraClient.Model.Asbest;
 
 public record Melding
 {
-    public Arkivreferanse Arkivreferanse { get; init; }
+    public required Arkivreferanse Arkivreferanse { get; init; }
 
-    public DateTime StartDato { get; init; }
+    public required DateTime StartDato { get; init; }
 
-    public DateTime SluttDato { get; init; }
+    public required DateTime SluttDato { get; init; }
 
-    public string OppdragGateadresse { get; init; }
+    public required string OppdragGateadresse { get; init; }
 
-    public string OppdragPostnummer { get; init; }
+    public required string OppdragPostnummer { get; init; }
 
-    public string OppdragPoststed { get; init; }
+    public required string OppdragPoststed { get; init; }
 };
 
 public record Arkivreferanse
 {
-    public string SaksId { get; init; }
+    public string? SaksId { get; init; }
 
-    public string Saksnummer { get; init; }
+    public string? Saksnummer { get; init; }
 
-    public string JournalpostId { get; init; }
+    public string? JournalpostId { get; init; }
 };
 
 public record SøknadStatusResponse
 {
-    public string SøknadId { get; init; }
-    public Søknadstatus Sakstatus { get; init; }
-    public string ArkivSakId { get; init; }
-    public string ArkivSaknummer { get; init; }
-    public List<Mangelkategori> Mangelkategorier { get; init; }
+    public required string SøknadId { get; init; }
+    public required Søknadstatus Sakstatus { get; init; }
+    public required string ArkivSakId { get; init; }
+    public required string ArkivSaknummer { get; init; }
+    public required List<Mangelkategori> Mangelkategorier { get; init; }
 }
 
 public record Mangelkategori
 {
-    public string Navn { get; init; }
-    public List<string> Mangelbeskrivelser { get; init; }
+    public required string Navn { get; init; }
+    public required List<string> Mangelbeskrivelser { get; init; }
 }
 
 public record GodkjenningStatusResponse
 {
-    public string Organisasjonsnummer { get; init; }
-    public string Registerstatus { get; init; }
+    public required string Organisasjonsnummer { get; init; }
+    public required string Registerstatus { get; init; }
     public Registerstatus? RegisterstatusEnum { get; init; }
-    public string Godkjenningstype { get; init; }
+    public required string Godkjenningstype { get; init; }
     public Godkjenningstype? GodkjenningstypeEnum { get; init; }
-    public string TillatelseUtloper { get; init; }
+    public required string TillatelseUtloper { get; init; }
 }
 
 public record BehandlingsstatusResponse
 {
-    public string Organisasjonsnummer { get; set; }
-    public bool KanSendeSoknad { get; set; }
-    public string Aarsak { get; set; }
+    public required string Organisasjonsnummer { get; set; }
+    public required bool KanSendeSoknad { get; set; }
+    public required string Aarsak { get; set; }
 }
 
 public enum Godkjenningstype
