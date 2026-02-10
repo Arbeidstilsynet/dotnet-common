@@ -44,9 +44,10 @@ public record Mangelkategori
 public record GodkjenningStatusResponse
 {
     public string Organisasjonsnummer { get; init; }
-    public Registerstatus Registerstatus { get; init; }
+    public string Registerstatus { get; init; }
+    public Registerstatus? RegisterstatusEnum { get; init; }
     public string Godkjenningstype { get; init; }
-    public Godkjenningstype GodkjenningstypeEnum { get; init; }
+    public Godkjenningstype? GodkjenningstypeEnum { get; init; }
     public string TillatelseUtloper { get; init; }
 }
 
