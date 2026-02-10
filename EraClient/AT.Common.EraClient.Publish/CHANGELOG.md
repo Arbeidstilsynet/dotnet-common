@@ -19,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.2.1
+
+### Added
+
+- feat: enhance godkjenningstatus response model with enum values
+- feat: supprt for asbest behandlingsstatus endpoint
+
 ## 2.2.0
 
 ### Added

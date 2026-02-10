@@ -113,4 +113,25 @@ internal class EraAsbestClient : IEraAsbestClient
             new Uri($"melding/virksomheter/{orgNumber}", UriKind.Relative)
         );
     }
+
+    public async Task<BehandlingsstatusResponse?> GetBehandlingsstatus(
+        AuthenticationResponseDto authenticationResponse,
+        string orgNumber
+    )
+    {
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+            authenticationResponse.TokenType,
+            authenticationResponse.AccessToken
+        );
+        // we need to update the base adress before each request because the determination of the base url is not defined at compile time
+        _httpClient.BaseAddress = new Uri(
+            GetAsbestUrl(
+                _hostEnvironment.GetRespectiveEraEnvironment(_httpContextAccessor.HttpContext),
+                _eraClientConfiguration
+            )
+        );
+        return await _httpClient.GetFromJsonAsync<BehandlingsstatusResponse>(
+            new Uri($"registrering/virksomheter/{orgNumber}", UriKind.Relative)
+        );
+    }
 }
