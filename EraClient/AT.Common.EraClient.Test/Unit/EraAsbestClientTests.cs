@@ -27,10 +27,28 @@ public class EraAsbestClientTests : TestBed<EraClientFixture>
 
     private static List<Melding> SampleMeldingerResponse = new Faker<Melding>()
         .UseSeed(9008)
+        .RuleForType(typeof(string), f => f.Random.Word())
+        .RuleForType(typeof(DateTime), f => f.Date.FutureDateOnly().ToDateTime(TimeOnly.MinValue))
+        .RuleFor(
+            r => r.Arkivreferanse,
+            (faker) =>
+                new Arkivreferanse
+                {
+                    JournalpostId = faker.Random.Word(),
+                    SaksId = faker.Random.Word(),
+                    Saksnummer = faker.Random.Word(),
+                }
+        )
         .Generate(5);
 
-    private static SøknadStatusResponse SampleSøknadStatusResponse =
-        new Faker<SøknadStatusResponse>().UseSeed(9008).Generate(1)[0];
+    private static SøknadStatusResponse SampleSøknadStatusResponse = new SøknadStatusResponse
+    {
+        ArkivSakId = "1234",
+        ArkivSaknummer = "1234",
+        Mangelkategorier = [],
+        Sakstatus = Søknadstatus.Underbehandling,
+        SøknadId = "1234",
+    };
 
     private new readonly EraClientFixture _fixture;
 
