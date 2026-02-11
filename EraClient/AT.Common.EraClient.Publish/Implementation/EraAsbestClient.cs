@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Arbeidstilsynet.Common.EraClient;
 using Arbeidstilsynet.Common.EraClient.DependencyInjection;
 using Arbeidstilsynet.Common.EraClient.Extensions;
@@ -17,6 +18,13 @@ internal class EraAsbestClient : IEraAsbestClient
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IHostEnvironment _hostEnvironment;
     private readonly EraClientConfiguration _eraClientConfiguration;
+
+    private static readonly JsonSerializerOptions _defaultJsonSerializerOptions = new(
+        JsonSerializerDefaults.Web
+    )
+    {
+        Converters = { new JsonStringEnumConverter() },
+    };
 
     public EraAsbestClient(
         IHttpClientFactory httpClientFactory,
@@ -50,7 +58,8 @@ internal class EraAsbestClient : IEraAsbestClient
             )
         );
         return await _httpClient.GetFromJsonAsync<List<Model.Asbest.Melding>>(
-                new Uri($"virksomheter/{orgNumber}/meldinger", UriKind.Relative)
+                new Uri($"virksomheter/{orgNumber}/meldinger", UriKind.Relative),
+                _defaultJsonSerializerOptions
             ) ?? [];
     }
 
@@ -71,7 +80,8 @@ internal class EraAsbestClient : IEraAsbestClient
             )
         );
         return await _httpClient.GetFromJsonAsync<SøknadStatusResponse>(
-            new Uri($"soknad/{orgNumber}", UriKind.Relative)
+            new Uri($"soknad/{orgNumber}", UriKind.Relative),
+            _defaultJsonSerializerOptions
         );
     }
 
@@ -110,7 +120,8 @@ internal class EraAsbestClient : IEraAsbestClient
             )
         );
         return await _httpClient.GetFromJsonAsync<GodkjenningStatusResponse>(
-            new Uri($"melding/virksomheter/{orgNumber}", UriKind.Relative)
+            new Uri($"melding/virksomheter/{orgNumber}", UriKind.Relative),
+            _defaultJsonSerializerOptions
         );
     }
 
@@ -131,7 +142,8 @@ internal class EraAsbestClient : IEraAsbestClient
             )
         );
         return await _httpClient.GetFromJsonAsync<BehandlingsstatusResponse>(
-            new Uri($"registrering/virksomheter/{orgNumber}", UriKind.Relative)
+            new Uri($"registrering/virksomheter/{orgNumber}", UriKind.Relative),
+            _defaultJsonSerializerOptions
         );
     }
 }
