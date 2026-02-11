@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.2.2
+
+### Changed
+
+- feat: use default web json serializer options with support for converting enums to string values
+
 ## 2.2.1
 
 ### Added
