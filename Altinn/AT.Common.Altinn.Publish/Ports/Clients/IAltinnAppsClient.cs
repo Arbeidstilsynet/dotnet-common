@@ -1,3 +1,4 @@
+using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 
@@ -11,7 +12,7 @@ public interface IAltinnAppsClient
     /// <summary>
     /// Completes an instance (marks as complete in Altinn).
     /// </summary>
-    /// <param name="appId">The appId which should be queried</param>
+    /// <param name="appId">Altinn app id.</param>
     /// <param name="instanceAddress">The instance address request.</param>
     /// <returns>The completed instance mapped to our own model.</returns>
     Task<AltinnInstance> CompleteInstance(string appId, InstanceRequest instanceAddress);
