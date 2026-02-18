@@ -22,4 +22,9 @@ public interface IEraAsbestClient
         AuthenticationResponseDto authenticationResponse,
         string orgNumber
     );
+
+    Task<BehandlingsstatusResponse?> GetBehandlingsstatus(
+        AuthenticationResponseDto authenticationResponse,
+        string orgNumber
+    );
 }
