@@ -99,7 +99,7 @@ jobs:
 
       - name: Publish prerelease package
         if: steps.prerelease_check.outputs.is_prerelease == 'true'
-        uses: Arbeidstilsynet/action-dotnet-publish@8d282653fd85f9a26e80d4f6a4c660eb5d6c8896 # v2
+        uses: Arbeidstilsynet/action-dotnet-publish@d1cc7810946ae13e76f109fab16a07bf75ec5917 # v3
         with:
           working-directory: ${{ needs.check-and-prepare.outputs.package_path }}
           nuget-auth-token: ${{ secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT }}
