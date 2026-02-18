@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.4.0
+
+- changed: Differentiate structured data and main content.
+  - More configurable, though defaults should for most.
+  - The altinn app will declare which data elemnts are the main content, and structured data, using data values
+
 ## 2.3.0
 
 - added: PreSubmitProcessor to make it easier to implement custom pre-submit logic in AltinnApps.

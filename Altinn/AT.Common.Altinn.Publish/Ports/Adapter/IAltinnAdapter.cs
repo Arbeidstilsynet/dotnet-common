@@ -1,4 +1,3 @@
-using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
@@ -14,12 +13,8 @@ public interface IAltinnAdapter
     /// Gets a summary of an Altinn instance from a CloudEvent.
     /// </summary>
     /// <param name="cloudEvent">The cloud event containing instance information.</param>
-    /// <param name="appConfig">Optional Altinn app configuration.</param>
     /// <returns>The summary of the Altinn instance.</returns>
-    public Task<AltinnInstanceSummary> GetSummary(
-        AltinnCloudEvent cloudEvent,
-        AltinnAppConfiguration? appConfig = null
-    );
+    public Task<AltinnInstanceSummary> GetSummary(AltinnCloudEvent cloudEvent);
 
     /// <summary>
     /// Returns a subscription if it exists
@@ -47,28 +42,22 @@ public interface IAltinnAdapter
     /// <summary>
     /// Gets all non-completed Altinn instances for a given app.
     /// </summary>
-    /// <param name="appId">The Altinn app ID. E.g. "ulykkesvarsel" will be treated as "dat/ulykkesvarsel"</param>
-    /// <param name="ProcessIsComplete">Whether the process is complete (default true).</param>
-    /// <param name="ExcludeConfirmedBy">Exclude instances which are already confirmed by the specified org identifier. Default: "dat"</param>
-    /// <param name="appConfig">Optional Altinn app configuration.</param>
+    /// <param name="appId">The altinn application id. The rest of the specification will be default.</param>
+    /// <param name="processIsComplete">Whether the process is complete (default true).</param>
     /// <returns>A collection of non-completed instance summaries.</returns>
     public Task<IEnumerable<AltinnInstanceSummary>> GetNonCompletedInstances(
         string appId,
-        bool ProcessIsComplete = true,
-        string? ExcludeConfirmedBy = DependencyInjectionExtensions.AltinnOrgIdentifier,
-        AltinnAppConfiguration? appConfig = null
+        bool processIsComplete = true
     );
 
     /// <summary>
-    /// Gets all non-completed Altinn instance metadata for a given app. Does not download any attachments.
+    /// Gets all non-completed Altinn instance metadata for a given app. Does not download any documents.
     /// </summary>
-    /// <param name="appId">The Altinn app ID. E.g. "ulykkesvarsel" will be treated as "dat/ulykkesvarsel"</param>
-    /// <param name="ProcessIsComplete">Whether the process is complete (default true).</param>
-    /// <param name="ExcludeConfirmedBy">Exclude instances which are already confirmed by the specified org identifier. Default: "dat"</param>
+    /// <param name="appId">The Altinn App Id. E.g. "ulykkesvarsel" (sans "dat/")</param>
+    /// <param name="processIsComplete">Whether the process is complete (default true).</param>
     /// <returns>A collection of non-completed instance summaries.</returns>
     public Task<IEnumerable<AltinnMetadata>> GetMetadataForNonCompletedInstances(
         string appId,
-        bool ProcessIsComplete = true,
-        string? ExcludeConfirmedBy = DependencyInjectionExtensions.AltinnOrgIdentifier
+        bool processIsComplete = true
     );
 }

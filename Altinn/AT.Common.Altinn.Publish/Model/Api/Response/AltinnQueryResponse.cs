@@ -11,7 +11,7 @@ public class AltinnQueryResponse<T>
     /// The number of items in this response.
     /// </summary>
     [JsonPropertyName("count")]
-    public long Count { get; set; }
+    public long Count { get; set; } = 0;
 
     /// <summary>
     /// The current query.
@@ -29,5 +29,5 @@ public class AltinnQueryResponse<T>
     /// The metadata.
     /// </summary>
     [JsonPropertyName("instances")]
-    public List<T> Instances { get; set; }
+    public List<T> Instances { get; set; } = [];
 }

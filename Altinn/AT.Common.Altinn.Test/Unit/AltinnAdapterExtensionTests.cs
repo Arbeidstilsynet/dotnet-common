@@ -15,10 +15,10 @@ public class AltinnAdapterExtensionTests
     private static readonly string InstanceGuid = "651375fb-4f0f-4857-9f8d-a37d82a3aeb6";
     private static readonly string InstanceOwnerPartyId = "51644866";
     private static readonly string OrganisationNumber = "313546071";
-    private static readonly DateTime ProcessStarted = new DateTime(2025, 09, 01, 12, 0, 0);
-    private static readonly DateTime ProcessEnded = new DateTime(2025, 09, 01, 13, 0, 0);
+    private static readonly DateTime ProcessStarted = new(2025, 09, 25, 12, 0, 0, DateTimeKind.Utc);
+    private static readonly DateTime ProcessEnded = new(2025, 09, 25, 13, 0, 0, DateTimeKind.Utc);
 
-    private readonly AltinnMetadata SampleAltinnMetadata = new AltinnMetadata()
+    private static readonly AltinnMetadata SampleAltinnMetadata = new AltinnMetadata()
     {
         App = App,
         Org = Org,
@@ -75,7 +75,7 @@ public class AltinnAdapterExtensionTests
         //arrange
         var metadata = new AltinnInstanceSummary
         {
-            AltinnSkjema = null,
+            SkjemaAsPdf = null!,
             Attachments = [],
             Metadata = SampleAltinnMetadata,
         };

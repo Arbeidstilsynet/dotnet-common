@@ -17,8 +17,13 @@ namespace Arbeidstilsynet.Common.Altinn.DependencyInjection;
 /// <summary>
 /// Configuration for Altinn 3 APIs.
 /// </summary>
-public record AltinnApiConfiguration
+public record AltinnConfiguration
 {
+    /// <summary>
+    /// The organization ID in Altinn. Default is "dat" (Arbeidstilsynet).
+    /// </summary>
+    public string OrgId { get; init; } = "dat";
+
     /// <summary>
     /// The base URL for Altinn authentication endpoints. See https://docs.altinn.studio/nb/api/authentication/spec/
     /// </summary>
@@ -35,8 +40,9 @@ public record AltinnApiConfiguration
     public required Uri EventUrl { get; init; }
 
     /// <summary>
-    /// The base URL for the Altinn application.
+    /// The base URL for Altinn applications.
     /// </summary>
+    /// <remarks>This will be static to one org, though we will most likely only interact with our own (dat) organzation's Altinn Applications</remarks>
     public required Uri AppBaseUrl { get; init; }
 }
 
@@ -84,7 +90,6 @@ public record MaskinportenConfiguration
 /// </summary>
 public static class DependencyInjectionExtensions
 {
-    internal const string AltinnOrgIdentifier = "dat";
     internal const string AltinnStorageApiClientKey = "AltinnStorageApiClient";
     internal const string AltinnEventsApiClientKey = "AltinnEventsApiClient";
 
@@ -100,13 +105,13 @@ public static class DependencyInjectionExtensions
     /// <param name="services"></param>
     /// <param name="hostEnvironment"></param>
     /// <param name="maskinportenConfiguration">Configuration for the altinn token exchange</param>
-    /// <param name="altinnApiConfiguration">Only required if it needs to be overwritten. By default, we determine BaseUrls based on the provided hostEnvironment.</param>
+    /// <param name="altinnConfiguration">Only required if it needs to be overwritten. By default, we determine BaseUrls based on the provided hostEnvironment.</param>
     /// <returns>Makes the usage of <see cref="IAltinnAdapter"/>, <see cref="IAltinnEventsClient"/> and <see cref="IAltinnStorageClient"/> available for the consumer.</returns>
     public static IServiceCollection AddAltinnAdapter(
         this IServiceCollection services,
         IWebHostEnvironment hostEnvironment,
         MaskinportenConfiguration maskinportenConfiguration,
-        AltinnApiConfiguration? altinnApiConfiguration = null
+        AltinnConfiguration? altinnConfiguration = null
     )
     {
         ArgumentNullException.ThrowIfNull(hostEnvironment);
@@ -114,7 +119,7 @@ public static class DependencyInjectionExtensions
         services.AddAltinnApiClients(
             hostEnvironment,
             maskinportenConfiguration,
-            altinnApiConfiguration
+            altinnConfiguration
         );
         services.AddScoped<IAltinnAdapter, AltinnAdapter>();
 
@@ -127,19 +132,19 @@ public static class DependencyInjectionExtensions
     /// <param name="services"></param>
     /// <param name="hostEnvironment"></param>
     /// <param name="maskinportenConfiguration">Configuration for the altinn token exchange</param>
-    /// <param name="altinnApiConfiguration">Only required if it needs to be overwritten. By default, we determine BaseUrls based on the provided hostEnvironment.</param>
+    /// <param name="altinnConfiguration">Only required if it needs to be overwritten. By default, we determine BaseUrls based on the provided hostEnvironment.</param>
     /// <returns>Makes the usage of <see cref="IAltinnEventsClient"/> and <see cref="IAltinnStorageClient"/> available for the consumer.</returns>
     public static IServiceCollection AddAltinnApiClients(
         this IServiceCollection services,
         IWebHostEnvironment hostEnvironment,
         MaskinportenConfiguration maskinportenConfiguration,
-        AltinnApiConfiguration? altinnApiConfiguration = null
+        AltinnConfiguration? altinnConfiguration = null
     )
     {
         ArgumentNullException.ThrowIfNull(hostEnvironment);
 
-        altinnApiConfiguration ??= hostEnvironment.CreateDefaultAltinnApiConfiguration();
-        services.AddSingleton(Options.Create(altinnApiConfiguration));
+        altinnConfiguration ??= hostEnvironment.CreateDefaultAltinnConfiguration();
+        services.AddSingleton(Options.Create(altinnConfiguration));
         services.AddSingleton(Options.Create(maskinportenConfiguration));
         if (hostEnvironment.IsDevelopment())
         {
@@ -153,7 +158,7 @@ public static class DependencyInjectionExtensions
         return services.AddAltinnApiClientsInternal(
             hostEnvironment,
             maskinportenConfiguration,
-            altinnApiConfiguration
+            altinnConfiguration
         );
     }
 
@@ -161,7 +166,7 @@ public static class DependencyInjectionExtensions
         this IServiceCollection services,
         IWebHostEnvironment hostEnvironment,
         MaskinportenConfiguration maskinportenConfiguration,
-        AltinnApiConfiguration altinnApiConfiguration
+        AltinnConfiguration altinnConfiguration
     )
     {
         services
@@ -169,7 +174,7 @@ public static class DependencyInjectionExtensions
                 AltinnAppsApiClientKey,
                 client =>
                 {
-                    client.BaseAddress = altinnApiConfiguration.AppBaseUrl;
+                    client.BaseAddress = altinnConfiguration.AppBaseUrl;
                 }
             )
             .AddStandardResilienceHandler();
@@ -178,7 +183,7 @@ public static class DependencyInjectionExtensions
                 AltinnEventsApiClientKey,
                 client =>
                 {
-                    client.BaseAddress = altinnApiConfiguration.EventUrl;
+                    client.BaseAddress = altinnConfiguration.EventUrl;
                 }
             )
             .AddStandardResilienceHandler();
@@ -187,7 +192,7 @@ public static class DependencyInjectionExtensions
                 AltinnStorageApiClientKey,
                 client =>
                 {
-                    client.BaseAddress = altinnApiConfiguration.StorageUrl;
+                    client.BaseAddress = altinnConfiguration.StorageUrl;
                 }
             )
             .AddStandardResilienceHandler();
@@ -197,7 +202,7 @@ public static class DependencyInjectionExtensions
                 AltinnAuthenticationApiClientKey,
                 client =>
                 {
-                    client.BaseAddress = altinnApiConfiguration.AuthenticationUrl;
+                    client.BaseAddress = altinnConfiguration.AuthenticationUrl;
                 }
             )
             .AddStandardResilienceHandler();

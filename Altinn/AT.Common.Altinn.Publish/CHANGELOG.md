@@ -19,6 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.4.0
+
+### Added
+
+- feat(altinn): Differentiate between structured data and the main content of the instance.
+  - Implements the StructuredData configuration from AltinnApp 2.4.0.
+  - Adds DataType and Id from the Altinn DataElement to the FileMetadata of the AltinnDocument.
+
 ## 2.3.0
 
 ### Added

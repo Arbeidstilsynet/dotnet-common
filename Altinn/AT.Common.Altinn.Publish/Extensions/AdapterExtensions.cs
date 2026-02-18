@@ -1,14 +1,21 @@
+using System.Globalization;
 using System.Text.Json;
+using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
+using Arbeidstilsynet.Common.Altinn.Ports.Adapter;
+using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 
 namespace Arbeidstilsynet.Common.Altinn.Extensions;
 
+/// <summary>
+/// Extension methods for Altinn adapter models.
+/// </summary>
 public static class AdapterExtensions
 {
     /// <summary>
-    /// Converts an Altinn <see cref="Instance"/> to <see cref="AltinnMetadata"/>.
+    /// Converts an Altinn <see cref="AltinnInstance"/> to <see cref="AltinnMetadata"/>.
     /// </summary>
     /// <param name="altinnInstance">The Altinn instance to convert.</param>
     /// <returns>The corresponding <see cref="AltinnMetadata"/> object.</returns>
@@ -117,7 +124,16 @@ public static class AdapterExtensions
             .GetProperties()
             .ToDictionary(
                 p => JsonNamingPolicy.CamelCase.ConvertName(p.Name),
-                p => p.GetValue(source)?.ToString() ?? ""
+                p =>
+                    p.GetValue(source) switch
+                    {
+                        null => "",
+                        IFormattable formattable => formattable.ToString(
+                            null,
+                            CultureInfo.InvariantCulture
+                        ),
+                        var value => value.ToString() ?? "",
+                    }
             );
     }
 }
