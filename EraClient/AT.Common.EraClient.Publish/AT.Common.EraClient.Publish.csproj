@@ -10,7 +10,7 @@
     <Company>Arbeidstilsynet</Company>
     <Description></Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.2.3-beta1</Version>
+    <Version>2.2.3</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/Arbeidstilsynet/dotnet-common</PackageProjectUrl>
