@@ -42,6 +42,14 @@ public static class AuthorizationExtensions
         });
     }
 
+    public static void AddGroupRoleMappings(
+        this IServiceCollection services,
+        IReadOnlyDictionary<string, IEnumerable<string>> roleGroupMappings,
+        string m2mAppRole, // "access_as_application",
+        string groupClaimType = "groups",
+        string rolesClaimType = "roles"
+    ) { }
+
     private static bool HasAnyAllowedGroup(
         this ClaimsPrincipal user,
         HashSet<string> allowedGroupIds,
