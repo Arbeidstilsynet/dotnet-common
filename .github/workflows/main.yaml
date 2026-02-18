@@ -42,5 +42,6 @@ jobs:
     secrets: inherit
     permissions:
       contents: write
+      id-token: write
     with:
       package-path: ${{ matrix.package }}

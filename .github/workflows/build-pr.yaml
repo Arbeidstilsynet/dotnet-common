@@ -24,6 +24,9 @@ jobs:
       matrix:
         package: ${{ fromJson(needs.discover.outputs.matrix) }}
     uses: ./.github/workflows/build-pr-template.yaml
+    permissions:
+      contents: read
+      id-token: write
     with:
       package-path: ${{ matrix.package }}
 
