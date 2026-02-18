@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.2.3
+
+### Changed
+
+- chore: moved package to nuget.org
+
 ## 2.2.2
 
 ### Changed

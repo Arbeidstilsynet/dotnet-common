@@ -35,7 +35,6 @@ jobs:
           include: |
             ${{ steps.get_parent_dir.outputs.parent_dir }}
 
-
       - name: Changes for publishing?
         uses: Arbeidstilsynet/action-check-changes@6e51077b178b819e4194f40e32bd562df0954f3f # v1
         id: check_changes_for_publishing
@@ -80,7 +79,7 @@ jobs:
         with:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
           version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
-          source-feed: AT.Public.NuGet
+          source-feed: nuget
 
       - name: Check if version is prerelease
         id: prerelease_check
@@ -99,10 +98,10 @@ jobs:
 
       - name: Publish prerelease package
         if: steps.prerelease_check.outputs.is_prerelease == 'true'
-        uses: Arbeidstilsynet/action-dotnet-publish@8d282653fd85f9a26e80d4f6a4c660eb5d6c8896 # v2
+        uses: Arbeidstilsynet/action-dotnet-publish@d1cc7810946ae13e76f109fab16a07bf75ec5917 # v3
         with:
           working-directory: ${{ needs.check-and-prepare.outputs.package_path }}
-          nuget-auth-token: ${{ secrets.AZURE_DEVOPS_PUBLISH_PACKAGE_PAT }}
+          nuget-username: ${{ vars.NUGET_BOT_USERNAME }}
 
       - name: Fail if prerelease was published
         if: steps.prerelease_check.outputs.is_prerelease == 'true'
