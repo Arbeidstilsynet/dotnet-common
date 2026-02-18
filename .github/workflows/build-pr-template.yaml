@@ -79,7 +79,7 @@ jobs:
         with:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
           version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
-          source-feed: AT.Public.NuGet
+          source-feed: nuget
 
       - name: Check if version is prerelease
         id: prerelease_check

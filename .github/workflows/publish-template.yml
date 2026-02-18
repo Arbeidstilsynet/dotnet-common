@@ -26,7 +26,7 @@ jobs:
         with:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
           version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
-          source-feed: AT.Public.NuGet
+          source-feed: nuget
 
       - name: Publish package if not already published
         if: steps.nuget_version_check.outputs.published == 'false'
