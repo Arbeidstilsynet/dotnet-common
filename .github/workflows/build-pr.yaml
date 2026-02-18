@@ -24,7 +24,6 @@ jobs:
       matrix:
         package: ${{ fromJson(needs.discover.outputs.matrix) }}
     uses: ./.github/workflows/build-pr-template.yaml
-    secrets: inherit
     with:
       package-path: ${{ matrix.package }}
 
