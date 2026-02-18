@@ -16,7 +16,7 @@ namespace Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 internal class AltinnAdapter(
     IAltinnStorageClient altinnStorageClient,
     IAltinnEventsClient altinnEventsClient,
-    IOptions<AltinnConfiguration> altinnApiConfigurationOptions,
+    IOptions<AltinnConfiguration> altinnConfigurationOptions,
     ILogger<AltinnAdapter> logger
 ) : IAltinnAdapter
 {
@@ -31,8 +31,8 @@ internal class AltinnAdapter(
         SubscriptionRequestDto subscriptionRequestDto
     )
     {
-        var baseUrl = altinnApiConfigurationOptions.Value.AppBaseUrl;
-        var orgId = altinnApiConfigurationOptions.Value.OrgId;
+        var baseUrl = altinnConfigurationOptions.Value.AppBaseUrl;
+        var orgId = altinnConfigurationOptions.Value.OrgId;
         var appId = subscriptionRequestDto.AltinnAppId;
 
         var mappedRequest = new AltinnSubscriptionRequest()
@@ -63,7 +63,7 @@ internal class AltinnAdapter(
         bool processIsComplete = true
     )
     {
-        var orgId = altinnApiConfigurationOptions.Value.OrgId;
+        var orgId = altinnConfigurationOptions.Value.OrgId;
 
         var instances = await altinnStorageClient.GetAllInstances(
             new InstanceQueryParameters
@@ -82,7 +82,7 @@ internal class AltinnAdapter(
         bool processIsComplete = true
     )
     {
-        var orgId = altinnApiConfigurationOptions.Value.OrgId;
+        var orgId = altinnConfigurationOptions.Value.OrgId;
 
         var instances = await altinnStorageClient.GetAllInstances(
             new InstanceQueryParameters

@@ -105,13 +105,13 @@ public static class DependencyInjectionExtensions
     /// <param name="services"></param>
     /// <param name="hostEnvironment"></param>
     /// <param name="maskinportenConfiguration">Configuration for the altinn token exchange</param>
-    /// <param name="altinnApiConfiguration">Only required if it needs to be overwritten. By default, we determine BaseUrls based on the provided hostEnvironment.</param>
+    /// <param name="altinnConfiguration">Only required if it needs to be overwritten. By default, we determine BaseUrls based on the provided hostEnvironment.</param>
     /// <returns>Makes the usage of <see cref="IAltinnAdapter"/>, <see cref="IAltinnEventsClient"/> and <see cref="IAltinnStorageClient"/> available for the consumer.</returns>
     public static IServiceCollection AddAltinnAdapter(
         this IServiceCollection services,
         IWebHostEnvironment hostEnvironment,
         MaskinportenConfiguration maskinportenConfiguration,
-        AltinnConfiguration? altinnApiConfiguration = null
+        AltinnConfiguration? altinnConfiguration = null
     )
     {
         ArgumentNullException.ThrowIfNull(hostEnvironment);
@@ -119,7 +119,7 @@ public static class DependencyInjectionExtensions
         services.AddAltinnApiClients(
             hostEnvironment,
             maskinportenConfiguration,
-            altinnApiConfiguration
+            altinnConfiguration
         );
         services.AddScoped<IAltinnAdapter, AltinnAdapter>();
 
@@ -132,19 +132,19 @@ public static class DependencyInjectionExtensions
     /// <param name="services"></param>
     /// <param name="hostEnvironment"></param>
     /// <param name="maskinportenConfiguration">Configuration for the altinn token exchange</param>
-    /// <param name="altinnApiConfiguration">Only required if it needs to be overwritten. By default, we determine BaseUrls based on the provided hostEnvironment.</param>
+    /// <param name="altinnConfiguration">Only required if it needs to be overwritten. By default, we determine BaseUrls based on the provided hostEnvironment.</param>
     /// <returns>Makes the usage of <see cref="IAltinnEventsClient"/> and <see cref="IAltinnStorageClient"/> available for the consumer.</returns>
     public static IServiceCollection AddAltinnApiClients(
         this IServiceCollection services,
         IWebHostEnvironment hostEnvironment,
         MaskinportenConfiguration maskinportenConfiguration,
-        AltinnConfiguration? altinnApiConfiguration = null
+        AltinnConfiguration? altinnConfiguration = null
     )
     {
         ArgumentNullException.ThrowIfNull(hostEnvironment);
 
-        altinnApiConfiguration ??= hostEnvironment.CreateDefaultAltinnApiConfiguration();
-        services.AddSingleton(Options.Create(altinnApiConfiguration));
+        altinnConfiguration ??= hostEnvironment.CreateDefaultAltinnConfiguration();
+        services.AddSingleton(Options.Create(altinnConfiguration));
         services.AddSingleton(Options.Create(maskinportenConfiguration));
         if (hostEnvironment.IsDevelopment())
         {
@@ -158,7 +158,7 @@ public static class DependencyInjectionExtensions
         return services.AddAltinnApiClientsInternal(
             hostEnvironment,
             maskinportenConfiguration,
-            altinnApiConfiguration
+            altinnConfiguration
         );
     }
 

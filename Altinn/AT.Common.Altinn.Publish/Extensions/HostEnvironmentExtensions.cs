@@ -27,7 +27,7 @@ public static class HostEnvironmentExtensions
     /// <param name="webHostEnvironment">The web host environment.</param>
     /// <param name="orgId">Used to build the <see cref="AltinnConfiguration.AppBaseUrl"/>. Defaults to "dat" (Arbeidstilsynet)</param>
     /// <returns>A default Altinn API configuration for the environment.</returns>
-    public static AltinnConfiguration CreateDefaultAltinnApiConfiguration(
+    public static AltinnConfiguration CreateDefaultAltinnConfiguration(
         this IWebHostEnvironment webHostEnvironment,
         string orgId = "dat"
     )
