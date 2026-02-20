@@ -23,6 +23,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- changed(deps): Update to new major unleash version (v6). We keep this as a minor change since it will not have any breaking changes for our clients.
+
+## 1.1.2
+
+### Changed
+
 - chore: moved package to nuget.org
 
 ## 1.1.1
