@@ -1,0 +1,9 @@
+﻿{
+  Value: {
+    OrgId: my-org-id,
+    AuthenticationUrl: https://platform.altinn.no/authentication/api/v1/,
+    StorageUrl: https://platform.altinn.no/storage/api/v1/,
+    EventUrl: https://platform.altinn.no/events/api/v1/,
+    AppBaseUrl: https://dat.apps.altinn.no/
+  }
+}

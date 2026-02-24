@@ -38,6 +38,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Unit\Snapshots\" />
     <Folder Include="Unit\TestData\openapi\" />
   </ItemGroup>
 </Project>

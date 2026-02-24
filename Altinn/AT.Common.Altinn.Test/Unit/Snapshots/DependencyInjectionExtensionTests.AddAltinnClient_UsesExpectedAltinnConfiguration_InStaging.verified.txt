@@ -1,0 +1,9 @@
+﻿{
+  Value: {
+    OrgId: dat,
+    AuthenticationUrl: https://platform.tt02.altinn.no/authentication/api/v1/,
+    StorageUrl: https://platform.tt02.altinn.no/storage/api/v1/,
+    EventUrl: https://platform.tt02.altinn.no/events/api/v1/,
+    AppBaseUrl: https://dat.apps.tt02.altinn.no/
+  }
+}
