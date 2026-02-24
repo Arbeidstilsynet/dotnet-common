@@ -4,10 +4,6 @@ on:
   push:
     branches: [main]
 
-permissions:
-  contents: write
-  packages: write
-
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: false
@@ -44,5 +40,8 @@ jobs:
         package: ${{ fromJson(needs.discover.outputs.matrix) }}
     uses: ./.github/workflows/publish-template.yml
     secrets: inherit
+    permissions:
+      contents: write
+      id-token: write
     with:
       package-path: ${{ matrix.package }}

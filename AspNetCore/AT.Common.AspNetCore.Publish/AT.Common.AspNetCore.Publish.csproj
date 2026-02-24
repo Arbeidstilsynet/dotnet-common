@@ -10,9 +10,10 @@
     <Company>Arbeidstilsynet</Company>
     <Description>Useful extensions for cross-cutting concerns at Arbeidstilsynet</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.2.0</Version>
+    <Version>2.2.1</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/Arbeidstilsynet/dotnet-common</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />

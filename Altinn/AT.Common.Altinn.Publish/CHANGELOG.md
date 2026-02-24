@@ -19,11 +19,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
-## 2.4.1
+## 2.4.2
 
 ### Fixed
 
 - Fixed a bug where a partial altinn configuration would overwrite defaults.
+
+## 2.4.1
+
+### Changed
+
+- chore: moved package to nuget.org
 
 ## 2.4.0
 
