@@ -14,16 +14,12 @@ public class DependencyInjectionExtensionTests
     private readonly IWebHostEnvironment _production = Substitute.For<IWebHostEnvironment>();
     private readonly IWebHostEnvironment _develpment = Substitute.For<IWebHostEnvironment>();
     private readonly IWebHostEnvironment _staging = Substitute.For<IWebHostEnvironment>();
-    
-    private readonly VerifySettings _verifySettings = new (); 
-    
-    private readonly MaskinportenConfiguration _maskinportenConfiguration = new ()
+
+    private readonly VerifySettings _verifySettings = new();
+
+    private readonly MaskinportenConfiguration _maskinportenConfiguration = new()
     {
-        Scopes =
-        [
-            "scope1",
-            "scope2"
-        ],
+        Scopes = ["scope1", "scope2"],
         CertificatePrivateKey = "some-private-key",
         CertificateChain = "some-certificate-chain",
         IntegrationId = "some-integration-id",
@@ -34,10 +30,10 @@ public class DependencyInjectionExtensionTests
         _production.EnvironmentName.Returns(Environments.Production);
         _develpment.EnvironmentName.Returns(Environments.Development);
         _staging.EnvironmentName.Returns(Environments.Staging);
-        
+
         _verifySettings.UseDirectory("Snapshots");
     }
-    
+
     [Fact]
     public async Task AddAltinnClient_MergesPartialConfigurationCorrectly()
     {
@@ -53,28 +49,28 @@ public class DependencyInjectionExtensionTests
             EventUrl = null!,
             AppBaseUrl = null!,
         };
-        
+
         //act
         services.AddAltinnAdapter(_production, _maskinportenConfiguration, partialConfiguration);
         //assert
         var serviceProvider = services.BuildServiceProvider();
         var result = serviceProvider.GetRequiredService<IOptions<AltinnConfiguration>>();
-        
+
         await Verify(result, _verifySettings);
     }
-    
+
     [Fact]
     public async Task AddAltinnClient_UsesExpectedAltinnConfiguration_InProduction()
     {
         //arrange
         var services = new ServiceCollection();
-        
+
         //act
         services.AddAltinnAdapter(_production, _maskinportenConfiguration);
         //assert
         var serviceProvider = services.BuildServiceProvider();
         var result = serviceProvider.GetRequiredService<IOptions<AltinnConfiguration>>();
-        
+
         await Verify(result, _verifySettings);
     }
 

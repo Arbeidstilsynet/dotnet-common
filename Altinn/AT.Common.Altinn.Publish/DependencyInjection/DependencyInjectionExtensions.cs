@@ -44,7 +44,7 @@ public record AltinnConfiguration
     /// </summary>
     /// <remarks>This will be static to one org, though we will most likely only interact with our own (dat) organzation's Altinn Applications</remarks>
     public required Uri AppBaseUrl { get; init; }
-    
+
     /// <summary>
     /// Creates an instance of <see cref="AltinnConfiguration"/>. This is only used for manual configuration and is not required when using the extension methods, as we will automatically determine the correct BaseUrls based on the provided <see cref="IWebHostEnvironment"/>. If you need to overwrite any of the default BaseUrls, you can provide an instance of <see cref="AltinnConfiguration"/> with the desired values and it will be merged with the default configuration.
     /// </summary>
@@ -148,8 +148,10 @@ public static class DependencyInjectionExtensions
     {
         ArgumentNullException.ThrowIfNull(hostEnvironment);
 
-        var resolvedConfig = hostEnvironment.CreateDefaultAltinnConfiguration().Merge(altinnConfiguration);
-        
+        var resolvedConfig = hostEnvironment
+            .CreateDefaultAltinnConfiguration()
+            .Merge(altinnConfiguration);
+
         services.AddSingleton(Options.Create(resolvedConfig));
         services.AddSingleton(Options.Create(maskinportenConfiguration));
         if (hostEnvironment.IsDevelopment())

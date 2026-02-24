@@ -5,22 +5,25 @@ internal static class ObjectExtensions
     public enum MergeStrategy
     {
         SetNull,
-        IgnoreNull
+        IgnoreNull,
     }
-    
-    public static T Merge<T>(this T source, T? patch, MergeStrategy mergeStrategy = MergeStrategy.IgnoreNull)
-    where T : notnull
+
+    public static T Merge<T>(
+        this T source,
+        T? patch,
+        MergeStrategy mergeStrategy = MergeStrategy.IgnoreNull
+    )
+        where T : notnull
     {
         var result = Activator.CreateInstance<T>();
-        
+
         patch ??= Activator.CreateInstance<T>();
-        
+
         foreach (var property in typeof(T).GetProperties())
         {
             var patchValue = property.GetValue(patch);
             var sourceValue = property.GetValue(source);
 
-            
             if (patchValue != null)
             {
                 property.SetValue(result, patchValue);
@@ -40,5 +43,4 @@ internal static class ObjectExtensions
 
         return result;
     }
-    
 }
