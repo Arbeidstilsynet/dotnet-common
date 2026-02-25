@@ -1,8 +1,5 @@
-using System.Runtime.InteropServices;
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
-using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
-using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Shouldly;
 

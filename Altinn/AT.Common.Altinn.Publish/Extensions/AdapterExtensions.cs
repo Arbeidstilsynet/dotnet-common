@@ -1,11 +1,8 @@
 using System.Globalization;
 using System.Text.Json;
-using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
-using Arbeidstilsynet.Common.Altinn.Ports.Adapter;
-using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 
 namespace Arbeidstilsynet.Common.Altinn.Extensions;
 

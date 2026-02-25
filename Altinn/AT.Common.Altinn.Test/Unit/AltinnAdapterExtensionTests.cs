@@ -1,7 +1,6 @@
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
-using Microsoft.AspNetCore.Authentication;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 
