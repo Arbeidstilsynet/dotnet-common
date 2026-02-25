@@ -43,7 +43,7 @@ public class DependencyInjectionExtensionTests
         var partialConfiguration = new AltinnConfiguration
         {
             OrgId = "my-org-id",
-            // These properties can be null in a real situation be cause they're resolved from configuration
+            // These properties can be null in a real situation because they're resolved from configuration
             AuthenticationUrl = null!,
             StorageUrl = null!,
             EventUrl = null!,
