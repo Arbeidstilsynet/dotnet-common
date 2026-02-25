@@ -1,18 +1,16 @@
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
-using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using NSubstitute;
-using Shouldly;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 
 public class DependencyInjectionExtensionTests
 {
     private readonly IWebHostEnvironment _production = Substitute.For<IWebHostEnvironment>();
-    private readonly IWebHostEnvironment _develpment = Substitute.For<IWebHostEnvironment>();
+    private readonly IWebHostEnvironment _development = Substitute.For<IWebHostEnvironment>();
     private readonly IWebHostEnvironment _staging = Substitute.For<IWebHostEnvironment>();
 
     private readonly VerifySettings _verifySettings = new();
@@ -28,7 +26,7 @@ public class DependencyInjectionExtensionTests
     public DependencyInjectionExtensionTests()
     {
         _production.EnvironmentName.Returns(Environments.Production);
-        _develpment.EnvironmentName.Returns(Environments.Development);
+        _development.EnvironmentName.Returns(Environments.Development);
         _staging.EnvironmentName.Returns(Environments.Staging);
 
         _verifySettings.UseDirectory("Snapshots");
@@ -80,7 +78,7 @@ public class DependencyInjectionExtensionTests
         //arrange
         var services = new ServiceCollection();
         //act
-        services.AddAltinnAdapter(_develpment, _maskinportenConfiguration);
+        services.AddAltinnAdapter(_development, _maskinportenConfiguration);
         //assert
         var serviceProvider = services.BuildServiceProvider();
         var result = serviceProvider.GetRequiredService<IOptions<AltinnConfiguration>>();

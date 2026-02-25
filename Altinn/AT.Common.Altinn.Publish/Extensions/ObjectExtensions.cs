@@ -19,7 +19,7 @@ internal static class ObjectExtensions
 
         patch ??= Activator.CreateInstance<T>();
 
-        foreach (var property in typeof(T).GetProperties())
+        foreach (var property in typeof(T).GetProperties().Where(p => p.CanWrite))
         {
             var patchValue = property.GetValue(patch);
             var sourceValue = property.GetValue(source);
