@@ -42,7 +42,7 @@ public record AltinnConfiguration
     /// <summary>
     /// The base URL for Altinn applications.
     /// </summary>
-    /// <remarks>This will be static to one org, though we will most likely only interact with our own (dat) organzation's Altinn Applications</remarks>
+    /// <remarks>This will be static to one org, though we will most likely only interact with our own (dat) organization's Altinn Applications</remarks>
     public required Uri AppBaseUrl { get; init; }
 
     /// <summary>

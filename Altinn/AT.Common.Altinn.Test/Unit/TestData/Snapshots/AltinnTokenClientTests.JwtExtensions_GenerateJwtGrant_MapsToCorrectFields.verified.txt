@@ -45,6 +45,6 @@
   Issuer: testIntegration,
   Id: ,
   Subject: ,
-  ValidFrom: DateTime_1,
-  ValidTo: DateTime_2
+  ValidFrom: {Scrubbed},
+  ValidTo: {Scrubbed}
 }

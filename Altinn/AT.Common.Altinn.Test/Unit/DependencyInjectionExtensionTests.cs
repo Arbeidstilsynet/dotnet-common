@@ -29,7 +29,7 @@ public class DependencyInjectionExtensionTests
         _development.EnvironmentName.Returns(Environments.Development);
         _staging.EnvironmentName.Returns(Environments.Staging);
 
-        _verifySettings.UseDirectory("Snapshots");
+        _verifySettings.UseDirectory("TestData/Snapshots");
     }
 
     [Fact]

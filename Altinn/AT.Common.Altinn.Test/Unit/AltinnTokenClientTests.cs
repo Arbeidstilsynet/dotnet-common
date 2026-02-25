@@ -41,7 +41,9 @@ public class AltinnTokenClientTests
                 "EncodedPayload",
                 "EncodedSignature",
                 "EncodedHeader",
-                "EncodedToken"
+                "EncodedToken",
+                "ValidTo",
+                "ValidFrom"
             );
     }
 }
