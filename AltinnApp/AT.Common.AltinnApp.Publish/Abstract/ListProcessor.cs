@@ -32,10 +32,8 @@ public abstract class ListProcessor<TDataModel, TListItem>
         TDataModel previousDataModel
     )
     {
-        var prevItems =
-            previousList?.ToDictionary(item => item.GetAltinnRowId(), item => item) ?? [];
-        var currItems =
-            currentList?.ToDictionary(item => item.GetAltinnRowId(), item => item) ?? [];
+        var prevItems = previousList.GroupByAltinnRowId();
+        var currItems = currentList.GroupByAltinnRowId();
 
         foreach (var rowId in currItems.Keys.Union(prevItems.Keys))
         {
@@ -79,7 +77,27 @@ file static class Extensions
 {
     public const string AltinnRowIdPropertyName = "AltinnRowId";
 
-    public static Guid GetAltinnRowId<TListItem>(this TListItem item)
+    public static Dictionary<Guid, TListItem> GroupByAltinnRowId<TListItem>(
+        this IEnumerable<TListItem>? items
+    )
+    {
+        if (items is not null)
+        {
+            var prevGroups = items.GroupBy(item => item.GetAltinnRowId()).ToList();
+            var duplicatePrevIds = prevGroups.Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+            if (duplicatePrevIds.Count > 0)
+            {
+                throw new InvalidOperationException(
+                    $"Duplicate AltinnRowId values detected in previous list for type {typeof(TListItem).Name}: {string.Join(", ", duplicatePrevIds)}."
+                );
+            }
+            return prevGroups.ToDictionary(g => g.Key, g => g.First());
+        }
+
+        return new Dictionary<Guid, TListItem>();
+    }
+
+    private static Guid GetAltinnRowId<TListItem>(this TListItem item)
     {
         var propertyInfo = typeof(TListItem).GetProperty(AltinnRowIdPropertyName);
         if (propertyInfo is null || propertyInfo.PropertyType != typeof(Guid))
