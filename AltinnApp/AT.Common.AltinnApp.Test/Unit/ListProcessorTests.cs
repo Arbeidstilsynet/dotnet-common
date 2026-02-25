@@ -24,7 +24,7 @@ public class ListProcessorTests
         var item1Id = Guid.NewGuid();
         var item2Id = Guid.NewGuid();
         var item3Id = Guid.NewGuid();
-        
+
         var currentData = new ListTestDataModel
         {
             Name = "Current",
@@ -62,7 +62,7 @@ public class ListProcessorTests
         // Arrange
         var item1Id = Guid.NewGuid();
         var item2Id = Guid.NewGuid();
-        
+
         var currentData = new ListTestDataModel
         {
             Name = "Current",
@@ -98,7 +98,7 @@ public class ListProcessorTests
         // Arrange
         var item1Id = Guid.NewGuid();
         var item2Id = Guid.NewGuid();
-        
+
         var currentData = new ListTestDataModel
         {
             Name = "Current",
@@ -131,7 +131,7 @@ public class ListProcessorTests
         // Arrange
         var item1Id = Guid.NewGuid();
         var item2Id = Guid.NewGuid();
-        
+
         var currentData = new ListTestDataModel
         {
             Name = "Current",
@@ -163,7 +163,7 @@ public class ListProcessorTests
     {
         // Arrange
         var item1Id = Guid.NewGuid();
-        
+
         var currentData = new ListTestDataModel { Name = "Current", Items = null };
         var previousData = new ListTestDataModel
         {
@@ -186,7 +186,7 @@ public class ListProcessorTests
     {
         // Arrange
         var item1Id = Guid.NewGuid();
-        
+
         var currentData = new ListTestDataModel
         {
             Name = "Current",
