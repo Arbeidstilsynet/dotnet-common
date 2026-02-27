@@ -12,14 +12,14 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Shouldly" Version="4.3.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-    <PackageReference Include="xunit.v3.mtp-v2" Version="3.2.1" />
-    <PackageReference Include="Xunit.Microsoft.DependencyInjection" Version="10.0.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+    <PackageReference Include="xunit.v3.mtp-v2" Version="3.2.2" />
+    <PackageReference Include="Xunit.Microsoft.DependencyInjection" Version="10.0.4" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.3.1" />
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.5.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AT.Common.TestExtensions.Publish\AT.Common.TestExtensions.Publish.csproj" />
