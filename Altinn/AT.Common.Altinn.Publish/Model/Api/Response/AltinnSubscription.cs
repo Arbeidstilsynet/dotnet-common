@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using Newtonsoft.Json;
 
 namespace Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 

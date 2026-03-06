@@ -1,5 +1,4 @@
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
-using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 

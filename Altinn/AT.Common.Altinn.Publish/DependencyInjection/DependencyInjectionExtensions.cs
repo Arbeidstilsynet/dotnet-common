@@ -42,8 +42,24 @@ public record AltinnConfiguration
     /// <summary>
     /// The base URL for Altinn applications.
     /// </summary>
-    /// <remarks>This will be static to one org, though we will most likely only interact with our own (dat) organzation's Altinn Applications</remarks>
+    /// <remarks>This will be static to one org, though we will most likely only interact with our own (dat) organization's Altinn Applications</remarks>
     public required Uri AppBaseUrl { get; init; }
+
+    /// <summary>
+    /// Creates an instance of <see cref="AltinnConfiguration"/>.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This constructor is primarily used for manual configuration and is not required when using the extension methods.
+    /// </para>
+    /// <para>
+    /// The extension methods will automatically determine the correct BaseUrls based on the provided <see cref="IWebHostEnvironment"/>.
+    /// </para>
+    /// <para>
+    /// If you need to override any of the default BaseUrls, provide an instance of <see cref="AltinnConfiguration"/> with the desired values, and it will be merged with the default configuration.
+    /// </para>
+    /// </remarks>
+    public AltinnConfiguration() { }
 }
 
 /// <summary>
@@ -143,8 +159,11 @@ public static class DependencyInjectionExtensions
     {
         ArgumentNullException.ThrowIfNull(hostEnvironment);
 
-        altinnConfiguration ??= hostEnvironment.CreateDefaultAltinnConfiguration();
-        services.AddSingleton(Options.Create(altinnConfiguration));
+        var resolvedConfig = hostEnvironment
+            .CreateDefaultAltinnConfiguration()
+            .Merge(altinnConfiguration);
+
+        services.AddSingleton(Options.Create(resolvedConfig));
         services.AddSingleton(Options.Create(maskinportenConfiguration));
         if (hostEnvironment.IsDevelopment())
         {
@@ -158,7 +177,7 @@ public static class DependencyInjectionExtensions
         return services.AddAltinnApiClientsInternal(
             hostEnvironment,
             maskinportenConfiguration,
-            altinnConfiguration
+            resolvedConfig
         );
     }
 

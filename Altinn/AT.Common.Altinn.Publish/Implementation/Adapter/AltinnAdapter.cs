@@ -1,6 +1,5 @@
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Extensions;
-using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
@@ -9,7 +8,6 @@ using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using DataElement = Arbeidstilsynet.Common.Altinn.Model.Api.Response.DataElement;
-using FileScanResult = Arbeidstilsynet.Common.Altinn.Model.Api.Response.FileScanResult;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 

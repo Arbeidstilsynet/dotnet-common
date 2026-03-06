@@ -1,0 +1,9 @@
+﻿{
+  Value: {
+    OrgId: dat,
+    AuthenticationUrl: http://local.altinn.cloud:5101/authentication/api/v1/,
+    StorageUrl: http://local.altinn.cloud:5101/storage/api/v1/,
+    EventUrl: http://local.altinn.cloud:5101/events/api/v1/,
+    AppBaseUrl: http://local.altinn.cloud:5005/
+  }
+}

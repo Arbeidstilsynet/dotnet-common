@@ -10,7 +10,7 @@
     <Company>Arbeidstilsynet</Company>
     <Description>Useful methods and classes for cross-cutting concerns in Altinn applications</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.4.1</Version>
+    <Version>2.4.2</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/Arbeidstilsynet/dotnet-common</PackageProjectUrl>

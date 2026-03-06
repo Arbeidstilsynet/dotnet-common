@@ -1,13 +1,11 @@
 using System.Text.Json;
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
-using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Arbeidstilsynet.Common.Altinn.Ports.Token;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using static Arbeidstilsynet.Common.Altinn.DependencyInjection.DependencyInjectionExtensions;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Clients;

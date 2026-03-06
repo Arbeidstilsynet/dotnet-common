@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.5.0
+
+### Changed
+
+- ListProcessor no longer emits ProcessList -- only ProcessItem, and items are compared using AltinnRowId. If you need to process the list as a whole, you should use MemberProcessor pointing to the list in question.
+
 ## 2.4.1
 
 ### Changed
