@@ -69,6 +69,15 @@ public class AltinnApiTestFixture : TestBedFixture
                 PathPatternToUse = ExampleValueType.Wildcard,
             }
         );
+
+        _server.AddMappings(
+            "Unit/TestData/openapi/altinn-correspondence-v1.json",
+            settings: new WireMockOpenApiParserSettings
+            {
+                ExampleValues = new DynamicDataGeneration(),
+                PathPatternToUse = ExampleValueType.Wildcard,
+            }
+        );
         _server
             .WhenRequest(r =>
                 r.WithPath("/token")
@@ -109,6 +118,7 @@ public class AltinnApiTestFixture : TestBedFixture
                 AuthenticationUrl = new Uri($"{_server.Urls[0]}/authentication/api/v1/"),
                 StorageUrl = new Uri($"{_server.Urls[0]}/storage/api/v1/"),
                 EventUrl = new Uri($"{_server.Urls[0]}/events/api/v1/"),
+                CorrespondenceUrl = new Uri($"{_server.Urls[0]}/correspondence/api/v1/"),
                 AppBaseUrl = new Uri(_server.Urls[0]),
             }
         );
