@@ -40,6 +40,11 @@ public record AltinnConfiguration
     public required Uri EventUrl { get; init; }
 
     /// <summary>
+    /// The base URL for Altinn correspondence endpoints. See https://docs.altinn.studio/nb/api/correspondence/spec/
+    /// </summary>
+    public required Uri CorrespondenceUrl { get; init; }
+
+    /// <summary>
     /// The base URL for Altinn applications.
     /// </summary>
     /// <remarks>This will be static to one org, though we will most likely only interact with our own (dat) organization's Altinn Applications</remarks>
@@ -110,6 +115,8 @@ public static class DependencyInjectionExtensions
     internal const string AltinnEventsApiClientKey = "AltinnEventsApiClient";
 
     internal const string AltinnAppsApiClientKey = "AltinnAppsApiClient";
+
+    internal const string AltinnCorrespondenceApiClientKey = "AltinnCorrespondenceApiClient";
 
     internal const string AltinnAuthenticationApiClientKey = "AltinnAuthenticationApiClient";
 
@@ -218,6 +225,16 @@ public static class DependencyInjectionExtensions
 
         services
             .AddHttpClient(
+                AltinnCorrespondenceApiClientKey,
+                client =>
+                {
+                    client.BaseAddress = altinnConfiguration.CorrespondenceUrl;
+                }
+            )
+            .AddStandardResilienceHandler();
+
+        services
+            .AddHttpClient(
                 AltinnAuthenticationApiClientKey,
                 client =>
                 {
@@ -241,6 +258,7 @@ public static class DependencyInjectionExtensions
         services.AddTransient<IAltinnEventsClient, AltinnEventsClient>();
         services.AddTransient<IAltinnStorageClient, AltinnStorageClient>();
         services.AddTransient<IAltinnAuthenticationClient, AltinnAuthenticationClient>();
+        services.AddTransient<IAltinnCorrespondenceClient, AltinnCorrespondenceClient>();
         services.AddTransient<IMaskinportenClient, MaskinportenClient>();
 
         return services;

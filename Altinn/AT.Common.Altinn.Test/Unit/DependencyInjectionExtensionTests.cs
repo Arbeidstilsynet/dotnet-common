@@ -45,6 +45,7 @@ public class DependencyInjectionExtensionTests
             AuthenticationUrl = null!,
             StorageUrl = null!,
             EventUrl = null!,
+            CorrespondenceUrl = null!,
             AppBaseUrl = null!,
         };
 
