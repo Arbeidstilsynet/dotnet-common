@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Text.Json;
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Model.Api;
 using Arbeidstilsynet.Common.Altinn.Ports.Token;
@@ -95,7 +96,9 @@ public class AltinnApiTestFixture : TestBedFixture
                     .UsingPost()
             )
             .ThenRespondWith(r =>
-                r.WithStatusCode(200).WithBodyAsJson(SampleMaskinportenTokenResponse)
+                r.WithStatusCode(200)
+                    .WithBody(JsonSerializer.Serialize(SampleMaskinportenTokenResponse))
+                    .WithHeader("Content-Type", "application/json")
             );
     }
 
