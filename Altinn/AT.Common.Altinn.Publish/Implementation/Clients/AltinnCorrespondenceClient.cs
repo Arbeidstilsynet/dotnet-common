@@ -37,11 +37,21 @@ internal class AltinnCorrespondenceClient : IAltinnCorrespondenceClient
         List<IFormFile>? attachments
     )
     {
-        var content = request.ToMultipartFormData(attachments ?? null);
+        var token = await _altinnTokenProvider.GetToken();
+
+        if (attachments != null)
+        {
+            var content = request.ToMultipartFormData(attachments);
+            return await _httpClient
+                    .Post("correspondence/upload", content)
+                    .WithBearerToken(token)
+                    .ReceiveContent<CorrespondenceResponse>(_jsonSerializerOptions)
+                ?? throw new InvalidOperationException("Failed to send correspondence");
+        }
 
         return await _httpClient
-                .Post(attachments != null ? "correspondence/upload" : "correspondence", content)
-                .WithBearerToken(await _altinnTokenProvider.GetToken())
+                .PostAsJson("correspondence", request)
+                .WithBearerToken(token)
                 .ReceiveContent<CorrespondenceResponse>(_jsonSerializerOptions)
             ?? throw new InvalidOperationException("Failed to send correspondence");
     }
