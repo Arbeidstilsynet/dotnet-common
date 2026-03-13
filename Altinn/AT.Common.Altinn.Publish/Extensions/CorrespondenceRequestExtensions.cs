@@ -6,6 +6,36 @@ namespace Arbeidstilsynet.Common.Altinn.Extensions;
 internal static class CorrespondenceRequestExtensions
 {
     /// <summary>
+    /// Maps the flat <see cref="CorrespondenceRequest"/> to the nested JSON structure
+    /// expected by the Altinn Correspondence API (InitializeCorrespondencesExt).
+    /// </summary>
+    public static object ToApiRequest(this CorrespondenceRequest request)
+    {
+        return new
+        {
+            correspondence = new
+            {
+                request.ResourceId,
+                request.SendersReference,
+                request.MessageSender,
+                request.Content,
+                request.RequestedPublishTime,
+                request.DueDateTime,
+                request.ExternalReferences,
+                request.PropertyList,
+                request.ReplyOptions,
+                request.Notification,
+                request.IgnoreReservation,
+                request.IsConfirmationNeeded,
+                request.IsConfidential,
+            },
+            request.Recipients,
+            request.ExistingAttachments,
+            request.IdempotentKey,
+        };
+    }
+
+    /// <summary>
     /// Converts a <see cref="CorrespondenceRequest"/> and its attachments into a
     /// <see cref="MultipartFormDataContent"/> that conforms to the Altinn Correspondence
     /// upload endpoint's [FromForm] binding contract.

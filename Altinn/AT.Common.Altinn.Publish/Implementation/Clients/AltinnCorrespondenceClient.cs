@@ -50,7 +50,7 @@ internal class AltinnCorrespondenceClient : IAltinnCorrespondenceClient
         }
 
         return await _httpClient
-                .PostAsJson("correspondence", request)
+                .PostAsJson("correspondence", request.ToApiRequest())
                 .WithBearerToken(token)
                 .ReceiveContent<CorrespondenceResponse>(_jsonSerializerOptions)
             ?? throw new InvalidOperationException("Failed to send correspondence");
