@@ -14,6 +14,8 @@ public static class HostEnvironmentExtensions
 
     private const string AltinnStorageApiSuffix = "storage/api/v1/";
 
+    private const string AltinnCorrespondenceApiSuffix = "correspondence/api/v1/";
+
     /// <summary>
     /// Creates a default <see cref="AltinnConfiguration"/> for the current web host environment.
     /// <br/>
@@ -45,6 +47,10 @@ public static class HostEnvironmentExtensions
             StorageUrl = new Uri(
                 new Uri(webHostEnvironment.GetAltinnPlattformUrl()),
                 AltinnStorageApiSuffix
+            ),
+            CorrespondenceUrl = new Uri(
+                new Uri(webHostEnvironment.GetAltinnPlattformUrl()),
+                AltinnCorrespondenceApiSuffix
             ),
             AppBaseUrl = new Uri(webHostEnvironment.GetAltinnAppBaseUrl(orgId)),
         };
