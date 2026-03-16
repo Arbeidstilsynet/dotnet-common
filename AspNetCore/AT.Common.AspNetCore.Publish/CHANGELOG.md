@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.4.0
+
+### Added
+
+- added(exception-handling): Added new extension method `AddExceptionMapping` to map status codes dynamically based on the exception, instead of just static mappings.
+
 ## 2.3.0
 
 ### Changed
