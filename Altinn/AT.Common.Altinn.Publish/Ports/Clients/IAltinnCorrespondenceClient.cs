@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 namespace Arbeidstilsynet.Common.Altinn.Ports.Clients;
 
 /// <summary>
-/// Client for subscribing to Altinn events.
+/// Client for interacting with Altinn Correspondence (meldinger).
 /// </summary>
 public interface IAltinnCorrespondenceClient
 {
