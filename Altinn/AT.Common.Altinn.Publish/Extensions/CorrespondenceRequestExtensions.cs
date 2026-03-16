@@ -30,7 +30,7 @@ internal static class CorrespondenceRequestExtensions
                 request.IsConfidential,
             },
             request.Recipients,
-            request.ExistingAttachments,
+            ExistingAttachments = request.ExistingAttachments ?? [],
             request.IdempotentKey,
         };
     }
