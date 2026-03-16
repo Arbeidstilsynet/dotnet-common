@@ -16,7 +16,7 @@ public interface IAltinnCorrespondenceClient
     /// <param name="attachments">File attachments if any, else null</param>
     /// <returns>The created correspondence mapped to our internal model.</returns>
     Task<CorrespondenceResponse> InitializeCorrespondence(
-        CorrespondenceRequest request,
+        InitializeCorrespondences request,
         List<IFormFile>? attachments
     );
 }

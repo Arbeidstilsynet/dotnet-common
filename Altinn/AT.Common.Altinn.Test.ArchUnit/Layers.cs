@@ -53,6 +53,8 @@ namespace AT.Common.Altinn.Test.ArchUnit
             .That()
             .Are(AltinnLayer)
             .And()
+            .DoNotResideInNamespaceMatching(Constants.ModelNamespace)
+            .And()
             .AreAssignableTo(PublicInterfaces)
             .And()
             .AreNot(PublicInterfaces)

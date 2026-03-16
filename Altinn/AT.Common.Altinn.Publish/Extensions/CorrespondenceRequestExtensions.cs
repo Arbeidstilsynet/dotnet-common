@@ -1,3 +1,4 @@
+using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Microsoft.AspNetCore.Http;
 
@@ -9,30 +10,35 @@ internal static class CorrespondenceRequestExtensions
     /// Maps the flat <see cref="CorrespondenceRequest"/> to the nested JSON structure
     /// expected by the Altinn Correspondence API (InitializeCorrespondencesExt).
     /// </summary>
-    public static object ToApiRequest(this CorrespondenceRequest request)
+    public static InitializeCorrespondences ToApiRequest(this CorrespondenceRequest request)
     {
-        return new
+        return new InitializeCorrespondences
         {
-            correspondence = new
+            Correspondence = new BaseCorrespondence
             {
-                request.ResourceId,
-                request.SendersReference,
-                request.MessageSender,
-                request.Content,
-                request.RequestedPublishTime,
-                request.DueDateTime,
-                request.ExternalReferences,
-                request.PropertyList,
-                request.ReplyOptions,
-                request.Notification,
-                request.IgnoreReservation,
-                request.IsConfirmationNeeded,
-                request.IsConfidential,
+                ResourceId = $"urn:altinn:resource:{request.ResourceIdentifier}",
+                SendersReference = request.SendersReference,
+                MessageSender = request.MessageSender,
+                Content = request.Content,
+                RequestedPublishTime = request.RequestedPublishTime,
+                DueDateTime = request.DueDateTime,
+                ExternalReferences = request.ExternalReferences,
+                PropertyList = request.PropertyList,
+                ReplyOptions = request.ReplyOptions,
+                Notification = request.Notification,
+                IgnoreReservation = request.IgnoreReservation,
+                IsConfirmationNeeded = request.IsConfirmationNeeded,
+                IsConfidential = request.IsConfidential,
             },
-            request.Recipients,
+            Recipients = request.Recipients.ToReceiverList(),
             ExistingAttachments = request.ExistingAttachments ?? [],
-            request.IdempotentKey,
+            IdempotentKey = request.IdempotentKey,
         };
+    }
+
+    public static List<string> ToReceiverList(this List<IReceiver> receivers)
+    {
+        return [.. receivers.Select(s => s.ToAltinnRessourceFormat())];
     }
 
     /// <summary>
@@ -41,7 +47,7 @@ internal static class CorrespondenceRequestExtensions
     /// upload endpoint's [FromForm] binding contract.
     /// </summary>
     public static MultipartFormDataContent ToMultipartFormData(
-        this CorrespondenceRequest request,
+        this InitializeCorrespondences request,
         List<IFormFile>? attachments
     )
     {
@@ -50,14 +56,14 @@ internal static class CorrespondenceRequestExtensions
         AddTopLevelFields(formData, request);
         AddCorrespondenceFields(formData, request);
 
-        if (request.Content is not null)
+        if (request.Correspondence.Content is not null)
         {
-            AddContent(formData, request.Content);
+            AddContent(formData, request.Correspondence.Content);
         }
 
-        if (request.Notification is not null)
+        if (request.Correspondence.Notification is not null)
         {
-            AddNotification(formData, request.Notification);
+            AddNotification(formData, request.Correspondence.Notification);
         }
 
         AddCollections(formData, request);
@@ -69,7 +75,7 @@ internal static class CorrespondenceRequestExtensions
 
     private static void AddTopLevelFields(
         MultipartFormDataContent formData,
-        CorrespondenceRequest request
+        InitializeCorrespondences request
     )
     {
         for (var i = 0; i < request.Recipients.Count; i++)
@@ -99,65 +105,71 @@ internal static class CorrespondenceRequestExtensions
 
     private static void AddCorrespondenceFields(
         MultipartFormDataContent formData,
-        CorrespondenceRequest request
+        InitializeCorrespondences request
     )
     {
-        formData.Add(new StringContent(request.ResourceId), "correspondence.resourceId");
         formData.Add(
-            new StringContent(request.SendersReference),
+            new StringContent(request.Correspondence.ResourceId),
+            "correspondence.resourceId"
+        );
+        formData.Add(
+            new StringContent(request.Correspondence.SendersReference),
             "correspondence.sendersReference"
         );
 
-        if (request.MessageSender is not null)
-        {
-            formData.Add(new StringContent(request.MessageSender), "correspondence.messageSender");
-        }
-
-        if (request.RequestedPublishTime.HasValue)
+        if (request.Correspondence.MessageSender is not null)
         {
             formData.Add(
-                new StringContent(request.RequestedPublishTime.Value.ToString("O")),
+                new StringContent(request.Correspondence.MessageSender),
+                "correspondence.messageSender"
+            );
+        }
+
+        if (request.Correspondence.RequestedPublishTime.HasValue)
+        {
+            formData.Add(
+                new StringContent(request.Correspondence.RequestedPublishTime.Value.ToString("O")),
                 "correspondence.requestedPublishTime"
             );
         }
 
-        if (request.DueDateTime.HasValue)
+        if (request.Correspondence.DueDateTime.HasValue)
         {
             formData.Add(
-                new StringContent(request.DueDateTime.Value.ToString("O")),
+                new StringContent(request.Correspondence.DueDateTime.Value.ToString("O")),
                 "correspondence.dueDateTime"
             );
         }
 
-        if (request.IgnoreReservation.HasValue)
+        if (request.Correspondence.IgnoreReservation.HasValue)
         {
             formData.Add(
-                new StringContent(request.IgnoreReservation.Value.ToString()),
+                new StringContent(request.Correspondence.IgnoreReservation.Value.ToString()),
                 "correspondence.ignoreReservation"
             );
         }
 
         formData.Add(
-            new StringContent(request.IsConfirmationNeeded.ToString()),
+            new StringContent(request.Correspondence.IsConfirmationNeeded.ToString()),
             "correspondence.isConfirmationNeeded"
         );
 
         formData.Add(
-            new StringContent(request.IsConfidential.ToString()),
+            new StringContent(request.Correspondence.IsConfidential.ToString()),
             "correspondence.isConfidential"
         );
     }
 
     private static void AddCollections(
         MultipartFormDataContent formData,
-        CorrespondenceRequest request
+        InitializeCorrespondences request
     )
     {
-        if (request.ExternalReferences is not null)
+        if (request.Correspondence.ExternalReferences is not null)
         {
-            for (var i = 0; i < request.ExternalReferences.Count; i++)
+            for (var i = 0; i < request.Correspondence.ExternalReferences.Count; i++)
             {
-                var r = request.ExternalReferences[i];
+                var r = request.Correspondence.ExternalReferences[i];
                 formData.Add(
                     new StringContent(r.ReferenceType.ToString()),
                     $"correspondence.externalReferences[{i}].referenceType"
@@ -169,11 +181,11 @@ internal static class CorrespondenceRequestExtensions
             }
         }
 
-        if (request.ReplyOptions is not null)
+        if (request.Correspondence.ReplyOptions is not null)
         {
-            for (var i = 0; i < request.ReplyOptions.Count; i++)
+            for (var i = 0; i < request.Correspondence.ReplyOptions.Count; i++)
             {
-                var opt = request.ReplyOptions[i];
+                var opt = request.Correspondence.ReplyOptions[i];
                 formData.Add(
                     new StringContent(opt.LinkURL),
                     $"correspondence.replyOptions[{i}].linkURL"
@@ -188,7 +200,7 @@ internal static class CorrespondenceRequestExtensions
             }
         }
 
-        foreach (var kvp in request.PropertyList)
+        foreach (var kvp in request.Correspondence.PropertyList)
         {
             formData.Add(new StringContent(kvp.Value), $"correspondence.propertyList.{kvp.Key}");
         }

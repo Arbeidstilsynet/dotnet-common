@@ -1,0 +1,78 @@
+﻿{
+  Correspondence: {
+    ResourceId: urn:altinn:resource:dat-tilsyn-correspondence,
+    SendersReference: REF-002,
+    MessageSender: Arbeidstilsynet,
+    Content: {
+      Language: nb,
+      MessageTitle: Full Test Title,
+      MessageSummary: A summary of the correspondence,
+      MessageBody: Full test body with details,
+      Attachments: [
+        {
+          FileName: report.pdf,
+          DisplayName: Inspection Report,
+          IsEncrypted: false,
+          Checksum: Guid_1,
+          SendersReference: ATT-REF-001,
+          ExpirationInDays: 30
+        }
+      ]
+    },
+    RequestedPublishTime: DateTimeOffset_1,
+    DueDateTime: DateTimeOffset_2,
+    ExternalReferences: [
+      {
+        ReferenceValue: instance-ref-123,
+        ReferenceType: AltinnAppInstance
+      }
+    ],
+    PropertyList: {
+      caseId: CASE-42,
+      priority: high
+    },
+    ReplyOptions: [
+      {
+        LinkURL: https://example.com/reply,
+        LinkText: Reply here
+      }
+    ],
+    Notification: {
+      NotificationTemplate: CustomMessage,
+      EmailSubject: You have a new correspondence,
+      EmailBody: <p>Please check your inbox</p>,
+      EmailContentType: Html,
+      SmsBody: New correspondence available,
+      SendReminder: true,
+      ReminderEmailSubject: Reminder: Unread correspondence,
+      ReminderEmailBody: <p>Reminder: please read</p>,
+      ReminderEmailContentType: Html,
+      ReminderSmsBody: Reminder: check your inbox,
+      NotificationChannel: EmailPreferred,
+      ReminderNotificationChannel: EmailAndSms,
+      SendersReference: NOTIF-REF-001,
+      CustomRecipients: [
+        {
+          EmailAddress: test@example.com,
+          MobileNumber: +4799887766,
+          OrganizationNumber: 987654321,
+          NationalIdentityNumber: 12345678901,
+          IsReserved: false
+        }
+      ],
+      OverrideRegisteredContactInformation: true
+    },
+    IgnoreReservation: true,
+    IsConfirmationNeeded: true,
+    IsConfidential: true
+  },
+  Recipients: [
+    urn:altinn:organization:identifier-no:123456789,
+    urn:altinn:person:identifier-no:12345678901,
+    urn:altinn:person:idporten-email:user@example.com
+  ],
+  ExistingAttachments: [
+    Guid_2
+  ],
+  IdempotentKey: Guid_3
+}

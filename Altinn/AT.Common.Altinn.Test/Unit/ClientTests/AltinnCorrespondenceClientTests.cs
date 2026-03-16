@@ -1,4 +1,6 @@
 using System.Text;
+using Arbeidstilsynet.Common.Altinn.Extensions;
+using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Arbeidstilsynet.Common.Altinn.Test.Unit.Setup;
@@ -28,13 +30,13 @@ public class AltinnCorrespondenceClientTests : TestBed<AltinnApiTestFixture>
         //arrange
         CorrespondenceRequest request = new()
         {
-            ResourceId = "urn:altinn:resource:your-resource-id",
+            ResourceIdentifier = "dat-",
             SendersReference = "a-unique-string",
-            Recipients = ["urn:altinn:organization:identifier-no:123123123"],
+            Recipients = [new Organization { OrgNumber = "123123123" }],
             Content = new() { MessageTitle = "Test", MessageBody = "This is a test" },
         };
         //act
-        var result = await _sut.InitializeCorrespondence(request, null);
+        var result = await _sut.InitializeCorrespondence(request.ToApiRequest(), null);
         //assert
         result.ShouldNotBeNull();
     }
@@ -57,9 +59,9 @@ public class AltinnCorrespondenceClientTests : TestBed<AltinnApiTestFixture>
         attachment2.ContentType.Returns("application/txt");
         CorrespondenceRequest request = new()
         {
-            ResourceId = "urn:altinn:resource:your-resource-id",
+            ResourceIdentifier = "dat-",
             SendersReference = "a-unique-string",
-            Recipients = ["urn:altinn:organization:identifier-no:123123123"],
+            Recipients = [new Organization { OrgNumber = "123123123" }],
             Content = new()
             {
                 MessageTitle = "Test",
@@ -72,7 +74,10 @@ public class AltinnCorrespondenceClientTests : TestBed<AltinnApiTestFixture>
             },
         };
         //act
-        var result = await _sut.InitializeCorrespondence(request, [attachment1, attachment2]);
+        var result = await _sut.InitializeCorrespondence(
+            request.ToApiRequest(),
+            [attachment1, attachment2]
+        );
         //assert
         result.ShouldNotBeNull();
     }

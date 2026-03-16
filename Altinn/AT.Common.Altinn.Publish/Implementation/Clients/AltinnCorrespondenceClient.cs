@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
+using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
@@ -33,7 +34,7 @@ internal class AltinnCorrespondenceClient : IAltinnCorrespondenceClient
     }
 
     public async Task<CorrespondenceResponse> InitializeCorrespondence(
-        CorrespondenceRequest request,
+        InitializeCorrespondences request,
         List<IFormFile>? attachments
     )
     {
@@ -50,7 +51,7 @@ internal class AltinnCorrespondenceClient : IAltinnCorrespondenceClient
         }
 
         return await _httpClient
-                .PostAsJson("correspondence", request.ToApiRequest())
+                .PostAsJson("correspondence", request)
                 .WithBearerToken(token)
                 .ReceiveContent<CorrespondenceResponse>(_jsonSerializerOptions)
             ?? throw new InvalidOperationException("Failed to send correspondence");
