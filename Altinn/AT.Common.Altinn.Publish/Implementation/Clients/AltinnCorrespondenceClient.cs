@@ -33,6 +33,15 @@ internal class AltinnCorrespondenceClient : IAltinnCorrespondenceClient
         _jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     }
 
+    public async Task<AltinnCorrespondenceOverview> GetCorrespondence(Guid guid)
+    {
+        return await _httpClient
+                .Get($"correspondence/{guid}")
+                .WithBearerToken(await _altinnTokenProvider.GetToken())
+                .ReceiveContent<AltinnCorrespondenceOverview>(_jsonSerializerOptions)
+            ?? throw new InvalidOperationException("Failed to retrieve correspondence");
+    }
+
     public async Task<CorrespondenceResponse> InitializeCorrespondence(
         InitializeCorrespondences request,
         List<IFormFile>? attachments

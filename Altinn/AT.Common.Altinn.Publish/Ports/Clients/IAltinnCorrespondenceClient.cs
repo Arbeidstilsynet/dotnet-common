@@ -1,5 +1,6 @@
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
+using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 using Microsoft.AspNetCore.Http;
 
 namespace Arbeidstilsynet.Common.Altinn.Ports.Clients;
@@ -19,4 +20,11 @@ public interface IAltinnCorrespondenceClient
         InitializeCorrespondences request,
         List<IFormFile>? attachments
     );
+
+    /// <summary>
+    /// Returns an existing correspondence, throws <see cref="AltinnHttpRequestException"/> if it fails.
+    /// </summary>
+    /// <param name="guid">The identifier of an existing correspondence</param>
+    /// <returns></returns>
+    Task<AltinnCorrespondenceOverview> GetCorrespondence(Guid guid);
 }

@@ -145,7 +145,7 @@ public static class DependencyInjectionExtensions
             altinnConfiguration
         );
         services.AddScoped<IAltinnAdapter, AltinnAdapter>();
-        services.AddScoped<IMeldingerAdapter, MeldingerAdapter>();
+        services.AddScoped<IAltinnMeldingerAdapter, AltinnMeldingerAdapter>();
 
         return services;
     }
