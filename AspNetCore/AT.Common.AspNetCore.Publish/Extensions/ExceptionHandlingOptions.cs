@@ -73,6 +73,8 @@ public record ExceptionHandlingOptions
     )
         where TException : Exception
     {
+        ArgumentNullException.ThrowIfNull(statusCodeResolver);
+
         _exceptionToStatusCodeMapping[typeof(TException)] = ex =>
             statusCodeResolver(ex as TException);
         return this;
