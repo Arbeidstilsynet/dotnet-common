@@ -18,30 +18,18 @@ internal static class ApiExceptionHandler
         var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
         var exception = exceptionHandlerPathFeature?.Error;
 
-        var statusCode = options.ExceptionToStatusCodeMapping.GetStatusCode(exception);
+        var statusCode = options.GetStatusCode(exception);
 
         context.Response.StatusCode = statusCode;
         return context.Response.WriteAsJsonAsync(exception.GetProblemDetails(statusCode));
-    }
-
-    private static int GetStatusCode(
-        this IReadOnlyDictionary<Type, HttpStatusCode> mapping,
-        Exception? exception
-    )
-    {
-        var statusCode = exception is null
-            ? HttpStatusCode.InternalServerError
-            : mapping.GetValueOrDefault(exception.GetType(), HttpStatusCode.InternalServerError);
-
-        return (int)statusCode;
     }
 
     private static ProblemDetails GetProblemDetails(this Exception? exception, int statusCode)
     {
         return new()
         {
-            Title = $"{exception?.GetType().Name ?? "Exception"} occured",
-            Detail = exception?.Message ?? "An unexpected error occured",
+            Title = $"{exception?.GetType().Name ?? "Exception"} occurred",
+            Detail = exception?.Message ?? "An unexpected error occurred",
             Status = statusCode,
         };
     }

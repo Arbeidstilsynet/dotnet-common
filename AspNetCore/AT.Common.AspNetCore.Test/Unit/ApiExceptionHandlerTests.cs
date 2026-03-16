@@ -110,6 +110,49 @@ public class ApiExceptionHandlerTests
         context.Response.StatusCode.ShouldBe(expectedValue);
     }
 
+    [Fact]
+    public async Task CreateExceptionHandler_NullException_Produces500InternalServerError()
+    {
+        // Arrange
+        var context = SetupContext<Exception>(null!);
+
+        // Act
+        var handler = ApiExceptionHandler.CreateExceptionHandler(new ExceptionHandlingOptions());
+        await handler(context);
+
+        // Assert
+        context.Response.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
+    }
+
+    [Theory]
+    [InlineData("Should yield 424", 424)]
+    [InlineData("Something else", 501)]
+    public async Task CreateExceptionHandler_DynamicMapping_ProducesStatusBasedOnExceptionContent(
+        string exceptionContents,
+        int expectedStatusCode
+    )
+    {
+        // Arrange
+        var context = SetupContext<Exception>(new ArgumentException(exceptionContents));
+        var exceptionHandlingOptions =
+            new ExceptionHandlingOptions().AddExceptionMapping<ArgumentException>(ex =>
+            {
+                if (ex!.Message.Contains("Should yield 424"))
+                {
+                    return HttpStatusCode.FailedDependency;
+                }
+
+                return HttpStatusCode.NotImplemented;
+            });
+
+        // Act
+        var handler = ApiExceptionHandler.CreateExceptionHandler(exceptionHandlingOptions);
+        await handler(context);
+
+        // Assert
+        context.Response.StatusCode.ShouldBe(expectedStatusCode);
+    }
+
     private static HttpContext SetupContext<TException>(TException exception)
         where TException : Exception
     {
