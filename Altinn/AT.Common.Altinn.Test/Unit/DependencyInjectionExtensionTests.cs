@@ -18,7 +18,7 @@ public class DependencyInjectionExtensionTests
     private readonly MaskinportenConfiguration _maskinportenConfiguration = new()
     {
         Scopes = ["scope1", "scope2"],
-        CertificatePrivateKey = "some-private-key",
+        PrivateKey = "some-private-key",
         CertificateChain = "some-certificate-chain",
         IntegrationId = "some-integration-id",
     };
@@ -45,6 +45,7 @@ public class DependencyInjectionExtensionTests
             AuthenticationUrl = null!,
             StorageUrl = null!,
             EventUrl = null!,
+            CorrespondenceUrl = null!,
             AppBaseUrl = null!,
         };
 

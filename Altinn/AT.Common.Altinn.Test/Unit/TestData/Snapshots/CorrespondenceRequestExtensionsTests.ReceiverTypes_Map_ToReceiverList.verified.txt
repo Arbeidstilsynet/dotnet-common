@@ -1,0 +1,5 @@
+﻿[
+  urn:altinn:organization:identifier-no:123456789,
+  urn:altinn:person:identifier-no:12345678901,
+  urn:altinn:person:idporten-email:user@example.com
+]

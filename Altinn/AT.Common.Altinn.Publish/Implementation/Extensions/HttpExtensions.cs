@@ -114,7 +114,7 @@ internal static class HttpExtensions
     {
         var response = await requestBuilder.Send();
 
-        response.EnsureSuccessStatusCode();
+        await response.EnsureSuccessStatusCodeWithBody();
 
         return await response.Content.ReadFromJsonAsync<TResponse>(options);
     }
@@ -123,7 +123,7 @@ internal static class HttpExtensions
     {
         var response = await requestBuilder.Send();
 
-        response.EnsureSuccessStatusCode();
+        await response.EnsureSuccessStatusCodeWithBody();
 
         return await response.Content.ReadAsStreamAsync();
     }
@@ -132,7 +132,7 @@ internal static class HttpExtensions
     {
         var response = await requestBuilder.Send();
 
-        response.EnsureSuccessStatusCode();
+        await response.EnsureSuccessStatusCodeWithBody();
 
         return await response.Content.ReadAsStringAsync();
     }

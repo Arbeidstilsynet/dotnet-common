@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Text.Json;
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Model.Api;
 using Arbeidstilsynet.Common.Altinn.Ports.Token;
@@ -69,6 +70,15 @@ public class AltinnApiTestFixture : TestBedFixture
                 PathPatternToUse = ExampleValueType.Wildcard,
             }
         );
+
+        _server.AddMappings(
+            "Unit/TestData/openapi/altinn-correspondence-v1.json",
+            settings: new WireMockOpenApiParserSettings
+            {
+                ExampleValues = new DynamicDataGeneration(),
+                PathPatternToUse = ExampleValueType.Wildcard,
+            }
+        );
         _server
             .WhenRequest(r =>
                 r.WithPath("/token")
@@ -86,7 +96,9 @@ public class AltinnApiTestFixture : TestBedFixture
                     .UsingPost()
             )
             .ThenRespondWith(r =>
-                r.WithStatusCode(200).WithBodyAsJson(SampleMaskinportenTokenResponse)
+                r.WithStatusCode(200)
+                    .WithBody(JsonSerializer.Serialize(SampleMaskinportenTokenResponse))
+                    .WithHeader("Content-Type", "application/json")
             );
     }
 
@@ -97,9 +109,7 @@ public class AltinnApiTestFixture : TestBedFixture
             new MaskinportenConfiguration()
             {
                 MaskinportenUrl = new Uri(_server.Urls[0]),
-                CertificatePrivateKey = Convert.ToBase64String(
-                    RSA.Create(2048).ExportRSAPrivateKey()
-                ),
+                PrivateKey = Convert.ToBase64String(RSA.Create(2048).ExportRSAPrivateKey()),
                 CertificateChain = "",
                 IntegrationId = "integration",
                 Scopes = ["test:read"],
@@ -109,6 +119,7 @@ public class AltinnApiTestFixture : TestBedFixture
                 AuthenticationUrl = new Uri($"{_server.Urls[0]}/authentication/api/v1/"),
                 StorageUrl = new Uri($"{_server.Urls[0]}/storage/api/v1/"),
                 EventUrl = new Uri($"{_server.Urls[0]}/events/api/v1/"),
+                CorrespondenceUrl = new Uri($"{_server.Urls[0]}/correspondence/api/v1/"),
                 AppBaseUrl = new Uri(_server.Urls[0]),
             }
         );

@@ -34,6 +34,7 @@ public class AltinnAdapterTests
                 AuthenticationUrl = new Uri("https://platform.altinn.no/authentication/api/v1"),
                 StorageUrl = new Uri("https://platform.altinn.no/storage/api/v1"),
                 EventUrl = new Uri("https://platform.altinn.no/events/api/v1"),
+                CorrespondenceUrl = new Uri("https://platform.altinn.no/correspondence/api/v1"),
                 AppBaseUrl = new Uri("https://dat.apps.altinn.no"),
             }
         );
