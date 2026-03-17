@@ -278,7 +278,7 @@ internal static class CorrespondenceRequestExtensions
                 );
             }
 
-            if (att.Checksum is not null)
+            if (!string.IsNullOrEmpty(att.Checksum))
             {
                 formData.Add(
                     new StringContent(att.Checksum),

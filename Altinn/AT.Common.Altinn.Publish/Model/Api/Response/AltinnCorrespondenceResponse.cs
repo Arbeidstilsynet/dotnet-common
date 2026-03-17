@@ -15,13 +15,13 @@ public class CorrespondenceResponse
     /// The initialized correspondences
     /// </summary>
     [JsonPropertyName("correspondences")]
-    public List<InitializedCorrespondences> Correspondences { get; set; }
+    public List<InitializedCorrespondences>? Correspondences { get; set; }
 
     /// <summary>
     /// The IDs of the attachments that is included in the correspondences
     /// </summary>
     [JsonPropertyName("attachmentIds")]
-    public List<Guid> AttachmentIds { get; set; }
+    public List<Guid>? AttachmentIds { get; set; }
 }
 
 /// <summary>

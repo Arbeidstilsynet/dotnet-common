@@ -23,7 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- feat(altinn): Added ``AltinnCorrespondenceClient`` to support posting correspondences, with and without attachments. Can be injected via ``IAltinnCorrespondenceClient`` and requires a maskinporten integration with the following altinn scope to work: `altinn:correspondence.write`.
+- feat(altinn): Added ``AltinnCorrespondenceClient`` to support posting correspondences, with and without attachments. Can be injected via ``IAltinnCorrespondenceClient`` and requires a maskinporten integration with the following altinn scope to work: `altinn:correspondence.write`. It is also possible to retrieve a correspondence by ID.
+- feat(altinn): Added ``AltinnMeldingerAdapter`` to make usage of the ``IAltinnCorrespondenceClient`` easier. Can be injected via ``IAltinnMeldingerAdapter``.
 
 ## 2.5.0
 
