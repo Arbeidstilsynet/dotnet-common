@@ -161,7 +161,7 @@ public class CorrespondenceRequestExtensionsTests
     [Fact]
     public async Task ReceiverTypes_Map_ToReceiverList()
     {
-        List<IReceiver> receivers =
+        List<IAltinnRecipient> receivers =
         [
             new Organization { OrgNumber = "123456789" },
             new NorwegianCitizen { SosialSecurityNumber = "12345678901" },

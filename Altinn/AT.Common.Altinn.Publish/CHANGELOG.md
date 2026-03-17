@@ -26,6 +26,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat(altinn): Added ``AltinnCorrespondenceClient`` to support posting correspondences, with and without attachments. Can be injected via ``IAltinnCorrespondenceClient`` and requires a maskinporten integration with the following altinn scope to work: `altinn:correspondence.write`. It is also possible to retrieve a correspondence by ID.
 - feat(altinn): Added ``AltinnMeldingerAdapter`` to make usage of the ``IAltinnCorrespondenceClient`` easier. Can be injected via ``IAltinnMeldingerAdapter``.
 
+### Changed
+
+- feat(maskinporten): Updated MaskinportenConfiguration to also support jwt token generation which includes a key identifier (`kid`) instead of only supporting identification by a certificate chain.
+
 ## 2.5.0
 
 ### Changed

@@ -36,7 +36,7 @@ internal static class CorrespondenceRequestExtensions
         };
     }
 
-    public static List<string> ToReceiverList(this List<IReceiver> receivers)
+    public static List<string> ToReceiverList(this List<IAltinnRecipient> receivers)
     {
         return [.. receivers.Select(s => s.ToAltinnRessourceFormat())];
     }
