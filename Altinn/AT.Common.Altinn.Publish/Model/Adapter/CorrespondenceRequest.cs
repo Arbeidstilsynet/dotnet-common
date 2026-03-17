@@ -124,6 +124,10 @@ namespace Arbeidstilsynet.Common.Altinn.Model.Adapter
     /// <summary>
     /// A possible altinn receiver
     /// </summary>
+    [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
+    [JsonDerivedType(typeof(Organization), "organization")]
+    [JsonDerivedType(typeof(NorwegianCitizen), "norwegianCitizen")]
+    [JsonDerivedType(typeof(SelfRegisteredUser), "selfRegisteredUser")]
     public interface IReceiver
     {
         /// <summary>
