@@ -73,18 +73,18 @@ public record AltinnConfiguration
 public record MaskinportenConfiguration
 {
     /// <summary>
-    /// The private key base64 encoded for the certificate used for authentication.
+    /// The private (rsa) key base64 encoded for the certificate used for authentication.
     /// </summary>
     [Required]
-    [ConfigurationKeyName("")]
-    public required string CertificatePrivateKey { get; init; }
+    [ConfigurationKeyName("CertificatePrivateKey")]
+    public required string PrivateKey { get; init; }
 
     /// <summary>
     /// The certificate chain base64 encoded to be used as x5c header.
+    /// Required if we do not have uploaded a public key on the maskinporten integration.
     /// </summary>
-    [Required]
     [ConfigurationKeyName("CertificateChain")]
-    public required string CertificateChain { get; init; }
+    public string? CertificateChain { get; init; }
 
     /// <summary>
     /// The integration ID for the Altinn application.

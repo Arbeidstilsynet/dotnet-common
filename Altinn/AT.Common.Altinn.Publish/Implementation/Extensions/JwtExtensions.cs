@@ -10,7 +10,7 @@ internal static class JwtExtensions
     public static string GenerateJwtGrant(
         string audience,
         string certificatePrivateKey,
-        string certificateChain,
+        string? certificateChain,
         string integrationId,
         string[] scopes
     )
@@ -31,13 +31,16 @@ internal static class JwtExtensions
             Issuer = integrationId,
             Audience = audience,
             SigningCredentials = signingCredentials,
-            AdditionalHeaderClaims = new Dictionary<string, object>
-            {
-                {
-                    "x5c",
-                    new List<string> { certificateChain }
-                },
-            },
+            AdditionalHeaderClaims =
+                certificateChain == null
+                    ? []
+                    : new Dictionary<string, object>
+                    {
+                        {
+                            "x5c",
+                            new List<string> { certificateChain }
+                        },
+                    },
         };
         var tokenHandler = new JsonWebTokenHandler();
         return tokenHandler.CreateToken(tokenDescriptor);

@@ -109,9 +109,7 @@ public class AltinnApiTestFixture : TestBedFixture
             new MaskinportenConfiguration()
             {
                 MaskinportenUrl = new Uri(_server.Urls[0]),
-                CertificatePrivateKey = Convert.ToBase64String(
-                    RSA.Create(2048).ExportRSAPrivateKey()
-                ),
+                PrivateKey = Convert.ToBase64String(RSA.Create(2048).ExportRSAPrivateKey()),
                 CertificateChain = "",
                 IntegrationId = "integration",
                 Scopes = ["test:read"],

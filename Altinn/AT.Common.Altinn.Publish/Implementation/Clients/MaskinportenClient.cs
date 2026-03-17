@@ -98,7 +98,7 @@ file static class Extensions
     {
         return JwtExtensions.GenerateJwtGrant(
             baseAddress.ToString(),
-            config.CertificatePrivateKey,
+            config.PrivateKey,
             config.CertificateChain,
             config.IntegrationId,
             config.Scopes
