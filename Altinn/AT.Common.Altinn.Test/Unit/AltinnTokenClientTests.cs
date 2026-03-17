@@ -24,11 +24,11 @@ public class AltinnTokenClientTests
         var privateKey = rsa.ExportRSAPrivateKey();
 
         //act
-        var result = JwtExtensions.GenerateJwtGrant(
+        var result = JwtExtensions.GenerateJwtGrantWithCertificateChain(
             "https://test.maskinporten.no",
             Convert.ToBase64String(privateKey),
-            "",
-            "testIntegration",
+            "testChain",
+            Guid.NewGuid().ToString(),
             ["test:read"]
         );
         //assert
@@ -57,11 +57,11 @@ public class AltinnTokenClientTests
         // Export the private key
         var privateKey = rsa.ExportRSAPrivateKeyPem();
         //act
-        var result = JwtExtensions.GenerateJwtGrant(
-            "https://test.maskinporten.no",
+        var result = JwtExtensions.GenerateJwtGrantWithKey(
+            "https://test.maskinporten.no/",
             Convert.ToBase64String(Encoding.UTF8.GetBytes(privateKey)),
-            null,
-            "testIntegration",
+            Guid.NewGuid().ToString(),
+            Guid.NewGuid().ToString(),
             ["test:read"]
         );
         //assert

@@ -96,10 +96,26 @@ file static class Extensions
 {
     public static string GenerateJwtGrant(this MaskinportenConfiguration config, Uri baseAddress)
     {
-        return JwtExtensions.GenerateJwtGrant(
-            baseAddress.ToString(),
+        var audience = baseAddress.ToString();
+
+        if (config.KeyId is not null)
+        {
+            return JwtExtensions.GenerateJwtGrantWithKey(
+                audience,
+                config.PrivateKey,
+                config.KeyId,
+                config.IntegrationId,
+                config.Scopes
+            );
+        }
+
+        return JwtExtensions.GenerateJwtGrantWithCertificateChain(
+            audience,
             config.PrivateKey,
-            config.CertificateChain,
+            config.CertificateChain
+                ?? throw new InvalidOperationException(
+                    "Either KeyId or CertificateChain must be configured."
+                ),
             config.IntegrationId,
             config.Scopes
         );

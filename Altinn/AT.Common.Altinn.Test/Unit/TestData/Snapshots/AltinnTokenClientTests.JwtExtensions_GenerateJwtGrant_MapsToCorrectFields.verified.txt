@@ -14,7 +14,7 @@
       aud: https://test.maskinporten.no
     },
     {
-      iss: testIntegration
+      iss: Guid_1
     },
     {
       exp: Scrubbed
@@ -42,7 +42,7 @@
   ],
   Azp: ,
   IssuedAt: DateTime_1,
-  Issuer: testIntegration,
+  Issuer: Guid_1,
   Id: ,
   Subject: ,
   ValidFrom: {Scrubbed},

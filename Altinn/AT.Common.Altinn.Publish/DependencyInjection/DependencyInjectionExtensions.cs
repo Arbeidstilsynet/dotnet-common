@@ -87,6 +87,13 @@ public record MaskinportenConfiguration
     public string? CertificateChain { get; init; }
 
     /// <summary>
+    /// The Key ID (kid) to include in the JWT header.
+    /// Required if a public key has been pre-registered in Maskinporten.
+    /// </summary>
+    [ConfigurationKeyName("KeyId")]
+    public string? KeyId { get; init; }
+
+    /// <summary>
     /// The integration ID for the Altinn application.
     /// </summary>
     [Required]
