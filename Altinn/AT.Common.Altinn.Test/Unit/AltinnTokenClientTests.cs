@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Text;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Microsoft.IdentityModel.JsonWebTokens;
 
@@ -27,6 +28,39 @@ public class AltinnTokenClientTests
             "https://test.maskinporten.no",
             Convert.ToBase64String(privateKey),
             "",
+            "testIntegration",
+            ["test:read"]
+        );
+        //assert
+        var handler = new JsonWebTokenHandler();
+        await Verifier
+            .Verify(handler.ReadJsonWebToken(result), _verifySettings)
+            .ScrubMembers(
+                "exp",
+                "iat",
+                "nbf",
+                "EncodedPayload",
+                "EncodedSignature",
+                "EncodedHeader",
+                "EncodedToken",
+                "ValidTo",
+                "ValidFrom"
+            );
+    }
+
+    [Fact]
+    public async Task JwtExtensions_GenerateTestJwtGrantWithPemSecret_MapsToCorrectFields()
+    {
+        //arrange
+        using RSA rsa = RSA.Create();
+        rsa.KeySize = 2048;
+        // Export the private key
+        var privateKey = rsa.ExportRSAPrivateKeyPem();
+        //act
+        var result = JwtExtensions.GenerateJwtGrant(
+            "https://test.maskinporten.no",
+            Convert.ToBase64String(Encoding.UTF8.GetBytes(privateKey)),
+            null,
             "testIntegration",
             ["test:read"]
         );

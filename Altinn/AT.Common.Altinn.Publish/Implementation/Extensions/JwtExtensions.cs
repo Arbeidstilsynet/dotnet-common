@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
@@ -15,9 +16,18 @@ internal static class JwtExtensions
         string[] scopes
     )
     {
-        var privateKey = Convert.FromBase64String(certificatePrivateKey);
         var rsa = RSA.Create();
-        rsa.ImportRSAPrivateKey(privateKey, out _);
+        var privateKey = Convert.FromBase64String(certificatePrivateKey);
+        var privateKeyAsString = Encoding.UTF8.GetString(privateKey);
+        if (privateKeyAsString.Contains("-----BEGIN", StringComparison.Ordinal))
+        {
+            rsa.ImportFromPem(privateKeyAsString);
+        }
+        else
+        {
+            rsa.ImportRSAPrivateKey(privateKey, out _);
+        }
+
         var signingCredentials = new SigningCredentials(
             new RsaSecurityKey(rsa),
             SecurityAlgorithms.RsaSha256
