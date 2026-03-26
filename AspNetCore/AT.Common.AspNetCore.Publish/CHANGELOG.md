@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.4.1
+
+### Fixed
+
+- fix(otel-config): Enhance otel config to support tracing from `ActivitySources` defined in hexarch v3.
+
 ## 2.4.0
 
 ### Added
