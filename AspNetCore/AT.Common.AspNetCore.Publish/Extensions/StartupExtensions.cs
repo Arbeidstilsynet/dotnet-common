@@ -112,9 +112,13 @@ public static partial class StartupExtensions
             })
             .WithTracing(options =>
             {
-                options.AddSource("API.Adapters");
                 options.AddSource("Domain.Logic");
+                // hexarch > v3
+                options.AddSource("API.Adapters");
                 options.AddSource("Infrastructure.Adapters");
+                // hexarch < v3
+                options.AddSource("App");
+                options.AddSource("Infrastructure");
                 options.AddAspNetCoreInstrumentation(options =>
                 {
                     // Filter out requests to the health check endpoint
