@@ -376,19 +376,44 @@ public static partial class StartupExtensions
         bool isDevelopment = false
     )
     {
+        return services.ConfigureCors(
+            new CorsConfiguration
+            {
+                AllowedOrigins = allowedOrigins ?? [],
+                AllowCredentials = allowCredentials,
+            },
+            isDevelopment
+        );
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="corsConfiguration"></param>
+    /// <param name="isDevelopment"></param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureCors(
+        this IServiceCollection services,
+        CorsConfiguration corsConfiguration,
+        bool isDevelopment = false
+    )
+    {
+        var allowedOrigins = corsConfiguration.AllowedOrigins;
+
         services.AddCors(options =>
         {
             options.AddDefaultPolicy(policy =>
             {
-                if (isDevelopment && (allowedOrigins == null || allowedOrigins.Length == 0))
+                if (isDevelopment && (allowedOrigins.Length == 0))
                 {
                     policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
                 }
-                else if (allowedOrigins != null && allowedOrigins.Length > 0)
+                else if (allowedOrigins.Length > 0)
                 {
                     policy.WithOrigins(allowedOrigins).AllowAnyMethod().AllowAnyHeader();
 
-                    if (allowCredentials)
+                    if (corsConfiguration.AllowCredentials)
                     {
                         policy.AllowCredentials();
                     }
