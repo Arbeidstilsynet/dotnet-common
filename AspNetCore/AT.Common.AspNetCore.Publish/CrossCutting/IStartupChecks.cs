@@ -34,4 +34,7 @@ namespace Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
 /// StartupChecks tasks = (_) => [];
 /// </code>
 /// </example>
-public delegate List<Task> StartupChecks(IServiceProvider serviceProvider);
+public delegate List<Task> StartupChecks(
+    IServiceProvider serviceProvider,
+    CancellationToken? cancellationToken = null
+);

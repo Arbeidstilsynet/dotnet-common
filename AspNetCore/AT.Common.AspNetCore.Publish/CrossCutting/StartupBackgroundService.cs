@@ -46,9 +46,11 @@ public class StartupBackgroundService : BackgroundService
     {
         foreach (var group in _startupCheckGroups)
         {
+            stoppingToken.ThrowIfCancellationRequested();
+
             await using var scope = _serviceProvider.CreateAsyncScope();
 
-            foreach (var taskBeforeStartup in group.Invoke(scope.ServiceProvider))
+            foreach (var taskBeforeStartup in group.Invoke(scope.ServiceProvider, stoppingToken))
             {
                 await taskBeforeStartup;
             }

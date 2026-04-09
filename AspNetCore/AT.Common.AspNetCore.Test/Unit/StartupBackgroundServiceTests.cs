@@ -15,9 +15,9 @@ public class StartupBackgroundServiceTests
         var check2Executed = false;
         var check3Executed = false;
 
-        StartupChecks group1 = _ => [Task.Run(() => check1Executed = true)];
-        StartupChecks group2 = _ => [Task.Run(() => check2Executed = true)];
-        StartupChecks group3 = _ => [Task.Run(() => check3Executed = true)];
+        StartupChecks group1 = (_, _) => [Task.Run(() => check1Executed = true)];
+        StartupChecks group2 = (_, _) => [Task.Run(() => check2Executed = true)];
+        StartupChecks group3 = (_, _) => [Task.Run(() => check3Executed = true)];
 
         var sut = CreateService([group1, group2, group3]);
 
@@ -38,9 +38,9 @@ public class StartupBackgroundServiceTests
         // Arrange
         var executionOrder = new List<int>();
 
-        StartupChecks group1 = _ => [Task.Run(() => executionOrder.Add(1))];
-        StartupChecks group2 = _ => [Task.Run(() => executionOrder.Add(2))];
-        StartupChecks group3 = _ => [Task.Run(() => executionOrder.Add(3))];
+        StartupChecks group1 = (_, _) => [Task.Run(() => executionOrder.Add(1))];
+        StartupChecks group2 = (_, _) => [Task.Run(() => executionOrder.Add(2))];
+        StartupChecks group3 = (_, _) => [Task.Run(() => executionOrder.Add(3))];
 
         var sut = CreateService([group1, group2, group3]);
 
@@ -58,8 +58,8 @@ public class StartupBackgroundServiceTests
     {
         // Arrange
         var healthCheck = new StartupHealthCheck();
-        StartupChecks group1 = _ => [Task.CompletedTask];
-        StartupChecks group2 = _ => [Task.CompletedTask];
+        StartupChecks group1 = (_, _) => [Task.CompletedTask];
+        StartupChecks group2 = (_, _) => [Task.CompletedTask];
 
         var sut = CreateService([group1, group2], healthCheck);
 
@@ -96,9 +96,9 @@ public class StartupBackgroundServiceTests
         // Arrange
         var scopeIds = new List<Guid>();
 
-        StartupChecks group1 = provider =>
+        StartupChecks group1 = (provider, _) =>
             [Task.Run(() => scopeIds.Add(provider.GetRequiredService<ScopedMarker>().Id))];
-        StartupChecks group2 = provider =>
+        StartupChecks group2 = (provider, _) =>
             [Task.Run(() => scopeIds.Add(provider.GetRequiredService<ScopedMarker>().Id))];
 
         var services = new ServiceCollection();

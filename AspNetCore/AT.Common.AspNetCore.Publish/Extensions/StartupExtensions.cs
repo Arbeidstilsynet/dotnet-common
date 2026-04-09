@@ -80,7 +80,6 @@ public static partial class StartupExtensions
             });
         services.AddProblemDetails(configureProblemDetailsAction);
         services.AddHostedService<StartupBackgroundService>();
-        services.AddSingleton(_ => startupChecks ?? ((_) => []));
         services.AddSingleton<StartupHealthCheck>();
         var healthChecksBuilder = services
             .AddHealthChecks()
@@ -487,7 +486,7 @@ public static partial class StartupExtensions
 
     private static IServiceCollection AddAllowAllAuthorization(this IServiceCollection services)
     {
-        services.AddStartupChecks(sp => [LogWarningAsync(sp)]);
+        services.AddStartupChecks((sp, _) => [LogWarningAsync(sp)]);
 
         // Register a permissive authorization policy that allows all requests
         services.AddAuthorization(options =>
