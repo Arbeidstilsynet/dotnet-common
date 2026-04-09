@@ -17,7 +17,8 @@ public static class OpenApiExtensions
     /// <param name="appName"></param>
     /// <returns></returns>
     public static Microsoft.AspNetCore.OpenApi.OpenApiOptions ConfigureBasicOpenApiSpec(
-        this Microsoft.AspNetCore.OpenApi.OpenApiOptions openApiOptions, string appName
+        this Microsoft.AspNetCore.OpenApi.OpenApiOptions openApiOptions,
+        string appName
     )
     {
         return openApiOptions
@@ -59,36 +60,36 @@ public static class OpenApiExtensions
         {
             return openApiOptions;
         }
-        
+
         return openApiOptions.AddDocumentTransformer(
             (document, context, cancellationToken) =>
             {
-                    document.Components ??= new OpenApiComponents();
-                    document.Components.SecuritySchemes ??=
-                        new Dictionary<string, IOpenApiSecurityScheme>();
-                    document.Components.SecuritySchemes["Bearer"] = new OpenApiSecurityScheme
+                document.Components ??= new OpenApiComponents();
+                document.Components.SecuritySchemes ??=
+                    new Dictionary<string, IOpenApiSecurityScheme>();
+                document.Components.SecuritySchemes["Bearer"] = new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                };
+                document.Components.SecuritySchemes["OAuth2"] = new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.OAuth2,
+                    Flows = new OpenApiOAuthFlows
                     {
-                        Type = SecuritySchemeType.Http,
-                        Scheme = "bearer",
-                        BearerFormat = "JWT",
-                    };
-                    document.Components.SecuritySchemes["OAuth2"] = new OpenApiSecurityScheme
-                    {
-                        Type = SecuritySchemeType.OAuth2,
-                        Flows = new OpenApiOAuthFlows
+                        ClientCredentials = new OpenApiOAuthFlow
                         {
-                            ClientCredentials = new OpenApiOAuthFlow
+                            TokenUrl = new Uri(
+                                $"https://login.microsoftonline.com/{authConfiguration.TenantId}/oauth2/v2.0/token"
+                            ),
+                            Scopes = new Dictionary<string, string>
                             {
-                                TokenUrl = new Uri(
-                                    $"https://login.microsoftonline.com/{authConfiguration.TenantId}/oauth2/v2.0/token"
-                                ),
-                                Scopes = new Dictionary<string, string>
-                                {
-                                    { authConfiguration.Scope, "Access API" },
-                                },
+                                { authConfiguration.Scope, "Access API" },
                             },
                         },
-                    };
+                    },
+                };
                 return Task.CompletedTask;
             }
         );

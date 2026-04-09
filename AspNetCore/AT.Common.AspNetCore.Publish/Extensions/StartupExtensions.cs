@@ -100,7 +100,7 @@ public static partial class StartupExtensions
 
         return services;
     }
-    
+
     /// <summary>
     /// Adds a health check for startup tasks, which will report "unhealthy" until all tasks defined in <see cref="StartupChecks"/> have completed successfully.
     /// </summary>
@@ -110,8 +110,7 @@ public static partial class StartupExtensions
     {
         services.AddHostedService<StartupBackgroundService>(); // Required for StartupHealthCheck
         services.AddSingleton<StartupHealthCheck>();
-        services.AddHealthChecks()
-            .AddCheck<StartupHealthCheck>("Startup");
+        services.AddHealthChecks().AddCheck<StartupHealthCheck>("Startup");
 
         return services;
     }
@@ -148,10 +147,13 @@ public static partial class StartupExtensions
     /// The tasks should be short-lived, as they are run sequentially.
     /// </remarks>
     /// <returns></returns>
-    public static IServiceCollection AddStartupChecks(this IServiceCollection services, StartupChecks startupChecks)
+    public static IServiceCollection AddStartupChecks(
+        this IServiceCollection services,
+        StartupChecks startupChecks
+    )
     {
         services.AddHostedService<StartupBackgroundService>(); // Idempotent
-        
+
         services.AddSingleton(startupChecks);
 
         return services;
@@ -163,7 +165,10 @@ public static partial class StartupExtensions
     /// <param name="services"></param>
     /// <param name="appName"></param>
     /// <returns></returns>
-    public static IServiceCollection AddStandardOpenApi(this IServiceCollection services, string appName)
+    public static IServiceCollection AddStandardOpenApi(
+        this IServiceCollection services,
+        string appName
+    )
     {
         services.AddOpenApi(options =>
         {
@@ -182,7 +187,10 @@ public static partial class StartupExtensions
     /// <remarks>
     /// If <see cref="AuthConfiguration.DisableAuth"/> is true, a permissive authorization policy is registered that allows all requests, and a warning is logged to alert developers.
     /// </remarks>
-    public static IServiceCollection AddStandardAuth(this IServiceCollection services, AuthConfiguration authConfiguration)
+    public static IServiceCollection AddStandardAuth(
+        this IServiceCollection services,
+        AuthConfiguration authConfiguration
+    )
     {
         if (authConfiguration.DisableAuth)
         {
@@ -192,36 +200,40 @@ public static partial class StartupExtensions
         {
             services.AddEntraAuth(authConfiguration);
         }
-        
+
         return services;
     }
-    
+
     /// <summary>
     /// Adds authentication and authorization using Microsoft Entra ID (Azure AD), and configures OpenAPI to include the appropriate security schemes.
     /// </summary>
     /// <param name="services"></param>
     /// <param name="authConfiguration"></param>
     /// <returns></returns>
-    public static IServiceCollection AddEntraAuth(this IServiceCollection services, AuthConfiguration authConfiguration)
+    public static IServiceCollection AddEntraAuth(
+        this IServiceCollection services,
+        AuthConfiguration authConfiguration
+    )
     {
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(jwtOptions =>
             {
-                jwtOptions.Authority = $"https://login.microsoftonline.com/{authConfiguration.TenantId}/v2.0";
+                jwtOptions.Authority =
+                    $"https://login.microsoftonline.com/{authConfiguration.TenantId}/v2.0";
                 jwtOptions.Audience = authConfiguration.ClientId;
             });
 
         services.AddAuthorization();
-        
+
         services.AddOpenApi(options =>
         {
             options.AddEntraOAuth2AndBearerSecuritySchemes(authConfiguration);
         });
-        
+
         return services;
     }
-    
+
     /// <summary>
     /// Adds OpenTelemetry, including metrics, tracing, and logging.
     /// Adds instrumentation for ASP.NET Core and HTTP client, and exports data to an OpenTelemetry Protocol (OTLP) endpoint.
@@ -414,7 +426,7 @@ public static partial class StartupExtensions
 
         return services;
     }
-    
+
     private static IServiceCollection AddAllowAllAuthorization(this IServiceCollection services)
     {
         LoggerFactory
