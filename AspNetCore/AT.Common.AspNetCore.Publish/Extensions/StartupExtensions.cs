@@ -487,12 +487,7 @@ public static partial class StartupExtensions
 
     private static IServiceCollection AddAllowAllAuthorization(this IServiceCollection services)
     {
-        LoggerFactory
-            .Create(builder => builder.AddConsole())
-            .CreateLogger<IAssemblyInfo>()
-            .LogWarning(
-                "Authentication is disabled. Update AuthenticationConfiguration to require authentication."
-            );
+        services.AddStartupChecks(sp => [LogWarningAsync(sp)]);
 
         // Register a permissive authorization policy that allows all requests
         services.AddAuthorization(options =>
@@ -503,6 +498,17 @@ public static partial class StartupExtensions
         });
 
         return services;
+
+        Task LogWarningAsync(IServiceProvider serviceProvider)
+        {
+            var logger = serviceProvider.GetService<ILogger<IAssemblyInfo>>();
+
+            logger?.LogWarning(
+                "Authentication is disabled. Update AuthenticationConfiguration to require authentication."
+            );
+
+            return Task.CompletedTask;
+        }
     }
 
     private static IServiceCollection AddEntraAuth(
