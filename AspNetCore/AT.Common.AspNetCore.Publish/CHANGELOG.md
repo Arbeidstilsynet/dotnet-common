@@ -32,14 +32,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat(openapi): Added `AddStandardOpenApi(string appName)` with basic document info configuration.
 - feat(openapi): Added `ConfigureBasicOpenApiSpec()` and `AddEntraOAuth2AndBearerSecuritySchemes()` OpenAPI document transformers.
 - feat(cors): Added `CorsConfiguration` record and a new `ConfigureCors(CorsConfiguration, bool)` overload that accepts it.
+- feat(api): Added `AddStandardApi(WebApplication)` middleware pipeline method that incorporates authentication, CORS, Scalar, exception handling, and health checks.
 
 ### Changed
 
 - changed(startup): `StartupBackgroundService` now accepts multiple `StartupChecks` groups (`IEnumerable<StartupChecks>`) and runs each in its own scope.
+- changed(startup): `StartupChecks` delegate signature now accepts an optional `CancellationToken` parameter.
+- changed(auth): `AddAllowAllAuthorization` now logs the disabled-auth warning via the application's logging pipeline at startup instead of creating a standalone `LoggerFactory` at registration time.
 
 ### Deprecated
 
 - deprecated(api): `ConfigureApi()` — use `ConfigureStandardApi()` or register components individually instead.
+- deprecated(api): `AddApi()` — use `AddStandardApi()` instead.
 - deprecated(openapi): `ConfigureOpenApi()` (both overloads) — use `AddStandardOpenApi()` instead.
 
 ## 2.4.1

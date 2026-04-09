@@ -120,11 +120,12 @@ public static partial class StartupExtensions
     /// Adds Controllers with JSON options, including converters for string enums and URIs, and a global model validation filter.
     /// </summary>
     /// <param name="services"></param>
-    /// <returns></returns>
-    public static IServiceCollection ConfigureStandardMvc(this IServiceCollection services)
+    /// <returns>The MVC builder for further configuration if needed.</returns>
+    public static IMvcBuilder ConfigureStandardMvc(this IServiceCollection services)
     {
         services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
-        services
+        services.AddProblemDetails();
+        return services
             .AddControllers(options => options.Filters.Add<RequestValidationFilter>())
             .ConfigureApplicationPartManager(manager =>
             {
@@ -135,10 +136,6 @@ public static partial class StartupExtensions
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 options.JsonSerializerOptions.Converters.Add(new JsonStringUriConverter());
             });
-
-        services.AddProblemDetails();
-
-        return services;
     }
 
     /// <summary>
