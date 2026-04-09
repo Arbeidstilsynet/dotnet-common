@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -110,8 +111,7 @@ public static partial class StartupExtensions
     /// <returns></returns>
     public static IServiceCollection AddStandardHealthChecks(this IServiceCollection services)
     {
-        services.AddHostedService<StartupBackgroundService>(); // Required for StartupHealthCheck
-        services.AddSingleton<StartupHealthCheck>();
+        services.TryAddStartupHealthCheck();
         services.AddHealthChecks().AddCheck<StartupHealthCheck>("Startup");
 
         return services;
@@ -154,7 +154,7 @@ public static partial class StartupExtensions
         StartupChecks startupChecks
     )
     {
-        services.AddHostedService<StartupBackgroundService>(); // Idempotent
+        services.TryAddStartupHealthCheck();
 
         services.AddSingleton(startupChecks);
 
@@ -525,6 +525,14 @@ public static partial class StartupExtensions
         {
             options.AddEntraOAuth2AndBearerSecuritySchemes(authConfiguration);
         });
+
+        return services;
+    }
+
+    private static IServiceCollection TryAddStartupHealthCheck(this IServiceCollection services)
+    {
+        services.TryAddSingleton<StartupHealthCheck>();
+        services.AddHostedService<StartupBackgroundService>(); // Required for StartupHealthCheck
 
         return services;
     }
