@@ -52,7 +52,9 @@ public static partial class StartupExtensions
     /// builder.Services.ConfigureApi();
     /// </code>
     /// </example>
-    [Obsolete("Use ConfigureStandardApi instead.")]
+    [Obsolete(
+        "Use ConfigureStandardApi for the standard API setup, and register startup checks, health checks, MVC options, and problem details explicitly as needed."
+    )]
     public static IServiceCollection ConfigureApi(
         this IServiceCollection services,
         StartupChecks? startupChecks = null,
@@ -272,7 +274,7 @@ public static partial class StartupExtensions
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>
-    [Obsolete("Use AddBasicOpenApi instead.")]
+    [Obsolete("Use AddStandardOpenApi instead.")]
     public static IServiceCollection ConfigureOpenApi(this IServiceCollection services)
     {
         services.AddOpenApi();
@@ -286,7 +288,7 @@ public static partial class StartupExtensions
     /// <param name="documentName"></param>
     /// <param name="openApiOptions"></param>
     /// <returns></returns>
-    [Obsolete("Use AddBasicOpenApi instead.")]
+    [Obsolete("Use AddStandardOpenApi instead.")]
     public static IServiceCollection ConfigureOpenApi(
         this IServiceCollection services,
         string documentName,
