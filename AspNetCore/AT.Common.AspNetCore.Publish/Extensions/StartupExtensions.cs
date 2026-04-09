@@ -1,6 +1,8 @@
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
@@ -8,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -49,6 +52,7 @@ public static partial class StartupExtensions
     /// builder.Services.ConfigureApi();
     /// </code>
     /// </example>
+    [Obsolete("Use ConfigureStandardApi or ConfigureApi with explicit parameters instead for better clarity and control.")]
     public static IServiceCollection ConfigureApi(
         this IServiceCollection services,
         StartupChecks? startupChecks = null,
@@ -57,23 +61,16 @@ public static partial class StartupExtensions
         Action<IHealthChecksBuilder>? buildHealthChecksAction = null
     )
     {
-        configureMvcAction ??= options => options.Filters.Add<RequestValidationFilter>();
-
-        services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
-        services
-            .AddControllers(configureMvcAction)
-            .ConfigureApplicationPartManager(manager =>
-            {
-                manager.FeatureProviders.Add(new CustomControllerFeatureProvider());
-            })
-            .AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                options.JsonSerializerOptions.Converters.Add(new JsonStringUriConverter());
-            });
+        services.ConfigureStandardApi();
+        
+        services.AddControllers(configureMvcAction);
         services.AddProblemDetails(configureProblemDetailsAction);
-        services.AddHostedService<StartupBackgroundService>();
-        services.AddSingleton(_ => startupChecks ?? ((_) => []));
+        
+        if (startupChecks != null)
+        {
+            services.AddStartupChecks(startupChecks);
+        }
+
         services.AddSingleton<StartupHealthCheck>();
         var healthChecksBuilder = services
             .AddHealthChecks()
@@ -84,6 +81,140 @@ public static partial class StartupExtensions
         return services;
     }
 
+    /// <summary>
+    /// Adds Controllers, model validation, problem details, and a health check for startup tasks.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureStandardApi(this IServiceCollection services)
+    {
+        services.ConfigureStandardMvc();
+        services.AddStandardHealthChecks();
+
+        return services;
+    }
+    
+    /// <summary>
+    /// Adds a health check for startup tasks, which will report "unhealthy" until all tasks defined in <see cref="StartupChecks"/> have completed successfully.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddStandardHealthChecks(this IServiceCollection services)
+    {
+        services.AddHostedService<StartupBackgroundService>(); // Required for StartupHealthCheck
+        services.AddSingleton<StartupHealthCheck>();
+        services.AddHealthChecks()
+            .AddCheck<StartupHealthCheck>("Startup");
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adds Controllers with JSON options, including converters for string enums and URIs, and a global model validation filter.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureStandardMvc(this IServiceCollection services)
+    {
+        services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
+        services
+            .AddControllers(options => options.Filters.Add<RequestValidationFilter>())
+            .ConfigureApplicationPartManager(manager =>
+            {
+                manager.FeatureProviders.Add(new CustomControllerFeatureProvider());
+            })
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                options.JsonSerializerOptions.Converters.Add(new JsonStringUriConverter());
+            });
+
+        services.AddProblemDetails();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Each added <see cref="StartupChecks"/> is executed in its own scope in a run-once hosted service (<see cref="StartupBackgroundService"/>)
+    /// </summary>
+    /// <remarks>
+    /// The tasks should be short-lived, as they are run sequentially.
+    /// </remarks>
+    /// <returns></returns>
+    public static IServiceCollection AddStartupChecks(this IServiceCollection services, StartupChecks startupChecks)
+    {
+        services.AddHostedService<StartupBackgroundService>(); // Idempotent
+        
+        services.AddSingleton(startupChecks);
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adds OpenAPI with a basic configuration.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="appName"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddStandardOpenApi(this IServiceCollection services, string appName)
+    {
+        services.AddOpenApi(options =>
+        {
+            options.ConfigureBasicOpenApiSpec(appName);
+        });
+
+        return services;
+    }
+
+    /// <summary>
+    /// Configures authentication and authorization based on the provided <see cref="AuthConfiguration"/>.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="authConfiguration"></param>
+    /// <returns></returns>
+    /// <remarks>
+    /// If <see cref="AuthConfiguration.DisableAuth"/> is true, a permissive authorization policy is registered that allows all requests, and a warning is logged to alert developers.
+    /// </remarks>
+    public static IServiceCollection AddStandardAuth(this IServiceCollection services, AuthConfiguration authConfiguration)
+    {
+        if (authConfiguration.DisableAuth)
+        {
+            services.AddAllowAllAuthorization();
+        }
+        else
+        {
+            services.AddEntraAuth(authConfiguration);
+        }
+        
+        return services;
+    }
+    
+    /// <summary>
+    /// Adds authentication and authorization using Microsoft Entra ID (Azure AD), and configures OpenAPI to include the appropriate security schemes.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="authConfiguration"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddEntraAuth(this IServiceCollection services, AuthConfiguration authConfiguration)
+    {
+        services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(jwtOptions =>
+            {
+                jwtOptions.Authority = $"https://login.microsoftonline.com/{authConfiguration.TenantId}/v2.0";
+                jwtOptions.Audience = authConfiguration.ClientId;
+            });
+
+        services.AddAuthorization();
+        
+        services.AddOpenApi(options =>
+        {
+            options.AddEntraOAuth2AndBearerSecuritySchemes(authConfiguration);
+        });
+        
+        return services;
+    }
+    
     /// <summary>
     /// Adds OpenTelemetry, including metrics, tracing, and logging.
     /// Adds instrumentation for ASP.NET Core and HTTP client, and exports data to an OpenTelemetry Protocol (OTLP) endpoint.
@@ -150,6 +281,7 @@ public static partial class StartupExtensions
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>
+    [Obsolete("Use AddBasicOpenApi instead.")]
     public static IServiceCollection ConfigureOpenApi(this IServiceCollection services)
     {
         services.AddOpenApi();
@@ -163,6 +295,7 @@ public static partial class StartupExtensions
     /// <param name="documentName"></param>
     /// <param name="openApiOptions"></param>
     /// <returns></returns>
+    [Obsolete("Use AddBasicOpenApi instead.")]
     public static IServiceCollection ConfigureOpenApi(
         this IServiceCollection services,
         string documentName,
@@ -270,6 +403,26 @@ public static partial class StartupExtensions
 
                 // No fallback else needed - if no origins specified in production, CORS won't work
             });
+        });
+
+        return services;
+    }
+    
+    private static IServiceCollection AddAllowAllAuthorization(this IServiceCollection services)
+    {
+        LoggerFactory
+            .Create(builder => builder.AddConsole())
+            .CreateLogger<IAssemblyInfo>()
+            .LogWarning(
+                "Authentication is disabled. Update AuthenticationConfiguration to require authentication."
+            );
+
+        // Register a permissive authorization policy that allows all requests
+        services.AddAuthorization(options =>
+        {
+            options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                .RequireAssertion(_ => true)
+                .Build();
         });
 
         return services;

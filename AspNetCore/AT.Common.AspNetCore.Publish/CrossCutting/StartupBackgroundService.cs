@@ -14,23 +14,23 @@ namespace Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
 public class StartupBackgroundService : BackgroundService
 {
     private readonly StartupHealthCheck _healthCheck;
-    private readonly StartupChecks _startupChecks;
+    private readonly List<StartupChecks> _startupCheckGroups;
     private readonly IServiceProvider _serviceProvider;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StartupBackgroundService"/> class.
     /// </summary>
     /// <param name="healthCheck">The health check to update when startup tasks complete.</param>
-    /// <param name="startupChecks">The startup tasks delegate to execute.</param>
+    /// <param name="startupCheckGroups">The startup tasks delegate to execute.</param>
     /// <param name="serviceProvider">The service provider for resolving dependencies.</param>
     public StartupBackgroundService(
         StartupHealthCheck healthCheck,
-        StartupChecks startupChecks,
+        IEnumerable<StartupChecks> startupCheckGroups,
         IServiceProvider serviceProvider
     )
     {
         _healthCheck = healthCheck;
-        _startupChecks = startupChecks;
+        _startupCheckGroups = startupCheckGroups.ToList();
         _serviceProvider = serviceProvider;
     }
 
@@ -44,11 +44,14 @@ public class StartupBackgroundService : BackgroundService
     /// </remarks>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await using var scope = _serviceProvider.CreateAsyncScope();
-
-        foreach (var taskBeforeStartup in _startupChecks(scope.ServiceProvider))
+        foreach (var group in _startupCheckGroups)
         {
-            await taskBeforeStartup;
+            await using var scope = _serviceProvider.CreateAsyncScope();
+
+            foreach (var taskBeforeStartup in group.Invoke(scope.ServiceProvider))
+            {
+                await taskBeforeStartup;
+            }
         }
 
         _healthCheck.StartupCompleted = true;
