@@ -52,7 +52,7 @@ public static partial class StartupExtensions
     /// builder.Services.ConfigureApi();
     /// </code>
     /// </example>
-    [Obsolete("Use ConfigureStandardApi or ConfigureApi with explicit parameters instead for better clarity and control.")]
+    [Obsolete("Use ConfigureStandardApi instead.")]
     public static IServiceCollection ConfigureApi(
         this IServiceCollection services,
         StartupChecks? startupChecks = null,
@@ -61,16 +61,23 @@ public static partial class StartupExtensions
         Action<IHealthChecksBuilder>? buildHealthChecksAction = null
     )
     {
-        services.ConfigureStandardApi();
-        
-        services.AddControllers(configureMvcAction);
-        services.AddProblemDetails(configureProblemDetailsAction);
-        
-        if (startupChecks != null)
-        {
-            services.AddStartupChecks(startupChecks);
-        }
+        configureMvcAction ??= options => options.Filters.Add<RequestValidationFilter>();
 
+        services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
+        services
+            .AddControllers(configureMvcAction)
+            .ConfigureApplicationPartManager(manager =>
+            {
+                manager.FeatureProviders.Add(new CustomControllerFeatureProvider());
+            })
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                options.JsonSerializerOptions.Converters.Add(new JsonStringUriConverter());
+            });
+        services.AddProblemDetails(configureProblemDetailsAction);
+        services.AddHostedService<StartupBackgroundService>();
+        services.AddSingleton(_ => startupChecks ?? ((_) => []));
         services.AddSingleton<StartupHealthCheck>();
         var healthChecksBuilder = services
             .AddHealthChecks()
