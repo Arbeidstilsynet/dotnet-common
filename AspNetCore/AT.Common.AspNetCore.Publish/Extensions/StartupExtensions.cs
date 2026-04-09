@@ -306,6 +306,9 @@ public static partial class StartupExtensions
     /// <param name="app"></param>
     /// <param name="configureExceptionHandling">Determines mapping from Exceptions to HTTP Status codes.</param>
     /// <returns></returns>
+    [Obsolete(
+        "Use AddStandardApi instead. If you do, you should also remove UseAuthentication, UseCors and AddScalar (if any) around this call, as it is incorporated into AddStandardApi"
+    )]
     public static WebApplication AddApi(
         this WebApplication app,
         Action<ExceptionHandlingOptions>? configureExceptionHandling = null
@@ -336,10 +339,66 @@ public static partial class StartupExtensions
     }
 
     /// <summary>
+    /// Adds API middleware to the application, including authentication, exception handling, HTTPS redirection, routing, authorization, and health checks ("/healthz").
+    /// </summary>
+    /// <param name="app"></param>
+    /// <param name="authConfiguration">If omitted, authentication is not used</param>
+    /// <param name="configureExceptionHandling">Determines mapping from Exceptions to HTTP Status codes.</param>
+    /// <param name="disableCors">Should only be used for development.</param>
+    /// <returns></returns>
+    public static WebApplication AddStandardApi(
+        this WebApplication app,
+        AuthConfiguration? authConfiguration,
+        Action<ExceptionHandlingOptions>? configureExceptionHandling = null,
+        bool disableCors = false
+    )
+    {
+        var disableAuth = authConfiguration?.DisableAuth ?? true;
+
+        if (!disableAuth)
+        {
+            app.UseAuthentication();
+        }
+
+        var exceptionHandlingOptions = new ExceptionHandlingOptions();
+        configureExceptionHandling?.Invoke(exceptionHandlingOptions);
+
+        app.UseExceptionHandler(exceptionHandlerApp =>
+            exceptionHandlerApp.Run(
+                ApiExceptionHandler.CreateExceptionHandler(exceptionHandlingOptions)
+            )
+        );
+
+        app.UseHttpsRedirection();
+        app.UseRouting();
+        app.UseAuthorization();
+
+        app.MapControllers();
+
+        app.MapHealthChecks(
+            "/healthz/ready",
+            new HealthCheckOptions() { ResponseWriter = CustomHealthReport.WriteHealthCheckDetails }
+        );
+        app.MapHealthChecks("/healthz/live", new HealthCheckOptions() { Predicate = _ => false });
+
+        if (!disableCors)
+        {
+            app.UseCors();
+        }
+
+        app.AddScalar();
+
+        return app;
+    }
+
+    /// <summary>
     /// Adds the Scalar reference endpoint and configures Scalar to serve the OpenAPI document at "/openapi/{documentName}.json".
     /// </summary>
     /// <param name="app"></param>
     /// <returns></returns>
+    /// <remarks>
+    /// This is now incorporated into <see cref="AddStandardApi"/>, so it should not be necessary to call this method explicitly when using <see cref="AddStandardApi"/>.
+    /// </remarks>
     public static WebApplication AddScalar(this WebApplication app)
     {
         app.MapOpenApi();
