@@ -180,6 +180,8 @@ public static partial class StartupExtensions
 
     /// <summary>
     /// Configures authentication and authorization based on the provided <see cref="AuthConfiguration"/>.
+    ///
+    /// Entra authentication is configured when <see cref="AuthConfiguration.DisableAuth"/> is false, using the tenant ID and client ID from the configuration.
     /// </summary>
     /// <param name="services"></param>
     /// <param name="authConfiguration"></param>
@@ -200,36 +202,6 @@ public static partial class StartupExtensions
         {
             services.AddEntraAuth(authConfiguration);
         }
-
-        return services;
-    }
-
-    /// <summary>
-    /// Adds authentication and authorization using Microsoft Entra ID (Azure AD), and configures OpenAPI to include the appropriate security schemes.
-    /// </summary>
-    /// <param name="services"></param>
-    /// <param name="authConfiguration"></param>
-    /// <returns></returns>
-    public static IServiceCollection AddEntraAuth(
-        this IServiceCollection services,
-        AuthConfiguration authConfiguration
-    )
-    {
-        services
-            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(jwtOptions =>
-            {
-                jwtOptions.Authority =
-                    $"https://login.microsoftonline.com/{authConfiguration.TenantId}/v2.0";
-                jwtOptions.Audience = authConfiguration.ClientId;
-            });
-
-        services.AddAuthorization();
-
-        services.AddOpenApi(options =>
-        {
-            options.AddEntraOAuth2AndBearerSecuritySchemes(authConfiguration);
-        });
 
         return services;
     }
@@ -442,6 +414,30 @@ public static partial class StartupExtensions
             options.DefaultPolicy = new AuthorizationPolicyBuilder()
                 .RequireAssertion(_ => true)
                 .Build();
+        });
+
+        return services;
+    }
+
+    private static IServiceCollection AddEntraAuth(
+        this IServiceCollection services,
+        AuthConfiguration authConfiguration
+    )
+    {
+        services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(jwtOptions =>
+            {
+                jwtOptions.Authority =
+                    $"https://login.microsoftonline.com/{authConfiguration.TenantId}/v2.0";
+                jwtOptions.Audience = authConfiguration.ClientId;
+            });
+
+        services.AddAuthorization();
+
+        services.AddOpenApi(options =>
+        {
+            options.AddEntraOAuth2AndBearerSecuritySchemes(authConfiguration);
         });
 
         return services;

@@ -1,5 +1,9 @@
 using Arbeidstilsynet.Common.AspNetCore.DependencyInjection;
+using Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
 using Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -245,6 +249,146 @@ public class StartupExtensionsTests
         var policy = corsOptions.Value.GetPolicy(corsOptions.Value.DefaultPolicyName ?? "");
         var corsResult = corsService.EvaluatePolicy(httpContext, policy!);
         corsResult.IsOriginAllowed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task AddStartupChecks_MultipleRegistrations_AllChecksAreExecuted()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddSingleton<StartupHealthCheck>();
+
+        var check1Executed = false;
+        var check2Executed = false;
+        var check3Executed = false;
+
+        services.AddStartupChecks(_ => [Task.Run(() => check1Executed = true)]);
+        services.AddStartupChecks(_ => [Task.Run(() => check2Executed = true)]);
+        services.AddStartupChecks(_ => [Task.Run(() => check3Executed = true)]);
+
+        var serviceProvider = services.BuildServiceProvider();
+        var backgroundService =
+            serviceProvider.GetRequiredService<IHostedService>() as BackgroundService;
+
+        // Act
+        await backgroundService!.StartAsync(TestContext.Current.CancellationToken);
+        await backgroundService.ExecuteTask!;
+        await backgroundService.StopAsync(TestContext.Current.CancellationToken);
+
+        // Assert
+        check1Executed.ShouldBeTrue();
+        check2Executed.ShouldBeTrue();
+        check3Executed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task AddStartupChecks_MultipleRegistrations_SetsHealthCheckToCompleted()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddSingleton<StartupHealthCheck>();
+
+        services.AddStartupChecks(_ => [Task.CompletedTask]);
+        services.AddStartupChecks(_ => [Task.CompletedTask]);
+
+        var serviceProvider = services.BuildServiceProvider();
+        var healthCheck = serviceProvider.GetRequiredService<StartupHealthCheck>();
+        var backgroundService =
+            serviceProvider.GetRequiredService<IHostedService>() as BackgroundService;
+
+        healthCheck.StartupCompleted.ShouldBeFalse();
+
+        // Act
+        await backgroundService!.StartAsync(TestContext.Current.CancellationToken);
+        await backgroundService.ExecuteTask!;
+        await backgroundService.StopAsync(TestContext.Current.CancellationToken);
+
+        // Assert
+        healthCheck.StartupCompleted.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task AddStartupChecks_MultipleRegistrations_ExecutesInOrder()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddSingleton<StartupHealthCheck>();
+
+        var executionOrder = new List<int>();
+
+        services.AddStartupChecks(_ => [Task.Run(() => executionOrder.Add(1))]);
+        services.AddStartupChecks(_ => [Task.Run(() => executionOrder.Add(2))]);
+        services.AddStartupChecks(_ => [Task.Run(() => executionOrder.Add(3))]);
+
+        var serviceProvider = services.BuildServiceProvider();
+        var backgroundService =
+            serviceProvider.GetRequiredService<IHostedService>() as BackgroundService;
+
+        // Act
+        await backgroundService!.StartAsync(TestContext.Current.CancellationToken);
+        await backgroundService.ExecuteTask!;
+        await backgroundService.StopAsync(TestContext.Current.CancellationToken);
+
+        // Assert
+        executionOrder.ShouldBe([1, 2, 3]);
+    }
+
+    [Fact]
+    public void AddStandardAuth_DisableAuthTrue_RegistersPermissiveAuthorizationPolicy()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddLogging();
+        var authConfig = new AuthConfiguration
+        {
+            DisableAuth = true,
+            TenantId = "fake-tenant",
+            ClientId = "fake-client",
+            Scope = "fake-scope",
+        };
+
+        // Act
+        services.AddStandardAuth(authConfig);
+
+        // Assert — no authentication scheme should be registered
+        services.ShouldNotContain(s => s.ServiceType == typeof(IAuthenticationService));
+
+        var serviceProvider = services.BuildServiceProvider();
+        var authOptions = serviceProvider.GetRequiredService<IOptions<AuthorizationOptions>>();
+        var defaultPolicy = authOptions.Value.DefaultPolicy;
+
+        defaultPolicy.ShouldNotBeNull();
+        defaultPolicy.Requirements.Count.ShouldBe(1);
+        defaultPolicy.AuthenticationSchemes.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task AddStandardAuth_DisableAuthFalse_RegistersJwtBearerAuthentication()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddLogging();
+        var authConfig = new AuthConfiguration
+        {
+            DisableAuth = false,
+            TenantId = "fake-tenant",
+            ClientId = "fake-client",
+            Scope = "fake-scope",
+        };
+
+        // Act
+        services.AddStandardAuth(authConfig);
+
+        // Assert — JWT bearer authentication should be registered
+        var serviceProvider = services.BuildServiceProvider();
+        var authSchemeProvider =
+            serviceProvider.GetRequiredService<IAuthenticationSchemeProvider>();
+        var scheme = await authSchemeProvider.GetSchemeAsync(
+            JwtBearerDefaults.AuthenticationScheme
+        );
+
+        scheme.ShouldNotBeNull();
+        scheme.Name.ShouldBe(JwtBearerDefaults.AuthenticationScheme);
     }
 
     private static ServiceCollection CreateTestServiceCollection(bool isDevelopment)
