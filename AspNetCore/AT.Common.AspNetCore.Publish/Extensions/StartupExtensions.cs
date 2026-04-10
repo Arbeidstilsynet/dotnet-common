@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
@@ -125,6 +126,13 @@ public static partial class StartupExtensions
     {
         services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
         services.AddProblemDetails();
+
+        services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.Converters.AddStandardConverters();
+            options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        });
+
         return services
             .AddControllers(options => options.Filters.Add<RequestValidationFilter>())
             .ConfigureApplicationPartManager(manager =>
@@ -133,9 +141,15 @@ public static partial class StartupExtensions
             })
             .AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                options.JsonSerializerOptions.Converters.Add(new JsonStringUriConverter());
+                options.JsonSerializerOptions.Converters.AddStandardConverters();
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             });
+    }
+
+    private static void AddStandardConverters(this IList<JsonConverter> converters)
+    {
+        converters.Add(new JsonStringEnumConverter());
+        converters.Add(new JsonStringUriConverter());
     }
 
     /// <summary>
