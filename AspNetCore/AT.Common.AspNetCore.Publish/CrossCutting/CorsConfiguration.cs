@@ -12,11 +12,14 @@ public record CorsConfiguration
     /// If empty or null, CORS will allow any origin in development.
     /// </summary>
     [Required]
+    [ConfigurationKeyName("AllowedOrigins")]
     public string[] AllowedOrigins { get; init; } = [];
 
     /// <summary>
     /// Whether to allow credentials in CORS requests
     /// </summary>
     [Required]
+    [ConfigurationKeyName("AllowCredentials")]
+
     public bool AllowCredentials { get; init; } = false;
 }
