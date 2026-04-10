@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - changed(startup): `StartupBackgroundService` now accepts multiple `StartupChecks` groups (`IEnumerable<StartupChecks>`) and runs each in its own scope.
 - changed(startup): `StartupChecks` delegate signature now accepts an optional `CancellationToken` parameter.
 - changed(auth): `AddAllowAllAuthorization` now logs the disabled-auth warning via the application's logging pipeline at startup instead of creating a standalone `LoggerFactory` at registration time.
+- changed(api): `ConfigureStandardMvc()` now returns `IMvcBuilder` for further configuration and also configures `HttpJsonOptions` for Minimal API JSON consistency (enum-as-string, camelCase).
 
 ### Deprecated
 
