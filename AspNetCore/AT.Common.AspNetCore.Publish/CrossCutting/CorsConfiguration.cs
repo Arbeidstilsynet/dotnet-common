@@ -20,6 +20,5 @@ public record CorsConfiguration
     /// </summary>
     [Required]
     [ConfigurationKeyName("AllowCredentials")]
-
     public bool AllowCredentials { get; init; } = false;
 }
