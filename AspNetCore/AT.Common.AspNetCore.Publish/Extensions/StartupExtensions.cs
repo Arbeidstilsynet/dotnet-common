@@ -1,6 +1,9 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
@@ -8,6 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -49,6 +54,9 @@ public static partial class StartupExtensions
     /// builder.Services.ConfigureApi();
     /// </code>
     /// </example>
+    [Obsolete(
+        "Use ConfigureStandardApi for the standard API setup, and register startup checks, health checks, MVC options, and problem details explicitly as needed."
+    )]
     public static IServiceCollection ConfigureApi(
         this IServiceCollection services,
         StartupChecks? startupChecks = null,
@@ -73,13 +81,139 @@ public static partial class StartupExtensions
             });
         services.AddProblemDetails(configureProblemDetailsAction);
         services.AddHostedService<StartupBackgroundService>();
-        services.AddSingleton(_ => startupChecks ?? ((_) => []));
         services.AddSingleton<StartupHealthCheck>();
         var healthChecksBuilder = services
             .AddHealthChecks()
             .AddCheck<StartupHealthCheck>("Startup");
 
         buildHealthChecksAction?.Invoke(healthChecksBuilder);
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adds Controllers, model validation, problem details, and a health check for startup tasks.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureStandardApi(this IServiceCollection services)
+    {
+        services.ConfigureStandardMvc();
+        services.AddStandardHealthChecks();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adds a health check for startup tasks, which will report "unhealthy" until all tasks defined in <see cref="StartupChecks"/> have completed successfully.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddStandardHealthChecks(this IServiceCollection services)
+    {
+        services.TryAddStartupHealthCheck();
+        services.AddHealthChecks().AddCheck<StartupHealthCheck>("Startup");
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adds Controllers with JSON options, including converters for string enums and URIs, and a global model validation filter.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns>The MVC builder for further configuration if needed.</returns>
+    public static IMvcBuilder ConfigureStandardMvc(this IServiceCollection services)
+    {
+        services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
+        services.AddProblemDetails();
+
+        services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.Converters.AddStandardConverters();
+            options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        });
+
+        return services
+            .AddControllers(options => options.Filters.Add<RequestValidationFilter>())
+            .ConfigureApplicationPartManager(manager =>
+            {
+                manager.FeatureProviders.Add(new CustomControllerFeatureProvider());
+            })
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.AddStandardConverters();
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            });
+    }
+
+    private static void AddStandardConverters(this IList<JsonConverter> converters)
+    {
+        converters.Add(new JsonStringEnumConverter());
+        converters.Add(new JsonStringUriConverter());
+    }
+
+    /// <summary>
+    /// Each added <see cref="StartupChecks"/> is executed in its own scope in a run-once hosted service (<see cref="StartupBackgroundService"/>)
+    /// </summary>
+    /// <remarks>
+    /// The tasks should be short-lived, as they are run sequentially.
+    /// </remarks>
+    /// <returns></returns>
+    public static IServiceCollection AddStartupChecks(
+        this IServiceCollection services,
+        StartupChecks startupChecks
+    )
+    {
+        services.TryAddStartupHealthCheck();
+
+        services.AddSingleton(startupChecks);
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adds OpenAPI with a basic configuration.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="appName"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddStandardOpenApi(
+        this IServiceCollection services,
+        string appName
+    )
+    {
+        services.AddOpenApi(options =>
+        {
+            options.ConfigureBasicOpenApiSpec(appName);
+        });
+
+        return services;
+    }
+
+    /// <summary>
+    /// Configures authentication and authorization based on the provided <see cref="AuthConfiguration"/>.
+    ///
+    /// Entra authentication is configured when <see cref="AuthConfiguration.DisableAuth"/> is false, using the tenant ID and client ID from the configuration.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="authConfiguration"></param>
+    /// <returns></returns>
+    /// <remarks>
+    /// If <see cref="AuthConfiguration.DisableAuth"/> is true, a permissive authorization policy is registered that allows all requests, and a warning is logged to alert developers.
+    /// </remarks>
+    public static IServiceCollection AddStandardAuth(
+        this IServiceCollection services,
+        AuthConfiguration authConfiguration
+    )
+    {
+        if (authConfiguration.DisableAuth)
+        {
+            services.AddAllowAllAuthorization();
+        }
+        else
+        {
+            services.AddEntraAuth(authConfiguration);
+        }
 
         return services;
     }
@@ -150,6 +284,7 @@ public static partial class StartupExtensions
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>
+    [Obsolete("Use AddStandardOpenApi instead.")]
     public static IServiceCollection ConfigureOpenApi(this IServiceCollection services)
     {
         services.AddOpenApi();
@@ -163,6 +298,7 @@ public static partial class StartupExtensions
     /// <param name="documentName"></param>
     /// <param name="openApiOptions"></param>
     /// <returns></returns>
+    [Obsolete("Use AddStandardOpenApi instead.")]
     public static IServiceCollection ConfigureOpenApi(
         this IServiceCollection services,
         string documentName,
@@ -180,6 +316,9 @@ public static partial class StartupExtensions
     /// <param name="app"></param>
     /// <param name="configureExceptionHandling">Determines mapping from Exceptions to HTTP Status codes.</param>
     /// <returns></returns>
+    [Obsolete(
+        "Use AddStandardApi instead. If you do, you should also remove UseAuthentication, UseCors and AddScalar (if any) around this call, as it is incorporated into AddStandardApi"
+    )]
     public static WebApplication AddApi(
         this WebApplication app,
         Action<ExceptionHandlingOptions>? configureExceptionHandling = null
@@ -210,10 +349,66 @@ public static partial class StartupExtensions
     }
 
     /// <summary>
+    /// Adds API middleware to the application, including authentication, exception handling, HTTPS redirection, routing, authorization, and health checks ("/healthz").
+    /// </summary>
+    /// <param name="app"></param>
+    /// <param name="authConfiguration">If omitted, authentication is not used</param>
+    /// <param name="configureExceptionHandling">Determines mapping from Exceptions to HTTP Status codes.</param>
+    /// <param name="disableCors">Should only be used for development.</param>
+    /// <returns></returns>
+    public static WebApplication AddStandardApi(
+        this WebApplication app,
+        AuthConfiguration? authConfiguration,
+        Action<ExceptionHandlingOptions>? configureExceptionHandling = null,
+        bool disableCors = false
+    )
+    {
+        var disableAuth = authConfiguration?.DisableAuth ?? true;
+
+        if (!disableAuth)
+        {
+            app.UseAuthentication();
+        }
+
+        var exceptionHandlingOptions = new ExceptionHandlingOptions();
+        configureExceptionHandling?.Invoke(exceptionHandlingOptions);
+
+        app.UseExceptionHandler(exceptionHandlerApp =>
+            exceptionHandlerApp.Run(
+                ApiExceptionHandler.CreateExceptionHandler(exceptionHandlingOptions)
+            )
+        );
+
+        app.UseHttpsRedirection();
+        app.UseRouting();
+        app.UseAuthorization();
+
+        app.MapControllers();
+
+        app.MapHealthChecks(
+            "/healthz/ready",
+            new HealthCheckOptions() { ResponseWriter = CustomHealthReport.WriteHealthCheckDetails }
+        );
+        app.MapHealthChecks("/healthz/live", new HealthCheckOptions() { Predicate = _ => false });
+
+        if (!disableCors)
+        {
+            app.UseCors();
+        }
+
+        app.AddScalar();
+
+        return app;
+    }
+
+    /// <summary>
     /// Adds the Scalar reference endpoint and configures Scalar to serve the OpenAPI document at "/openapi/{documentName}.json".
     /// </summary>
     /// <param name="app"></param>
     /// <returns></returns>
+    /// <remarks>
+    /// This is now incorporated into <see cref="AddStandardApi"/>, so it should not be necessary to call this method explicitly when using <see cref="AddStandardApi"/>.
+    /// </remarks>
     public static WebApplication AddScalar(this WebApplication app)
     {
         app.MapOpenApi();
@@ -250,19 +445,44 @@ public static partial class StartupExtensions
         bool isDevelopment = false
     )
     {
+        return services.ConfigureCors(
+            new CorsConfiguration
+            {
+                AllowedOrigins = allowedOrigins ?? [],
+                AllowCredentials = allowCredentials,
+            },
+            isDevelopment
+        );
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="corsConfiguration"></param>
+    /// <param name="isDevelopment"></param>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureCors(
+        this IServiceCollection services,
+        CorsConfiguration corsConfiguration,
+        bool isDevelopment = false
+    )
+    {
+        var allowedOrigins = corsConfiguration.AllowedOrigins;
+
         services.AddCors(options =>
         {
             options.AddDefaultPolicy(policy =>
             {
-                if (isDevelopment && (allowedOrigins == null || allowedOrigins.Length == 0))
+                if (isDevelopment && (allowedOrigins.Length == 0))
                 {
                     policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
                 }
-                else if (allowedOrigins != null && allowedOrigins.Length > 0)
+                else if (allowedOrigins.Length > 0)
                 {
                     policy.WithOrigins(allowedOrigins).AllowAnyMethod().AllowAnyHeader();
 
-                    if (allowCredentials)
+                    if (corsConfiguration.AllowCredentials)
                     {
                         policy.AllowCredentials();
                     }
@@ -271,6 +491,64 @@ public static partial class StartupExtensions
                 // No fallback else needed - if no origins specified in production, CORS won't work
             });
         });
+
+        return services;
+    }
+
+    private static IServiceCollection AddAllowAllAuthorization(this IServiceCollection services)
+    {
+        services.AddStartupChecks((sp, _) => [LogWarningAsync(sp)]);
+
+        // Register a permissive authorization policy that allows all requests
+        services.AddAuthorization(options =>
+        {
+            options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                .RequireAssertion(_ => true)
+                .Build();
+        });
+
+        return services;
+
+        Task LogWarningAsync(IServiceProvider serviceProvider)
+        {
+            var logger = serviceProvider.GetService<ILogger<IAssemblyInfo>>();
+
+            logger?.LogWarning(
+                "Authentication is disabled. Update AuthenticationConfiguration to require authentication."
+            );
+
+            return Task.CompletedTask;
+        }
+    }
+
+    private static IServiceCollection AddEntraAuth(
+        this IServiceCollection services,
+        AuthConfiguration authConfiguration
+    )
+    {
+        services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(jwtOptions =>
+            {
+                jwtOptions.Authority =
+                    $"https://login.microsoftonline.com/{authConfiguration.TenantId}/v2.0";
+                jwtOptions.Audience = authConfiguration.ClientId;
+            });
+
+        services.AddAuthorization();
+
+        services.AddOpenApi(options =>
+        {
+            options.AddEntraOAuth2AndBearerSecuritySchemes(authConfiguration);
+        });
+
+        return services;
+    }
+
+    private static IServiceCollection TryAddStartupHealthCheck(this IServiceCollection services)
+    {
+        services.TryAddSingleton<StartupHealthCheck>();
+        services.AddHostedService<StartupBackgroundService>(); // Required for StartupHealthCheck
 
         return services;
     }

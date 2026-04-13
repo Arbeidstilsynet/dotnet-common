@@ -1,5 +1,9 @@
 using Arbeidstilsynet.Common.AspNetCore.DependencyInjection;
+using Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
 using Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -245,6 +249,64 @@ public class StartupExtensionsTests
         var policy = corsOptions.Value.GetPolicy(corsOptions.Value.DefaultPolicyName ?? "");
         var corsResult = corsService.EvaluatePolicy(httpContext, policy!);
         corsResult.IsOriginAllowed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void AddStandardAuth_DisableAuthTrue_RegistersPermissiveAuthorizationPolicy()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddLogging();
+        var authConfig = new AuthConfiguration
+        {
+            DisableAuth = true,
+            TenantId = "fake-tenant",
+            ClientId = "fake-client",
+            Scope = "fake-scope",
+        };
+
+        // Act
+        services.AddStandardAuth(authConfig);
+
+        // Assert — no authentication scheme should be registered
+        services.ShouldNotContain(s => s.ServiceType == typeof(IAuthenticationService));
+
+        var serviceProvider = services.BuildServiceProvider();
+        var authOptions = serviceProvider.GetRequiredService<IOptions<AuthorizationOptions>>();
+        var defaultPolicy = authOptions.Value.DefaultPolicy;
+
+        defaultPolicy.ShouldNotBeNull();
+        defaultPolicy.Requirements.Count.ShouldBe(1);
+        defaultPolicy.AuthenticationSchemes.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task AddStandardAuth_DisableAuthFalse_RegistersJwtBearerAuthentication()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddLogging();
+        var authConfig = new AuthConfiguration
+        {
+            DisableAuth = false,
+            TenantId = "fake-tenant",
+            ClientId = "fake-client",
+            Scope = "fake-scope",
+        };
+
+        // Act
+        services.AddStandardAuth(authConfig);
+
+        // Assert — JWT bearer authentication should be registered
+        var serviceProvider = services.BuildServiceProvider();
+        var authSchemeProvider =
+            serviceProvider.GetRequiredService<IAuthenticationSchemeProvider>();
+        var scheme = await authSchemeProvider.GetSchemeAsync(
+            JwtBearerDefaults.AuthenticationScheme
+        );
+
+        scheme.ShouldNotBeNull();
+        scheme.Name.ShouldBe(JwtBearerDefaults.AuthenticationScheme);
     }
 
     private static ServiceCollection CreateTestServiceCollection(bool isDevelopment)
