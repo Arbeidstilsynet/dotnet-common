@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.Extensions.Configuration;
 
 namespace Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
 
