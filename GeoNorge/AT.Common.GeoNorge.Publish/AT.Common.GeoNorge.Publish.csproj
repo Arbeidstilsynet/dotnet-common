@@ -16,7 +16,6 @@
     <PackageProjectUrl>https://github.com/Arbeidstilsynet/dotnet-common</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Arbeidstilsynet.Common.AspNetCore.Extensions" Version="2.2.1" />
     <PackageReference
       Include="Microsoft.Extensions.DependencyInjection.Abstractions"
       Version="10.0.3"
