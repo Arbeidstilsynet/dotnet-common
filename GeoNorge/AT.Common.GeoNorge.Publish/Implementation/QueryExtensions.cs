@@ -38,6 +38,16 @@ internal static class QueryExtensions
             parameterMap.Add("kommunenummer", kommunenummer);
         }
 
+        if (query.Gardsnummer is > 0 and var gardsnummer)
+        {
+            parameterMap.Add("gardsnummer", gardsnummer.ToString());
+        }
+
+        if (query.Bruksnummer is > 0 and var bruksnummer)
+        {
+            parameterMap.Add("bruksnummer", bruksnummer.ToString());
+        }
+
         return parameterMap;
     }
 

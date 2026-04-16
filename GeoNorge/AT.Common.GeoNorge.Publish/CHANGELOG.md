@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.2.1
+
+### Added
+
+- feat(search): Added missing query paramters `gardsbruksnummer` and `bruksnummer` to `TextSearchQuery`
+
 ## 2.2.0
 
 ### Changed
