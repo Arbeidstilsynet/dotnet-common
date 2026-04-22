@@ -73,7 +73,7 @@ public static class HostEnvironmentExtensions
         }
     }
 
-    private static string GetAltinnPlattformUrl(this IWebHostEnvironment webHostEnvironment)
+    public static string GetAltinnPlattformUrl(this IWebHostEnvironment webHostEnvironment)
     {
         if (webHostEnvironment.IsDevelopment())
         {
@@ -89,7 +89,7 @@ public static class HostEnvironmentExtensions
         }
     }
 
-    private static string GetAltinnAppBaseUrl(
+    public static string GetAltinnAppBaseUrl(
         this IWebHostEnvironment webHostEnvironment,
         string orgId
     )

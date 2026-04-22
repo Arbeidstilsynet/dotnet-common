@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.6.1
+
+### Changed
+
+- fix(extensions): make all methods in `HostEnvironmentExtensions` publically available
+
 ## 2.6.0
 
 ### Added
