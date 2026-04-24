@@ -1,4 +1,5 @@
 using Altinn.App.Core.Features;
+using Altinn.App.Core.Internal.Language;
 using Altinn.App.Core.Internal.Profile;
 using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.AltinnApp.Extensions;
@@ -12,15 +13,18 @@ internal class SelectedLanguageProcessor : IDataProcessor
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IProfileClient _profileClient;
     private readonly ILanguageObserver _languageObserver;
+    private readonly IApplicationLanguage _applicationLanguage;
 
     public SelectedLanguageProcessor(
         IHttpContextAccessor httpContextAccessor, 
         IProfileClient profileClient,
-        ILanguageObserver languageObserver)
+        ILanguageObserver languageObserver,
+        IApplicationLanguage applicationLanguage)
     {
         _httpContextAccessor = httpContextAccessor;
         _profileClient = profileClient;
         _languageObserver = languageObserver;
+        _applicationLanguage = applicationLanguage;
     }
     
     public async Task ProcessDataRead(Instance instance, Guid? dataId, object data, string? language)
@@ -35,7 +39,9 @@ internal class SelectedLanguageProcessor : IDataProcessor
             }
         }
         
-        if (språkvalg is { Length: > 0 })
+        var availableLanguages = (await _applicationLanguage.GetApplicationLanguages()).Select(l => l.Language);
+        
+        if (språkvalg is { Length: > 0 } && availableLanguages.Contains(språkvalg))
         {
             await _languageObserver.NotifyCurrentLanguage(språkvalg);
         }

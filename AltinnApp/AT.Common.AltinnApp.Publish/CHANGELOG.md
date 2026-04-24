@@ -19,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.7.0
+
+### Added
+
+- added: `ILanguageObserver` interface and `AddLanguageObserver<T>` DI extension for receiving notifications about the user's selected language during `ProcessDataRead`
+- added: `SelectedLanguageProcessor` that resolves the current language from the request or falls back to the user's profile preference. Only notifies when the language is supported by the application
+
 ## 2.6.0
 
 ### Changed
