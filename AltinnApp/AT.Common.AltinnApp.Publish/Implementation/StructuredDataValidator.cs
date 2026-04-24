@@ -9,7 +9,8 @@ internal interface IStructuredDataValidator<in T>
     Task ValidateAndThrow(T structuredData);
 }
 
-internal class StructuredDataValidator<T>(IEnumerable<IValidator<T>> validators) : IStructuredDataValidator<T>
+internal class StructuredDataValidator<T>(IEnumerable<IValidator<T>> validators)
+    : IStructuredDataValidator<T>
     where T : class
 {
     public async Task ValidateAndThrow(T structuredData)
@@ -29,8 +30,9 @@ internal class StructuredDataValidator<T>(IEnumerable<IValidator<T>> validators)
         {
             var validationResults =
                 new List<System.ComponentModel.DataAnnotations.ValidationResult>();
-            var validationContext =
-                new System.ComponentModel.DataAnnotations.ValidationContext(structuredData);
+            var validationContext = new System.ComponentModel.DataAnnotations.ValidationContext(
+                structuredData
+            );
             System.ComponentModel.DataAnnotations.Validator.TryValidateObject(
                 structuredData,
                 validationContext,

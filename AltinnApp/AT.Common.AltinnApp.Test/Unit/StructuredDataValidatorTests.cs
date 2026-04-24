@@ -39,8 +39,8 @@ public class StructuredDataValidatorTests
         var sut = new StructuredDataValidator<TestModel>([validator]);
 
         // Act & Assert
-        var ex = await Should.ThrowAsync<ValidationException>(
-            () => sut.ValidateAndThrow(new TestModel())
+        var ex = await Should.ThrowAsync<ValidationException>(() =>
+            sut.ValidateAndThrow(new TestModel())
         );
         ex.Errors.ShouldHaveSingleItem();
         ex.Errors.First().PropertyName.ShouldBe("Name");
@@ -63,8 +63,8 @@ public class StructuredDataValidatorTests
         var sut = new StructuredDataValidator<TestModel>([validator1, validator2]);
 
         // Act & Assert
-        var ex = await Should.ThrowAsync<ValidationException>(
-            () => sut.ValidateAndThrow(new TestModel())
+        var ex = await Should.ThrowAsync<ValidationException>(() =>
+            sut.ValidateAndThrow(new TestModel())
         );
         ex.Errors.Count().ShouldBe(2);
     }
@@ -76,8 +76,8 @@ public class StructuredDataValidatorTests
         var sut = new StructuredDataValidator<AnnotatedModel>([]);
 
         // Act & Assert
-        await Should.NotThrowAsync(
-            () => sut.ValidateAndThrow(new AnnotatedModel { RequiredField = "present" })
+        await Should.NotThrowAsync(() =>
+            sut.ValidateAndThrow(new AnnotatedModel { RequiredField = "present" })
         );
     }
 
@@ -88,8 +88,8 @@ public class StructuredDataValidatorTests
         var sut = new StructuredDataValidator<AnnotatedModel>([]);
 
         // Act & Assert
-        var ex = await Should.ThrowAsync<ValidationException>(
-            () => sut.ValidateAndThrow(new AnnotatedModel())
+        var ex = await Should.ThrowAsync<ValidationException>(() =>
+            sut.ValidateAndThrow(new AnnotatedModel())
         );
         ex.Errors.ShouldContain(e => e.PropertyName.Contains("RequiredField"));
     }

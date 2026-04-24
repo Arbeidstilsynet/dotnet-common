@@ -213,7 +213,10 @@ public static class DependencyInjectionExtensions
     {
         services.AddSingleton(config);
         services.AddSingleton<StructuredDataManager<TDataModel, TStructuredData>>();
-        services.AddTransient<IStructuredDataValidator<TStructuredData>, StructuredDataValidator<TStructuredData>>();
+        services.AddTransient<
+            IStructuredDataValidator<TStructuredData>,
+            StructuredDataValidator<TStructuredData>
+        >();
         services.AddTransient<IProcessEnd>(sp =>
             sp.GetRequiredService<StructuredDataManager<TDataModel, TStructuredData>>()
         );

@@ -46,7 +46,8 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         IInstanceClient instanceClient,
         Config config,
         ILogger<StructuredDataManager<TDataModel, TStructuredData>> logger,
-        IStructuredDataValidator<TStructuredData> structuredDataValidator)
+        IStructuredDataValidator<TStructuredData> structuredDataValidator
+    )
     {
         _applicationClient = applicationClient;
         _dataClient = dataClient;
