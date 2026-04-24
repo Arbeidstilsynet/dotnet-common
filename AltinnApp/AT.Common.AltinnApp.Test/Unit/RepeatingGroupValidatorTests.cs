@@ -115,10 +115,11 @@ public class RepeatingGroupValidatorTests
     public void HasRelevantChanges_WhenUnchanged_ReturnsFalse()
     {
         var sut = new OrderItemValidator();
+        var sharedItems = new List<OrderItem> { new() { Name = "same" } };
 
         var result = sut.HasRelevantChanges(
-            new OrderModel { Items = [new OrderItem { Name = "same" }] },
-            new OrderModel { Items = [new OrderItem { Name = "same" }] }
+            new OrderModel { Items = sharedItems },
+            new OrderModel { Items = sharedItems }
         );
 
         result.ShouldBeFalse();
@@ -192,10 +193,7 @@ public class RepeatingGroupValidatorTests
             Func<NestedModel, IEnumerable<Tag>>
         > GetCollectionAccessor() => m => m.Inner.Tags;
 
-        protected override Task<List<ValidationIssue>> ValidateItem(
-            Tag? item,
-            string itemPath
-        ) =>
+        protected override Task<List<ValidationIssue>> ValidateItem(Tag? item, string itemPath) =>
             Task.FromResult(
                 new List<ValidationIssue>
                 {
