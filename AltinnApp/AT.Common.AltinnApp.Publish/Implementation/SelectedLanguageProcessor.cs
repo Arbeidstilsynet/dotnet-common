@@ -35,13 +35,13 @@ internal class SelectedLanguageProcessor : IDataProcessor
         string? language
     )
     {
-        var språkvalg = language;
+        var selectedLanguage = language;
 
-        if (språkvalg is not { Length: > 0 })
+        if (selectedLanguage is not { Length: > 0 })
         {
-            if (await _profileClient.GetUserProfile(_httpContextAccessor) is { } innloggetBruker)
+            if (await _profileClient.GetUserProfile(_httpContextAccessor) is { } userProfile)
             {
-                språkvalg = innloggetBruker.ProfileSettingPreference.Language;
+                selectedLanguage = userProfile.ProfileSettingPreference.Language;
             }
         }
 
@@ -49,9 +49,9 @@ internal class SelectedLanguageProcessor : IDataProcessor
             l.Language
         );
 
-        if (språkvalg is { Length: > 0 } && availableLanguages.Contains(språkvalg))
+        if (selectedLanguage is { Length: > 0 } && availableLanguages.Contains(selectedLanguage))
         {
-            await _languageObserver.NotifyCurrentLanguage(data, språkvalg);
+            await _languageObserver.NotifyCurrentLanguage(data, selectedLanguage);
         }
     }
 

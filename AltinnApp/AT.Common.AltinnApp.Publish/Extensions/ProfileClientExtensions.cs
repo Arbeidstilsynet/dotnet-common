@@ -23,8 +23,8 @@ public static class ProfileClientExtensions
     {
         return
             httpContext.GetUserId() is { } userId
-            && await profileClient.GetUserProfile(userId) is { } innloggetBruker
-            ? innloggetBruker
+            && await profileClient.GetUserProfile(userId) is { } userProfile
+            ? userProfile
             : null;
     }
 
