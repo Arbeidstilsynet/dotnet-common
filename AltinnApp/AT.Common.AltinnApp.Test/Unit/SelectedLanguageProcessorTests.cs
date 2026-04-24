@@ -8,7 +8,6 @@ using Arbeidstilsynet.Common.AltinnApp.Ports;
 using Arbeidstilsynet.Common.AltinnApp.Test.Unit.TestFixtures;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
-using Shouldly;
 using Xunit;
 using ApplicationLanguageModel = Altinn.App.Core.Models.ApplicationLanguage;
 

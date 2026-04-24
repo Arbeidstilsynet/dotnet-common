@@ -14,5 +14,5 @@ public interface ILanguageObserver
     /// <param name="dataModel">Current data model</param>
     /// <param name="language">Guaranteed to be non-empty. Two-letter ISO name</param>
     /// <returns></returns>
-    public Task NotifyCurrentLanguage(object dataModel, string language);
+    Task NotifyCurrentLanguage(object dataModel, string language);
 }

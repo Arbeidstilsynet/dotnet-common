@@ -1,7 +1,5 @@
 using Altinn.App.Core.Features;
-using Altinn.App.Core.Interface;
 using Altinn.Platform.Storage.Interface.Models;
-using Arbeidstilsynet.Common.AltinnApp.Abstract.Processing;
 using Arbeidstilsynet.Common.AltinnApp.Implementation;
 using Arbeidstilsynet.Common.AltinnApp.Model;
 using Arbeidstilsynet.Common.AltinnApp.Ports;

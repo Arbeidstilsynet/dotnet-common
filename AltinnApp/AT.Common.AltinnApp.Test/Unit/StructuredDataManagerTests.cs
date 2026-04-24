@@ -1,9 +1,7 @@
-using Altinn.App.Core.Helpers.DataModel;
 using Altinn.App.Core.Internal.App;
 using Altinn.App.Core.Internal.Data;
 using Altinn.App.Core.Internal.Instances;
 using Altinn.Platform.Storage.Interface.Models;
-using Arbeidstilsynet.Common.AltinnApp.DependencyInjection;
 using Arbeidstilsynet.Common.AltinnApp.Extensions;
 using Arbeidstilsynet.Common.AltinnApp.Implementation;
 using Arbeidstilsynet.Common.AltinnApp.Test.Unit.TestFixtures;

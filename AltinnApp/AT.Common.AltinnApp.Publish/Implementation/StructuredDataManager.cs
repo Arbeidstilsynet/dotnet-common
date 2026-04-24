@@ -7,10 +7,7 @@ using Altinn.App.Core.Internal.Instances;
 using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.AltinnApp.DependencyInjection;
 using Arbeidstilsynet.Common.AltinnApp.Extensions;
-using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens.Experimental;
 
 namespace Arbeidstilsynet.Common.AltinnApp.Implementation;
 
