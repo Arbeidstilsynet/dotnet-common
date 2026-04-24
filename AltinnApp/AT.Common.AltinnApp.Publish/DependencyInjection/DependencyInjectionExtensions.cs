@@ -72,6 +72,11 @@ public record StructuredDataConfiguration
     public bool IncludeErrorDetails { get; init; } = false;
 
     /// <summary>
+    /// Whether to disable validation of the structured data against the JSON schema during mapping. Default is false.
+    /// </summary>
+    public bool DisableValidation { get; init; } = false;
+
+    /// <summary>
     /// Whether to keep the App data model after mapping. Default is false.
     /// </summary>
     public bool KeepAppDataModelAfterMapping { get; init; } = false;

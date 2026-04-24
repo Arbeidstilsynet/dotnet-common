@@ -4,7 +4,7 @@ namespace Arbeidstilsynet.Common.AltinnApp.Ports;
 
 /// <summary>
 /// Interface for observers that want to be notified when the language of the application changes.
-/// Add an implementation with <see cref="DependencyInjection.AddLanguageObserver"/>
+/// Add an implementation with <see cref="DependencyInjection.DependencyInjectionExtensions.AddLanguageObserver{T}"/>
 /// </summary>
 public interface ILanguageObserver
 {
