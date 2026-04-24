@@ -16,18 +16,24 @@ internal class SelectedLanguageProcessor : IDataProcessor
     private readonly IApplicationLanguage _applicationLanguage;
 
     public SelectedLanguageProcessor(
-        IHttpContextAccessor httpContextAccessor, 
+        IHttpContextAccessor httpContextAccessor,
         IProfileClient profileClient,
         ILanguageObserver languageObserver,
-        IApplicationLanguage applicationLanguage)
+        IApplicationLanguage applicationLanguage
+    )
     {
         _httpContextAccessor = httpContextAccessor;
         _profileClient = profileClient;
         _languageObserver = languageObserver;
         _applicationLanguage = applicationLanguage;
     }
-    
-    public async Task ProcessDataRead(Instance instance, Guid? dataId, object data, string? language)
+
+    public async Task ProcessDataRead(
+        Instance instance,
+        Guid? dataId,
+        object data,
+        string? language
+    )
     {
         var språkvalg = language;
 
@@ -38,16 +44,24 @@ internal class SelectedLanguageProcessor : IDataProcessor
                 språkvalg = innloggetBruker.ProfileSettingPreference.Language;
             }
         }
-        
-        var availableLanguages = (await _applicationLanguage.GetApplicationLanguages()).Select(l => l.Language);
-        
+
+        var availableLanguages = (await _applicationLanguage.GetApplicationLanguages()).Select(l =>
+            l.Language
+        );
+
         if (språkvalg is { Length: > 0 } && availableLanguages.Contains(språkvalg))
         {
             await _languageObserver.NotifyCurrentLanguage(språkvalg);
         }
     }
-    
-    public Task ProcessDataWrite(Instance instance, Guid? dataId, object data, object? previousData, string? language)
+
+    public Task ProcessDataWrite(
+        Instance instance,
+        Guid? dataId,
+        object data,
+        object? previousData,
+        string? language
+    )
     {
         return Task.CompletedTask;
     }

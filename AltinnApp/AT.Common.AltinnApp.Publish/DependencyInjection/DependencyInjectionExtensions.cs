@@ -88,16 +88,14 @@ public static class DependencyInjectionExtensions
     /// <param name="services"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static IServiceCollection AddLanguageObserver<T>( 
-        this IServiceCollection services
-    )
+    public static IServiceCollection AddLanguageObserver<T>(this IServiceCollection services)
         where T : class, ILanguageObserver
     {
         services.TryAddTransient<IDataProcessor, SelectedLanguageProcessor>();
         services.AddSingleton<ILanguageObserver, T>();
         return services;
     }
-    
+
     /// <summary>
     /// Adds a <see cref="ILandskodeLookup"/> to look up countries and their dial codes based on 3-letter ISO values.
     /// </summary>

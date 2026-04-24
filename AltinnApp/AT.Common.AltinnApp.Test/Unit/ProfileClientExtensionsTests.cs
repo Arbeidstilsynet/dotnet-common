@@ -13,7 +13,8 @@ public class ProfileClientExtensionsTests
 {
     private const int UserId = 42;
     private readonly IProfileClient _profileClient = Substitute.For<IProfileClient>();
-    private readonly IHttpContextAccessor _httpContextAccessor = Substitute.For<IHttpContextAccessor>();
+    private readonly IHttpContextAccessor _httpContextAccessor =
+        Substitute.For<IHttpContextAccessor>();
 
     [Fact]
     public async Task GetUserProfile_WhenUserIsLoggedIn_ReturnsProfile()
@@ -47,7 +48,10 @@ public class ProfileClientExtensionsTests
     public async Task GetUserProfile_WhenUserHasNoClaims_ReturnsNull()
     {
         // Arrange
-        var httpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity()) };
+        var httpContext = new DefaultHttpContext
+        {
+            User = new ClaimsPrincipal(new ClaimsIdentity()),
+        };
         _httpContextAccessor.HttpContext.Returns(httpContext);
 
         // Act

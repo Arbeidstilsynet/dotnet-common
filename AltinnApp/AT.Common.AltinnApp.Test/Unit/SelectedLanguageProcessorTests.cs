@@ -17,17 +17,24 @@ namespace Arbeidstilsynet.Common.AltinnApp.Test.Unit;
 public class SelectedLanguageProcessorTests
 {
     private const int UserId = 12345;
-    private readonly IHttpContextAccessor _httpContextAccessor = Substitute.For<IHttpContextAccessor>();
+    private readonly IHttpContextAccessor _httpContextAccessor =
+        Substitute.For<IHttpContextAccessor>();
     private readonly IProfileClient _profileClient = Substitute.For<IProfileClient>();
     private readonly ILanguageObserver _languageObserver = Substitute.For<ILanguageObserver>();
-    private readonly IApplicationLanguage _applicationLanguage = Substitute.For<IApplicationLanguage>();
+    private readonly IApplicationLanguage _applicationLanguage =
+        Substitute.For<IApplicationLanguage>();
     private readonly SelectedLanguageProcessor _sut;
     private readonly Instance _instance;
     private readonly Guid _dataId = Guid.NewGuid();
 
     public SelectedLanguageProcessorTests()
     {
-        _sut = new SelectedLanguageProcessor(_httpContextAccessor, _profileClient, _languageObserver, _applicationLanguage);
+        _sut = new SelectedLanguageProcessor(
+            _httpContextAccessor,
+            _profileClient,
+            _languageObserver,
+            _applicationLanguage
+        );
         _instance = AltinnData.CreateTestInstance();
         SetupHttpContextWithUserId(UserId);
         SetupAvailableLanguages("nb", "nn", "en");
@@ -47,10 +54,14 @@ public class SelectedLanguageProcessorTests
     public async Task ProcessDataRead_WhenLanguageIsNull_AndProfileHasLanguage_ShouldNotifyWithProfileLanguage()
     {
         // Arrange
-        _profileClient.GetUserProfile(UserId).Returns(new UserProfile
-        {
-            ProfileSettingPreference = new ProfileSettingPreference { Language = "nb" }
-        });
+        _profileClient
+            .GetUserProfile(UserId)
+            .Returns(
+                new UserProfile
+                {
+                    ProfileSettingPreference = new ProfileSettingPreference { Language = "nb" },
+                }
+            );
 
         // Act
         await _sut.ProcessDataRead(_instance, _dataId, new object(), null);
@@ -63,10 +74,14 @@ public class SelectedLanguageProcessorTests
     public async Task ProcessDataRead_WhenLanguageIsEmpty_AndProfileHasLanguage_ShouldNotifyWithProfileLanguage()
     {
         // Arrange
-        _profileClient.GetUserProfile(UserId).Returns(new UserProfile
-        {
-            ProfileSettingPreference = new ProfileSettingPreference { Language = "nn" }
-        });
+        _profileClient
+            .GetUserProfile(UserId)
+            .Returns(
+                new UserProfile
+                {
+                    ProfileSettingPreference = new ProfileSettingPreference { Language = "nn" },
+                }
+            );
 
         // Act
         await _sut.ProcessDataRead(_instance, _dataId, new object(), "");
@@ -105,10 +120,14 @@ public class SelectedLanguageProcessorTests
     public async Task ProcessDataRead_WhenLanguageIsNull_AndProfileLanguageIsEmpty_ShouldNotNotify()
     {
         // Arrange
-        _profileClient.GetUserProfile(UserId).Returns(new UserProfile
-        {
-            ProfileSettingPreference = new ProfileSettingPreference { Language = "" }
-        });
+        _profileClient
+            .GetUserProfile(UserId)
+            .Returns(
+                new UserProfile
+                {
+                    ProfileSettingPreference = new ProfileSettingPreference { Language = "" },
+                }
+            );
 
         // Act
         await _sut.ProcessDataRead(_instance, _dataId, new object(), null);
@@ -135,10 +154,14 @@ public class SelectedLanguageProcessorTests
     {
         // Arrange
         SetupAvailableLanguages("nb", "nn");
-        _profileClient.GetUserProfile(UserId).Returns(new UserProfile
-        {
-            ProfileSettingPreference = new ProfileSettingPreference { Language = "de" }
-        });
+        _profileClient
+            .GetUserProfile(UserId)
+            .Returns(
+                new UserProfile
+                {
+                    ProfileSettingPreference = new ProfileSettingPreference { Language = "de" },
+                }
+            );
 
         // Act
         await _sut.ProcessDataRead(_instance, _dataId, new object(), null);

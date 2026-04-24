@@ -16,14 +16,18 @@ public static class ProfileClientExtensions
     /// <param name="profileClient"></param>
     /// <param name="httpContext"></param>
     /// <returns></returns>
-    public static async Task<UserProfile?> GetUserProfile(this IProfileClient profileClient, IHttpContextAccessor httpContext)
+    public static async Task<UserProfile?> GetUserProfile(
+        this IProfileClient profileClient,
+        IHttpContextAccessor httpContext
+    )
     {
-        return httpContext.GetUserId() is { } userId
-               && await profileClient.GetUserProfile(userId) is { } innloggetBruker
+        return
+            httpContext.GetUserId() is { } userId
+            && await profileClient.GetUserProfile(userId) is { } innloggetBruker
             ? innloggetBruker
             : null;
     }
-    
+
     private static int? GetUserId(this IHttpContextAccessor httpContext)
     {
         return httpContext.HttpContext?.User?.GetUserIdAsInt();
