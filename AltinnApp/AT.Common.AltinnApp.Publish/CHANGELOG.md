@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added: `ILanguageObserver` interface and `AddLanguageObserver<T>` DI extension for receiving notifications about the user's selected language during `ProcessDataRead`
 - added: `SelectedLanguageProcessor` that resolves the current language from the request or falls back to the user's profile preference. Only notifies when the language is supported by the application
 - added: `StructuredDataManager` now validates structured data before insertion. Uses registered `IValidator<T>` implementations, or falls back to `DataAnnotations`. Controlled via `StructuredDataConfiguration.DisableValidation`
+- added: `FieldsValidator<TDataModel, TField>` base class for field-level validators with expression-based field paths and change detection
 
 ### Changed
 
