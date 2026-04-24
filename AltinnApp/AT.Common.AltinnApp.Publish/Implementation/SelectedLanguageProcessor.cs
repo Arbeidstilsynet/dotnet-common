@@ -51,7 +51,7 @@ internal class SelectedLanguageProcessor : IDataProcessor
 
         if (språkvalg is { Length: > 0 } && availableLanguages.Contains(språkvalg))
         {
-            await _languageObserver.NotifyCurrentLanguage(språkvalg);
+            await _languageObserver.NotifyCurrentLanguage(data, språkvalg);
         }
     }
 

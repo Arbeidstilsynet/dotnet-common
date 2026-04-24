@@ -47,7 +47,7 @@ public class SelectedLanguageProcessorTests
         await _sut.ProcessDataRead(_instance, _dataId, new object(), "en");
 
         // Assert
-        await _languageObserver.Received(1).NotifyCurrentLanguage("en");
+        await _languageObserver.Received(1).NotifyCurrentLanguage(Arg.Any<object>(), "en");
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public class SelectedLanguageProcessorTests
         await _sut.ProcessDataRead(_instance, _dataId, new object(), null);
 
         // Assert
-        await _languageObserver.Received(1).NotifyCurrentLanguage("nb");
+        await _languageObserver.Received(1).NotifyCurrentLanguage(Arg.Any<object>(), "nb");
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public class SelectedLanguageProcessorTests
         await _sut.ProcessDataRead(_instance, _dataId, new object(), "");
 
         // Assert
-        await _languageObserver.Received(1).NotifyCurrentLanguage("nn");
+        await _languageObserver.Received(1).NotifyCurrentLanguage(Arg.Any<object>(), "nn");
     }
 
     [Fact]
@@ -100,7 +100,9 @@ public class SelectedLanguageProcessorTests
         await _sut.ProcessDataRead(_instance, _dataId, new object(), null);
 
         // Assert
-        await _languageObserver.DidNotReceiveWithAnyArgs().NotifyCurrentLanguage(default!);
+        await _languageObserver
+            .DidNotReceiveWithAnyArgs()
+            .NotifyCurrentLanguage(default!, default!);
     }
 
     [Fact]
@@ -113,7 +115,9 @@ public class SelectedLanguageProcessorTests
         await _sut.ProcessDataRead(_instance, _dataId, new object(), null);
 
         // Assert
-        await _languageObserver.DidNotReceiveWithAnyArgs().NotifyCurrentLanguage(default!);
+        await _languageObserver
+            .DidNotReceiveWithAnyArgs()
+            .NotifyCurrentLanguage(default!, default!);
     }
 
     [Fact]
@@ -133,7 +137,9 @@ public class SelectedLanguageProcessorTests
         await _sut.ProcessDataRead(_instance, _dataId, new object(), null);
 
         // Assert
-        await _languageObserver.DidNotReceiveWithAnyArgs().NotifyCurrentLanguage(default!);
+        await _languageObserver
+            .DidNotReceiveWithAnyArgs()
+            .NotifyCurrentLanguage(default!, default!);
     }
 
     [Fact]
@@ -146,7 +152,9 @@ public class SelectedLanguageProcessorTests
         await _sut.ProcessDataRead(_instance, _dataId, new object(), "fr");
 
         // Assert
-        await _languageObserver.DidNotReceiveWithAnyArgs().NotifyCurrentLanguage(default!);
+        await _languageObserver
+            .DidNotReceiveWithAnyArgs()
+            .NotifyCurrentLanguage(default!, default!);
     }
 
     [Fact]
@@ -167,7 +175,9 @@ public class SelectedLanguageProcessorTests
         await _sut.ProcessDataRead(_instance, _dataId, new object(), null);
 
         // Assert
-        await _languageObserver.DidNotReceiveWithAnyArgs().NotifyCurrentLanguage(default!);
+        await _languageObserver
+            .DidNotReceiveWithAnyArgs()
+            .NotifyCurrentLanguage(default!, default!);
     }
 
     [Fact]
@@ -177,7 +187,9 @@ public class SelectedLanguageProcessorTests
         await _sut.ProcessDataWrite(_instance, _dataId, new object(), null, "en");
 
         // Assert
-        await _languageObserver.DidNotReceiveWithAnyArgs().NotifyCurrentLanguage(default!);
+        await _languageObserver
+            .DidNotReceiveWithAnyArgs()
+            .NotifyCurrentLanguage(default!, default!);
     }
 
     private void SetupAvailableLanguages(params string[] languages)

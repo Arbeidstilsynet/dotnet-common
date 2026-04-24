@@ -11,7 +11,8 @@ public interface ILanguageObserver
     /// <summary>
     /// This is called on <see cref="IDataProcessor.ProcessDataRead"/> and does not guarantee that a change has occurred.
     /// </summary>
+    /// <param name="dataModel">Current data model</param>
     /// <param name="language">Guaranteed to be non-empty. Two-letter ISO name</param>
     /// <returns></returns>
-    public Task NotifyCurrentLanguage(string language);
+    public Task NotifyCurrentLanguage(object dataModel, string language);
 }
