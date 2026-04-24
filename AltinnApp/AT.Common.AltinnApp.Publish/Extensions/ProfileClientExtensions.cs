@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace Arbeidstilsynet.Common.AltinnApp.Extensions;
 
+/// <summary>
+/// Extension methods for <see cref="IProfileClient"/> to get the user profile of the logged in user based on the userId in the http context.
+/// </summary>
 public static class ProfileClientExtensions
 {
     /// <summary>

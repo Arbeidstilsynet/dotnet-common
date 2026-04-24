@@ -1,5 +1,7 @@
 using Altinn.App.Core.Features;
+using Altinn.App.Core.Interface;
 using Altinn.Platform.Storage.Interface.Models;
+using Arbeidstilsynet.Common.AltinnApp.Abstract.Processing;
 using Arbeidstilsynet.Common.AltinnApp.Implementation;
 using Arbeidstilsynet.Common.AltinnApp.Model;
 using Arbeidstilsynet.Common.AltinnApp.Ports;
@@ -80,6 +82,22 @@ public record StructuredDataConfiguration
 /// </summary>
 public static class DependencyInjectionExtensions
 {
+    /// <summary>
+    /// Adds a singleton language observer of type <typeparamref name="T"/> to the service collection.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static IServiceCollection AddLanguageObserver<T>( 
+        this IServiceCollection services
+    )
+        where T : class, ILanguageObserver
+    {
+        services.TryAddTransient<IDataProcessor, SelectedLanguageProcessor>();
+        services.AddSingleton<ILanguageObserver, T>();
+        return services;
+    }
+    
     /// <summary>
     /// Adds a <see cref="ILandskodeLookup"/> to look up countries and their dial codes based on 3-letter ISO values.
     /// </summary>
