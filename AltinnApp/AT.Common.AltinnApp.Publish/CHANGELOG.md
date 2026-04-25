@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added: `StructuredDataManager` now validates structured data before insertion. Uses registered `IValidator<T>` implementations, or falls back to `DataAnnotations`. Controlled via `StructuredDataConfiguration.DisableValidation`
 - added: `FieldsValidator<TDataModel, TField>` base class for field-level validators with expression-based field paths and change detection
 - added: `RepeatingGroupValidator<TDataModel, TItem>` base class for validating items within repeating groups (collections), with indexed path generation
+- added: `DataTypeValidator<TDataModel, TToValidate>` base class that automatically discovers and validates all instances of a target type within a data model by walking the object graph via reflection, with circular type reference detection
 
 ### Changed
 
