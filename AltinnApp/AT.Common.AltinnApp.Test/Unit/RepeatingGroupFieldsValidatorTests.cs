@@ -192,10 +192,7 @@ public class RepeatingGroupValidatorTests
             Func<NestedModel, IEnumerable<Tag>>
         > GetCollectionAccessor() => m => m.Inner.Tags;
 
-        protected override Task<List<ValidationIssue>> ValidateItem(
-            Tag? item,
-            string itemPath
-        ) =>
+        protected override Task<List<ValidationIssue>> ValidateItem(Tag? item, string itemPath) =>
             Task.FromResult(
                 new List<ValidationIssue>
                 {
