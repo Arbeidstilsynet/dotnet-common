@@ -19,12 +19,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
-## 2.2.1
+## 2.2.2
 
 ### Added
 
 - feat(search): Added missing query parameters `gardsbruksnummer` and `bruksnummer` to `TextSearchQuery`
 - chore: add dotnet8 as targetframework to make it backwards compatible
+
+## 2.2.1
+
+### Changed
+
+- changed(deps): Applied minor and patch updates to dependencies
 
 ## 2.2.0
 
