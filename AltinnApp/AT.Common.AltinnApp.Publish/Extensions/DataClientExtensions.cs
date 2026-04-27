@@ -14,12 +14,14 @@ public static class DataClientExtensions
     /// <param name="dataClient">Interface used to retrieve the form data</param>
     /// <param name="instance">The instance where the form data is located</param>
     /// <param name="dataType">The datatype ID for the form. Default based on Arbeidstilsynet convention: "structured-data"</param>
+    /// <param name="cancellationToken">An optional cancellation token</param>
     /// <typeparam name="T">The type of the data model for the form</typeparam>
     /// <returns>The form data of type <typeparamref name="T"/>, or null if no element with the type <paramref name="dataType"/> was found</returns>
     public static async Task<T?> GetSkjemaData<T>(
         this IDataClient dataClient,
         Instance instance,
-        string dataType = "structured-data"
+        string dataType = "structured-data",
+        CancellationToken? cancellationToken = null
     )
     {
         var element = instance.Data.FirstOrDefault(d => d.DataType.Equals(dataType));
@@ -29,7 +31,12 @@ public static class DataClientExtensions
             return default;
         }
 
-        return (T?)await dataClient.GetFormData(instance, element);
+        return (T?)
+            await dataClient.GetFormData(
+                instance,
+                element,
+                cancellationToken: cancellationToken ?? CancellationToken.None
+            );
     }
 
     /// <summary>
@@ -39,18 +46,21 @@ public static class DataClientExtensions
     /// <param name="instance">The instance where the data element is located</param>
     /// <param name="element">The element to be deleted</param>
     /// <param name="delay">Determines whether the deletion can be postponed, or must happen now (default)</param>
+    /// <param name="cancellationToken">An optional cancellation token</param>
     public static async Task DeleteElement(
         this IDataClient dataClient,
         Instance instance,
         DataElement element,
-        bool delay = false
+        bool delay = false,
+        CancellationToken? cancellationToken = null
     )
     {
         await dataClient.DeleteData(
             instance.GetInstanceOwnerPartyId(),
             instance.GetInstanceGuid(),
             Guid.Parse(element.Id),
-            delay
+            delay,
+            cancellationToken: cancellationToken ?? CancellationToken.None
         );
 
         instance.Data.RemoveAll(e => e.Id == element.Id);
