@@ -1,6 +1,6 @@
 using System.Net;
-using Arbeidstilsynet.Common.AspNetCore.DependencyInjection;
-using Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
+using Arbeidstilsynet.Shared.CrossCutting;
+using Arbeidstilsynet.Shared.DependencyInjection;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using NSubstitute;

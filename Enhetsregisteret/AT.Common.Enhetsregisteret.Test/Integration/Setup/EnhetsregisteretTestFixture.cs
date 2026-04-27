@@ -1,5 +1,5 @@
 using Arbeidstilsynet.Common.Enhetsregisteret.DependencyInjection;
-using Arbeidstilsynet.Common.TestExtensions.Extensions;
+using Arbeidstilsynet.Shared.TestExtensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
