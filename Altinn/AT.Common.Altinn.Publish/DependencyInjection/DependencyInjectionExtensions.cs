@@ -51,6 +51,11 @@ public record AltinnConfiguration
     public required Uri AppBaseUrl { get; init; }
 
     /// <summary>
+    /// The base URL for the Dialogporten API. See https://docs.altinn.studio/en/dialogporten
+    /// </summary>
+    public Uri? DialogportenUrl { get; init; }
+
+    /// <summary>
     /// Creates an instance of <see cref="AltinnConfiguration"/>.
     /// </summary>
     /// <remarks>
@@ -126,6 +131,8 @@ public static class DependencyInjectionExtensions
     internal const string AltinnCorrespondenceApiClientKey = "AltinnCorrespondenceApiClient";
 
     internal const string AltinnAuthenticationApiClientKey = "AltinnAuthenticationApiClient";
+
+    internal const string DialogportenApiClientKey = "DialogportenApiClient";
 
     internal const string MaskinportenApiClientKey = "MaskinportenApiClient";
 
@@ -261,6 +268,20 @@ public static class DependencyInjectionExtensions
                 }
             )
             .AddStandardResilienceHandler();
+
+        if (altinnConfiguration.DialogportenUrl is not null)
+        {
+            services
+                .AddHttpClient(
+                    DialogportenApiClientKey,
+                    client =>
+                    {
+                        client.BaseAddress = altinnConfiguration.DialogportenUrl;
+                    }
+                )
+                .AddStandardResilienceHandler();
+            services.AddTransient<IDialogportenClient, DialogportenClient>();
+        }
 
         services.AddTransient<IAltinnAppsClient, AltinnAppsClient>();
         services.AddTransient<IAltinnEventsClient, AltinnEventsClient>();

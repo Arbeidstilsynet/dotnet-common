@@ -16,6 +16,8 @@ public static class HostEnvironmentExtensions
 
     private const string AltinnCorrespondenceApiSuffix = "correspondence/api/v1/";
 
+    private const string DialogportenSuffix = "dialogporten/api/v1/";
+
     /// <summary>
     /// Creates a default <see cref="AltinnConfiguration"/> for the current web host environment.
     /// <br/>
@@ -51,6 +53,10 @@ public static class HostEnvironmentExtensions
             CorrespondenceUrl = new Uri(
                 new Uri(webHostEnvironment.GetAltinnPlattformUrl()),
                 AltinnCorrespondenceApiSuffix
+            ),
+            DialogportenUrl = new Uri(
+                new Uri(webHostEnvironment.GetAltinnPlattformUrl()),
+                DialogportenSuffix
             ),
             AppBaseUrl = new Uri(webHostEnvironment.GetAltinnAppBaseUrl(orgId)),
         };
