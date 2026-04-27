@@ -6,7 +6,10 @@ namespace Enhetsregisteret.ArchUnit.Tests
     internal static class Constants
     {
         internal static string NameSpacePrefix = @"Arbeidstilsynet\.Common\.Enhetsregisteret";
-        internal static string RootNamespace = $"^({NameSpacePrefix}|{NameSpacePrefix}\\..*)$";
+
+        internal static string SharedNameSpacePrefix = @"Arbeidstilsynet\.Shared";
+        internal static string RootNamespace =
+            $"^({NameSpacePrefix}|{NameSpacePrefix}\\..*|{SharedNameSpacePrefix}|{SharedNameSpacePrefix}\\..*)$";
         internal static string ExtensionsNamespace = CreateNamespaceRegex("Extensions");
         internal static string DependencyInjectionNamespace = CreateNamespaceRegex(
             "DependencyInjection"
@@ -15,7 +18,7 @@ namespace Enhetsregisteret.ArchUnit.Tests
 
         private static string CreateNamespaceRegex(string namespaceSection)
         {
-            return $@"^({NameSpacePrefix}\.{namespaceSection}|{NameSpacePrefix}\.{namespaceSection}\..*|{NameSpacePrefix}\..*\.{namespaceSection}|{NameSpacePrefix}\..*\.{namespaceSection}\..*)$";
+            return $@"^({NameSpacePrefix}\.{namespaceSection}|{NameSpacePrefix}\.{namespaceSection}\..*|{NameSpacePrefix}\..*\.{namespaceSection}|{NameSpacePrefix}\..*\.{namespaceSection}\..*|{SharedNameSpacePrefix}\.{namespaceSection}|{SharedNameSpacePrefix}\.{namespaceSection}\..*|{SharedNameSpacePrefix}\..*\.{namespaceSection}|{SharedNameSpacePrefix}\..*\.{namespaceSection}\..*)$";
         }
     }
 
