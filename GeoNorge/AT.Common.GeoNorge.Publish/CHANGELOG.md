@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- feat(search): Added missing query paramters `gardsbruksnummer` and `bruksnummer` to `TextSearchQuery`
+- feat(search): Added missing query parameters `gardsbruksnummer` and `bruksnummer` to `TextSearchQuery`
 - chore: add dotnet8 as targetframework to make it backwards compatible
 
 ## 2.2.0
