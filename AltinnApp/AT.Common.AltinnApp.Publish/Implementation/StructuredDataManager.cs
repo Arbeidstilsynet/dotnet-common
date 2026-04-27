@@ -224,14 +224,16 @@ file static class Extensions
     public static async Task DeleteElement(
         this IDataClient dataClient,
         Instance instance,
-        DataElement dataElement
+        DataElement dataElement,
+        CancellationToken? cancellationToken = null
     )
     {
         await dataClient.DeleteData(
             instance.GetInstanceOwnerPartyId(),
             instance.GetInstanceGuid(),
             Guid.Parse(dataElement.Id),
-            false
+            false,
+            cancellationToken: cancellationToken ?? CancellationToken.None
         );
         instance.Data.Remove(dataElement);
     }

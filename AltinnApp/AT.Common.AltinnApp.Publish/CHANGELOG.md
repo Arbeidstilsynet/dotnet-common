@@ -34,6 +34,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - changed: `ILanguageObserver.NotifyCurrentLanguage` now receives the current data model as a parameter (`object dataModel, string language`)
 
+## 2.6.1
+
+### Changed
+
+- changed(deps): Applied minor and patch updates to dependencies
+
 ## 2.6.0
 
 ### Changed
