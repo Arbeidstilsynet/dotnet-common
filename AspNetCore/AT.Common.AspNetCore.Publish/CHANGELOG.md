@@ -19,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 3.0.0
+
+### Changed
+
+- **BREAKING**: `UriExtensions`, `MemoryCachedHttpClient`, `CachingOptions`, and `MemoryCachingHandler` moved from `Arbeidstilsynet.Common.AspNetCore.*` namespaces to `Arbeidstilsynet.Shared.*` namespaces
+- Shared utility code is now sourced from the `shared/` directory
+
 ## 2.5.2
 
 ### Changed

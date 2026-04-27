@@ -19,6 +19,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.0.0
+
+### Removed
+
+- **BREAKING**: Removed dependency on `Arbeidstilsynet.Common.AspNetCore.Extensions`
+
+### Changed
+
+- **BREAKING**: `AddEnhetsregisteret()` now accepts `IHostEnvironment` instead of `IWebHostEnvironment`
+- Internalized `UriExtensions`, `MemoryCachedHttpClient`, and `MemoryCachingHandler` from shared sources
+- Added `Microsoft.Extensions.Hosting.Abstractions` and `Microsoft.Extensions.Caching.Memory` as direct dependencies
+
 ## 1.2.1
 
 ### Changed

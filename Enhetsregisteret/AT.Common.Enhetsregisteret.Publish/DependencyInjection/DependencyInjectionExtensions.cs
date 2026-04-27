@@ -1,8 +1,7 @@
-using Arbeidstilsynet.Common.AspNetCore.DependencyInjection;
 using Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
 using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
+using Arbeidstilsynet.Shared.DependencyInjection;
 using FluentValidation;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -41,12 +40,12 @@ public static class DependencyInjectionExtensions
     /// Registers an implementation of IEnhetsregisteret in the specified <see cref="IServiceCollection"/>.
     /// </summary>
     /// <param name="services"><see cref="IServiceCollection"/> to add the service to.</param>
-    /// <param name="webHostEnvironment">the environment the application runs in</param>
+    /// <param name="hostEnvironment">the environment the application runs in</param>
     /// <param name="configure">Configure the client.</param>
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
     public static IServiceCollection AddEnhetsregisteret(
         this IServiceCollection services,
-        IWebHostEnvironment webHostEnvironment,
+        IHostEnvironment hostEnvironment,
         Action<EnhetsregisteretConfig> configure
     )
     {
@@ -57,7 +56,7 @@ public static class DependencyInjectionExtensions
 
         configure.Invoke(config);
 
-        services.AddServices(webHostEnvironment, config);
+        services.AddServices(hostEnvironment, config);
 
         return services;
     }
@@ -66,12 +65,12 @@ public static class DependencyInjectionExtensions
     /// Registers an implementation of IEnhetsregisteret in the specified <see cref="IServiceCollection"/>.
     /// </summary>
     /// <param name="services"><see cref="IServiceCollection"/> to add the service to.</param>
-    /// <param name="webHostEnvironment">the environment the application runs in</param>
+    /// <param name="hostEnvironment">the environment the application runs in</param>
     /// <param name="config">Configuration for the client. If null, a default configuration is used.</param>
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
     public static IServiceCollection AddEnhetsregisteret(
         this IServiceCollection services,
-        IWebHostEnvironment webHostEnvironment,
+        IHostEnvironment hostEnvironment,
         EnhetsregisteretConfig? config = null
     )
     {
@@ -80,21 +79,21 @@ public static class DependencyInjectionExtensions
             CacheOptions = new CacheOptions { Disabled = false },
         };
 
-        services.AddServices(webHostEnvironment, config);
+        services.AddServices(hostEnvironment, config);
 
         return services;
     }
 
-    private static string GetBrregUrlBasedOnEnvironment(IWebHostEnvironment webHostEnvironment)
+    private static string GetBrregUrlBasedOnEnvironment(IHostEnvironment hostEnvironment)
     {
-        return webHostEnvironment.IsProduction()
+        return hostEnvironment.IsProduction()
             ? "https://data.brreg.no/"
             : "https://data.ppe.brreg.no/";
     }
 
     private static void AddServices(
         this IServiceCollection services,
-        IWebHostEnvironment webHostEnvironment,
+        IHostEnvironment hostEnvironment,
         EnhetsregisteretConfig config
     )
     {
@@ -105,7 +104,7 @@ public static class DependencyInjectionExtensions
         {
             httpClient.BaseAddress = new Uri(
                 string.IsNullOrEmpty(config.BrregApiBaseUrlOverwrite)
-                    ? GetBrregUrlBasedOnEnvironment(webHostEnvironment)
+                    ? GetBrregUrlBasedOnEnvironment(hostEnvironment)
                     : config.BrregApiBaseUrlOverwrite
             );
         };

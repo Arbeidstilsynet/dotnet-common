@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 3.0.0
+
+### Removed
+
+- **BREAKING**: Removed dependency on `Arbeidstilsynet.Common.AspNetCore.Extensions`
+
 ## 2.2.2
 
 ### Added

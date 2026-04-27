@@ -1,9 +1,9 @@
-using Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
+using Arbeidstilsynet.Shared.CrossCutting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
-namespace Arbeidstilsynet.Common.AspNetCore.DependencyInjection;
+namespace Arbeidstilsynet.Shared.DependencyInjection;
 
 /// <summary>
 /// Options for configuring caching behavior.
@@ -29,10 +29,6 @@ public static class MemoryCachedHttpClient
     /// <summary>
     /// Adds a cached HTTP client to the service collection.
     /// </summary>
-    /// <param name="services"></param>
-    /// <param name="name"></param>
-    /// <param name="configureCachingOptions"></param>
-    /// <returns></returns>
     public static IHttpClientBuilder AddMemoryCachedClient(
         this IServiceCollection services,
         string name,
@@ -53,11 +49,6 @@ public static class MemoryCachedHttpClient
     /// <summary>
     /// Adds a cached HTTP client to the service collection with a custom configuration action.
     /// </summary>
-    /// <param name="services"></param>
-    /// <param name="name"></param>
-    /// <param name="configureClient"></param>
-    /// <param name="configureCachingOptions"></param>
-    /// <returns></returns>
     public static IHttpClientBuilder AddMemoryCachedClient(
         this IServiceCollection services,
         string name,
@@ -73,11 +64,6 @@ public static class MemoryCachedHttpClient
     /// <summary>
     /// Adds a cached HTTP client to the service collection with a custom configuration action that receives the service provider.
     /// </summary>
-    /// <param name="services"></param>
-    /// <param name="name"></param>
-    /// <param name="configureClient"></param>
-    /// <param name="configureCachingOptions"></param>
-    /// <returns></returns>
     public static IHttpClientBuilder AddMemoryCachedClient(
         this IServiceCollection services,
         string name,

@@ -10,14 +10,15 @@
     <Company>Arbeidstilsynet</Company>
     <Description>A http client which interfaces with enhetsregisteret (Brønnøysundregistrene)</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.2.1</Version>
+    <Version>2.0.0</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/Arbeidstilsynet/dotnet-common</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Arbeidstilsynet.Common.AspNetCore.Extensions" Version="2.5.1" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.7" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageReference
       Include="Microsoft.Extensions.DependencyInjection.Abstractions"
@@ -27,6 +28,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\shared\src\UriExtensions.cs" Link="Shared\UriExtensions.cs" />
+    <Compile
+      Include="..\..\shared\src\MemoryCachedHttpClient.cs"
+      Link="Shared\MemoryCachedHttpClient.cs"
+    />
+    <Compile
+      Include="..\..\shared\src\MemoryCachingHandler.cs"
+      Link="Shared\MemoryCachingHandler.cs"
+    />
   </ItemGroup>
   <Target
     Name="InjectPackageReleaseNotesFromFile"
