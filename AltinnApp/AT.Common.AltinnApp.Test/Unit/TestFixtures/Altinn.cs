@@ -1,4 +1,3 @@
-using Altinn.App.Core.Internal.AppModel;
 using Altinn.Platform.Storage.Interface.Models;
 
 namespace Arbeidstilsynet.Common.AltinnApp.Test.Unit.TestFixtures;

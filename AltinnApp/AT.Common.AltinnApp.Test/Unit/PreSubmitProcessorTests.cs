@@ -3,7 +3,6 @@ using Altinn.App.Core.Internal.App;
 using Altinn.App.Core.Internal.Data;
 using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.AltinnApp.Abstract.Processing;
-using Arbeidstilsynet.Common.AltinnApp.Extensions;
 using Arbeidstilsynet.Common.AltinnApp.Test.Unit.TestFixtures;
 using NSubstitute;
 using Shouldly;

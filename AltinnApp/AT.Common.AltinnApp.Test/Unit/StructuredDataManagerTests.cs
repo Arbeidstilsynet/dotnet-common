@@ -1,9 +1,7 @@
-using Altinn.App.Core.Helpers.DataModel;
 using Altinn.App.Core.Internal.App;
 using Altinn.App.Core.Internal.Data;
 using Altinn.App.Core.Internal.Instances;
 using Altinn.Platform.Storage.Interface.Models;
-using Arbeidstilsynet.Common.AltinnApp.DependencyInjection;
 using Arbeidstilsynet.Common.AltinnApp.Extensions;
 using Arbeidstilsynet.Common.AltinnApp.Implementation;
 using Arbeidstilsynet.Common.AltinnApp.Test.Unit.TestFixtures;
@@ -20,6 +18,7 @@ public class StructuredDataManagerTests
     private readonly IDataClient _dataClient;
     private readonly IInstanceClient _instanceClient;
     private readonly ILogger<StructuredDataManager<TestDataModel, TestStructuredData>> _logger;
+    private readonly IStructuredDataValidator<TestStructuredData> _structuredDataValidator;
     private readonly StructuredDataManager<TestDataModel, TestStructuredData> _sut;
 
     private readonly StructuredDataManager<TestDataModel, TestStructuredData>.Config _config;
@@ -32,6 +31,7 @@ public class StructuredDataManagerTests
         _logger = Substitute.For<
             ILogger<StructuredDataManager<TestDataModel, TestStructuredData>>
         >();
+        _structuredDataValidator = Substitute.For<IStructuredDataValidator<TestStructuredData>>();
 
         _config = new StructuredDataManager<TestDataModel, TestStructuredData>.Config(
             dataModel => new TestStructuredData { Name = dataModel.Name }
@@ -42,7 +42,8 @@ public class StructuredDataManagerTests
             _dataClient,
             _instanceClient,
             _config,
-            _logger
+            _logger,
+            _structuredDataValidator
         );
     }
 
@@ -270,7 +271,8 @@ public class StructuredDataManagerTests
                     KeepAppDataModelAfterMapping = true,
                 },
             },
-            _logger
+            _logger,
+            Substitute.For<IStructuredDataValidator<TestStructuredData>>()
         );
 
         // Act
