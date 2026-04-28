@@ -79,7 +79,12 @@ public static class HostEnvironmentExtensions
         }
     }
 
-    private static string GetAltinnPlattformUrl(this IWebHostEnvironment webHostEnvironment)
+    /// <summary>
+    /// Returns the Altinn platform base URL for the current environment.
+    /// </summary>
+    /// <param name="webHostEnvironment">The web host environment.</param>
+    /// <returns>The Altinn platform base URL.</returns>
+    public static string GetAltinnPlattformUrl(this IWebHostEnvironment webHostEnvironment)
     {
         if (webHostEnvironment.IsDevelopment())
         {
@@ -95,7 +100,13 @@ public static class HostEnvironmentExtensions
         }
     }
 
-    private static string GetAltinnAppBaseUrl(
+    /// <summary>
+    /// Returns the Altinn app base URL for the current environment.
+    /// </summary>
+    /// <param name="webHostEnvironment">The web host environment.</param>
+    /// <param name="orgId">The organization identifier used to build the URL.</param>
+    /// <returns>The Altinn app base URL.</returns>
+    public static string GetAltinnAppBaseUrl(
         this IWebHostEnvironment webHostEnvironment,
         string orgId
     )
