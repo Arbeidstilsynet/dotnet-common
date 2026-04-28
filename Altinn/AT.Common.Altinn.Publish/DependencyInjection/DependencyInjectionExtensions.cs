@@ -280,7 +280,7 @@ public static class DependencyInjectionExtensions
                     }
                 )
                 .AddStandardResilienceHandler();
-            services.AddTransient<IDialogportenClient, DialogportenClient>();
+            services.AddTransient<IAltinnDialogportenClient, AltinnDialogportenClient>();
         }
 
         services.AddTransient<IAltinnAppsClient, AltinnAppsClient>();

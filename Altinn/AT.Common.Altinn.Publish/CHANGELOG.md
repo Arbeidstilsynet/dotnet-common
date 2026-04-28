@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 3.1.0
+
+### Added
+
+- feat(altinn): Added ``AltinnDialogportenClient`` to support communication with dialogporten. Can be injected via ``IAltinnDialogportenClient`` and requires a maskinporten integration with the following altinn scope to work: `altinn:serviceowner`. Right now the client only supports one method to retrieve a dialogId based on an instanceId.
+
 ## 3.0.0
 
 ### Removed

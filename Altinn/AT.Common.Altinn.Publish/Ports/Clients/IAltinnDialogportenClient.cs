@@ -5,7 +5,7 @@ namespace Arbeidstilsynet.Common.Altinn.Ports.Clients;
 /// <summary>
 /// Client for interacting with Dialogporten.
 /// </summary>
-public interface IDialogportenClient
+public interface IAltinnDialogportenClient
 {
     /// <summary>
     /// Looks up a dialog by instance reference in service owner context.

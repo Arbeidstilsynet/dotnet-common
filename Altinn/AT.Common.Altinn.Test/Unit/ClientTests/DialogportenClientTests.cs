@@ -7,7 +7,7 @@ namespace Arbeidstilsynet.Common.Altinn.Test.Unit.ClientTests;
 
 public class DialogportenClientTests : TestBed<AltinnApiTestFixture>
 {
-    private readonly IDialogportenClient _sut;
+    private readonly IAltinnDialogportenClient _sut;
 
     public DialogportenClientTests(
         ITestOutputHelper testOutputHelper,
@@ -15,7 +15,7 @@ public class DialogportenClientTests : TestBed<AltinnApiTestFixture>
     )
         : base(testOutputHelper, altinnApiTestFixture)
     {
-        _sut = altinnApiTestFixture.GetService<IDialogportenClient>(testOutputHelper)!;
+        _sut = altinnApiTestFixture.GetService<IAltinnDialogportenClient>(testOutputHelper)!;
     }
 
     [Fact]

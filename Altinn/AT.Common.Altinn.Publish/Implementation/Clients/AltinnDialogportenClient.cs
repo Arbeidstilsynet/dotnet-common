@@ -8,13 +8,13 @@ using static Arbeidstilsynet.Common.Altinn.DependencyInjection.DependencyInjecti
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Clients;
 
-internal class DialogportenClient : IDialogportenClient
+internal class AltinnDialogportenClient : IAltinnDialogportenClient
 {
     private readonly IAltinnTokenProvider _altinnTokenProvider;
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-    public DialogportenClient(
+    public AltinnDialogportenClient(
         IHttpClientFactory httpClientFactory,
         IAltinnTokenProvider altinnTokenProvider
     )
