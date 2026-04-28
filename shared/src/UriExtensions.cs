@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
+namespace Arbeidstilsynet.Shared.Extensions;
 
 /// <summary>
 /// Extensions for working with <see cref="Uri"/> objects.

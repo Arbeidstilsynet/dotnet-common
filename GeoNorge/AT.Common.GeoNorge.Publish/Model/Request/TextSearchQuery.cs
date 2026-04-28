@@ -34,4 +34,14 @@ public record TextSearchQuery
     /// Optional municipality number to filter the search results by a specific municipality number (4 digits, first two are the county code).
     /// </summary>
     public string? Kommunenummer { get; init; }
+
+    /// <summary>
+    /// Optional farm number (gardsnummer) to filter the search results by a specific farm number.
+    /// </summary>
+    public int? Gardsnummer { get; init; }
+
+    /// <summary>
+    /// Optional land use number (bruksnummer) to filter the search results by a specific land use number.
+    /// </summary>
+    public int? Bruksnummer { get; init; }
 }

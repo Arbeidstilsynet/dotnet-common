@@ -1,5 +1,5 @@
 using Arbeidstilsynet.Common.GeoNorge.DependencyInjection;
-using Arbeidstilsynet.Common.TestExtensions.Extensions;
+using Arbeidstilsynet.Shared.TestExtensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WireMock.Admin.Mappings;

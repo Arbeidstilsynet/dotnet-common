@@ -1,4 +1,4 @@
-using Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
+using Arbeidstilsynet.Shared.Extensions;
 using Shouldly;
 
 namespace Arbeidstilsynet.Common.AspNetCore.Extensions.Test.Unit;

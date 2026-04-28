@@ -1,8 +1,8 @@
-using Arbeidstilsynet.Common.AspNetCore.DependencyInjection;
+using Arbeidstilsynet.Shared.DependencyInjection;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
-namespace Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
+namespace Arbeidstilsynet.Shared.CrossCutting;
 
 internal class MemoryCachingHandler(IMemoryCache cache, IOptions<CachingOptions> cachingOptions)
     : DelegatingHandler

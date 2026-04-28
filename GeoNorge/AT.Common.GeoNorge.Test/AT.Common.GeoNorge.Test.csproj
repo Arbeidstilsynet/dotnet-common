@@ -10,7 +10,6 @@
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Arbeidstilsynet.Common.TestExtensions" Version="1.2.0" />
     <PackageReference Include="NSubstitute" Version="5.3.0" />
     <PackageReference Include="Shouldly" Version="4.3.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
@@ -27,6 +26,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AT.Common.GeoNorge.Publish\AT.Common.GeoNorge.Publish.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile
+      Include="..\..\shared\test\WireMockExtensions.cs"
+      Link="Shared\WireMockExtensions.cs"
+    />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Integration\TestData\Snapshots\" />

@@ -1,6 +1,7 @@
-using Arbeidstilsynet.Common.AspNetCore.DependencyInjection;
 using Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
 using Arbeidstilsynet.Common.AspNetCore.Extensions.Extensions;
+using Arbeidstilsynet.Shared.CrossCutting;
+using Arbeidstilsynet.Shared.DependencyInjection;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
