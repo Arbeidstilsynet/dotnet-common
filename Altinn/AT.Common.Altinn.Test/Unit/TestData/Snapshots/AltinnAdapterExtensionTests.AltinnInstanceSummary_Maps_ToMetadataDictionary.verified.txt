@@ -1,6 +1,8 @@
 ﻿{
   altinnReference: a37d82a3aeb6,
   app: test,
+  dataValues: {"dialog.id":"651375fb-4f0f-4857-9f8d-a37d82a3aeb7"},
+  dialogId: 651375fb-4f0f-4857-9f8d-a37d82a3aeb7,
   instanceGuid: 651375fb-4f0f-4857-9f8d-a37d82a3aeb6,
   instanceOwnerPartyId: 51644866,
   org: dat,
