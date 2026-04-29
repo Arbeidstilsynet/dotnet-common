@@ -31,8 +31,24 @@ public void ConfigureServices(IServiceCollection services)
 
     // Country options for Altinn dropdowns (includes AddLandskoder)
     services.AddLandOptions();
+
+    // Country options with custom configuration
+    services.AddLandOptions(new LandOptionsConfiguration
+    {
+        OptionsId = "land",                                        // default
+        OptionValueIsoType = LandOptionsConfiguration.IsoType.Alpha3, // default; or Alpha2
+        CustomOrderFunc = countries => countries.OrderBy(c => c.Land), // default is alphabetical
+    });
 }
 ```
+
+### `LandOptionsConfiguration`
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `OptionsId` | `string` | `"land"` | The Altinn optionsId used to identify this option list. |
+| `CustomOrderFunc` | `Func<IEnumerable<Landskode>, IEnumerable<Landskode>>?` | `null` (alphabetical) | Custom ordering function for the list of countries. |
+| `OptionValueIsoType` | `LandOptionsConfiguration.IsoType` | `Alpha3` | Which ISO code to use as the option value (`Alpha3` or `Alpha2`). |
 
 ---
 
@@ -42,13 +58,34 @@ Attach a strongly-typed `DataElement` to your Altinn instance to hold computed/d
 
 ### 1. Register in DI
 
+Two overloads are available — one accepting an explicit `StructuredDataConfiguration`, and one accepting `IHostEnvironment` (which auto-configures `IncludeErrorDetails` based on the environment):
+
 ```csharp
-services.AddStructuredData<TDataModel, TStructuredData>(dataModel =>
-    new TStructuredData
+// Option A: Explicit configuration
+services.AddStructuredData<TDataModel, TStructuredData>(
+    dataModel => new TStructuredData { /* map properties */ },
+    new StructuredDataConfiguration
     {
-        // Map properties from the form data model
+        StructuredDataTypeId = "structured-data",       // default
+        MainPdfDataTypeId = "ref-data-as-pdf",          // default
+        IncludeErrorDetails = false,                    // default
+        KeepAppDataModelAfterMapping = false,            // default
     });
+
+// Option B: Environment-based (IncludeErrorDetails = true in non-production)
+services.AddStructuredData<TDataModel, TStructuredData>(
+    dataModel => new TStructuredData { /* map properties */ },
+    builder.Environment);
 ```
+
+#### `StructuredDataConfiguration`
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `StructuredDataTypeId` | `string` | `"structured-data"` | The `DataElement.DataType` id for the structured data element. |
+| `MainPdfDataTypeId` | `string` | `"ref-data-as-pdf"` | The `DataElement.DataType` id for the main PDF document. |
+| `IncludeErrorDetails` | `bool` | `false` | Whether to include error details in the structured data on mapping errors. |
+| `KeepAppDataModelAfterMapping` | `bool` | `false` | Whether to keep the App data model after mapping (otherwise it is deleted before storage). |
 
 ### 2. Declare the data type in `App/config/applicationmetadata.json`
 
@@ -107,28 +144,44 @@ public class EmailChangeProcessor : MemberProcessor<MyDataModel, string>
 
 ### `ListProcessor<TDataModel, TItem>` — Collection diff (add/remove/item change)
 
+`ListProcessor` extends `MemberProcessor` for list properties. It seals `ProcessMember` to iterate items by their `AltinnRowId` (a `Guid` property required on `TItem`) and calls `ProcessItem` for each added, removed, or changed item.
+
 ```csharp
 public class AttachmentListProcessor : ListProcessor<MyDataModel, AttachmentInfo>
 {
     protected override List<AttachmentInfo>? AccessMember(MyDataModel dataModel)
         => dataModel.Attachments;
 
-    protected override async Task ProcessListChange(
-        List<AttachmentInfo>? currentList,
-        List<AttachmentInfo>? previousList,
-        MyDataModel currentDataModel,
-        MyDataModel previousDataModel)
-    {
-        // React to the list being added to or removed from
-    }
-
     protected override async Task ProcessItem(
-        AttachmentInfo currentItem,
-        AttachmentInfo previousItem,
+        AttachmentInfo? currentItem,
+        AttachmentInfo? previousItem,
         MyDataModel currentDataModel,
         MyDataModel previousDataModel)
     {
-        // React to individual item changes
+        // currentItem is null  → item was deleted
+        // previousItem is null → item was added
+        // both non-null        → item was changed
+    }
+}
+```
+
+### `PreSubmitDataModelProcessor<TDataModel>` — Process data before submission
+
+Runs at process task end (`IProcessTaskEnd`) to modify the data model before it is finalised. Retrieves the form data, calls your `ProcessDataModel` method, and saves the result back.
+
+```csharp
+public class MyPreSubmitProcessor : PreSubmitDataModelProcessor<MyDataModel>
+{
+    public MyPreSubmitProcessor(IDataClient dataClient, IApplicationClient applicationClient)
+        : base(dataClient, applicationClient) { }
+
+    protected override async Task<MyDataModel> ProcessDataModel(
+        MyDataModel currentDataModel,
+        Instance instance)
+    {
+        // Modify the data model before submission
+        currentDataModel.SubmittedAt = DateTime.UtcNow;
+        return currentDataModel;
     }
 }
 ```
@@ -139,6 +192,7 @@ public class AttachmentListProcessor : ListProcessor<MyDataModel, AttachmentInfo
 services.AddTransient<IDataProcessor, MyFormDataProcessor>();
 services.AddTransient<IDataProcessor, EmailChangeProcessor>();
 services.AddTransient<IDataProcessor, AttachmentListProcessor>();
+services.AddTransient<IProcessTaskEnd, MyPreSubmitProcessor>();
 ```
 
 ---
@@ -176,6 +230,18 @@ await dataClient.DeleteElement(instance, attachment, delay: true);
 
 ---
 
+## ApplicationClient Extensions
+
+```csharp
+using Arbeidstilsynet.Common.AltinnApp.Extensions;
+
+// Get the DataElement for your data model type (matched via AppLogic.ClassRef)
+DataElement element = await applicationClient.GetRequiredDataModelElement<MyDataModel>(instance);
+// Throws InvalidOperationException if the application, data type, or data element is not found.
+```
+
+---
+
 ## Country Code Lookup (`ILandskodeLookup`)
 
 ```csharp
@@ -183,9 +249,17 @@ public class AddressService(ILandskodeLookup landskodeLookup)
 {
     public async Task<string> GetCountryInfo(string isoCode)
     {
+        // Look up a single country by alpha-3 code
         var country = await landskodeLookup.GetLandskode("NOR");
         return country != null ? $"{country.Land} ({country.Kode})" : "Unknown";
         // → "Norway (+47)"
+    }
+
+    public async Task<IEnumerable<string>> GetAllCountryNames()
+    {
+        // Get all available country codes
+        var all = await landskodeLookup.GetLandskoder();
+        return all.Select(kvp => kvp.Value.Land);
     }
 }
 ```
@@ -207,7 +281,7 @@ var resource = await assembly.GetEmbeddedResource<MyResourceType>("resource.json
 
 ## Adding a New Data Processor — Checklist
 
-1. Choose the appropriate base class: `BaseDataProcessor`, `MemberProcessor`, or `ListProcessor`
-2. Implement the abstract `ProcessData` / `ProcessMember` / `ProcessListChange` + `ProcessItem` methods
-3. Register as `services.AddTransient<IDataProcessor, MyProcessor>()`
+1. Choose the appropriate base class: `BaseDataProcessor`, `MemberProcessor`, `ListProcessor`, or `PreSubmitDataModelProcessor`
+2. Implement the abstract methods (`ProcessData`, `ProcessMember`, `ProcessItem`, or `ProcessDataModel`)
+3. Register as `services.AddTransient<IDataProcessor, MyProcessor>()` (or `IProcessTaskEnd` for `PreSubmitDataModelProcessor`)
 4. Test by submitting form data changes in a local Altinn app instance

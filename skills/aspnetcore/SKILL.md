@@ -48,7 +48,7 @@ builder.Services.ConfigureCors(
 );
 
 // Optional: startup tasks executed before the health check reports "ready"
-builder.Services.AddStartupChecks(provider =>
+builder.Services.AddStartupChecks((provider, cancellationToken) =>
 [
     provider.GetRequiredService<IDatabaseMigrator>().MigrateAsync()
 ]);
@@ -66,7 +66,8 @@ app.AddStandardApi(
         // Dynamic mapping
         options.AddExceptionMapping<SomeHttpException>(e =>
             e?.StatusCode ?? HttpStatusCode.InternalServerError);
-    }
+    },
+    disableCors: false // optional; set true only during development
 );
 
 await app.RunAsync();
@@ -78,11 +79,13 @@ await app.RunAsync();
 
 | Method | What it registers |
 |--------|-------------------|
-| `ConfigureStandardApi()` | Controllers + JSON options (`JsonStringEnumConverter`, `JsonStringUriConverter`, camelCase), `RequestValidationFilter`, `ProblemDetails`, startup health check |
+| `ConfigureStandardApi()` | Calls `ConfigureStandardMvc()` + `AddStandardHealthChecks()` — convenience one-liner |
+| `ConfigureStandardMvc()` | Controllers + JSON options (`JsonStringEnumConverter`, `JsonStringUriConverter`, camelCase), `RequestValidationFilter`, `ProblemDetails`. Returns `IMvcBuilder` for further configuration |
 | `AddStandardOpenApi(appName)` | OpenAPI document with title/version + enum-as-string schema transformer |
 | `AddStandardAuth(authConfig)` | JWT Bearer (Entra ID) when `DisableAuth = false`; permissive allow-all policy otherwise |
 | `ConfigureOpenTelemetry(appName)` | ASP.NET Core + HttpClient instrumentation, OTLP export for traces/metrics/logs |
 | `ConfigureCors(origins, credentials, isDev)` | Default CORS policy (any origin in dev if no origins provided) |
+| `ConfigureCors(corsConfiguration, isDev)` | Same as above but accepts a `CorsConfiguration` record with `AllowedOrigins` and `AllowCredentials` properties |
 | `AddStartupChecks(delegate)` | Runs async tasks before `StartupHealthCheck` reports healthy |
 | `AddStandardHealthChecks()` | `/healthz/ready` + `/healthz/live` health check endpoints |
 
@@ -92,7 +95,7 @@ await app.RunAsync();
 
 | Method | What it adds |
 |--------|--------------|
-| `AddStandardApi(authConfig, configureExceptions)` | Full pipeline: authentication → exception handler → HTTPS redirection → routing → authorization → controllers → health checks → CORS → Scalar |
+| `AddStandardApi(authConfig, configureExceptions, disableCors)` | Full pipeline: authentication → exception handler → HTTPS redirection → routing → authorization → controllers → health checks → CORS → Scalar |
 | `AddScalar()` | `GET /openapi/v1.json` + Scalar UI at `/scalar/v1` |
 
 ---

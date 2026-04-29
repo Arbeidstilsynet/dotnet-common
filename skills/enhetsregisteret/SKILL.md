@@ -76,7 +76,7 @@ Both return `null` if the unit is not found or an error occurs.
 var searchParams = new SearchEnheterQuery
 {
     Navn = "Arbeidstilsynet",
-    Kommunenummer = "5001",
+    Organisasjonsform = ["AS"],
 };
 
 var pagination = new Pagination { Page = 0, Size = 20 };
@@ -95,7 +95,7 @@ Returns `null` on error.
 ```csharp
 var query = new GetOppdateringerQuery
 {
-    Dato = DateOnly.FromDateTime(DateTime.Today.AddDays(-7)),
+    Dato = DateTime.Today.AddDays(-7),
 };
 
 // Updates for main units
@@ -116,20 +116,60 @@ PaginationResult<Oppdatering>? underenheterOps =
 | `Enhet` | Main business unit with name, organisation number, address, NACE codes, etc. |
 | `Underenhet` | Sub-unit linked to a parent `Enhet` |
 | `Oppdatering` | Record of a change to an `Enhet` or `Underenhet` |
-| `SearchEnheterQuery` | Search filter (name, municipality, industry code, …) |
-| `GetOppdateringerQuery` | Filter for update history (date range) |
+| `SearchEnheterQuery` | Search filter: `Navn`, `Organisasjonsnummer`, `OverordnetEnhetOrganisasjonsnummer`, `Organisasjonsform`, `StrictSearch`, `SortDirection`, `SortBy` |
+| `GetOppdateringerQuery` | Filter for update history: `required DateTime Dato`, `long Oppdateringsid` (default `1`), `string[] Organisasjonsnummer` |
 | `Pagination` | `Page` (page index) + `Size` (page size) |
-| `PaginationResult<T>` | `Elements`, `TotalElements`, `TotalPages` |
+| `PaginationResult<T>` | `Elements`, `TotalElements`, `PageSize`, `PageIndex` |
 
 ---
 
-## Validation Utilities
+## Extension Methods
 
-The package includes `Enhetsregisteret.Validation` helpers for validating Norwegian organisation numbers:
+The `EnhetsregisteretExtensions` class (in `Arbeidstilsynet.Common.Enhetsregisteret.Extensions`) provides convenience methods on `IEnhetsregisteret` for common access patterns.
+
+### Batch lookups
 
 ```csharp
-// Check if a string is a valid 9-digit Norwegian org number
-bool valid = OrganisasjonsnummerValidator.IsValid("123456789");
+// Get multiple enheter by org numbers
+IEnumerable<Enhet> enheter = await enhetsregisteret.GetEnheter(["123456789", "987654321"]);
+
+// Get multiple underenheter by org numbers
+IEnumerable<Underenhet> underenheter = await enhetsregisteret.GetUnderenheter(["111111111", "222222222"]);
+
+// Get all underenheter belonging to a hovedenhet
+IEnumerable<Underenhet> children = await enhetsregisteret.GetUnderenheterByHovedenhet("123456789");
+```
+
+These methods handle pagination automatically and return all matching results.
+
+### `IAsyncEnumerable` overloads
+
+For large result sets, extension overloads return `IAsyncEnumerable<T>` and stream pages lazily:
+
+```csharp
+// Stream all matching enheter
+await foreach (Enhet enhet in enhetsregisteret.SearchEnheter(new SearchEnheterQuery { Navn = "Arbeidstilsynet" }))
+{
+    // process each enhet as it arrives
+}
+
+// Stream all matching underenheter
+await foreach (Underenhet ue in enhetsregisteret.SearchUnderenheter(new SearchEnheterQuery { Organisasjonsform = ["BEDR"] }))
+{
+    // ...
+}
+
+// Stream updates for enheter
+await foreach (Oppdatering op in enhetsregisteret.GetOppdateringerEnheter(new GetOppdateringerQuery { Dato = DateTime.Today.AddDays(-7) }))
+{
+    // ...
+}
+
+// Stream updates for underenheter
+await foreach (Oppdatering op in enhetsregisteret.GetOppdateringerUnderenheter(new GetOppdateringerQuery { Dato = DateTime.Today.AddDays(-7) }))
+{
+    // ...
+}
 ```
 
 ---
@@ -148,4 +188,4 @@ bool valid = OrganisasjonsnummerValidator.IsValid("123456789");
 2. Register with `services.AddEnhetsregisteret(environment)`
 3. Inject `IEnhetsregisteret` into your service
 4. Handle `null` returns (not-found / error)
-5. Use `OrganisasjonsnummerValidator.IsValid` to validate input before calling the API
+5. Use extension methods from `EnhetsregisteretExtensions` for batch lookups and streaming

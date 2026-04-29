@@ -28,12 +28,16 @@ dotnet add package Arbeidstilsynet.Common.Altinn
 Registers `IAltinnAdapter`, `IAltinnMeldingerAdapter`, and all low-level clients.
 
 ```csharp
+// Signature: AddAltinnAdapter(IWebHostEnvironment, MaskinportenConfiguration, AltinnConfiguration? altinnConfiguration = null)
 services.AddAltinnAdapter(builder.Environment, appSettings.MaskinportenConfiguration);
 ```
 
 ### Option B — Low-level clients only
 
+Registers `IAltinnStorageClient`, `IAltinnEventsClient`, `IAltinnCorrespondenceClient`, `IAltinnAuthenticationClient`, `IAltinnAppsClient`, and `IMaskinportenClient`.
+
 ```csharp
+// Signature: AddAltinnApiClients(IWebHostEnvironment, MaskinportenConfiguration, AltinnConfiguration? altinnConfiguration = null)
 services.AddAltinnApiClients(builder.Environment, appSettings.MaskinportenConfiguration);
 ```
 
@@ -42,8 +46,8 @@ Both methods automatically resolve the correct Altinn base URLs based on environ
 | Environment | URLs used |
 |-------------|-----------|
 | Development | `http://local.altinn.cloud:5101/` (platform) / `http://local.altinn.cloud:5005/` (apps) |
-| Non-production (other) | `https://platform.tt02.altinn.no/` |
-| Production | `https://platform.altinn.no/` |
+| Non-production (other) | `https://platform.tt02.altinn.no/` (platform) / `https://dat.apps.tt02.altinn.no/` (apps) |
+| Production | `https://platform.altinn.no/` (platform) / `https://dat.apps.altinn.no/` (apps) |
 
 Override specific URLs by passing an `AltinnConfiguration`:
 
@@ -123,10 +127,10 @@ public class MyService(IAltinnAdapter altinnAdapter)
         var subscription = await altinnAdapter.SubscribeForCompletedProcessEvents(request);
 
         // Verify it exists
-        var existing = await altinnAdapter.GetAltinnSubscription(subscription.Id);
+        AltinnSubscription? existing = await altinnAdapter.GetAltinnSubscription(subscription.Id);
 
         // Remove it
-        await altinnAdapter.UnsubscribeForCompletedProcessEvents(subscription);
+        var success = await altinnAdapter.UnsubscribeForCompletedProcessEvents(subscription);
     }
 
     public async Task ScanInstances(string appId)
@@ -136,6 +140,29 @@ public class MyService(IAltinnAdapter altinnAdapter)
 
         // Get metadata only (no document download)
         var metadata = await altinnAdapter.GetMetadataForNonCompletedInstances(appId);
+    }
+}
+```
+
+---
+
+## `IAltinnMeldingerAdapter` — Correspondence adapter
+
+Inject via DI after calling `AddAltinnAdapter`. Provides a high-level interface for Altinn correspondences (meldinger).
+
+```csharp
+public class MyCorrespondenceService(IAltinnMeldingerAdapter meldingerAdapter)
+{
+    public async Task SendCorrespondence(CorrespondenceRequest request, List<IFormFile>? attachments = null)
+    {
+        // Create a new correspondence, optionally with file attachments
+        var response = await meldingerAdapter.CreateCorrespondence(request, attachments);
+    }
+
+    public async Task CheckCorrespondence(Guid correspondenceId)
+    {
+        // Retrieve an existing correspondence (returns null if not found)
+        AltinnCorrespondenceOverview? overview = await meldingerAdapter.GetCorrespondence(correspondenceId);
     }
 }
 ```
@@ -188,7 +215,10 @@ var overview = await correspondenceClient.GetCorrespondence(guid);
 
 ### `IAltinnAppsClient`
 
-Interact directly with Altinn App endpoints.
+```csharp
+// Complete an instance (mark as complete in Altinn)
+var instance = await appsClient.CompleteInstance(appId, new InstanceRequest { ... });
+```
 
 ### `IAltinnAuthenticationClient`
 
@@ -212,6 +242,15 @@ Get raw Maskinporten tokens.
 ## Extension Methods
 
 `AdapterExtensions`, `AltinnStorageClientExtensions`, `CorrespondenceRequestExtensions`, and `InstanceExtensions` provide convenience helpers for common operations on Altinn model objects.
+
+### `GetAllInstances` (`AltinnStorageClientExtensions`)
+
+Retrieves all Altinn instances matching the given query parameters, handling pagination internally.
+
+```csharp
+// Returns all matching instances across all pages
+var allInstances = await storageClient.GetAllInstances(new InstanceQueryParameters { ... });
+```
 
 ---
 
