@@ -135,8 +135,8 @@ public class LocationService(IFylkeKommuneApi fylkeKommuneApi)
 | `PointQuery` | Coordinates for fylke/kommune lookup |
 | `Address` | Full address record (street, number, municipality, coordinates) |
 | `Location` | Latitude + Longitude point |
-| `Pagination` | `Side` (page index) + `Størrelse` (page size) |
-| `PaginationResult<T>` | `Data` + paging metadata |
+| `Pagination` | `PageIndex` (page index) + `PageSize` (page size) |
+| `PaginationResult<T>` | `Elements` + paging metadata |
 | `Fylke` | Norwegian county |
 | `Kommune` | Norwegian municipality |
 
