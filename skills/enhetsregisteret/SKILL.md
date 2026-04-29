@@ -1,0 +1,191 @@
+---
+name: enhetsregisteret
+description: Norwegian business registry (Brreg) client for looking up companies and organisations using AT.Common.Enhetsregisteret. Use this skill when looking up enheter or underenheter by organisation number, searching for companies, or fetching update history from the Norwegian Register of Business Enterprises.
+license: MIT
+metadata:
+  domain: backend
+  tags: enhetsregisteret brreg norway business-registry organisation company dotnet client
+---
+
+# Enhetsregisteret Skill — Arbeidstilsynet/dotnet-common
+
+`Arbeidstilsynet.Common.Enhetsregisteret` (`AT.Common.Enhetsregisteret.Publish`) is a strongly-typed .NET client for the Norwegian Register of Business Enterprises (Brreg).
+
+---
+
+## Installation
+
+```bash
+dotnet add package Arbeidstilsynet.Common.Enhetsregisteret
+```
+
+---
+
+## Dependency Injection Setup
+
+```csharp
+using Arbeidstilsynet.Common.Enhetsregisteret.DependencyInjection;
+
+builder.Services.AddEnhetsregisteret(
+    builder.Environment,
+    config =>
+    {
+        // Optional: override the Brreg API base URL
+        // config.BrregApiBaseUrlOverwrite = "https://custom-url/";
+
+        // Optional: disable in-memory caching
+        // config.CacheOptions = new CacheOptions { Disabled = true };
+    }
+);
+```
+
+### Automatic URL selection
+
+| Environment | API URL used |
+|-------------|-------------|
+| Production | `https://data.brreg.no/` |
+| Non-production (dev, staging, …) | `https://data.ppe.brreg.no/` |
+
+Caching is enabled by default. Override with `config.BrregApiBaseUrlOverwrite` or disable with `config.CacheOptions = new CacheOptions { Disabled = true }`.
+
+---
+
+## `IEnhetsregisteret` Interface
+
+Inject `IEnhetsregisteret` into any service or controller.
+
+```csharp
+public class MyService(IEnhetsregisteret enhetsregisteret) { }
+```
+
+### Look up a single unit
+
+```csharp
+// Main unit (enhet)
+Enhet? enhet = await enhetsregisteret.GetEnhet("123456789");
+
+// Sub-unit (underenhet)
+Underenhet? underenhet = await enhetsregisteret.GetUnderenhet("987654321");
+```
+
+Both return `null` if the unit is not found or an error occurs.
+
+### Search
+
+```csharp
+var searchParams = new SearchEnheterQuery
+{
+    Navn = "Arbeidstilsynet",
+    Organisasjonsform = ["AS"],
+};
+
+var pagination = new Pagination { Page = 0, Size = 20 };
+
+// Search main units
+PaginationResult<Enhet>? enheter = await enhetsregisteret.SearchEnheter(searchParams, pagination);
+
+// Search sub-units
+PaginationResult<Underenhet>? underenheter = await enhetsregisteret.SearchUnderenheter(searchParams, pagination);
+```
+
+Returns `null` on error.
+
+### Update history
+
+```csharp
+var query = new GetOppdateringerQuery
+{
+    Dato = DateTime.Today.AddDays(-7),
+};
+
+// Updates for main units
+PaginationResult<Oppdatering>? enheterOps =
+    await enhetsregisteret.GetOppdateringerEnheter(query, pagination);
+
+// Updates for sub-units
+PaginationResult<Oppdatering>? underenheterOps =
+    await enhetsregisteret.GetOppdateringerUnderenheter(query, pagination);
+```
+
+---
+
+## Key Model Types
+
+| Type | Description |
+|------|-------------|
+| `Enhet` | Main business unit with name, organisation number, address, NACE codes, etc. |
+| `Underenhet` | Sub-unit linked to a parent `Enhet` |
+| `Oppdatering` | Record of a change to an `Enhet` or `Underenhet` |
+| `SearchEnheterQuery` | Search filter: `Navn`, `Organisasjonsnummer`, `OverordnetEnhetOrganisasjonsnummer`, `Organisasjonsform`, `StrictSearch`, `SortDirection`, `SortBy` |
+| `GetOppdateringerQuery` | Filter for update history: `required DateTime Dato`, `long Oppdateringsid` (default `1`), `string[] Organisasjonsnummer` |
+| `Pagination` | `Page` (page index) + `Size` (page size) |
+| `PaginationResult<T>` | `Elements`, `TotalElements`, `PageSize`, `PageIndex` |
+
+---
+
+## Extension Methods
+
+The `EnhetsregisteretExtensions` class (in `Arbeidstilsynet.Common.Enhetsregisteret.Extensions`) provides convenience methods on `IEnhetsregisteret` for common access patterns.
+
+### Batch lookups
+
+```csharp
+// Get multiple enheter by org numbers
+IEnumerable<Enhet> enheter = await enhetsregisteret.GetEnheter(["123456789", "987654321"]);
+
+// Get multiple underenheter by org numbers
+IEnumerable<Underenhet> underenheter = await enhetsregisteret.GetUnderenheter(["111111111", "222222222"]);
+
+// Get all underenheter belonging to a hovedenhet
+IEnumerable<Underenhet> children = await enhetsregisteret.GetUnderenheterByHovedenhet("123456789");
+```
+
+These methods handle pagination automatically and return all matching results.
+
+### `IAsyncEnumerable` overloads
+
+For large result sets, extension overloads return `IAsyncEnumerable<T>` and stream pages lazily:
+
+```csharp
+// Stream all matching enheter
+await foreach (Enhet enhet in enhetsregisteret.SearchEnheter(new SearchEnheterQuery { Navn = "Arbeidstilsynet" }))
+{
+    // process each enhet as it arrives
+}
+
+// Stream all matching underenheter
+await foreach (Underenhet ue in enhetsregisteret.SearchUnderenheter(new SearchEnheterQuery { Organisasjonsform = ["BEDR"] }))
+{
+    // ...
+}
+
+// Stream updates for enheter
+await foreach (Oppdatering op in enhetsregisteret.GetOppdateringerEnheter(new GetOppdateringerQuery { Dato = DateTime.Today.AddDays(-7) }))
+{
+    // ...
+}
+
+// Stream updates for underenheter
+await foreach (Oppdatering op in enhetsregisteret.GetOppdateringerUnderenheter(new GetOppdateringerQuery { Dato = DateTime.Today.AddDays(-7) }))
+{
+    // ...
+}
+```
+
+---
+
+## Notes
+
+- All methods are `async` and return `null` for non-5xx failures (e.g. 404); 5xx responses cause an `HttpRequestException` to be rethrown.
+- In-memory caching reduces repeated round-trips to Brreg for the same org number.
+- For XML documentation on available search fields, see the source of `SearchEnheterQuery`.
+
+---
+
+## Adding Enhetsregisteret — Checklist
+
+1. `dotnet add package Arbeidstilsynet.Common.Enhetsregisteret`
+2. Register with `services.AddEnhetsregisteret(environment)`
+3. Inject `IEnhetsregisteret` into your service
+4. Handle `null` returns (not-found / error)
+5. Use extension methods from `EnhetsregisteretExtensions` for batch lookups and streaming
