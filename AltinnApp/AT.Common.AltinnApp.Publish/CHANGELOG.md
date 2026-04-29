@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.7.1
+
+### Fixed
+
+- fixed: `StructuredDataManager` now deletes any pre-existing `structured-data` data elements before inserting the new one, making `CreateStructuredData` idempotent on retries
+
 ## 2.7.0
 
 ### Added
