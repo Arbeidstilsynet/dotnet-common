@@ -86,7 +86,7 @@ Both search methods accept an optional `Pagination` parameter:
 ```csharp
 var result = await addressSearch.SearchAddresses(
     new TextSearchQuery { SearchTerm = "Brannfjordveien" },
-    new Pagination { Side = 0, Størrelse = 10 }
+    new Pagination { PageIndex = 0, PageSize = 10 }
 );
 ```
 
