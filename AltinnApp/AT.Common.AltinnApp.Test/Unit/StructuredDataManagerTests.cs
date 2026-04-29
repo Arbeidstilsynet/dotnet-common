@@ -311,6 +311,233 @@ public class StructuredDataManagerTests
         instance.Data.Count.ShouldBe(initialDataCount - 1);
     }
 
+    [Fact]
+    public async Task End_TaskEnd_DeletesExistingStructuredDataBeforeInserting()
+    {
+        // Arrange
+        var instance = AltinnData.CreateTestInstance();
+        var existingStructuredDataId = Guid.NewGuid();
+        instance.Data.Add(
+            new DataElement
+            {
+                Id = existingStructuredDataId.ToString(),
+                DataType = "structured-data",
+            }
+        );
+
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+        );
+        var dataModel = new TestDataModel { Name = "Test" };
+
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(application);
+        _dataClient
+            .GetFormData(
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
+                cancellationToken: Arg.Any<CancellationToken>()
+            )
+            .Returns(dataModel);
+
+        // Act
+        await _sut.End("task1", instance);
+
+        // Assert
+        await _dataClient
+            .Received(1)
+            .DeleteData(
+                instance.GetInstanceOwnerPartyId(),
+                instance.GetInstanceGuid(),
+                existingStructuredDataId,
+                false,
+                cancellationToken: Arg.Any<CancellationToken>()
+            );
+
+        Received.InOrder(() =>
+        {
+            _dataClient.DeleteData(
+                instance.GetInstanceOwnerPartyId(),
+                instance.GetInstanceGuid(),
+                existingStructuredDataId,
+                false,
+                cancellationToken: Arg.Any<CancellationToken>()
+            );
+            _dataClient.InsertBinaryData(
+                instance.Id,
+                "structured-data",
+                "application/json",
+                "structured-data.json",
+                Arg.Any<Stream>(),
+                cancellationToken: Arg.Any<CancellationToken>()
+            );
+        });
+
+        instance.Data.ShouldNotContain(d => d.Id == existingStructuredDataId.ToString());
+    }
+
+    [Fact]
+    public async Task End_TaskEnd_DeletesAllExistingStructuredDataElements()
+    {
+        // Arrange
+        var instance = AltinnData.CreateTestInstance();
+        var firstId = Guid.NewGuid();
+        var secondId = Guid.NewGuid();
+        instance.Data.Add(
+            new DataElement { Id = firstId.ToString(), DataType = "structured-data" }
+        );
+        instance.Data.Add(
+            new DataElement { Id = secondId.ToString(), DataType = "structured-data" }
+        );
+
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+        );
+        var dataModel = new TestDataModel { Name = "Test" };
+
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(application);
+        _dataClient
+            .GetFormData(
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
+                cancellationToken: Arg.Any<CancellationToken>()
+            )
+            .Returns(dataModel);
+
+        // Act
+        await _sut.End("task1", instance);
+
+        // Assert
+        await _dataClient
+            .Received(1)
+            .DeleteData(
+                instance.GetInstanceOwnerPartyId(),
+                instance.GetInstanceGuid(),
+                firstId,
+                false,
+                cancellationToken: Arg.Any<CancellationToken>()
+            );
+        await _dataClient
+            .Received(1)
+            .DeleteData(
+                instance.GetInstanceOwnerPartyId(),
+                instance.GetInstanceGuid(),
+                secondId,
+                false,
+                cancellationToken: Arg.Any<CancellationToken>()
+            );
+    }
+
+    [Fact]
+    public async Task End_TaskEnd_DoesNotDeleteWhenNoExistingStructuredData()
+    {
+        // Arrange
+        var instance = AltinnData.CreateTestInstance();
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+        );
+        var dataModel = new TestDataModel { Name = "Test" };
+
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(application);
+        _dataClient
+            .GetFormData(
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
+                cancellationToken: Arg.Any<CancellationToken>()
+            )
+            .Returns(dataModel);
+
+        // Act
+        await _sut.End("task1", instance);
+
+        // Assert
+        await _dataClient
+            .DidNotReceiveWithAnyArgs()
+            .DeleteData(
+                default,
+                default,
+                default,
+                default,
+                cancellationToken: Arg.Any<CancellationToken>()
+            );
+    }
+
+    [Fact]
+    public async Task End_TaskEnd_IsIdempotent_WhenCalledTwice()
+    {
+        // Arrange
+        var instance = AltinnData.CreateTestInstance();
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+        );
+        var dataModel = new TestDataModel { Name = "Test" };
+
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(application);
+        _dataClient
+            .GetFormData(
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
+                cancellationToken: Arg.Any<CancellationToken>()
+            )
+            .Returns(dataModel);
+
+        // Simulate that the first call resulted in a structured-data element being persisted on the instance.
+        _dataClient
+            .When(c =>
+                c.InsertBinaryData(
+                    Arg.Any<string>(),
+                    "structured-data",
+                    Arg.Any<string>(),
+                    Arg.Any<string>(),
+                    Arg.Any<Stream>(),
+                    cancellationToken: Arg.Any<CancellationToken>()
+                )
+            )
+            .Do(_ =>
+            {
+                instance.Data.Add(
+                    new DataElement { Id = Guid.NewGuid().ToString(), DataType = "structured-data" }
+                );
+            });
+
+        // Act
+        await _sut.End("task1", instance);
+        await _sut.End("task1", instance);
+
+        // Assert: only one structured-data element should remain after the second call.
+        instance.Data.Count(d => d.DataType == "structured-data").ShouldBe(1);
+
+        // And InsertBinaryData should have been called once per invocation (i.e. twice total).
+        await _dataClient
+            .Received(2)
+            .InsertBinaryData(
+                instance.Id,
+                "structured-data",
+                "application/json",
+                "structured-data.json",
+                Arg.Any<Stream>(),
+                cancellationToken: Arg.Any<CancellationToken>()
+            );
+
+        // The second call must have deleted the element added by the first call.
+        await _dataClient
+            .Received(1)
+            .DeleteData(
+                instance.GetInstanceOwnerPartyId(),
+                instance.GetInstanceGuid(),
+                Arg.Any<Guid>(),
+                false,
+                cancellationToken: Arg.Any<CancellationToken>()
+            );
+    }
+
     public class TestDataModel
     {
         public string? Name { get; set; }

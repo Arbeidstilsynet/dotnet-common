@@ -115,7 +115,32 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
             await _structuredDataValidator.ValidateAndThrow(structuredData);
         }
 
-        await _dataClient.InsertStructuredData(instance, structuredData, CancellationToken.None);
+        await DeleteExistingStructuredData(instance);
+
+        await _dataClient.InsertStructuredData(
+            instance,
+            structuredData,
+            _config.StructuredDataConfiguration.StructuredDataTypeId,
+            CancellationToken.None
+        );
+    }
+
+    private async Task DeleteExistingStructuredData(Instance instance)
+    {
+        var existingStructuredDataElements = instance
+            .Data.Where(d =>
+                string.Equals(
+                    d.DataType,
+                    _config.StructuredDataConfiguration.StructuredDataTypeId,
+                    StringComparison.OrdinalIgnoreCase
+                )
+            )
+            .ToList();
+
+        foreach (var element in existingStructuredDataElements)
+        {
+            await _dataClient.DeleteElement(instance, element);
+        }
     }
 
     private async Task CreateAppSpecification(Instance instance)
@@ -205,6 +230,7 @@ file static class Extensions
         this IDataClient dataClient,
         Instance instance,
         T structuredData,
+        string structuredDataTypeId,
         CancellationToken? cancellationToken = null
     )
         where T : class
@@ -213,7 +239,7 @@ file static class Extensions
 
         await dataClient.InsertBinaryData(
             instance.Id,
-            "structured-data",
+            structuredDataTypeId,
             "application/json",
             "structured-data.json",
             stream,
