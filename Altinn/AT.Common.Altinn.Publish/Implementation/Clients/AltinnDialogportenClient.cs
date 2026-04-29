@@ -31,7 +31,7 @@ internal class AltinnDialogportenClient : IAltinnDialogportenClient
     public async Task<DialogportenLookupResponse> LookupDialog(string instanceRef)
     {
         return await _httpClient
-                .Get("enduser/dialoglookup")
+                .Get("serviceowner/dialoglookup")
                 .WithBearerToken(await _altinnTokenProvider.GetToken())
                 .WithQueryParameter("instanceRef", instanceRef)
                 .ReceiveContent<DialogportenLookupResponse>(_jsonSerializerOptions)

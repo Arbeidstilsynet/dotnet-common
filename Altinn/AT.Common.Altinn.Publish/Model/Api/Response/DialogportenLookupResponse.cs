@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 
 /// <summary>
-/// Represents the result of a dialog lookup by instance reference in end user context.
+/// Represents the result of a dialog lookup by instance reference in service owner context.
 /// </summary>
 public class DialogportenLookupResponse
 {
@@ -44,46 +44,10 @@ public class DialogportenLookupResponse
     public List<DialogportenLocalization>? Title { get; set; }
 
     /// <summary>
-    /// Authorization evidence for the end user's access to the dialog.
+    /// An optional non-sensitive title of the dialog.
     /// </summary>
-    [JsonPropertyName("authorizationEvidence")]
-    public DialogportenAuthorizationEvidence? AuthorizationEvidence { get; set; }
-}
-
-/// <summary>
-/// Represents authorization evidence for a dialog lookup.
-/// </summary>
-public class DialogportenAuthorizationEvidence
-{
-    /// <summary>
-    /// The current authentication level of the user.
-    /// </summary>
-    [JsonPropertyName("currentAuthenticationLevel")]
-    public int CurrentAuthenticationLevel { get; set; }
-
-    /// <summary>
-    /// Whether access is granted via a role.
-    /// </summary>
-    [JsonPropertyName("viaRole")]
-    public bool ViaRole { get; set; }
-
-    /// <summary>
-    /// Whether access is granted via an access package.
-    /// </summary>
-    [JsonPropertyName("viaAccessPackage")]
-    public bool ViaAccessPackage { get; set; }
-
-    /// <summary>
-    /// Whether access is granted via resource delegation.
-    /// </summary>
-    [JsonPropertyName("viaResourceDelegation")]
-    public bool ViaResourceDelegation { get; set; }
-
-    /// <summary>
-    /// Whether access is granted via instance delegation.
-    /// </summary>
-    [JsonPropertyName("viaInstanceDelegation")]
-    public bool ViaInstanceDelegation { get; set; }
+    [JsonPropertyName("nonSensitiveTitle")]
+    public List<DialogportenLocalization>? NonSensitiveTitle { get; set; }
 }
 
 /// <summary>

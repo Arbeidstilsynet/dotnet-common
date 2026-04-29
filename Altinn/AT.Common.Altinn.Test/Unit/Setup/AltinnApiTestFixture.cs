@@ -80,7 +80,9 @@ public class AltinnApiTestFixture : TestBedFixture
             }
         );
         _server
-            .WhenRequest(r => r.WithPath("/dialogporten/api/v1/enduser/dialoglookup").UsingGet())
+            .WhenRequest(r =>
+                r.WithPath("/dialogporten/api/v1/serviceowner/dialoglookup").UsingGet()
+            )
             .ThenRespondWith(r =>
                 r.WithStatusCode(200)
                     .WithBody(
@@ -116,14 +118,6 @@ public class AltinnApiTestFixture : TestBedFixture
                                 title = new[]
                                 {
                                     new { value = "Some dialog title", languageCode = "nb" },
-                                },
-                                authorizationEvidence = new
-                                {
-                                    currentAuthenticationLevel = 3,
-                                    viaRole = true,
-                                    viaAccessPackage = false,
-                                    viaResourceDelegation = false,
-                                    viaInstanceDelegation = false,
                                 },
                             }
                         )

@@ -8,7 +8,7 @@ namespace Arbeidstilsynet.Common.Altinn.Ports.Clients;
 public interface IAltinnDialogportenClient
 {
     /// <summary>
-    /// Looks up a dialog by instance reference in end user context.
+    /// Looks up a dialog by instance reference in service owner context.
     /// </summary>
     /// <param name="instanceRef">The instance reference to look up.</param>
     /// <returns>The dialog lookup metadata.</returns>
