@@ -81,6 +81,51 @@ public class AltinnApiTestFixture : TestBedFixture
         );
         _server
             .WhenRequest(r =>
+                r.WithPath("/dialogporten/api/v1/serviceowner/dialoglookup").UsingGet()
+            )
+            .ThenRespondWith(r =>
+                r.WithStatusCode(200)
+                    .WithBody(
+                        JsonSerializer.Serialize(
+                            new
+                            {
+                                dialogId = "01913cd5-784f-7d3b-abef-4c77b1f0972d",
+                                instanceRef = "some-instance-ref",
+                                party = "urn:altinn:organization:identifier-no:912345678",
+                                serviceResource = new
+                                {
+                                    id = "urn:altinn:resource:some-service",
+                                    isDelegable = true,
+                                    minimumAuthenticationLevel = 3,
+                                    name = new[]
+                                    {
+                                        new { value = "Some service", languageCode = "nb" },
+                                    },
+                                },
+                                serviceOwner = new
+                                {
+                                    orgNumber = "991825827",
+                                    code = "dat",
+                                    name = new[]
+                                    {
+                                        new
+                                        {
+                                            value = "Digitaliseringsdirektoratet",
+                                            languageCode = "nb",
+                                        },
+                                    },
+                                },
+                                title = new[]
+                                {
+                                    new { value = "Some dialog title", languageCode = "nb" },
+                                },
+                            }
+                        )
+                    )
+                    .WithHeader("Content-Type", "application/json")
+            );
+        _server
+            .WhenRequest(r =>
                 r.WithPath("/token")
                     .WithHeader("Content-Type", "application/x-www-form-urlencoded")
                     .WithBody(
@@ -120,6 +165,7 @@ public class AltinnApiTestFixture : TestBedFixture
                 StorageUrl = new Uri($"{_server.Urls[0]}/storage/api/v1/"),
                 EventUrl = new Uri($"{_server.Urls[0]}/events/api/v1/"),
                 CorrespondenceUrl = new Uri($"{_server.Urls[0]}/correspondence/api/v1/"),
+                DialogportenUrl = new Uri($"{_server.Urls[0]}/dialogporten/api/v1/"),
                 AppBaseUrl = new Uri(_server.Urls[0]),
             }
         );
