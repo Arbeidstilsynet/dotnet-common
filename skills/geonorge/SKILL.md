@@ -27,6 +27,15 @@ dotnet add package Arbeidstilsynet.Common.GeoNorge
 builder.Services.AddGeoNorge();
 ```
 
+An optional `GeoNorgeConfig` can be passed to override the base URL (default `https://ws.geonorge.no/`):
+
+```csharp
+builder.Services.AddGeoNorge(new GeoNorgeConfig
+{
+    BaseUrl = "https://custom-geonorge-proxy.example.com/"
+});
+```
+
 This registers `IAddressSearch` and `IFylkeKommuneApi`.
 
 ---
@@ -130,11 +139,11 @@ public class LocationService(IFylkeKommuneApi fylkeKommuneApi)
 
 | Type | Description |
 |------|-------------|
-| `TextSearchQuery` | Free-text address search parameters |
+| `TextSearchQuery` | Free-text address search — `SearchTerm` (required) plus optional filters: `FuzzySearch`, `Adressenavn`, `Poststed`, `Postnummer`, `Kommunenummer`, `Gardsnummer`, `Bruksnummer` |
 | `PointSearchQuery` | Coordinates + radius for reverse geocoding |
-| `PointQuery` | Coordinates for fylke/kommune lookup |
+| `PointQuery` | Coordinates (`Latitude`, `Longitude`) + `Epsg` (default 4326) for fylke/kommune lookup |
 | `Address` | Full address record (street, number, municipality, coordinates) |
-| `Location` | Latitude + Longitude point |
+| `Location` | Latitude + Longitude point + optional `Epsg` coordinate system code |
 | `Pagination` | `PageIndex` (page index) + `PageSize` (page size) |
 | `PaginationResult<T>` | `Elements` + paging metadata |
 | `Fylke` | Norwegian county |
