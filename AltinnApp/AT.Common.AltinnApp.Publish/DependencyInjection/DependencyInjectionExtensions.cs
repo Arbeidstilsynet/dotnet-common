@@ -210,7 +210,7 @@ public static class DependencyInjectionExtensions
         where TStructuredData : class
     {
         services.AddSingleton(config);
-        services.AddSingleton<StructuredDataManager<TDataModel, TStructuredData>>();
+        services.AddTransient<StructuredDataManager<TDataModel, TStructuredData>>();
         services.AddTransient<
             IStructuredDataValidator<TStructuredData>,
             StructuredDataValidator<TStructuredData>
