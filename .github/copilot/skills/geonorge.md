@@ -46,7 +46,7 @@ public class AddressService(IAddressSearch addressSearch)
         {
             SearchTerm = "Karl Johans gate 1, Oslo"
         });
-        // result?.Data contains matching Address records
+        // result?.Elements contains matching Address records
 
         // Get only the first match as a Location (lat/lon)
         var location = await addressSearch.QuickSearchLocation(new TextSearchQuery

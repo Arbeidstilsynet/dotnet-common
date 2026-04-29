@@ -149,12 +149,15 @@ public record MyAppSettings
 ```csharp
 public record AuthConfiguration
 {
-    public bool DisableAuth { get; init; }   // set true in dev/test only
+    [ConfigurationKeyName("DangerousDisableAuth")]
+    public bool DisableAuth { get; init; }   // JSON key is "DangerousDisableAuth"; set true in dev/test only
     public required string TenantId { get; init; }
     public required string ClientId { get; init; }
     public required string Scope { get; init; }
 }
 ```
+
+> **Note:** The `DisableAuth` property is bound from the JSON key `DangerousDisableAuth` (via `[ConfigurationKeyName]`). Ensure your `appsettings.json` uses `"DangerousDisableAuth": true` (not `"DisableAuth"`) when you need to disable auth for local development.
 
 - When `DisableAuth = false` (production): JWT Bearer + Entra ID token validation.
 - When `DisableAuth = true`: a permissive "allow all" policy is registered — a warning is logged. **Never use in production.**

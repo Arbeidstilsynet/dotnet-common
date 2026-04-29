@@ -41,8 +41,9 @@ Both methods automatically resolve the correct Altinn base URLs based on environ
 
 | Environment | URLs used |
 |-------------|-----------|
+| Development | `http://local.altinn.cloud:5101/` (platform) / `http://local.altinn.cloud:5005/` (apps) |
+| Non-production (other) | `https://platform.tt02.altinn.no/` |
 | Production | `https://platform.altinn.no/` |
-| Non-production | `https://platform.tt02.altinn.no/` |
 
 Override specific URLs by passing an `AltinnConfiguration`:
 

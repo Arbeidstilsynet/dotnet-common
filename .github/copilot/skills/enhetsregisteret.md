@@ -79,7 +79,7 @@ var searchParams = new SearchEnheterQuery
     Kommunenummer = "5001",
 };
 
-var pagination = new Pagination { Side = 0, Størrelse = 20 };
+var pagination = new Pagination { Page = 0, Size = 20 };
 
 // Search main units
 PaginationResult<Enhet>? enheter = await enhetsregisteret.SearchEnheter(searchParams, pagination);
@@ -118,8 +118,8 @@ PaginationResult<Oppdatering>? underenheterOps =
 | `Oppdatering` | Record of a change to an `Enhet` or `Underenhet` |
 | `SearchEnheterQuery` | Search filter (name, municipality, industry code, …) |
 | `GetOppdateringerQuery` | Filter for update history (date range) |
-| `Pagination` | `Side` (page index) + `Størrelse` (page size) |
-| `PaginationResult<T>` | `Data`, `TotalElements`, `TotalPages` |
+| `Pagination` | `Page` (page index) + `Size` (page size) |
+| `PaginationResult<T>` | `Elements`, `TotalElements`, `TotalPages` |
 
 ---
 
@@ -136,7 +136,7 @@ bool valid = OrganisasjonsnummerValidator.IsValid("123456789");
 
 ## Notes
 
-- All methods are `async` and return `null` (not throw) on network errors or 404 responses.
+- All methods are `async` and return `null` for non-5xx failures (e.g. 404); 5xx responses cause an `HttpRequestException` to be rethrown.
 - In-memory caching reduces repeated round-trips to Brreg for the same org number.
 - For XML documentation on available search fields, see the source of `SearchEnheterQuery`.
 

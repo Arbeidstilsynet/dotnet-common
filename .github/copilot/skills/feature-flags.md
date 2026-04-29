@@ -45,12 +45,12 @@ using Arbeidstilsynet.Common.FeatureFlags.Model;
 
 var featureFlagSettings = builder.Configuration
     .GetSection("FeatureFlags")
-    .Get<FeatureFlagSettings>();
+    .Get<FeatureFlagSettings>() ?? new FeatureFlagSettings();
 
-builder.Services.AddFeatureFlags(builder.Environment, featureFlagSettings);
+builder.Services.AddFeatureFlags(featureFlagSettings);
 ```
 
-> **Note:** If `featureFlagSettings` is `null` or incomplete, the service automatically uses `FakeUnleash` — all flags are disabled by default. This keeps tests and local development working without an Unleash server.
+> **Note:** If `Url` or `ApiKey` is empty in `featureFlagSettings`, the service automatically uses `FakeUnleash` — all flags are disabled by default. This keeps tests and local development working without an Unleash server.
 
 ---
 
@@ -100,7 +100,7 @@ if (featureFlags.IsEnabled("user-specific-feature", context))
 Expose a feature flag check endpoint for frontend or cross-service consumers:
 
 ```csharp
-// Default route: POST /feature-flags
+// Default route: POST /featureflag
 app.MapFeatureFlagEndpoint();
 
 // Custom route
@@ -110,7 +110,7 @@ app.MapFeatureFlagEndpoint("/api/features");
 **Request:**
 
 ```http
-POST /feature-flags
+POST /featureflag
 Content-Type: application/json
 
 {
@@ -134,21 +134,21 @@ Content-Type: application/json
 
 ## Testing
 
-When `featureFlagSettings` is `null`, `FakeUnleash` is used automatically. Enable specific flags in tests:
+When `Url` or `ApiKey` is empty, `FakeUnleash` is registered automatically. Toggle flags directly via the `FakeUnleash` instance in tests:
 
 ```csharp
-var fakeUnleash = new FakeUnleash();
-fakeUnleash.Enable("test-feature");
+services.AddFeatureFlags(new FeatureFlagSettings());
 
-services.AddSingleton<IUnleash>(fakeUnleash);
-services.AddFeatureFlags(webHostEnvironment, null);
+// Resolve the FakeUnleash instance and enable a flag
+var fakeUnleash = (FakeUnleash)serviceProvider.GetRequiredService<IUnleash>();
+fakeUnleash.SetToggle("test-feature", true);
 ```
 
-Or rely on the auto-fallback:
+Or rely on the auto-fallback (all flags disabled by default):
 
 ```csharp
-// All flags disabled; override per test as needed
-services.AddFeatureFlags(webHostEnvironment, null);
+// All flags disabled; call SetToggle on the resolved FakeUnleash to override per test
+services.AddFeatureFlags(new FeatureFlagSettings());
 ```
 
 ---
@@ -168,5 +168,5 @@ public interface IFeatureFlags
 
 1. Define the flag in Unleash (name must match the string passed to `IsEnabled`)
 2. Wrap the new code path with `if (featureFlags.IsEnabled("flag-name"))`
-3. In tests, use `FakeUnleash.Enable("flag-name")` to activate the flag
+3. In tests, use `fakeUnleash.SetToggle("flag-name", true)` to activate the flag
 4. Remove the flag and old code path once the feature is fully rolled out
