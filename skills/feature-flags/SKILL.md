@@ -30,7 +30,8 @@ Add to `appsettings.json`:
   "FeatureFlags": {
     "Url": "https://unleash.example.com/api",
     "ApiKey": "your-api-key-here",
-    "AppName": "my-application"
+    "AppName": "my-application",
+    "Environment": "development"
   }
 }
 ```
@@ -85,6 +86,8 @@ Pass a `FeatureFlagContext` to enable user-specific or group-specific rollouts:
 var context = new FeatureFlagContext
 {
     UserId = userId,
+    AppName = appName,
+    SessionId = sessionId,
 };
 
 if (featureFlags.IsEnabled("user-specific-feature", context))
@@ -107,6 +110,26 @@ app.MapFeatureFlagEndpoint();
 app.MapFeatureFlagEndpoint("/api/features");
 ```
 
+### `FeatureFlagRequest`
+
+```csharp
+public record FeatureFlagRequest
+{
+    public required string FeatureName { get; init; }
+    public FeatureFlagContext? Context { get; init; }
+}
+```
+
+### `FeatureFlagResponse`
+
+```csharp
+public record FeatureFlagResponse
+{
+    public required bool IsEnabled { get; init; }
+    public required string FeatureName { get; init; }
+}
+```
+
 **Request:**
 
 ```http
@@ -116,7 +139,9 @@ Content-Type: application/json
 {
   "featureName": "my-new-feature",
   "context": {
-    "userId": "user123"
+    "userId": "user123",
+    "appName": "my-application",
+    "sessionId": "abc-123"
   }
 }
 ```
