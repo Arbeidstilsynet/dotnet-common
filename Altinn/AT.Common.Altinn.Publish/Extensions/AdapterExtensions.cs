@@ -37,6 +37,8 @@ public static class AdapterExtensions
             );
         }
 
+        altinnInstance.DataValues.TryGetValue("dialog.id", out var dialogId);
+
         var partyId = instanceIdParts[0];
         var instanceGuid = Guid.Parse(instanceIdParts[1]);
 
@@ -49,6 +51,8 @@ public static class AdapterExtensions
             OrganisationNumber = altinnInstance.InstanceOwner.OrganisationNumber,
             ProcessStarted = altinnInstance.Process.Started,
             ProcessEnded = altinnInstance.Process.Ended,
+            DialogId = dialogId,
+            DataValues = altinnInstance.DataValues,
         };
     }
 
@@ -61,7 +65,7 @@ public static class AdapterExtensions
     {
         return new InstanceRequest()
         {
-            InstanceGuid = altinnMetadata.InstanceGuid ?? Guid.Empty,
+            InstanceGuid = altinnMetadata.InstanceGuid,
             InstanceOwnerPartyId = altinnMetadata.InstanceOwnerPartyId ?? "",
         };
     }
@@ -78,7 +82,7 @@ public static class AdapterExtensions
         var dict = altinnInstanceSummary.Metadata.ToDict();
 
         dict["altinnReference"] =
-            altinnInstanceSummary.Metadata.InstanceGuid?.ToAltinnReference() ?? "";
+            altinnInstanceSummary.Metadata.InstanceGuid.ToAltinnReference() ?? "";
 
         return dict;
     }
@@ -94,7 +98,7 @@ public static class AdapterExtensions
     {
         var dict = altinnMetadata.ToDict();
 
-        dict["altinnReference"] = altinnMetadata.InstanceGuid?.ToAltinnReference() ?? "";
+        dict["altinnReference"] = altinnMetadata.InstanceGuid.ToAltinnReference() ?? "";
 
         return dict;
     }
@@ -129,6 +133,7 @@ public static class AdapterExtensions
                             null,
                             CultureInfo.InvariantCulture
                         ),
+                        System.Collections.IDictionary dict => JsonSerializer.Serialize(dict),
                         var value => value.ToString() ?? "",
                     }
             );
