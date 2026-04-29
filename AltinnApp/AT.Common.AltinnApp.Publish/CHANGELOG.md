@@ -19,11 +19,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.7.2
+
+- fixed: `StructuredDataManager` now deletes any pre-existing `structured-data` data elements before inserting the new one, making `CreateStructuredData` idempotent on retries
+
 ## 2.7.1
 
 ### Fixed
 
-- fixed: `StructuredDataManager` now deletes any pre-existing `structured-data` data elements before inserting the new one, making `CreateStructuredData` idempotent on retries
+- fixed: `StructuredDataManager<,>` was registered as singleton but depends (via `IStructuredDataValidator<T>`) on FluentValidation's `IValidator<T>`, which is scoped by default. This caused DI scope validation to fail at startup. The manager is now registered as transient.
 
 ## 2.7.0
 
