@@ -46,7 +46,7 @@ public class AddressService(IAddressSearch addressSearch)
         {
             SearchTerm = "Karl Johans gate 1, Oslo"
         });
-        // result?.Data contains matching Address records
+        // result?.Elements contains matching Address records
 
         // Get only the first match as a Location (lat/lon)
         var location = await addressSearch.QuickSearchLocation(new TextSearchQuery
@@ -86,7 +86,7 @@ Both search methods accept an optional `Pagination` parameter:
 ```csharp
 var result = await addressSearch.SearchAddresses(
     new TextSearchQuery { SearchTerm = "Brannfjordveien" },
-    new Pagination { Side = 0, Størrelse = 10 }
+    new Pagination { PageIndex = 0, PageSize = 10 }
 );
 ```
 
@@ -135,8 +135,8 @@ public class LocationService(IFylkeKommuneApi fylkeKommuneApi)
 | `PointQuery` | Coordinates for fylke/kommune lookup |
 | `Address` | Full address record (street, number, municipality, coordinates) |
 | `Location` | Latitude + Longitude point |
-| `Pagination` | `Side` (page index) + `Størrelse` (page size) |
-| `PaginationResult<T>` | `Data` + paging metadata |
+| `Pagination` | `PageIndex` (page index) + `PageSize` (page size) |
+| `PaginationResult<T>` | `Elements` + paging metadata |
 | `Fylke` | Norwegian county |
 | `Kommune` | Norwegian municipality |
 
