@@ -70,6 +70,11 @@ public record StructuredDataConfiguration
     public bool IncludeErrorDetails { get; init; } = false;
 
     /// <summary>
+    /// Whether to disable validation of the structured data against the JSON schema during mapping. Default is false.
+    /// </summary>
+    public bool DisableValidation { get; init; } = false;
+
+    /// <summary>
     /// Whether to keep the App data model after mapping. Default is false.
     /// </summary>
     public bool KeepAppDataModelAfterMapping { get; init; } = false;
@@ -80,6 +85,20 @@ public record StructuredDataConfiguration
 /// </summary>
 public static class DependencyInjectionExtensions
 {
+    /// <summary>
+    /// Adds a singleton language observer of type <typeparamref name="T"/> to the service collection.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static IServiceCollection AddLanguageObserver<T>(this IServiceCollection services)
+        where T : class, ILanguageObserver
+    {
+        services.TryAddTransient<IDataProcessor, SelectedLanguageProcessor>();
+        services.AddSingleton<ILanguageObserver, T>();
+        return services;
+    }
+
     /// <summary>
     /// Adds a <see cref="ILandskodeLookup"/> to look up countries and their dial codes based on 3-letter ISO values.
     /// </summary>
@@ -191,7 +210,11 @@ public static class DependencyInjectionExtensions
         where TStructuredData : class
     {
         services.AddSingleton(config);
-        services.AddSingleton<StructuredDataManager<TDataModel, TStructuredData>>();
+        services.AddTransient<StructuredDataManager<TDataModel, TStructuredData>>();
+        services.AddTransient<
+            IStructuredDataValidator<TStructuredData>,
+            StructuredDataValidator<TStructuredData>
+        >();
         services.AddTransient<IProcessEnd>(sp =>
             sp.GetRequiredService<StructuredDataManager<TDataModel, TStructuredData>>()
         );

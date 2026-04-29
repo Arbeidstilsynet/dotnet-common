@@ -35,13 +35,15 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
     private readonly IInstanceClient _instanceClient;
     private readonly Config _config;
     private readonly ILogger<StructuredDataManager<TDataModel, TStructuredData>> _logger;
+    private readonly IStructuredDataValidator<TStructuredData> _structuredDataValidator;
 
     public StructuredDataManager(
         IApplicationClient applicationClient,
         IDataClient dataClient,
         IInstanceClient instanceClient,
         Config config,
-        ILogger<StructuredDataManager<TDataModel, TStructuredData>> logger
+        ILogger<StructuredDataManager<TDataModel, TStructuredData>> logger,
+        IStructuredDataValidator<TStructuredData> structuredDataValidator
     )
     {
         _applicationClient = applicationClient;
@@ -49,6 +51,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         _instanceClient = instanceClient;
         _config = config;
         _logger = logger;
+        _structuredDataValidator = structuredDataValidator;
     }
 
     public async Task End(Instance instance, List<InstanceEvent>? events)
@@ -106,6 +109,11 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         );
 
         var structuredData = _config.MapFunc.Invoke(dataModel);
+
+        if (!_config.StructuredDataConfiguration.DisableValidation)
+        {
+            await _structuredDataValidator.ValidateAndThrow(structuredData);
+        }
 
         await _dataClient.InsertStructuredData(instance, structuredData, CancellationToken.None);
     }
