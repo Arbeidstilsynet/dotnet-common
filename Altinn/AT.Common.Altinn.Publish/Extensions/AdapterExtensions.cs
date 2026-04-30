@@ -36,9 +36,12 @@ public static class AdapterExtensions
                 "InstanceId must be in the format partyId/instanceGuid"
             );
         }
-
-        altinnInstance.DataValues.TryGetValue("dialog.id", out var dialogId);
-
+        string? dialogId = null;
+        if (altinnInstance.DataValues != null)
+        {
+            altinnInstance.DataValues.TryGetValue("dialog.id", out var retrievedDialogId);
+            dialogId = retrievedDialogId;
+        }
         var partyId = instanceIdParts[0];
         var instanceGuid = Guid.Parse(instanceIdParts[1]);
 
@@ -48,11 +51,11 @@ public static class AdapterExtensions
             Org = org,
             InstanceGuid = instanceGuid,
             InstanceOwnerPartyId = partyId,
-            OrganisationNumber = altinnInstance.InstanceOwner.OrganisationNumber,
-            ProcessStarted = altinnInstance.Process.Started,
-            ProcessEnded = altinnInstance.Process.Ended,
+            OrganisationNumber = altinnInstance.InstanceOwner?.OrganisationNumber,
+            ProcessStarted = altinnInstance.Process?.Started,
+            ProcessEnded = altinnInstance.Process?.Ended,
             DialogId = dialogId,
-            DataValues = altinnInstance.DataValues,
+            DataValues = altinnInstance.DataValues ?? [],
         };
     }
 
