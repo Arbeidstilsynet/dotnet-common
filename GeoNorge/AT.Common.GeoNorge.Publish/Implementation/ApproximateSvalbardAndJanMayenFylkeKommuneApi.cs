@@ -8,18 +8,10 @@ internal class ApproximateSvalbardAndJanMayenFylkeKommuneApi(IFylkeKommuneApi in
     : IFylkeKommuneApi
 {
     private static Fylke NewSvalbardFylke() =>
-        new()
-        {
-            Fylkesnummer = "21",
-            Fylkesnavn = "Svalbard",
-        };
+        new() { Fylkesnummer = "21", Fylkesnavn = "Svalbard" };
 
     private static Kommune NewSvalbardKommune() =>
-        new()
-        {
-            Kommunenummer = "2100",
-            Kommunenavn = "Svalbard",
-        };
+        new() { Kommunenummer = "2100", Kommunenavn = "Svalbard" };
 
     private static KommuneFullInfo NewSvalbardKommuneFullInfo() =>
         new()
@@ -35,25 +27,13 @@ internal class ApproximateSvalbardAndJanMayenFylkeKommuneApi(IFylkeKommuneApi in
         };
 
     private static FylkeFullInfo NewSvalbardFylkeFullInfo() =>
-        new()
-        {
-            Fylke = NewSvalbardFylke(),
-            Kommuner = [NewSvalbardKommuneFullInfo()],
-        };
+        new() { Fylke = NewSvalbardFylke(), Kommuner = [NewSvalbardKommuneFullInfo()] };
 
     private static Fylke NewJanMayenFylke() =>
-        new()
-        {
-            Fylkesnummer = "22",
-            Fylkesnavn = "Jan Mayen",
-        };
+        new() { Fylkesnummer = "22", Fylkesnavn = "Jan Mayen" };
 
     private static Kommune NewJanMayenKommune() =>
-        new()
-        {
-            Kommunenummer = "2211",
-            Kommunenavn = "Jan Mayen",
-        };
+        new() { Kommunenummer = "2211", Kommunenavn = "Jan Mayen" };
 
     private static KommuneFullInfo NewJanMayenKommuneFullInfo() =>
         new()
@@ -69,11 +49,7 @@ internal class ApproximateSvalbardAndJanMayenFylkeKommuneApi(IFylkeKommuneApi in
         };
 
     private static FylkeFullInfo NewJanMayenFylkeFullInfo() =>
-        new()
-        {
-            Fylke = NewJanMayenFylke(),
-            Kommuner = [NewJanMayenKommuneFullInfo()],
-        };
+        new() { Fylke = NewJanMayenFylke(), Kommuner = [NewJanMayenKommuneFullInfo()] };
 
     public async Task<IEnumerable<Fylke>> GetFylker()
     {
@@ -145,11 +121,7 @@ internal class ApproximateSvalbardAndJanMayenFylkeKommuneApi(IFylkeKommuneApi in
         return query.Epsg is 4258 or 4326;
     }
 
-    private static void AddIfMissing<T>(
-        List<T> values,
-        T value,
-        Func<T, string> keySelector
-    )
+    private static void AddIfMissing<T>(List<T> values, T value, Func<T, string> keySelector)
     {
         var key = keySelector(value);
         if (values.All(v => keySelector(v) != key))
@@ -190,4 +162,3 @@ internal class ApproximateSvalbardAndJanMayenFylkeKommuneApi(IFylkeKommuneApi in
             query.Latitude is >= 70.5 and <= 71.5 && query.Longitude is >= -10.0 and <= -7.0;
     }
 }
-

@@ -136,11 +136,7 @@ public class ApproximateSvalbardAndJanMayenFylkeKommuneApiTests
     {
         // Act
         var result = await _sut.GetKommuneByPoint(
-            new PointQuery
-            {
-                Latitude = latitude,
-                Longitude = longitude,
-            }
+            new PointQuery { Latitude = latitude, Longitude = longitude }
         );
 
         // Assert
@@ -154,11 +150,7 @@ public class ApproximateSvalbardAndJanMayenFylkeKommuneApiTests
     {
         // Act
         var result = await _sut.GetKommuneByPoint(
-            new PointQuery
-            {
-                Latitude = 59.91,
-                Longitude = 10.75,
-            }
+            new PointQuery { Latitude = 59.91, Longitude = 10.75 }
         );
 
         // Assert
@@ -173,66 +165,40 @@ public class ApproximateSvalbardAndJanMayenFylkeKommuneApiTests
 
         public Task<IEnumerable<Fylke>> GetFylker()
         {
-            return Task.FromResult<IEnumerable<Fylke>>(
-                [
-                    new Fylke
-                    {
-                        Fylkesnummer = "03",
-                        Fylkesnavn = "Oslo",
-                    },
-                ]
-            );
+            return Task.FromResult<IEnumerable<Fylke>>([
+                new Fylke { Fylkesnummer = "03", Fylkesnavn = "Oslo" },
+            ]);
         }
 
         public Task<IEnumerable<Kommune>> GetKommuner()
         {
-            return Task.FromResult<IEnumerable<Kommune>>(
-                [
-                    new Kommune
-                    {
-                        Kommunenummer = "0301",
-                        Kommunenavn = "Oslo",
-                    },
-                ]
-            );
+            return Task.FromResult<IEnumerable<Kommune>>([
+                new Kommune { Kommunenummer = "0301", Kommunenavn = "Oslo" },
+            ]);
         }
 
         public Task<IEnumerable<FylkeFullInfo>> GetFylkerFullInfo()
         {
-            return Task.FromResult<IEnumerable<FylkeFullInfo>>(
-                [
-                    new FylkeFullInfo
-                    {
-                        Fylke = new Fylke
+            return Task.FromResult<IEnumerable<FylkeFullInfo>>([
+                new FylkeFullInfo
+                {
+                    Fylke = new Fylke { Fylkesnummer = "03", Fylkesnavn = "Oslo" },
+                    Kommuner =
+                    [
+                        new KommuneFullInfo
                         {
                             Fylkesnummer = "03",
-                            Fylkesnavn = "Oslo",
+                            Kommune = new Kommune { Kommunenummer = "0301", Kommunenavn = "Oslo" },
                         },
-                        Kommuner =
-                        [
-                            new KommuneFullInfo
-                            {
-                                Fylkesnummer = "03",
-                                Kommune = new Kommune
-                                {
-                                    Kommunenummer = "0301",
-                                    Kommunenavn = "Oslo",
-                                },
-                            },
-                        ],
-                    },
-                ]
-            );
+                    ],
+                },
+            ]);
         }
 
         public Task<Fylke?> GetFylkeByNumber(string fylkesnummer)
         {
             return Task.FromResult<Fylke?>(
-                new Fylke
-                {
-                    Fylkesnummer = fylkesnummer,
-                    Fylkesnavn = "Inner",
-                }
+                new Fylke { Fylkesnummer = fylkesnummer, Fylkesnavn = "Inner" }
             );
         }
 
@@ -242,11 +208,7 @@ public class ApproximateSvalbardAndJanMayenFylkeKommuneApiTests
                 new KommuneFullInfo
                 {
                     Fylkesnummer = "03",
-                    Kommune = new Kommune
-                    {
-                        Kommunenummer = kommunenummer,
-                        Kommunenavn = "Inner",
-                    },
+                    Kommune = new Kommune { Kommunenummer = kommunenummer, Kommunenavn = "Inner" },
                 }
             );
         }
@@ -256,11 +218,7 @@ public class ApproximateSvalbardAndJanMayenFylkeKommuneApiTests
             GetKommuneByPointWasCalled = true;
 
             return Task.FromResult<Kommune?>(
-                new Kommune
-                {
-                    Kommunenummer = "0301",
-                    Kommunenavn = "Oslo",
-                }
+                new Kommune { Kommunenummer = "0301", Kommunenavn = "Oslo" }
             );
         }
     }

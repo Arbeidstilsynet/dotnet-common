@@ -35,6 +35,8 @@ public class DependencyInjectionExtensionsTests
         using var serviceProvider = services.BuildServiceProvider();
 
         // Assert
-        serviceProvider.GetRequiredService<IFylkeKommuneApi>().ShouldBeOfType<FylkeKommuneClient>();
+        serviceProvider
+            .GetRequiredService<IFylkeKommuneApi>()
+            .ShouldBeOfType<FylkeKommuneClient>();
     }
 }
