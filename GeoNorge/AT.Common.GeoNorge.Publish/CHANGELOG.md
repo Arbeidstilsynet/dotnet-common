@@ -19,6 +19,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 3.1.0
+
+### Added
+
+- Added `UseApproximateSvalbardAndJanMayen` option to `GeoNorgeConfig`. When enabled, registers a
+  decorator around `IFylkeKommuneApi` that supplements GeoNorge data with synthetic entries for
+  Svalbard (fylke `21`, kommune `2100`) and Jan Mayen (fylke `22`, kommune `2211`), which are not
+  included in the GeoNorge API.
+  - `GetFylker` and `GetKommuner` append the synthetic entries if not already present.
+  - `GetFylkerFullInfo` appends full info entries for both territories.
+  - `GetFylkeByNumber` and `GetKommuneByNumber` return synthetic data for the known numbers without
+    hitting the GeoNorge API.
+  - `GetKommuneByPoint` short-circuits for WGS84/ETRS89 coordinates falling within approximate
+    bounding boxes for Svalbard (including Bjørnøya and Hopen) and Jan Mayen.
+
 ## 3.0.0
 
 ### Removed

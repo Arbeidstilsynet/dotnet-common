@@ -13,6 +13,14 @@ public record GeoNorgeConfig
     /// Base URL for GeoNorge API. Default is "https://ws.geonorge.no/".
     /// </summary>
     public string BaseUrl { get; init; } = "https://ws.geonorge.no/";
+
+    /// <summary>
+    /// If true, uses an approximate method for determining if coordinates are within Svalbard and Jan Mayen.
+    /// <remarks>
+    /// This is a workaround for the fact that the GeoNorge API does not include Svalbard and Jan Mayen in its fylke and kommune data.
+    /// </remarks>
+    /// </summary>
+    public bool UseApproximateSvalbardAndJanMayen { get; init; } = false;
 }
 
 /// <summary>
@@ -50,7 +58,15 @@ public static class DependencyInjectionExtensions
             .AddStandardResilienceHandler();
 
         services.AddSingleton<IAddressSearch, AddressSearchClient>();
-        services.AddSingleton<IFylkeKommuneApi, FylkeKommuneClient>();
+        services.AddSingleton<FylkeKommuneClient>();
+        services.AddSingleton<IFylkeKommuneApi>(serviceProvider =>
+        {
+            var fylkeKommuneClient = serviceProvider.GetRequiredService<FylkeKommuneClient>();
+
+            return geoNorgeConfig.UseApproximateSvalbardAndJanMayen
+                ? new ApproximateSvalbardAndJanMayenFylkeKommuneApi(fylkeKommuneClient)
+                : fylkeKommuneClient;
+        });
 
         return services;
     }
