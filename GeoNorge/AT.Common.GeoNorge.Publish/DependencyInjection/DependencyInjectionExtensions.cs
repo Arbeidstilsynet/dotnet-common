@@ -16,10 +16,10 @@ public record GeoNorgeConfig
 
     /// <summary>
     /// If true, uses an approximate method for determining if coordinates are within Svalbard and Jan Mayen.
+    /// </summary>
     /// <remarks>
     /// This is a workaround for the fact that the GeoNorge API does not include Svalbard and Jan Mayen in its fylke and kommune data.
     /// </remarks>
-    /// </summary>
     public bool UseApproximateSvalbardAndJanMayen { get; init; } = false;
 }
 
