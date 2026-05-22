@@ -98,7 +98,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         {
             var filter = string.Join(',', _config.StructuredDataConfiguration.TaskIdFilter);
             _logger.LogInformation(
-                "Skipping structured data generation for instance {InstanceId} on task {TaskId} due to not matching any of the configured TaskIds({filter})",
+                "Skipping structured data generation for instance {InstanceId} on task {TaskId} due to not matching any of the configured TaskIds({Filter})",
                 instance.Id,
                 taskId,
                 filter
