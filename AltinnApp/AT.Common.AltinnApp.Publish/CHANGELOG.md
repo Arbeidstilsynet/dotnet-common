@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed <!-- for any bug fixes. -->
 
+- fixed: `StructuredDataManager` now verifies that structured data exists by process end even when `KeepAppDataModelAfterMapping = true`.
+
 ### Security <!-- in case of vulnerabilities. -->
 
 ## 2.8.0
@@ -28,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- changed: `StructuredDataManager` now refuses to delete the app data model if no structured data element of the configured type exists on the instance, guarding against data loss on misconfiguration or when structured data mapping did not run for the task. Bypass with `KeepAppDataModelAfterMapping = true`.
+- changed: `StructuredDataManager` now refuses to delete the app data model if no structured data element of the configured type exists on the instance, guarding against data loss on misconfiguration or when structured data mapping did not run for the task. In 2.8.0 this guard was bypassed by `KeepAppDataModelAfterMapping = true`; current behavior validates structured data existence regardless of that setting.
 
 ## 2.7.2
 

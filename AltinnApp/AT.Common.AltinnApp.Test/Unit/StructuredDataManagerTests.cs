@@ -257,6 +257,9 @@ public class StructuredDataManagerTests
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
+        instance.Data.Add(
+            new DataElement { Id = Guid.NewGuid().ToString(), DataType = "structured-data" }
+        );
         var application = AltinnData.CreateTestApplication(
             classRef: typeof(TestDataModel).FullName
         );
@@ -349,9 +352,9 @@ public class StructuredDataManagerTests
     }
 
     [Fact]
-    public async Task End_ProcessEnd_WhenNoStructuredDataExists_And_KeepAppDataModelIsTrue_ShouldNotThrow()
+    public async Task End_ProcessEnd_WhenNoStructuredDataExists_And_KeepAppDataModelIsTrue_ShouldThrow()
     {
-        // Arrange: KeepAppDataModelAfterMapping bypasses the check entirely.
+        // Arrange
         var instance = AltinnData.CreateTestInstance();
         var application = AltinnData.CreateTestApplication(
             classRef: typeof(TestDataModel).FullName
@@ -376,8 +379,11 @@ public class StructuredDataManagerTests
             _structuredDataValidator
         );
 
-        // Act + Assert: should not throw, and should not delete anything
-        await sut.End(instance, new List<InstanceEvent>());
+        // Act
+        var act = () => sut.End(instance, new List<InstanceEvent>());
+
+        // Assert
+        await act.ShouldThrowAsync<InvalidOperationException>();
         await _dataClient
             .DidNotReceiveWithAnyArgs()
             .DeleteData(
