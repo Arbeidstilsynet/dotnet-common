@@ -62,6 +62,22 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
             instance
         );
 
+        var structuredDataExists = instance.Data.Any(d =>
+            string.Equals(
+                d.DataType,
+                _config.StructuredDataConfiguration.StructuredDataTypeId,
+                StringComparison.OrdinalIgnoreCase
+            )
+        );
+
+        if (!structuredDataExists)
+        {
+            throw new InvalidOperationException(
+                $"No structured data element of type '{_config.StructuredDataConfiguration.StructuredDataTypeId}' was found on the instance by process end. "
+                    + "This may indicate a misconfiguration or that structured data mapping did not run for this task."
+            );
+        }
+
         if (!_config.StructuredDataConfiguration.KeepAppDataModelAfterMapping)
         {
             await _dataClient.DeleteElement(instance, dataModelElement);
@@ -71,6 +87,23 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
     public async Task End(string taskId, Instance instance)
     {
         // Just before submission
+
+        var taskIdFilter = _config.StructuredDataConfiguration.TaskIdFilter ?? [];
+        if (
+            taskIdFilter.Length > 0
+            && !taskIdFilter.Contains(taskId, StringComparer.OrdinalIgnoreCase)
+        )
+        {
+            var filter = string.Join(',', taskIdFilter);
+            _logger.LogInformation(
+                "Skipping structured data generation for instance {InstanceId} on task {TaskId} due to not matching any of the configured TaskIds({Filter})",
+                instance.Id,
+                taskId,
+                filter
+            );
+            return;
+        }
+
         try
         {
             await CreateStructuredData(instance);
@@ -235,7 +268,7 @@ file static class Extensions
     )
         where T : class
     {
-        var stream = structuredData.ToBinaryStream();
+        using var stream = structuredData.ToBinaryStream();
 
         await dataClient.InsertBinaryData(
             instance.Id,
