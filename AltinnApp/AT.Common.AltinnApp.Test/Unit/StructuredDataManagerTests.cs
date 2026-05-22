@@ -204,7 +204,9 @@ public class StructuredDataManagerTests
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
-        instance.Data.Add(new DataElement { Id = Guid.NewGuid().ToString(), DataType = "structured-data" });
+        instance.Data.Add(
+            new DataElement { Id = Guid.NewGuid().ToString(), DataType = "structured-data" }
+        );
         var application = AltinnData.CreateTestApplication(
             classRef: typeof(TestDataModel).FullName
         );
@@ -223,7 +225,9 @@ public class StructuredDataManagerTests
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
-        instance.Data.Add(new DataElement { Id = Guid.NewGuid().ToString(), DataType = "structured-data" });
+        instance.Data.Add(
+            new DataElement { Id = Guid.NewGuid().ToString(), DataType = "structured-data" }
+        );
         var application = AltinnData.CreateTestApplication(
             classRef: typeof(TestDataModel).FullName
         );
@@ -297,7 +301,9 @@ public class StructuredDataManagerTests
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
-        instance.Data.Add(new DataElement { Id = Guid.NewGuid().ToString(), DataType = "structured-data" });
+        instance.Data.Add(
+            new DataElement { Id = Guid.NewGuid().ToString(), DataType = "structured-data" }
+        );
         var application = AltinnData.CreateTestApplication(
             classRef: typeof(TestDataModel).FullName
         );
