@@ -64,7 +64,6 @@ public class PreSubmitProcessorTests
         );
         var dataElement = instance.Data.First();
         var dataModel = new TestDataModel { Value = "Test" };
-        var expectedGuid = Guid.Parse(dataElement.Id);
 
         _applicationClient
             .GetApplication(Arg.Any<string>(), Arg.Any<string>())

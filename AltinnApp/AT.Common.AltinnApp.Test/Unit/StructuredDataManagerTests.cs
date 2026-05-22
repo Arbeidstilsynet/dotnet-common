@@ -82,7 +82,6 @@ public class StructuredDataManagerTests
             classRef: typeof(TestDataModel).FullName
         );
         var dataModel = new TestDataModel { Name = "Test" };
-        var expectedGuid = Guid.Parse(instance.Data.First().Id);
 
         _applicationClient
             .GetApplication(Arg.Any<string>(), Arg.Any<string>())

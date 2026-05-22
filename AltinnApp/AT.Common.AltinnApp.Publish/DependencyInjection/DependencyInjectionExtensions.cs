@@ -82,6 +82,11 @@ public record StructuredDataConfiguration
     /// <summary>
     /// Optional filter for which task(s) the structured data mapping should run for. Default is empty, which means it will run for all tasks.
     /// </summary>
+    /// <remarks>
+    /// If this filter is set and excludes the submission task, no structured data will be generated for that task,
+    /// which means the post-submission handler will refuse to delete the app data model (as a safeguard against data loss).
+    /// Ensure the submission task (usually Task_1) is included in this filter, or set <see cref="KeepAppDataModelAfterMapping"/> to <c>true</c>.
+    /// </remarks>
     public string[] TaskIdFilter { get; init; } = [];
 }
 

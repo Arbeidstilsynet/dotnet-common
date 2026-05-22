@@ -43,9 +43,10 @@ public abstract class PreSubmitDataModelProcessor<TDataModel> : IProcessTaskEnd
     /// <param name="instance"></param>
     public async Task End(string taskId, Instance instance)
     {
+        var taskIdFilter = TaskIdFilter ?? [];
         if (
-            TaskIdFilter.Length > 0
-            && !TaskIdFilter.Contains(taskId, StringComparer.OrdinalIgnoreCase)
+            taskIdFilter.Length > 0
+            && !taskIdFilter.Contains(taskId, StringComparer.OrdinalIgnoreCase)
         )
         {
             return;
