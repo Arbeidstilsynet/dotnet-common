@@ -64,6 +64,22 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
 
         if (!_config.StructuredDataConfiguration.KeepAppDataModelAfterMapping)
         {
+            var structuredDataExists = instance.Data.Any(d =>
+                string.Equals(
+                    d.DataType,
+                    _config.StructuredDataConfiguration.StructuredDataTypeId,
+                    StringComparison.OrdinalIgnoreCase
+                )
+            );
+
+            if (!structuredDataExists)
+            {
+                throw new InvalidOperationException(
+                    $"Refusing to delete app data model: no structured data element of type '{_config.StructuredDataConfiguration.StructuredDataTypeId}' was found on the instance. "
+                        + "This may indicate a misconfiguration or that structured data mapping did not run for this task."
+                );
+            }
+
             await _dataClient.DeleteElement(instance, dataModelElement);
         }
     }
