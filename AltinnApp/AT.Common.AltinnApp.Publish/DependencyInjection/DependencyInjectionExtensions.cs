@@ -84,8 +84,8 @@ public record StructuredDataConfiguration
     /// </summary>
     /// <remarks>
     /// If this filter is set and excludes the submission task, no structured data will be generated for that task,
-    /// which means the post-submission handler will refuse to delete the app data model (as a safeguard against data loss).
-    /// Ensure the submission task (usually Task_1) is included in this filter, or set <see cref="KeepAppDataModelAfterMapping"/> to <c>true</c>.
+    /// which means the post-submission handler will fail because structured data is expected to exist by process end.
+    /// Ensure the submission task (usually Task_1) is included in this filter.
     /// </remarks>
     public string[] TaskIdFilter { get; init; } = [];
 }
@@ -145,6 +145,7 @@ public static class DependencyInjectionExtensions
     /// Adds a mechanism to map the datamodel of type <typeparamref name="TDataModel"/> to structured data of type <typeparamref name="TStructuredData"/>
     ///
     /// The data model is deleted right after PDF-generation so that it doesn't get transferred to storage (control this behavior with <see cref="StructuredDataConfiguration.KeepAppDataModelAfterMapping"/>). The structured data will be stored instead.
+    /// A structured data element is always expected to exist by process end, regardless of whether the data model is kept.
     /// </summary>
     /// <param name="services"></param>
     /// <param name="mapFunc">The function responsible for mapping from <typeparamref name="TDataModel"/> to <typeparamref name="TStructuredData"/>.</param>
@@ -171,6 +172,8 @@ public static class DependencyInjectionExtensions
     /// Adds a mechanism to map the datamodel of type <typeparamref name="TDataModel"/> to structured data of type <typeparamref name="TStructuredData"/>
     /// <br/>
     /// The data model is deleted right after PDF-generation so that it doesn't get transferred to storage (control this behavior with <see cref="StructuredDataConfiguration.KeepAppDataModelAfterMapping"/>). The structured data will be stored instead.
+    /// <br/>
+    /// A structured data element is always expected to exist by process end, regardless of whether the data model is kept.
     /// <br/>
     /// The app instance will also declare the <see cref="DataElement.DataType"/> of the structured data and main content. This declaration is written to DataValues, based on the <see cref="StructuredDataConfiguration"/>
     /// </summary>
