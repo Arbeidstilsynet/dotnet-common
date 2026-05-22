@@ -538,6 +538,102 @@ public class StructuredDataManagerTests
             );
     }
 
+    [Fact]
+    public async Task End_TaskEnd_WhenTaskIdFilterDoesNotMatch_ShouldSkipStructuredDataGeneration()
+    {
+        // Arrange
+        var instance = AltinnData.CreateTestInstance();
+        var sut = new StructuredDataManager<TestDataModel, TestStructuredData>(
+            _applicationClient,
+            _dataClient,
+            _instanceClient,
+            _config with
+            {
+                StructuredDataConfiguration = _config.StructuredDataConfiguration with
+                {
+                    TaskIdFilter = ["allowed-task"],
+                },
+            },
+            _logger,
+            _structuredDataValidator
+        );
+
+        // Act
+        await sut.End("other-task", instance);
+
+        // Assert
+        await _applicationClient.DidNotReceiveWithAnyArgs().GetApplication(default!, default!);
+        await _dataClient
+            .DidNotReceiveWithAnyArgs()
+            .GetFormData(default!, default!, cancellationToken: Arg.Any<CancellationToken>());
+        await _dataClient
+            .DidNotReceiveWithAnyArgs()
+            .InsertBinaryData(
+                default!,
+                default!,
+                default!,
+                default!,
+                default!,
+                cancellationToken: Arg.Any<CancellationToken>()
+            );
+        await _instanceClient.DidNotReceiveWithAnyArgs().UpdateDataValues(default!, default!);
+        await _structuredDataValidator.DidNotReceiveWithAnyArgs().ValidateAndThrow(default!);
+    }
+
+    [Fact]
+    public async Task End_TaskEnd_WhenTaskIdFilterMatchesIgnoringCase_ShouldGenerateStructuredData()
+    {
+        // Arrange
+        var instance = AltinnData.CreateTestInstance();
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+        );
+        var dataModel = new TestDataModel { Name = "Test" };
+        var sut = new StructuredDataManager<TestDataModel, TestStructuredData>(
+            _applicationClient,
+            _dataClient,
+            _instanceClient,
+            _config with
+            {
+                StructuredDataConfiguration = _config.StructuredDataConfiguration with
+                {
+                    TaskIdFilter = ["Allowed-Task"],
+                },
+            },
+            _logger,
+            _structuredDataValidator
+        );
+
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(application);
+        _dataClient
+            .GetFormData(
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
+                cancellationToken: Arg.Any<CancellationToken>()
+            )
+            .Returns(dataModel);
+
+        // Act
+        await sut.End("allowed-task", instance);
+
+        // Assert
+        await _dataClient
+            .Received(1)
+            .InsertBinaryData(
+                instance.Id,
+                "structured-data",
+                "application/json",
+                "structured-data.json",
+                Arg.Any<Stream>(),
+                cancellationToken: Arg.Any<CancellationToken>()
+            );
+        await _instanceClient
+            .Received(1)
+            .UpdateDataValues(instance, Arg.Any<Dictionary<string, string?>>());
+    }
+
     public class TestDataModel
     {
         public string? Name { get; set; }

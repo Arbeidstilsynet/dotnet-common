@@ -71,6 +71,25 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
     public async Task End(string taskId, Instance instance)
     {
         // Just before submission
+
+        if (
+            _config.StructuredDataConfiguration.TaskIdFilter.Length > 0
+            && !_config.StructuredDataConfiguration.TaskIdFilter.Contains(
+                taskId,
+                StringComparer.OrdinalIgnoreCase
+            )
+        )
+        {
+            var filter = string.Join(',', _config.StructuredDataConfiguration.TaskIdFilter);
+            _logger.LogInformation(
+                "Skipping structured data generation for instance {InstanceId} on task {TaskId} due to not matching any of the configured TaskIds({filter})",
+                instance.Id,
+                taskId,
+                filter
+            );
+            return;
+        }
+
         try
         {
             await CreateStructuredData(instance);

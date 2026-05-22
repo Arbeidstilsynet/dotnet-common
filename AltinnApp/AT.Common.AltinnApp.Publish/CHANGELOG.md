@@ -19,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.8.0
+
+### Added
+
+- added: `PreSubmitDataModelProcessor<TDataModel>` supports `TaskIdFilter` for limiting pre-submit processing to selected Altinn task IDs
+- added: `StructuredDataConfiguration.TaskIdFilter` for limiting structured data generation to selected Altinn task IDs
+
 ## 2.7.2
 
 ### Fixed

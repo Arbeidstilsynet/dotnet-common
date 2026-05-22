@@ -78,6 +78,11 @@ public record StructuredDataConfiguration
     /// Whether to keep the App data model after mapping. Default is false.
     /// </summary>
     public bool KeepAppDataModelAfterMapping { get; init; } = false;
+
+    /// <summary>
+    /// Optional filter for which task(s) the structured data mapping should run for. Default is empty, which means it will run for all tasks.
+    /// </summary>
+    public string[] TaskIdFilter { get; init; } = [];
 }
 
 /// <summary>

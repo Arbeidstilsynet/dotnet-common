@@ -232,6 +232,77 @@ public class PreSubmitProcessorTests
             );
     }
 
+    [Fact]
+    public async Task End_WhenTaskIdFilterDoesNotMatch_ShouldSkipProcessing()
+    {
+        // Arrange
+        var instance = AltinnData.CreateTestInstance();
+        var sut = new FilteredTestPreSubmitProcessor(
+            _dataClient,
+            _applicationClient,
+            ["allowed-task"]
+        );
+
+        // Act
+        await sut.End("other-task", instance);
+
+        // Assert
+        sut.LastProcessedDataModel.ShouldBeNull();
+        await _applicationClient.DidNotReceiveWithAnyArgs().GetApplication(default!, default!);
+        await _dataClient
+            .DidNotReceiveWithAnyArgs()
+            .GetFormData(default!, default!, cancellationToken: Arg.Any<CancellationToken>());
+        await _dataClient
+            .DidNotReceiveWithAnyArgs()
+            .UpdateFormData(
+                default!,
+                default!,
+                default!,
+                cancellationToken: Arg.Any<CancellationToken>()
+            );
+    }
+
+    [Fact]
+    public async Task End_WhenTaskIdFilterMatchesIgnoringCase_ShouldProcessDataModel()
+    {
+        // Arrange
+        var instance = AltinnData.CreateTestInstance();
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+        );
+        var dataModel = new TestDataModel { Value = "Original" };
+        var sut = new FilteredTestPreSubmitProcessor(
+            _dataClient,
+            _applicationClient,
+            ["Allowed-Task"]
+        );
+
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(application);
+        _dataClient
+            .GetFormData(
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
+                cancellationToken: Arg.Any<CancellationToken>()
+            )
+            .Returns(dataModel);
+
+        // Act
+        await sut.End("allowed-task", instance);
+
+        // Assert
+        sut.LastProcessedDataModel.ShouldBe(dataModel);
+        await _dataClient
+            .Received(1)
+            .UpdateFormData(
+                instance,
+                Arg.Is<TestDataModel>(dm => dm.Value == "Processed"),
+                Arg.Any<DataElement>(),
+                cancellationToken: Arg.Any<CancellationToken>()
+            );
+    }
+
     public class TestDataModel
     {
         public string? Value { get; set; }
@@ -254,6 +325,23 @@ public class PreSubmitProcessorTests
             LastProcessedInstance = instance;
 
             return Task.FromResult(new TestDataModel { Value = "Processed" });
+        }
+    }
+
+    public class FilteredTestPreSubmitProcessor : TestPreSubmitProcessor
+    {
+        private readonly string[] _taskIdFilter;
+
+        protected override string[] TaskIdFilter => _taskIdFilter;
+
+        public FilteredTestPreSubmitProcessor(
+            IDataClient dataClient,
+            IApplicationClient applicationClient,
+            string[] taskIdFilter
+        )
+            : base(dataClient, applicationClient)
+        {
+            _taskIdFilter = taskIdFilter;
         }
     }
 }

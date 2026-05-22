@@ -18,6 +18,11 @@ public abstract class PreSubmitDataModelProcessor<TDataModel> : IProcessTaskEnd
     private readonly IApplicationClient _applicationClient;
 
     /// <summary>
+    /// Optional filter for which task(s) this processor should run for. If empty, the processor will run for all tasks.
+    /// </summary>
+    protected virtual string[] TaskIdFilter => [];
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="dataClient"></param>
@@ -38,6 +43,14 @@ public abstract class PreSubmitDataModelProcessor<TDataModel> : IProcessTaskEnd
     /// <param name="instance"></param>
     public async Task End(string taskId, Instance instance)
     {
+        if (
+            TaskIdFilter.Length > 0
+            && !TaskIdFilter.Contains(taskId, StringComparer.OrdinalIgnoreCase)
+        )
+        {
+            return;
+        }
+
         var dataElement = await _applicationClient.GetRequiredDataModelElement<TDataModel>(
             instance
         );
