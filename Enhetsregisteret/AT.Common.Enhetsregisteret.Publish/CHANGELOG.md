@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.0.1
+
+### Fixed
+
+- fix: map datetime to correct format in GetOppdateringerQuery mapping
+
 ## 2.0.0
 
 ### Removed
