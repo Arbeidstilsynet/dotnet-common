@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
 
       - name: Get version and name from csproj file
         id: get_metadata_from_csprojectfile
@@ -22,7 +22,7 @@ jobs:
 
       - name: Check if package version exists
         id: nuget_version_check
-        uses: Arbeidstilsynet/action-nuget-check-published@f645c4474151c76472f352ade57e8c19242fbf9c # v2
+        uses: Arbeidstilsynet/action-nuget-check-published@c706392290e42d3ee19cf8c22be9678c716703e0 # v2
         with:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
           version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
@@ -30,7 +30,7 @@ jobs:
 
       - name: Publish package if not already published
         if: steps.nuget_version_check.outputs.published == 'false'
-        uses: Arbeidstilsynet/action-dotnet-publish@13b0652cc572b0febf4be4160cdee9ec468b828d # v3
+        uses: Arbeidstilsynet/action-dotnet-publish@74f56a48df6466a1b1986cd298a71ed8a94311b6 # v3
         with:
           working-directory: ${{ inputs.package-path }}
           nuget-username: ${{ vars.NUGET_BOT_USERNAME }}

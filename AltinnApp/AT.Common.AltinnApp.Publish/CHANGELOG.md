@@ -17,7 +17,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed <!-- for any bug fixes. -->
 
+- fixed: `StructuredDataManager` now verifies that structured data exists by process end even when `KeepAppDataModelAfterMapping = true`.
+
 ### Security <!-- in case of vulnerabilities. -->
+
+## 2.8.0
+
+### Added
+
+- added: `PreSubmitDataModelProcessor<TDataModel>` supports `TaskIdFilter` for limiting pre-submit processing to selected Altinn task IDs
+- added: `StructuredDataConfiguration.TaskIdFilter` for limiting structured data generation to selected Altinn task IDs
+
+### Changed
+
+- changed: `StructuredDataManager` now refuses to delete the app data model if no structured data element of the configured type exists on the instance, guarding against data loss on misconfiguration or when structured data mapping did not run for the task.
 
 ## 2.7.2
 
