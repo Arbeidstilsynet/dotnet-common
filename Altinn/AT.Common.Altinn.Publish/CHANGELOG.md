@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 3.2.0-alpha1
+
+### Added
+
+- feat(altinn): Added `Validated` property to `AltinnSubscription` response model, indicating whether the subscription has been validated by Altinn.
+
 ## 3.1.1
 
 ### Fixed

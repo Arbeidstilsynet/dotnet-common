@@ -1693,10 +1693,11 @@
           "typeFilter": "app.instance.process.completed",
           "consumer": "/user/12345",
           "createdBy": "/user/12345",
-          "created": "2022-07-27T13:14:14.395226Z"
+          "created": "2022-07-27T13:14:14.395226Z",
+          "validated": true
         }
       },
-      "SubscriptionList": {
+      "SubscriptionList":{
         "type": "object",
         "properties": {
           "count": {

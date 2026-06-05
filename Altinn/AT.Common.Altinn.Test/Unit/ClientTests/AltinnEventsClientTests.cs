@@ -30,6 +30,7 @@ public class AltinnEventsClientTests : TestBed<AltinnApiTestFixture>
         //assert
         result.ShouldNotBeNull();
         result.TypeFilter.ShouldBe("app.instance.process.completed");
+        result.Validated.ShouldBe(true);
     }
 
     [Fact]
@@ -52,5 +53,6 @@ public class AltinnEventsClientTests : TestBed<AltinnApiTestFixture>
         //assert
         result.ShouldNotBeNull();
         result.TypeFilter.ShouldBe("app.instance.process.completed");
+        result.Validated.ShouldBe(true);
     }
 }
