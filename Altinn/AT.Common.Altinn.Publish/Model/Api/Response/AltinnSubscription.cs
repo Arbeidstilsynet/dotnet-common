@@ -57,7 +57,7 @@ public class AltinnSubscription
     /// </summary>
     [JsonPropertyName("created")]
     public DateTime Created { get; set; }
-    
+
     /// <summary>
     /// Indicate whether the subscription has been validated to be ok.
     /// </summary>
