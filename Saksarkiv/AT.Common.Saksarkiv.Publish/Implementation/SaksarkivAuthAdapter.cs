@@ -15,7 +15,7 @@ internal class SaksarkivAuthAdapter(
     public async Task AuthenticateRequestAsync(
         RequestInformation request,
         Dictionary<string, object>? additionalAuthenticationContext = null,
-        CancellationToken cancellationToken = new()
+        CancellationToken cancellationToken = default
     )
     {
         var accessToken = await tokenProvider.GetAccessToken(_scope, cancellationToken);

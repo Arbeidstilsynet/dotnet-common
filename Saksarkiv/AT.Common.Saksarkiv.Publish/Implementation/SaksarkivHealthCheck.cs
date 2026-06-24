@@ -6,7 +6,7 @@ internal class SaksarkivHealthCheck(SaksarkivClient saksarkivClient) : IHealthCh
 {
     public async Task<HealthCheckResult> CheckHealthAsync(
         HealthCheckContext context,
-        CancellationToken cancellationToken = new()
+        CancellationToken cancellationToken = default
     )
     {
         try
