@@ -1,0 +1,4985 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "AT.eArkiv v2 (Betzy)",
+    "description": "Build: v1.0.0",
+    "contact": {
+      "name": "Team Plattform",
+      "url": "https://arbeidstilsynet-group.slack.com/archives/C09TZT2R6FM"
+    },
+    "version": "v2"
+  },
+  "paths": {
+    "/apiv2/dokument/hentInnhold": {
+      "post": {
+        "tags": [
+          "Dokument"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentDokumentInnholdParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentDokumentInnholdParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentDokumentInnholdParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentDokumentInnholdRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentDokumentInnholdRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentDokumentInnholdRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/dokument/hentInnholdForBruker": {
+      "post": {
+        "tags": [
+          "Dokument"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentDokumentInnholdParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentDokumentInnholdParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentDokumentInnholdParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentDokumentInnholdRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentDokumentInnholdRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentDokumentInnholdRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/dokument/hentufordeltebrev": {
+      "post": {
+        "tags": [
+          "Dokument"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.UfordelteBrevParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.UfordelteBrevParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.UfordelteBrevParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.UfordelteBrevRetur"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.UfordelteBrevRetur"
+                  }
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.UfordelteBrevRetur"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/health/ping": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/health/pong": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/health/vannskille": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/apiv2/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/apiv2/historikk/merknader/{saksId}": {
+      "get": {
+        "tags": [
+          "Historikk"
+        ],
+        "parameters": [
+          {
+            "name": "saksId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentAlleMerknaderPaaEnSakRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentAlleMerknaderPaaEnSakRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentAlleMerknaderPaaEnSakRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/historikk/merknader/{saksId}/liste": {
+      "get": {
+        "tags": [
+          "Historikk"
+        ],
+        "parameters": [
+          {
+            "name": "saksid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.MerknaderPåSak"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.MerknaderPåSak"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.MerknaderPåSak"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/historikk/korrespondanse/{saksId}": {
+      "get": {
+        "tags": [
+          "Historikk"
+        ],
+        "parameters": [
+          {
+            "name": "saksId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentAllKorrespondansePaaEnSakRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentAllKorrespondansePaaEnSakRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentAllKorrespondansePaaEnSakRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/historikk/korrespondanse/lokalfunksjon": {
+      "post": {
+        "tags": [
+          "Historikk"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.RestApi.HentSaksarkivKorrespondanselisteParams"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.RestApi.HentSaksarkivKorrespondanselisteParams"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.RestApi.HentSaksarkivKorrespondanselisteParams"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FellesKorrespondansePåSak"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FellesKorrespondansePåSak"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FellesKorrespondansePåSak"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/historikk/korrespondanseMedRestanser/{saksId}": {
+      "get": {
+        "tags": [
+          "Historikk"
+        ],
+        "parameters": [
+          {
+            "name": "saksId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentAllKorrespondansePaaEnSakRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentAllKorrespondansePaaEnSakRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentAllKorrespondansePaaEnSakRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/journalpost/avskrivRestanse": {
+      "post": {
+        "tags": [
+          "Journalpost"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.RestApi.AvskrivRestanseRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.RestApi.AvskrivRestanseRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.RestApi.AvskrivRestanseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.AksjonResultat"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.AksjonResultat"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.AksjonResultat"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/journalpost/avskrivRestanseForBruker": {
+      "post": {
+        "tags": [
+          "Journalpost"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.RestApi.AvskrivRestanseForBrukerRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.RestApi.AvskrivRestanseForBrukerRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.RestApi.AvskrivRestanseForBrukerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.AksjonResultat"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.AksjonResultat"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.AksjonResultat"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/journalpost/avskrivDirekte": {
+      "post": {
+        "tags": [
+          "Journalpost"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.AvskrivJournalpostDirekteParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.AvskrivJournalpostDirekteParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.AvskrivJournalpostDirekteParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.AvskrivJournalpostDirekteRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.AvskrivJournalpostDirekteRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.AvskrivJournalpostDirekteRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/journalpost/flytt": {
+      "post": {
+        "tags": [
+          "Journalpost"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FlyttJournalpostParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FlyttJournalpostParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FlyttJournalpostParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FlyttJournalpostRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FlyttJournalpostRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FlyttJournalpostRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/journalpost/settSaksbehandler": {
+      "post": {
+        "tags": [
+          "Journalpost"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettSaksbehandlerParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettSaksbehandlerParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettSaksbehandlerParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettSaksbehandlerRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettSaksbehandlerRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettSaksbehandlerRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/journalpost/settTilgangskodeOgHjemmel": {
+      "post": {
+        "tags": [
+          "Journalpost"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettTilgangskodeOgHjemmelPåJournalpostParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettTilgangskodeOgHjemmelPåJournalpostParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettTilgangskodeOgHjemmelPåJournalpostParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettTilgangskodeOgHjemmelPåJournalpostRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettTilgangskodeOgHjemmelPåJournalpostRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettTilgangskodeOgHjemmelPåJournalpostRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/korrespondanse/opprett": {
+      "post": {
+        "tags": [
+          "Korrespondanse"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OpprettNyKorrespondanseParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OpprettNyKorrespondanseParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OpprettNyKorrespondanseParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OpprettNyKorrespondanseRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OpprettNyKorrespondanseRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OpprettNyKorrespondanseRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/korrespondanse/settStatusJournalfort": {
+      "post": {
+        "tags": [
+          "Korrespondanse"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseJournalførtParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseJournalførtParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseJournalførtParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseJournalførtRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseJournalførtRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseJournalførtRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/korrespondanse/finnEnKorrespondanse": {
+      "post": {
+        "tags": [
+          "Korrespondanse"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnEnKorrespondanseParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnEnKorrespondanseParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnEnKorrespondanseParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnEnKorrespondanseRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnEnKorrespondanseRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnEnKorrespondanseRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/korrespondanse/settStatusPaKorrespondanseFerdig": {
+      "post": {
+        "tags": [
+          "Korrespondanse"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseFerdigParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseFerdigParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseFerdigParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseFerdigRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseFerdigRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseFerdigRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/korrespondanse/settStatusPaKorrespondanseUtgaatt": {
+      "post": {
+        "tags": [
+          "Korrespondanse"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseUtgåttParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseUtgåttParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseUtgåttParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseUtgåttRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseUtgåttRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseUtgåttRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/korrespondanse/finnKorrespondanse": {
+      "post": {
+        "tags": [
+          "Korrespondanse"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnKorrespondanseParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnKorrespondanseParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnKorrespondanseParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnKorrespondanseRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnKorrespondanseRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnKorrespondanseRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/korrespondanse/hentKorrespondansetyper": {
+      "get": {
+        "tags": [
+          "Korrespondanse"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.KorresepondanseTypeBeskrivelse"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.KorresepondanseTypeBeskrivelse"
+                  }
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.KorresepondanseTypeBeskrivelse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/lenke/finnSak": {
+      "post": {
+        "tags": [
+          "Lenke"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnLenkeTilSakParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnLenkeTilSakParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnLenkeTilSakParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnLenkeTilSakRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnLenkeTilSakRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnLenkeTilSakRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/lenke/finnKorrespondanse/{korrespondanseId}": {
+      "get": {
+        "tags": [
+          "Lenke"
+        ],
+        "parameters": [
+          {
+            "name": "korrespondanseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/metadata/tilgangskoder": {
+      "get": {
+        "tags": [
+          "Metadata"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Kode"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Kode"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Kode"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/metadata/hentTilgangskoderForBrukerMedHjemmel/{brukerId}": {
+      "get": {
+        "tags": [
+          "Metadata"
+        ],
+        "parameters": [
+          {
+            "name": "brukerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentHjemmelForTilgangskoderRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentHjemmelForTilgangskoderRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentHjemmelForTilgangskoderRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/metadata/hentHjemmelForTilgangskoder": {
+      "get": {
+        "tags": [
+          "Metadata"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentHjemmelForTilgangskoderRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentHjemmelForTilgangskoderRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentHjemmelForTilgangskoderRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/metadata/organisatoriskeEnheter": {
+      "get": {
+        "tags": [
+          "Metadata"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Kode"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Kode"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Kode"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/metadata/arkivFilformater": {
+      "get": {
+        "tags": [
+          "Metadata"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentArkivFilformaterRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentArkivFilformaterRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentArkivFilformaterRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/objektreferanse/fjernForSak": {
+      "post": {
+        "tags": [
+          "Objektreferanse"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FjernObjektreferanseParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FjernObjektreferanseParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FjernObjektreferanseParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.ReturBase"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.ReturBase"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.ReturBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/objektreferanse/fjernForKorrespondanse": {
+      "post": {
+        "tags": [
+          "Objektreferanse"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FjernObjektreferanseParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FjernObjektreferanseParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FjernObjektreferanseParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.ReturBase"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.ReturBase"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.ReturBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/restanser/finn": {
+      "post": {
+        "tags": [
+          "Restanse"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnRestanserParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnRestanserParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnRestanserParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnRestanserRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnRestanserRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnRestanserRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/restanser/hent/{brukerId}": {
+      "get": {
+        "tags": [
+          "Restanse"
+        ],
+        "parameters": [
+          {
+            "name": "brukerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.RestanseRad"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.RestanseRad"
+                  }
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.RestanseRad"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/restanser/antall/{brukerId}": {
+      "get": {
+        "tags": [
+          "Restanse"
+        ],
+        "parameters": [
+          {
+            "name": "brukerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/sak/opprett": {
+      "post": {
+        "tags": [
+          "Sak"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OpprettSakParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OpprettSakParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OpprettSakParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OpprettSakRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OpprettSakRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OpprettSakRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/sak/oppdater": {
+      "post": {
+        "tags": [
+          "Sak"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OppdaterSakParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OppdaterSakParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OppdaterSakParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OppdaterSakRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OppdaterSakRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OppdaterSakRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/sak/settStatusUtgaatt": {
+      "post": {
+        "tags": [
+          "Sak"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettSakUtgaattParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettSakUtgaattParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettSakUtgaattParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettSakUtgaattRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettSakUtgaattRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettSakUtgaattRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/sak/settMappetype": {
+      "post": {
+        "tags": [
+          "Sak"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettSakMappetypeParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettSakMappetypeParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettSakMappetypeParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettSakMappetypeRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettSakMappetypeRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettSakMappetypeRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/sak/validersaksnummer": {
+      "get": {
+        "tags": [
+          "Sak"
+        ],
+        "parameters": [
+          {
+            "name": "saksnummer",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.ValiderSaksnummerRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.ValiderSaksnummerRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.ValiderSaksnummerRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/sak/validerSaksnummer": {
+      "post": {
+        "tags": [
+          "Sak"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.ValiderSaksnummerParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.ValiderSaksnummerParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.ValiderSaksnummerParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.ValiderSaksnummerRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.ValiderSaksnummerRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.ValiderSaksnummerRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/sak/finnEnSak": {
+      "post": {
+        "tags": [
+          "Sak"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnEnSakParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnEnSakParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnEnSakParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnEnSakRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnEnSakRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnEnSakRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/sak/settEksternReferanse": {
+      "post": {
+        "tags": [
+          "Sak"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettEksternReferanseParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettEksternReferanseParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettEksternReferanseParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettEksternReferanseRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettEksternReferanseRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettEksternReferanseRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/sak/opprettDokumenterPaaSak": {
+      "post": {
+        "tags": [
+          "Sak"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OpprettDokumenterPaaSakParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OpprettDokumenterPaaSakParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OpprettDokumenterPaaSakParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OpprettDokumenterPaaSakRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OpprettDokumenterPaaSakRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OpprettDokumenterPaaSakRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/sak/settStatusPaSakReservert": {
+      "post": {
+        "tags": [
+          "Sak"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaSakReservertParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaSakReservertParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaSakReservertParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaSakReservertRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaSakReservertRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.SettStatusPaaSakReservertRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/sak/oppdaterStatusPaEnSak": {
+      "post": {
+        "tags": [
+          "Sak"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OppdaterStatusPaaEnSakParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OppdaterStatusPaaEnSakParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OppdaterStatusPaaEnSakParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OppdaterStatusPaaEnSakRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OppdaterStatusPaaEnSakRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.OppdaterStatusPaaEnSakRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/saker/finnMedReferanser": {
+      "get": {
+        "tags": [
+          "SakerOppslag"
+        ],
+        "parameters": [
+          {
+            "name": "EndretDatoFra",
+            "in": "query",
+            "description": "Example: 25.02.2026 (dd.mm.yyyy)",
+            "schema": {
+              "type": "string",
+              "description": "Example: 25.02.2026 (dd.mm.yyyy)"
+            }
+          },
+          {
+            "name": "EndretDatoTil",
+            "in": "query",
+            "description": "Example: 25.02.2026 (dd.mm.yyyy)",
+            "schema": {
+              "type": "string",
+              "description": "Example: 25.02.2026 (dd.mm.yyyy)"
+            }
+          },
+          {
+            "name": "MappetypeId",
+            "in": "query",
+            "description": "ID for mappetype i saksarkivet",
+            "schema": {
+              "type": "string",
+              "description": "ID for mappetype i saksarkivet"
+            }
+          },
+          {
+            "name": "Take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Sak"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Sak"
+                  }
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Sak"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/saker/finn": {
+      "post": {
+        "tags": [
+          "SakerOppslag"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/saker/finnMedObjektReferanse": {
+      "post": {
+        "tags": [
+          "SakerOppslag"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerMedObjektReferanseParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerMedObjektReferanseParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerMedObjektReferanseParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/saker/finnKunKlassering": {
+      "post": {
+        "tags": [
+          "SakerOppslag"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerMedKunSaksarkivKlasseringParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerMedKunSaksarkivKlasseringParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerMedKunSaksarkivKlasseringParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/saker/finnKunKlasseringOgMappetype": {
+      "post": {
+        "tags": [
+          "SakerOppslag"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerMedKunSaksarkivKlasseringOgMappetypeParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerMedKunSaksarkivKlasseringOgMappetypeParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerMedKunSaksarkivKlasseringOgMappetypeParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSakerRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/saker/hentSakMedObjektReferanse": {
+      "post": {
+        "tags": [
+          "SakerOppslag"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentSakMedObjektReferanseParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentSakMedObjektReferanseParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.HentSakMedObjektReferanseParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnEnSakRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnEnSakRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnEnSakRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/saker/finnSaksId": {
+      "post": {
+        "tags": [
+          "SakerOppslag"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSaksIdParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSaksIdParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSaksIdParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSaksIdRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSaksIdRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnSaksIdRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/saker/finnEnReturSak": {
+      "post": {
+        "tags": [
+          "SakerOppslag"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnEnReturSakParameter"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnEnReturSakParameter"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnEnReturSakParameter"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnEnReturSakRetur"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnEnReturSakRetur"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FinnEnReturSakRetur"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/script/saksarkivMerknadliste": {
+      "get": {
+        "tags": [
+          "Script"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apiv2/script/saksarkivKorrespondanseliste": {
+      "get": {
+        "tags": [
+          "Script"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AT.eArkiv.Entiteter.API.V2.Dokument": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "tittel": {
+            "type": "string",
+            "nullable": true
+          },
+          "filnavn": {
+            "type": "string",
+            "nullable": true
+          },
+          "tilgangskode": {
+            "type": "string",
+            "nullable": true
+          },
+          "tilgangskodeHjemmel": {
+            "type": "string",
+            "nullable": true
+          },
+          "innhold": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V2.Identifikasjonstype": {
+        "type": "object",
+        "properties": {
+          "betegnelse": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V2.Kode": {
+        "type": "object",
+        "properties": {
+          "navn": {
+            "type": "string",
+            "nullable": true
+          },
+          "verdier": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.KodeVerdi"
+            },
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V2.KodeVerdi": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "nullable": true
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V2.Korrespondanse": {
+        "type": "object",
+        "properties": {
+          "publisert": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "korrespondanseType": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.KorrespondanseType"
+          },
+          "korrespondansePart": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.KorrespondansePart"
+          },
+          "andreMottakere": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.KorrespondansePart"
+            },
+            "nullable": true
+          },
+          "kopiMottakere": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.KorrespondansePart"
+            },
+            "nullable": true
+          },
+          "dokumenter": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Dokument"
+            },
+            "nullable": true
+          },
+          "korrespondanseDato": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fjernRestanse": {
+            "type": "boolean"
+          },
+          "harRestanse": {
+            "type": "boolean"
+          },
+          "restanseAvskrevetDato": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "restanseAvskrivingsmåte": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "indexOfHoveddok": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "beskrivelse": {
+            "type": "string",
+            "nullable": true
+          },
+          "personOpplysningerIBeskrivelse": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "skjermetInnholdIBeskrivelse": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "arkivStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "tilgangskode": {
+            "type": "string",
+            "nullable": true
+          },
+          "hjemmelUOff": {
+            "type": "string",
+            "nullable": true
+          },
+          "administrativOrgEnhetId": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksbehandler": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Saksbehandler"
+          },
+          "godkjenner": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Saksbehandler"
+          },
+          "godkjentDato": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "journalenhetId": {
+            "type": "string",
+            "nullable": true
+          },
+          "erJournalFørt": {
+            "type": "boolean",
+            "default": true
+          },
+          "objektReferanse": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.ObjektReferanse"
+          },
+          "saksId": {
+            "type": "string",
+            "nullable": true
+          },
+          "besvarelseId": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksNummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "merknader": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Merknad"
+            },
+            "nullable": true
+          },
+          "mottattDato": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dokumentkategori": {
+            "type": "string",
+            "nullable": true
+          },
+          "eksternReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "dokumentnummer": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tilleggsattributter": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Tilleggsattributt"
+            },
+            "nullable": true
+          },
+          "hovedDokument": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Dokument"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V2.KorrespondansePart": {
+        "type": "object",
+        "properties": {
+          "navn": {
+            "type": "string",
+            "nullable": true
+          },
+          "administrativEnhetId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "adresse": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "postnr": {
+            "type": "string",
+            "nullable": true
+          },
+          "poststed": {
+            "type": "string",
+            "nullable": true
+          },
+          "landkode": {
+            "type": "string",
+            "nullable": true
+          },
+          "land": {
+            "type": "string",
+            "nullable": true
+          },
+          "epostAdresse": {
+            "type": "string",
+            "nullable": true
+          },
+          "orgnummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "forsendelsesmåte": {
+            "type": "string",
+            "nullable": true
+          },
+          "forsendelsesstatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "referanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "kontaktPerson": {
+            "type": "string",
+            "nullable": true
+          },
+          "erVerneombud": {
+            "type": "boolean"
+          },
+          "erSkjermet": {
+            "type": "boolean"
+          },
+          "person": {
+            "type": "boolean"
+          },
+          "internMottaker": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Saksbehandler"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V2.KorrespondanseType": {
+        "enum": [
+          "Inngående",
+          "Utgående",
+          "Arkivdokument",
+          "NotatUtenRestanse",
+          "NotatMedRestanse",
+          "Ukjent"
+        ],
+        "type": "string"
+      },
+      "AT.eArkiv.Entiteter.API.V2.Merknad": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "registrertAvAnonym": {
+            "type": "boolean"
+          },
+          "registrertAv": {
+            "type": "string",
+            "nullable": true
+          },
+          "paaVegneAv": {
+            "type": "string",
+            "nullable": true
+          },
+          "opprettet": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "merknadsTypeId": {
+            "type": "string",
+            "nullable": true
+          },
+          "merknadTilgangskode": {
+            "type": "string",
+            "nullable": true
+          },
+          "merknadstekst": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V2.ObjektReferanse": {
+        "type": "object",
+        "properties": {
+          "objektType": {
+            "type": "string",
+            "nullable": true
+          },
+          "objektId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V2.ReturSak": {
+        "type": "object",
+        "properties": {
+          "saksId": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksNr": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksTittel": {
+            "type": "string",
+            "nullable": true
+          },
+          "objektReferanse": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.ObjektReferanse"
+          },
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "opprettetDato": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "opprettetAvBrukerId": {
+            "type": "string",
+            "nullable": true
+          },
+          "opprettetAvBrukerNavn": {
+            "type": "string",
+            "nullable": true
+          },
+          "mappetypeId": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksansvarligEnhet": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksstatusId": {
+            "type": "string",
+            "nullable": true
+          },
+          "arkivdelId": {
+            "type": "string",
+            "nullable": true
+          },
+          "arkivdelArkivstatusId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V2.Sak": {
+        "type": "object",
+        "properties": {
+          "saksnr": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksId": {
+            "type": "string",
+            "nullable": true
+          },
+          "tittel": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksstatusId": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksansvarligId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "saksansvarlig": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Saksbehandler"
+          },
+          "saksansvarligEnhetId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "journalenhetId": {
+            "type": "string",
+            "nullable": true
+          },
+          "mappetypeId": {
+            "type": "string",
+            "nullable": true
+          },
+          "arkivdelId": {
+            "type": "string",
+            "nullable": true
+          },
+          "tilgangskodeId": {
+            "type": "string",
+            "nullable": true
+          },
+          "klassifiseringsKode": {
+            "type": "string",
+            "nullable": true
+          },
+          "merknader": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Merknad"
+            },
+            "nullable": true
+          },
+          "korrespondanseListe": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Korrespondanse"
+            },
+            "nullable": true
+          },
+          "objektReferanse": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.ObjektReferanse"
+          },
+          "personOpplysningerIBeskrivelse": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "saksparter": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Sakspart"
+            },
+            "nullable": true
+          },
+          "datoOpprettet": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "organisasjonsnummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "eksternReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "avsluttet": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V2.Saksbehandler": {
+        "type": "object",
+        "properties": {
+          "kredentialer": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "navn": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V2.Sakspart": {
+        "type": "object",
+        "properties": {
+          "epost": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "kontaktperson": {
+            "type": "string",
+            "nullable": true
+          },
+          "kortnavn": {
+            "type": "string",
+            "nullable": true
+          },
+          "merknad": {
+            "type": "string",
+            "nullable": true
+          },
+          "navn": {
+            "type": "string",
+            "nullable": true
+          },
+          "postadresse": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnr": {
+            "type": "string",
+            "nullable": true
+          },
+          "poststed": {
+            "type": "string",
+            "nullable": true
+          },
+          "landkode": {
+            "type": "string",
+            "nullable": true
+          },
+          "rolle": {
+            "type": "string",
+            "nullable": true
+          },
+          "roller": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.SakspartRolleLink"
+            },
+            "nullable": true
+          },
+          "sak": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Sak"
+          },
+          "saksId": {
+            "type": "string",
+            "nullable": true
+          },
+          "sakspartRolleLinkId": {
+            "type": "string",
+            "nullable": true
+          },
+          "sakspartUOff": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "telefaks": {
+            "type": "string",
+            "nullable": true
+          },
+          "telefon": {
+            "type": "string",
+            "nullable": true
+          },
+          "utenlandsadresse": {
+            "type": "string",
+            "nullable": true
+          },
+          "identifikasjonstype": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Identifikasjonstype"
+          },
+          "identifikasjonstypeId": {
+            "type": "string",
+            "nullable": true
+          },
+          "organisasjonsnr": {
+            "type": "string",
+            "nullable": true
+          },
+          "opprettet": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "sistOppdatert": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V2.SakspartRolle": {
+        "type": "object",
+        "properties": {
+          "betegnelse": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "mappetypeId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V2.SakspartRolleLink": {
+        "type": "object",
+        "properties": {
+          "merknad": {
+            "type": "string",
+            "nullable": true
+          },
+          "rolle": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.SakspartRolle"
+          },
+          "rolleId": {
+            "type": "string",
+            "nullable": true
+          },
+          "sakspart": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Sakspart"
+          },
+          "sakspartId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V2.Tilgangskode": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "kode": {
+            "type": "string",
+            "nullable": true
+          },
+          "betegnelse": {
+            "type": "string",
+            "nullable": true
+          },
+          "hjemmelUOff": {
+            "type": "string",
+            "nullable": true
+          },
+          "anvendelsesområde": {
+            "type": "string",
+            "nullable": true
+          },
+          "avgraderingskodeBetegnelse": {
+            "type": "string",
+            "nullable": true
+          },
+          "standardUOff": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V2.Tilleggsattributt": {
+        "type": "object",
+        "properties": {
+          "nummer": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "verdi": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.AksjonResultat": {
+        "type": "object",
+        "properties": {
+          "suksess": {
+            "type": "boolean"
+          },
+          "melding": {
+            "type": "string",
+            "nullable": true
+          },
+          "endretKorrespondanse": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FellesKorrespondanse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.AvskrivJournalpostDirekteParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "journalpostId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "utgåendeJournalpost": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "merknad": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.AvskrivJournalpostDirekteRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FellesDokument": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "tittel": {
+            "type": "string",
+            "nullable": true
+          },
+          "tilgangskode": {
+            "type": "string",
+            "nullable": true
+          },
+          "tilgangskodeHjemmel": {
+            "type": "string",
+            "nullable": true
+          },
+          "filnavn": {
+            "type": "string",
+            "nullable": true
+          },
+          "urlTilDokument": {
+            "type": "string",
+            "nullable": true
+          },
+          "urltilFagsystemetsDokument": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FellesKorrespondanse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "tittel": {
+            "type": "string",
+            "nullable": true
+          },
+          "urlTilHovedDokument": {
+            "type": "string",
+            "nullable": true
+          },
+          "dokumenter": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FellesDokument"
+            },
+            "nullable": true
+          },
+          "korrespondanseType": {
+            "type": "string",
+            "nullable": true
+          },
+          "harRestanse": {
+            "type": "boolean"
+          },
+          "urlTilKorrespondanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "erInngående": {
+            "type": "boolean"
+          },
+          "restanseAvskrevetInfo": {
+            "type": "string",
+            "nullable": true
+          },
+          "antallVedlegg": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "korrespondanseDato": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksbehandlerNavn": {
+            "type": "string",
+            "nullable": true
+          },
+          "korrespondanseStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "urlForSvarbrev": {
+            "type": "string",
+            "nullable": true
+          },
+          "besvartMedKorrespondanseId": {
+            "type": "string",
+            "nullable": true
+          },
+          "mottakere": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.Mottaker"
+            },
+            "nullable": true
+          },
+          "saksId": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksnummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksbehandlerKredentialer": {
+            "type": "string",
+            "nullable": true
+          },
+          "tilgangskode": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Tilgangskode"
+          },
+          "dokumentnummer": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FellesKorrespondansePåSak": {
+        "type": "object",
+        "properties": {
+          "resultater": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.Meldinger.FellesKorrespondanse"
+            },
+            "nullable": true
+          },
+          "kanAvskriveRestanser": {
+            "type": "boolean"
+          },
+          "kanIkkeAvskriveReferanserText": {
+            "type": "string",
+            "nullable": true
+          },
+          "innloggetBrukerId": {
+            "type": "string",
+            "nullable": true
+          },
+          "infotekst": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FinnEnKorrespondanseParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "korrespondanseId": {
+            "type": "string",
+            "nullable": true
+          },
+          "taMedDokumenter": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FinnEnKorrespondanseRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "korrespondanse": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Korrespondanse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FinnEnReturSakParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksTittel": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksnummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FinnEnReturSakRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "sak": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.ReturSak"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FinnEnSakParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "sakstittel": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksnr": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksId": {
+            "type": "string",
+            "nullable": true
+          },
+          "objektReferanse": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.ObjektReferanse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FinnEnSakRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "sak": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Sak"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FinnKorrespondanseParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "mappetype": {
+            "type": "string",
+            "nullable": true
+          },
+          "journalpostStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "objektReferanse": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.ObjektReferanse"
+          },
+          "saksId": {
+            "type": "string",
+            "nullable": true
+          },
+          "beskrivelse": {
+            "type": "string",
+            "nullable": true
+          },
+          "harRestanse": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "taMedDokumenter": {
+            "type": "boolean"
+          },
+          "forsendelsesMåteId": {
+            "type": "string",
+            "nullable": true
+          },
+          "forsendelsesStatusId": {
+            "type": "string",
+            "nullable": true
+          },
+          "utgående": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "aktuellDato": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FinnKorrespondanseRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "korrespondanse": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Korrespondanse"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FinnLenkeTilSakParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksId": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksnummer": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FinnLenkeTilSakRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "lenkeTilSak": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FinnRestanserParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksbehandler": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Saksbehandler"
+          },
+          "saker": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Sak"
+            },
+            "nullable": true
+          },
+          "fraId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "tilId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "mappetypeId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FinnRestanserRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "korrespondanserMedRestanse": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Korrespondanse"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FinnSakerMedKunSaksarkivKlasseringOgMappetypeParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "klassering": {
+            "type": "string",
+            "nullable": true
+          },
+          "objektReferanse": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.ObjektReferanse"
+          },
+          "mappetyper": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "fraDato": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FinnSakerMedKunSaksarkivKlasseringParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "klassering": {
+            "type": "string",
+            "nullable": true
+          },
+          "objektReferanse": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.ObjektReferanse"
+          },
+          "fraDato": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FinnSakerMedObjektReferanseParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "objektReferanse": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.ObjektReferanse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FinnSakerParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksTittel": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksNr": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksId": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksIder": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "objektReferanse": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.ObjektReferanse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FinnSakerRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "saker": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.ReturSak"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FinnSaksIdParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksnummer": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FinnSaksIdRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "saksId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FjernObjektreferanseParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "objektReferanse": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.ObjektReferanse"
+          },
+          "id": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FlyttJournalpostParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "journalpostId": {
+            "type": "string",
+            "nullable": true
+          },
+          "fraSakId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tilSakId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "oppdaterSaksbehandler": {
+            "type": "boolean"
+          },
+          "administrativInndelingId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "saksbehandler": {
+            "type": "string",
+            "nullable": true
+          },
+          "merknad": {
+            "type": "string",
+            "nullable": true
+          },
+          "sendEpost": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.FlyttJournalpostRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.HentAllKorrespondansePaaEnSakRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "korrespondanseListe": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Korrespondanse"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.HentAlleMerknaderPaaEnSakRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "merknader": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Merknad"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.HentArkivFilformaterRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "godkjente": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.HentDokumentInnholdParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "dokumentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "brukerId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.HentDokumentInnholdRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "dokumentInnhold": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.HentHjemmelForTilgangskoderRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "tilgangskoder": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Tilgangskode"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.HentSakMedObjektReferanseParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "objektReferanse": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.ObjektReferanse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.KorresepondanseTypeBeskrivelse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "beskrivelse": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.KorrespondanseType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.MerknaderPåSak": {
+        "type": "object",
+        "properties": {
+          "resultater": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Merknad"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.Mottaker": {
+        "type": "object",
+        "properties": {
+          "navn": {
+            "type": "string",
+            "nullable": true
+          },
+          "forsendelsesstatus": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.OppdaterSakParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "sak": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Sak"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.OppdaterSakRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "sak": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Sak"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.OppdaterStatusPaaEnSakParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksId": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksstatusId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.OppdaterStatusPaaEnSakRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "statusOppdatert": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.OpprettDokumenterPaaSakParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksId": {
+            "type": "string",
+            "nullable": true
+          },
+          "korrespondanse": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Korrespondanse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.OpprettDokumenterPaaSakRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "korrespondanse": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Korrespondanse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.OpprettNyKorrespondanseParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksId": {
+            "type": "string",
+            "nullable": true
+          },
+          "korrespondansePart": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.KorrespondansePart"
+          },
+          "korrespondanseType": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.KorrespondanseType"
+          },
+          "dokument": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Dokument"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.OpprettNyKorrespondanseRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "korrespondanse": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Korrespondanse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.OpprettSakParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "sak": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Sak"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.OpprettSakRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "sak": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.Sak"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.RestanseRad": {
+        "type": "object",
+        "properties": {
+          "saksnummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "beskrivelse": {
+            "type": "string",
+            "nullable": true
+          },
+          "sakstittel": {
+            "type": "string",
+            "nullable": true
+          },
+          "avsender": {
+            "type": "string",
+            "nullable": true
+          },
+          "dato": {
+            "type": "string",
+            "nullable": true
+          },
+          "ePhorteUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "urlIEierSystem": {
+            "type": "string",
+            "nullable": true
+          },
+          "eiendeSystemsReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "erPolitiAnmodning": {
+            "type": "boolean"
+          },
+          "erPolitiAnmeldelse": {
+            "type": "boolean"
+          },
+          "saksid": {
+            "type": "string",
+            "nullable": true
+          },
+          "korrespondanseId": {
+            "type": "string",
+            "nullable": true
+          },
+          "dokumentId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.ReturBase": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.SettEksternReferanseParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "sakId": {
+            "type": "string",
+            "nullable": true
+          },
+          "objektReferanse": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V2.ObjektReferanse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.SettEksternReferanseRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "oppdateringOk": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.SettSakMappetypeParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksId": {
+            "type": "string",
+            "nullable": true
+          },
+          "mappetypeId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.SettSakMappetypeRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.SettSakUtgaattParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksId": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksstatusId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.SettSakUtgaattRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "saksstatusId": {
+            "type": "string",
+            "nullable": true
+          },
+          "statusOppdatert": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.SettSaksbehandlerParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksbehandler": {
+            "type": "string",
+            "nullable": true
+          },
+          "journalpostId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.SettSaksbehandlerRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseFerdigParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "korrespondanseId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseFerdigRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "oppdateringOk": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseJournalførtParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "korrespondanseId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseJournalførtRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "oppdateringOk": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseUtgåttParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "korrespondanseId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.SettStatusPaaKorrespondanseUtgåttRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "oppdateringOk": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.SettStatusPaaSakReservertParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "sakId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.SettStatusPaaSakReservertRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "oppdateringOk": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.SettTilgangskodeOgHjemmelPåJournalpostParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "journalpostId": {
+            "type": "string",
+            "nullable": true
+          },
+          "tilgangskodeId": {
+            "type": "string",
+            "nullable": true
+          },
+          "hjemmel": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.SettTilgangskodeOgHjemmelPåJournalpostRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "oppdateringOk": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.UfordelteBrevParameter": {
+        "type": "object",
+        "properties": {
+          "klassering": {
+            "type": "string",
+            "nullable": true
+          },
+          "dokumenttype": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.UfordelteBrevRetur": {
+        "type": "object",
+        "properties": {
+          "saksnummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksId": {
+            "type": "string",
+            "nullable": true
+          },
+          "korrespondanseId": {
+            "type": "string",
+            "nullable": true
+          },
+          "dokumentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksansvarligBrukerId": {
+            "type": "string",
+            "nullable": true
+          },
+          "tittel": {
+            "type": "string",
+            "nullable": true
+          },
+          "avsender": {
+            "type": "string",
+            "nullable": true
+          },
+          "journalDato": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ePhorteUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.ValiderSaksnummerParameter": {
+        "type": "object",
+        "properties": {
+          "systemReferanse": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksnummer": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.Meldinger.ValiderSaksnummerRetur": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "saksnummerOk": {
+            "type": "boolean"
+          },
+          "saksTittel": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksnummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.RestApi.AvskrivRestanseForBrukerRequest": {
+        "type": "object",
+        "properties": {
+          "restanseId": {
+            "type": "string",
+            "nullable": true
+          },
+          "besvarMedId": {
+            "type": "string",
+            "nullable": true
+          },
+          "melding": {
+            "type": "string",
+            "nullable": true
+          },
+          "brukerId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.RestApi.AvskrivRestanseRequest": {
+        "type": "object",
+        "properties": {
+          "restanseId": {
+            "type": "string",
+            "nullable": true
+          },
+          "besvarMedId": {
+            "type": "string",
+            "nullable": true
+          },
+          "melding": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.RestApi.HentSaksarkivKorrespondanselisteParams": {
+        "type": "object",
+        "properties": {
+          "saksid": {
+            "type": "string",
+            "nullable": true
+          },
+          "harRettigheterForSak": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "harIkkeRettigheterBeskrivelse": {
+            "type": "string",
+            "nullable": true
+          },
+          "innloggetBrukerId": {
+            "type": "string",
+            "nullable": true
+          },
+          "fagsystem": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Dokument"
+    },
+    {
+      "name": "Health"
+    },
+    {
+      "name": "Historikk"
+    },
+    {
+      "name": "Journalpost"
+    },
+    {
+      "name": "Korrespondanse"
+    },
+    {
+      "name": "Lenke"
+    },
+    {
+      "name": "Metadata"
+    },
+    {
+      "name": "Objektreferanse"
+    },
+    {
+      "name": "Restanse"
+    },
+    {
+      "name": "Sak"
+    },
+    {
+      "name": "SakerOppslag"
+    },
+    {
+      "name": "Script"
+    }
+  ]
+}
