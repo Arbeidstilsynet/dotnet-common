@@ -1,8 +1,8 @@
+using System.Net.Http;
 using Arbeidstilsynet.Common.Saksarkiv.DependencyInjection.Configuration;
 using Arbeidstilsynet.Common.Saksarkiv.Implementation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http.Resilience;
-using System.Net.Http;
 
 namespace Arbeidstilsynet.Common.Saksarkiv.DependencyInjection;
 
@@ -46,9 +46,9 @@ public static class DependencyInjectionExtensions
         services.AddHealthChecks().AddCheck<SaksarkivHealthCheck>("Saksarkiv");
         services.AddScoped<SaksarkivAuthAdapter>();
         services.AddScoped<SaksarkivRequestAdapter>();
-        services.AddScoped<SaksarkivClient>(serviceProvider =>
-            new SaksarkivClient(serviceProvider.GetRequiredService<SaksarkivRequestAdapter>())
-        );
+        services.AddScoped<SaksarkivClient>(serviceProvider => new SaksarkivClient(
+            serviceProvider.GetRequiredService<SaksarkivRequestAdapter>()
+        ));
 
         return services;
     }

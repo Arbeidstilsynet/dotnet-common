@@ -16,7 +16,9 @@ internal class SaksarkivHealthCheck(SaksarkivClient saksarkivClient) : IHealthCh
             );
             response ??= "<null>";
 
-            return HealthCheckResult.Healthy(description: $"Saksarkiv is healthy. Response: {response}");
+            return HealthCheckResult.Healthy(
+                description: $"Saksarkiv is healthy. Response: {response}"
+            );
         }
         catch (Exception ex)
         {

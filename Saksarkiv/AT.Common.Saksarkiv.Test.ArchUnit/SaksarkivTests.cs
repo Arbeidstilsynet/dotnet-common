@@ -37,5 +37,4 @@ public class SaksarkivLayerTests
 
         archRule.Check(Architecture);
     }
-
 }
