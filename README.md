@@ -51,3 +51,48 @@ Create a new branch and pull request. Remember to increment the version in `AT.C
 ## 🛠️ Update Dependencies
 
 Renovate is configured to group all non-major versions together. Check Renovate's PR, update the version and changelog for the affected packages according to the updates, then commit & merge.
+
+## 🔄 Refreshing generated clients
+
+Some packages contain a generated client produced from an OpenAPI specification. When the upstream API publishes a new spec, the generated code needs to be regenerated.
+
+### Saksarkiv
+
+1. Replace `openApi.json` in `Saksarkiv\AT.Common.Saksarkiv.Publish`.
+2. Ensure Kiota `1.32.2` is available:
+
+   ```bash
+   dotnet tool install --global Microsoft.OpenApi.Kiota --version 1.32.2
+   ```
+
+   or update it:
+
+   ```bash
+   dotnet tool update --global Microsoft.OpenApi.Kiota --version 1.32.2
+   ```
+
+3. Regenerate the client from `Saksarkiv\AT.Common.Saksarkiv.Publish`:
+
+   ```bash
+   kiota generate \
+     --openapi openApi.json \
+     --language csharp \
+     --class-name SaksarkivClient \
+     --namespace-name Arbeidstilsynet.Common.Saksarkiv \
+     --output Generated \
+     --type-access-modifier Public \
+     --exclude-backward-compatible \
+     --clean-output
+   ```
+
+4. Run the package tests from `dotnet-common\Saksarkiv`:
+
+   ```bash
+   dotnet test Saksarkiv.sln
+   ```
+
+Notes:
+
+- The generated code is expected to stay in the `Generated` folder.
+- The checked-in `Generated\kiota-lock.json` is part of the regeneration workflow and should stay in sync with the generated output.
+- If the OpenAPI contract changes the path structure used by consumers, review the fluent API call sites after regeneration.
