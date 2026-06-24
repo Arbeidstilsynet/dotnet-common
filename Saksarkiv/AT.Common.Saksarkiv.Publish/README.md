@@ -85,21 +85,25 @@ public sealed class MySaksarkivTokenProvider : ISaksarkivTokenProvider
 
 ## Usage
 
-Inject `SaksarkivClient` into your service and use the generated fluent API directly:
+You can use `SaksarkivClient` directly, but it is highly recommended that you wrap it in your own narrow interface that matches the intended use in that service or bounded context. That keeps tests simpler, avoids coupling every consumer to the full Saksarkiv API surface, and gives you a stable seam if the generated fluent API changes later.
+
+Define an interface for only the operations your service needs, and implement it as a thin adapter over `SaksarkivClient`:
 
 ```csharp
 using Arbeidstilsynet.Common.Saksarkiv;
 using Arbeidstilsynet.Common.Saksarkiv.Models.Entiteter.Meldinger;
 
-public sealed class ArchiveService(SaksarkivClient saksarkivClient)
+public interface IArchiveClient
 {
-    public async Task<bool?> CreateCase(CancellationToken cancellationToken)
+    Task<bool?> CreateCase(OpprettSakParameter parameter, CancellationToken cancellationToken);
+}
+
+public sealed class SaksarkivArchiveClient(SaksarkivClient saksarkivClient) : IArchiveClient
+{
+    public async Task<bool?> CreateCase(OpprettSakParameter parameter, CancellationToken cancellationToken)
     {
         var response = await saksarkivClient.Apiv2.Sak.Opprett.PostAsync(
-            new OpprettSakParameter
-            {
-                // Fill properties from the generated model as needed.
-            },
+            parameter,
             cancellationToken: cancellationToken
         );
 
@@ -108,7 +112,15 @@ public sealed class ArchiveService(SaksarkivClient saksarkivClient)
 }
 ```
 
-For application code, it is often a good idea to wrap the generated client in your own narrow interface that matches the intended use in that service or bounded context. That keeps tests simpler, avoids coupling every consumer to the full Saksarkiv API surface, and gives you a stable seam if the generated fluent API changes later.
+Register the adapter alongside the client:
+
+```csharp
+builder.Services.AddScoped<ISaksarkivTokenProvider, MySaksarkivTokenProvider>();
+builder.Services.AddSaksarkivClient(...);
+builder.Services.AddScoped<IArchiveClient, SaksarkivArchiveClient>();
+```
+
+The rest of your application then depends on `IArchiveClient`, not on `SaksarkivClient` directly.
 
 `AddSaksarkivClient(...)` also registers a health check named `Saksarkiv`.
 

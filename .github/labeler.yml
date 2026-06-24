@@ -26,6 +26,10 @@ GeoNorge:
   - changed-files:
       - any-glob-to-any-file: "GeoNorge/**"
 
+Saksarkiv:
+  - changed-files:
+      - any-glob-to-any-file: "Saksarkiv/**"
+
 TestExtensions:
   - changed-files:
       - any-glob-to-any-file: "TestExtensions/**"
