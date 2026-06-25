@@ -10,7 +10,7 @@
     <Company>Arbeidstilsynet</Company>
     <Description>Generated Saksarkiv client and dependency injection helpers.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.0.0-alpha1</Version>
+    <Version>1.0.0</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/Arbeidstilsynet/dotnet-common</PackageProjectUrl>
