@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.0.1
+
+- Added XML documentation comments for `ISaksarkivTokenProvider` to improve package API documentation.
+
 ## 1.0.0
 
 - Initial package with generated Saksarkiv client, configuration, and dependency injection support.
