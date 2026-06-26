@@ -19,11 +19,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
-## 3.2.1
+## 3.2.2
 
 ### Fixed
 
 - fix(altinn): `GetSpecification` no longer throws `NullReferenceException` when `DataValues` is `null` on an `AltinnInstance`
+
+## 3.2.1
+
+### Changed
+
+- chore(altinn): Updated default URL mapping for development environment to match new altinn studiocli setup.
 
 ## 3.2.0
 

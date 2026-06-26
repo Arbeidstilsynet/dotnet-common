@@ -1,6 +1,7 @@
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
+using System.Text.Json;
 using Shouldly;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
@@ -55,16 +56,14 @@ public class AltinnAppSpecificationTests
         appId.SanitizeAppId().ShouldBe(expectedResult);
     }
 
-    [Fact]
-    public void GetSpecification_WhenDataValuesIsNull_DoesNotThrow()
+    [Theory]
+    [InlineData("""{"id":"1","appId":"org/some-app-id","data":[]}""")]
+    [InlineData("""{"id":"1","appId":"org/some-app-id","data":[],"dataValues":null}""")]
+    public void GetSpecification_WhenDataValuesIsMissingOrNullInJson_DoesNotThrow(string json)
     {
-        var instance = new AltinnInstance
-        {
-            Id = Guid.NewGuid().ToString(),
-            AppId = "some-app-id",
-            Data = [],
-            DataValues = null!,
-        };
+        var instance = JsonSerializer.Deserialize<AltinnInstance>(json);
+        instance.ShouldNotBeNull();
+        instance.DataValues.ShouldNotBeNull();
 
         Action act = () => _ = instance.GetSpecification();
         act.ShouldNotThrow();

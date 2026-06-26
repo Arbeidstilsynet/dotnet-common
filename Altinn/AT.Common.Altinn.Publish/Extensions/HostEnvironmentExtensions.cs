@@ -88,7 +88,7 @@ public static class HostEnvironmentExtensions
     {
         if (webHostEnvironment.IsDevelopment())
         {
-            return "http://local.altinn.cloud:5101/";
+            return "http://local.altinn.cloud:8000/";
         }
         else if (webHostEnvironment.IsProduction())
         {
@@ -113,7 +113,7 @@ public static class HostEnvironmentExtensions
     {
         if (webHostEnvironment.IsDevelopment())
         {
-            return "http://local.altinn.cloud:5005/";
+            return "http://local.altinn.cloud:8000/";
         }
         else if (webHostEnvironment.IsProduction())
         {
