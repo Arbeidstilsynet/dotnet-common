@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
@@ -53,6 +54,19 @@ public class AltinnAppSpecificationTests
     public void SanitizeAppId_RetrunsExpectedResult(string? appId, string? expectedResult)
     {
         appId.SanitizeAppId().ShouldBe(expectedResult);
+    }
+
+    [Theory]
+    [InlineData("""{"id":"1","appId":"org/some-app-id","data":[]}""")]
+    [InlineData("""{"id":"1","appId":"org/some-app-id","data":[],"dataValues":null}""")]
+    public void GetSpecification_WhenDataValuesIsMissingOrNullInJson_DoesNotThrow(string json)
+    {
+        var instance = JsonSerializer.Deserialize<AltinnInstance>(json);
+        instance.ShouldNotBeNull();
+        instance.DataValues.ShouldNotBeNull();
+
+        Action act = () => _ = instance.GetSpecification();
+        act.ShouldNotThrow();
     }
 
     [Fact]
