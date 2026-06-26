@@ -1,7 +1,7 @@
+using System.Text.Json;
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
-using System.Text.Json;
 using Shouldly;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
