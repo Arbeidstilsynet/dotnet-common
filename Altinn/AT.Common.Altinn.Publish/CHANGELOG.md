@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 3.2.1
+
+### Changed
+
+- chore(altinn): Updated default URL mapping for development environment to match new altinn studiocli setup.
+
 ## 3.2.0
 
 ### Added

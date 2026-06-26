@@ -14,7 +14,7 @@ internal class LocalAltinnTokenProvider : IAltinnTokenProvider
     public async Task<string> GetToken()
     {
         return await _httpClient.GetStringAsync(
-            "http://local.altinn.cloud/Home/GetTestOrgToken?org=dat&authenticationLevel=2&orgNumber=&scopes="
+            "http://local.altinn.cloud:8000/Home/GetTestOrgToken?org=dat&authenticationLevel=2&orgNumber=&scopes="
         );
     }
 }
