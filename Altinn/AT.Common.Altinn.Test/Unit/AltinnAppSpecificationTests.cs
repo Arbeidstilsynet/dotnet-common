@@ -56,6 +56,21 @@ public class AltinnAppSpecificationTests
     }
 
     [Fact]
+    public void GetSpecification_WhenDataValuesIsNull_DoesNotThrow()
+    {
+        var instance = new AltinnInstance
+        {
+            Id = Guid.NewGuid().ToString(),
+            AppId = "some-app-id",
+            Data = [],
+            DataValues = null!,
+        };
+
+        Action act = () => _ = instance.GetSpecification();
+        act.ShouldNotThrow();
+    }
+
+    [Fact]
     public void GetDataElementsBySignificance_WhenMainPdfIsMissing_Throws()
     {
         var instance = CreateInstance([]);

@@ -87,7 +87,7 @@ namespace Arbeidstilsynet.Common.Altinn.Model.Api.Response
         /// Gets or sets the data values for the instance.
         /// </summary>
         [JsonPropertyName("dataValues")]
-        public Dictionary<string, string> DataValues { get; set; }
+        public Dictionary<string, string> DataValues { get; set; } = new();
     }
 
     /// <summary>

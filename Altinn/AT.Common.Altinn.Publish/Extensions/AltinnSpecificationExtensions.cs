@@ -25,8 +25,10 @@ internal static class AltinnSpecificationExtensions
 
         var resolvedSpec = new AltinnAppSpecification(sanitizedAppId);
 
+        var dataValues = instance.DataValues ?? [];
+
         if (
-            instance.DataValues.TryGetValue(StructuredDataTypeIdKey, out var val)
+            dataValues.TryGetValue(StructuredDataTypeIdKey, out var val)
             && val is { Length: > 0 } structuredDataTypeId
         )
         {
@@ -34,7 +36,7 @@ internal static class AltinnSpecificationExtensions
         }
 
         if (
-            instance.DataValues.TryGetValue(MainPdfDataTypeId, out val)
+            dataValues.TryGetValue(MainPdfDataTypeId, out val)
             && val is { Length: > 0 } mainPdfDataTypeId
         )
         {
