@@ -3,6 +3,7 @@ using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
+using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 using Arbeidstilsynet.Common.Altinn.Ports.Adapter;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Microsoft.Extensions.Logging;
@@ -96,7 +97,19 @@ internal class AltinnAdapter(
 
         foreach (var instance in instances)
         {
-            summaries.Add(await GetInstanceSummaryAsync(instance));
+            try
+            {
+                summaries.Add(await GetInstanceSummaryAsync(instance));
+            }
+            catch (Exception e) when (e is not OperationCanceledException)
+            {
+                logger.LogWarning(
+                    e,
+                    "Failed to get summary for instance {InstanceId} from app {AppId}.",
+                    instance.Id,
+                    instance.AppId
+                );
+            }
         }
 
         return summaries;
@@ -168,7 +181,7 @@ file static class Extensions
             InstanceGuid = instance.GetInstanceGuid(),
             InstanceOwnerPartyId =
                 instance.InstanceOwner?.PartyId
-                ?? throw new InvalidOperationException("PartyId required"),
+                ?? throw new AltinnInstanceOwnerPartyIdMissingException(instance),
         };
     }
 
@@ -181,7 +194,7 @@ file static class Extensions
         {
             InstanceRequest = instance.CreateInstanceRequest(),
             DataId = Guid.Parse(
-                dataElement.Id ?? throw new InvalidOperationException("Id required")
+                dataElement.Id ?? throw new AltinnDataElementIdMissingException(instance, dataElement)
             ),
         };
     }

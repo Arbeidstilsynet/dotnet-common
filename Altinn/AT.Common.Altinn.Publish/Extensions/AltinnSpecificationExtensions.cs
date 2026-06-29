@@ -1,6 +1,7 @@
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
+using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 
 namespace Arbeidstilsynet.Common.Altinn.Extensions;
 
@@ -78,8 +79,10 @@ internal static class AltinnSpecificationExtensions
 
         var mainData =
             instance.Data.FirstOrDefault(d => d.DataType == appSpec.MainPdfDataTypeId)
-            ?? throw new InvalidOperationException(
-                $"Main document with data type '{appSpec.MainPdfDataTypeId}' not found in instance '{instance.Id}'. The instance was from app '{instance.AppId}'. Existing data types: [{string.Join(", ", instance.Data.Select(d => d.DataType))}]"
+            ?? throw new AltinnMainDataElementNotFoundException(
+                instance,
+                appSpec.MainPdfDataTypeId,
+                instance.Data.Select(d => d.DataType)
             );
 
         DataElement? structuredData = null;
