@@ -17,11 +17,12 @@ public sealed class AltinnMainDataElementNotFoundException(
     AltinnInstance instance,
     string expectedMainDataType,
     IEnumerable<string?> existingDataTypes
-) : AltinnInstanceSummaryException(
-    $"Main document with data type '{expectedMainDataType}' was not found in instance '{instance.Id}' from app '{instance.AppId}'. Existing data types: [{string.Join(", ", existingDataTypes)}]",
-    instance.Id,
-    instance.AppId
 )
+    : AltinnInstanceSummaryException(
+        $"Main document with data type '{expectedMainDataType}' was not found in instance '{instance.Id}' from app '{instance.AppId}'. Existing data types: [{string.Join(", ", existingDataTypes)}]",
+        instance.Id,
+        instance.AppId
+    )
 {
     public string ExpectedMainDataType { get; } = expectedMainDataType;
     public IReadOnlyCollection<string?> ExistingDataTypes { get; } = [.. existingDataTypes];
@@ -34,7 +35,10 @@ public sealed class AltinnInstanceOwnerPartyIdMissingException(AltinnInstance in
         instance.AppId
     );
 
-public sealed class AltinnDataElementIdMissingException(AltinnInstance instance, DataElement dataElement)
+public sealed class AltinnDataElementIdMissingException(
+    AltinnInstance instance,
+    DataElement dataElement
+)
     : AltinnInstanceSummaryException(
         $"Data element id is required for data type '{dataElement.DataType}' in instance '{instance.Id}' from app '{instance.AppId}'.",
         instance.Id,

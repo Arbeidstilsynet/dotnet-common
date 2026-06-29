@@ -194,7 +194,8 @@ file static class Extensions
         {
             InstanceRequest = instance.CreateInstanceRequest(),
             DataId = Guid.Parse(
-                dataElement.Id ?? throw new AltinnDataElementIdMissingException(instance, dataElement)
+                dataElement.Id
+                    ?? throw new AltinnDataElementIdMissingException(instance, dataElement)
             ),
         };
     }
