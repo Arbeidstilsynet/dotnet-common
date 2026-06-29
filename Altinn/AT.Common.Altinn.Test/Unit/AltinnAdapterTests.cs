@@ -4,6 +4,7 @@ using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
+using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Arbeidstilsynet.Common.Altinn.Test.Unit.TestData;
 using Microsoft.Extensions.Logging;
@@ -356,6 +357,47 @@ public class AltinnAdapterTests
         await _storageClient.Received(2).GetInstanceData(Arg.Any<InstanceDataRequest>());
     }
 
+    [Fact]
+    public async Task GetNonCompletedInstances_LogsWarningAndContinues_WhenInstanceSummaryFails()
+    {
+        // Arrange
+        var appId = "test-app";
+        var failingInstance = AltinnTestData.CreateAltinnInstance(
+            dataElements: [AltinnTestData.CreateDataElement("not-main-pdf", "application/json")]
+        );
+        var successfulInstance = AltinnTestData.CreateAltinnInstance();
+
+        _storageClient
+            .GetInstances(Arg.Any<InstanceQueryParameters>())
+            .Returns(
+                new AltinnQueryResponse<AltinnInstance>
+                {
+                    Instances = [failingInstance, successfulInstance],
+                    Count = 2,
+                }
+            );
+        _storageClient
+            .GetInstanceData(Arg.Any<InstanceDataRequest>())
+            .Returns(new MemoryStream([1, 2, 3]));
+
+        // Act
+        var result = await _adapter.GetNonCompletedInstances(appId);
+
+        // Assert
+        var summaries = result.ToList();
+        summaries.Count.ShouldBe(1);
+        summaries[0].Metadata.InstanceGuid.ShouldBe(successfulInstance.GetInstanceGuid());
+
+        var warningLogs = _logger
+            .ReceivedCalls()
+            .Where(call => call.GetMethodInfo().Name == "Log")
+            .Where(call => (LogLevel)call.GetArguments()[0] == LogLevel.Warning)
+            .ToList();
+
+        warningLogs.Count.ShouldBe(1);
+        warningLogs[0].GetArguments()[3].ShouldBeOfType<AltinnMainDataElementNotFoundException>();
+    }
+
     #endregion
 
     #region GetAltinnSubscription Tests
@@ -437,9 +479,12 @@ public class AltinnAdapterTests
         _storageClient.GetInstance(cloudEvent).Returns(instance);
 
         // Act & Assert
-        await Should.ThrowAsync<InvalidOperationException>(async () =>
+        var exception = await Should.ThrowAsync<AltinnMainDataElementNotFoundException>(async () =>
             await _adapter.GetSummary(cloudEvent)
         );
+
+        exception.InstanceId.ShouldBe(instance.Id);
+        exception.AppId.ShouldBe(instance.AppId);
     }
 
     [Fact]
@@ -453,9 +498,13 @@ public class AltinnAdapterTests
         _storageClient.GetInstance(cloudEvent).Returns(instance);
 
         // Act & Assert
-        await Should.ThrowAsync<InvalidOperationException>(async () =>
+        var exception = await Should.ThrowAsync<AltinnDataElementIdMissingException>(async () =>
             await _adapter.GetSummary(cloudEvent)
         );
+
+        exception.InstanceId.ShouldBe(instance.Id);
+        exception.AppId.ShouldBe(instance.AppId);
+        exception.DataType.ShouldBe(instance.Data[0].DataType);
     }
 
     #endregion

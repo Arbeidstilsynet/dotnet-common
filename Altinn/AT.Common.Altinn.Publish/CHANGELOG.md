@@ -19,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 3.2.3
+
+### Fixed
+
+- fix(altinn): `GetNonCompletedInstances` now handles per-instance summary failures by logging a warning and continuing with remaining instances.
+- fix(altinn): replaced generic `InvalidOperationException` throws in instance summary flow with custom exceptions containing instance-specific context.
+
 ## 3.2.2
 
 ### Fixed

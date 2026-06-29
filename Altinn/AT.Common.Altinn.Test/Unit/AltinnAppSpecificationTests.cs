@@ -2,6 +2,7 @@ using System.Text.Json;
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
+using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 using Shouldly;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
@@ -75,7 +76,9 @@ public class AltinnAppSpecificationTests
         var instance = CreateInstance([]);
         Action act = () => _ = instance.GetDataElementsBySignificance();
 
-        act.ShouldThrow<InvalidOperationException>();
+        var exception = act.ShouldThrow<AltinnMainDataElementNotFoundException>();
+        exception.InstanceId.ShouldBe(instance.Id);
+        exception.AppId.ShouldBe(instance.AppId);
     }
 
     [Fact]
