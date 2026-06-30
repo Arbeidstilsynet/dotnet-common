@@ -18,8 +18,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="12.1.1" />
-    <PackageReference Include="Altinn.App.Core" Version="8.11.3" />
-    <PackageReference Include="OpenTelemetry.Api" Version="1.15.3" />
+    <PackageReference Include="Altinn.App.Core" Version="8.12.7" />
+    <PackageReference Include="OpenTelemetry.Api" Version="1.16.0" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
