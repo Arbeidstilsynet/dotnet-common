@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 3.2.4
+
+### Changed
+
+- changed(deps): Applied minor and patch updates to dependencies
+
 ## 3.2.3
 
 ### Fixed

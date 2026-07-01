@@ -10,7 +10,7 @@
     <Company>Arbeidstilsynet</Company>
     <Description>Useful methods and classes for cross-cutting concerns in Altinn applications</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>3.2.3</Version>
+    <Version>3.2.4</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/Arbeidstilsynet/dotnet-common</PackageProjectUrl>
@@ -19,9 +19,9 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.17.0" />
-    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.17.0" />
-    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.5.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.19.1" />
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.19.1" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.7.0" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
