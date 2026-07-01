@@ -1,6 +1,8 @@
+using Arbeidstilsynet.Common.GeoNorge.Adresser;
 using Arbeidstilsynet.Common.GeoNorge.Implementation;
 using Arbeidstilsynet.Common.GeoNorge.Model.Request;
 using Microsoft.Extensions.Logging;
+using Microsoft.Kiota.Abstractions;
 using NSubstitute;
 using Shouldly;
 
@@ -9,7 +11,7 @@ namespace Arbeidstilsynet.Common.GeoNorge.Test.Unit;
 public class AddressSearchClientUnitTests
 {
     private readonly AddressSearchClient _sut = new(
-        Substitute.For<IHttpClientFactory>(),
+        new AdresserClient(Substitute.For<IRequestAdapter>()),
         Substitute.For<ILogger<AddressSearchClient>>()
     );
 

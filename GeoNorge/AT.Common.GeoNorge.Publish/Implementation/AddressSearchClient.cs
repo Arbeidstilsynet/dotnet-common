@@ -1,61 +1,87 @@
-using System.Net.Http.Json;
-using System.Text.Json.Serialization;
-using Arbeidstilsynet.Common.GeoNorge.DependencyInjection;
-using Arbeidstilsynet.Common.GeoNorge.Extensions;
+using Arbeidstilsynet.Common.GeoNorge.Adresser;
+using Arbeidstilsynet.Common.GeoNorge.Adresser.Models;
 using Arbeidstilsynet.Common.GeoNorge.Model.Request;
-using Arbeidstilsynet.Common.GeoNorge.Model.Response;
 using Arbeidstilsynet.Common.GeoNorge.Ports;
 using Microsoft.Extensions.Logging;
+using Microsoft.Kiota.Abstractions;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Implementation;
 
-internal class AddressSearchClient : IAddressSearch
+internal class AddressSearchClient(AdresserClient client, ILogger<AddressSearchClient> logger)
+    : IAddressSearch
 {
-    private readonly ILogger<AddressSearchClient> _logger;
-    private readonly HttpClient _httpClient;
-
-    public AddressSearchClient(
-        IHttpClientFactory httpClientFactory,
-        ILogger<AddressSearchClient> logger
-    )
-    {
-        _logger = logger;
-        _httpClient = httpClientFactory.CreateClient(
-            DependencyInjectionExtensions.GeoNorgeClientKey
-        );
-    }
-
-    public async Task<PaginationResult<Address>?> SearchAddresses(
+    public async Task<OutputAdresseList?> SearchAddresses(
         TextSearchQuery query,
         Pagination? pagination = default
     )
     {
         pagination ??= new Pagination();
 
-        var parameterizedUri = new Uri("adresser/v1/sok", UriKind.Relative)
-            .AddQueryParameters(query.ToMap())
-            .AddQueryParameters(pagination.ToMap());
-
         try
         {
-            var response = await _httpClient.GetFromJsonAsync<SearchResponse>(parameterizedUri);
+            return await client.Sok.GetAsync(config =>
+            {
+                var parameters = config.QueryParameters;
 
-            return response?.Metadata.ToPaginationResult(response.Addresses);
+                if (query.SearchTerm is { Length: > 0 } searchTerm)
+                {
+                    parameters.Sok = searchTerm;
+                }
+
+                if (query.FuzzySearch)
+                {
+                    parameters.Fuzzy = true;
+                }
+
+                if (query.Adressenavn is { Length: > 0 } adressenavn)
+                {
+                    parameters.Adressenavn = adressenavn;
+                }
+
+                if (query.Poststed is { Length: > 0 } poststed)
+                {
+                    parameters.Poststed = poststed;
+                }
+
+                if (query.Postnummer is { Length: > 0 } postnummer)
+                {
+                    parameters.Postnummer = postnummer;
+                }
+
+                if (query.Kommunenummer is { Length: > 0 } kommunenummer)
+                {
+                    parameters.Kommunenummer = kommunenummer;
+                }
+
+                if (query.Gardsnummer is > 0 and var gardsnummer)
+                {
+                    parameters.Gardsnummer = gardsnummer;
+                }
+
+                if (query.Bruksnummer is > 0 and var bruksnummer)
+                {
+                    parameters.Bruksnummer = bruksnummer;
+                }
+
+                ApplyPagination(pagination, out var side, out var treffPerSide);
+                parameters.Side = side;
+                parameters.TreffPerSide = treffPerSide;
+            });
         }
-        catch (HttpRequestException e)
+        catch (Exception e) when (e is HttpRequestException or ApiException)
         {
-            _logger.LogWarning(e, "Failed to get address location for query: {Query}", query);
+            logger.LogWarning(e, "Failed to get address location for query: {Query}", query);
         }
 
         return null;
     }
 
-    public async Task<PaginationResult<Address>?> SearchAddressesByPoint(
+    public async Task<OutputGeoPointList?> SearchAddressesByPoint(
         PointSearchQuery query,
         Pagination? pagination = default
     )
     {
-        if (query.RadiusInMeters == 0)
+        if (query.RadiusInMeters <= 0)
         {
             throw new ArgumentException(
                 "RadiusInMeters must be greater than 0.",
@@ -65,77 +91,32 @@ internal class AddressSearchClient : IAddressSearch
 
         pagination ??= new Pagination();
 
-        var parameterizedUri = new Uri("adresser/v1/punktsok", UriKind.Relative)
-            .AddQueryParameters(query.ToMap())
-            .AddQueryParameters(pagination.ToMap());
-
         try
         {
-            var response = await _httpClient.GetFromJsonAsync<SearchResponse>(parameterizedUri);
+            return await client.Punktsok.GetAsync(config =>
+            {
+                var parameters = config.QueryParameters;
 
-            return response?.Metadata.ToPaginationResult(response.Addresses);
+                parameters.Lat = (float)query.Latitude;
+                parameters.Lon = (float)query.Longitude;
+                parameters.Radius = (int)query.RadiusInMeters;
+
+                ApplyPagination(pagination, out var side, out var treffPerSide);
+                parameters.Side = side;
+                parameters.TreffPerSide = treffPerSide;
+            });
         }
-        catch (HttpRequestException e)
+        catch (Exception e) when (e is HttpRequestException or ApiException)
         {
-            _logger.LogWarning(e, "Failed to get address location for query: {Query}", query);
+            logger.LogWarning(e, "Failed to get address location for query: {Query}", query);
         }
 
         return null;
     }
-}
 
-internal record SearchResponse
-{
-    [JsonPropertyName("metadata")]
-    public Metadata Metadata { get; set; } = new();
-
-    [JsonPropertyName("adresser")]
-    public List<Address> Addresses { get; set; } = [];
-}
-
-internal record Metadata
-{
-    [JsonPropertyName("treffPerSide")]
-    public int TreffPerSide { get; set; }
-
-    [JsonPropertyName("totaltAntallTreff")]
-    public long TotaltAntallTreff { get; set; }
-
-    [JsonPropertyName("side")]
-    public int Side { get; set; }
-}
-
-file static class Extensions
-{
-    public static PaginationResult<TElements> ToPaginationResult<TElements>(
-        this Metadata? metadata,
-        IEnumerable<TElements> elements
-    )
+    private static void ApplyPagination(Pagination pagination, out int? side, out int? treffPerSide)
     {
-        if (metadata == null)
-        {
-            return EmptyPagination(elements);
-        }
-
-        return new PaginationResult<TElements>
-        {
-            Elements = elements,
-            TotalElements = metadata.TotaltAntallTreff,
-            PageIndex = metadata.Side,
-            PageSize = metadata.TreffPerSide,
-        };
-    }
-
-    private static PaginationResult<TElements> EmptyPagination<TElements>(
-        IEnumerable<TElements>? elements = null
-    )
-    {
-        return new PaginationResult<TElements>
-        {
-            Elements = elements ?? [],
-            TotalElements = 0,
-            PageIndex = 0,
-            PageSize = 0,
-        };
+        side = pagination.PageIndex >= 0 ? (int)pagination.PageIndex : null;
+        treffPerSide = pagination.PageSize > 0 ? (int)pagination.PageSize : null;
     }
 }

@@ -12,6 +12,9 @@ namespace GeoNorge.ArchUnit.Tests
             "DependencyInjection"
         );
         internal static string ModelNamespace = CreateNamespaceRegex("Model");
+        internal static string PortsNamespace = CreateNamespaceRegex("Ports");
+        internal static string AdresserNamespace = CreateNamespaceRegex("Adresser");
+        internal static string KommuneInfoNamespace = CreateNamespaceRegex("KommuneInfo");
 
         private static string CreateNamespaceRegex(string namespaceSection)
         {
@@ -56,6 +59,12 @@ namespace GeoNorge.ArchUnit.Tests
             .ResideInNamespaceMatching(Constants.DependencyInjectionNamespace)
             .Or()
             .ResideInNamespaceMatching(Constants.ModelNamespace)
+            .Or()
+            .ResideInNamespaceMatching(Constants.PortsNamespace)
+            .Or()
+            .ResideInNamespaceMatching(Constants.AdresserNamespace)
+            .Or()
+            .ResideInNamespaceMatching(Constants.KommuneInfoNamespace)
             .As("inside exportable namespaces");
 
         internal static readonly IObjectProvider<IType> TypesInInternalNamespaces = Types()

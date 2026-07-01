@@ -19,6 +19,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 4.0.0
+
+### Changed
+
+- **BREAKING**: Replaced the hand-written GeoNorge HTTP client implementations with [Kiota](https://learn.microsoft.com/openapi/kiota/)-generated clients (`AdresserClient` and `KommuneInfoClient`), generated from the official OpenAPI specifications. The `IAddressSearch` and `IFylkeKommuneApi` ports and the `GetClosestAddress`/`QuickSearchLocation` extensions now expose the generated models directly instead of the package's own domain response models:
+  - `IAddressSearch.SearchAddresses` returns `OutputAdresseList?` and `SearchAddressesByPoint` returns `OutputGeoPointList?`.
+  - `IFylkeKommuneApi` returns `FylkerEnkel`, `KomEnkelNorskNavn`, `FylkerKommunerFull`, `FylkerKommunerEnkel`, `KomFull`, and `KommuneFylkeEnkel`.
+  - `GetClosestAddress` returns `OutputGeoPoint?` and `QuickSearchLocation` returns `GeomPoint?`.
+- Exposed the generated `AdresserClient` and `KommuneInfoClient` through `AddGeoNorge` (following the Saksarkiv pattern), so consumers can adapt the raw GeoNorge API surface locally.
+- The `UseApproximateSvalbardAndJanMayen` option is preserved and now supplements the generated models with synthetic entries for Svalbard and Jan Mayen.
+
+### Removed
+
+- **BREAKING**: Removed the hand-written GeoNorge domain response models (`Address`, `Fylke`, `FylkeFullInfo`, `Kommune`, `KommuneFullInfo`, `Location`, `PaginationResult`). Consumers should use the generated models exposed through the ports and extensions.
+
 ## 3.1.1
 
 ### Changed
