@@ -167,11 +167,7 @@ internal class ApproximateSvalbardAndJanMayenFylkeKommuneApi(IFylkeKommuneApi in
     }
 
     private static GeoJson NewPoint(double longitude, double latitude) =>
-        new()
-        {
-            Type = "Point",
-            Coordinates = [longitude, latitude],
-        };
+        new() { Type = "Point", Coordinates = [longitude, latitude] };
 
     private static bool UsesGeographicCoordinates(PointQuery query)
     {

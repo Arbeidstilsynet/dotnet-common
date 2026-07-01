@@ -116,8 +116,7 @@ internal class AddressSearchClient(AdresserClient client, ILogger<AddressSearchC
 
     private static void ApplyPagination(Pagination pagination, out int? side, out int? treffPerSide)
     {
-        side =
-            pagination.PageIndex >= 0 ? (int)Math.Min(pagination.PageIndex, int.MaxValue) : null;
+        side = pagination.PageIndex >= 0 ? (int)Math.Min(pagination.PageIndex, int.MaxValue) : null;
         treffPerSide =
             pagination.PageSize > 0 ? (int)Math.Min(pagination.PageSize, int.MaxValue) : null;
     }

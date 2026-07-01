@@ -14,7 +14,10 @@ public interface IAddressSearch
     /// <param name="query">The text search query containing search terms and filters.</param>
     /// <param name="pagination">Optional pagination parameters. Uses default pagination if not specified.</param>
     /// <returns>The generated <see cref="OutputAdresseList"/> containing matching addresses and pagination metadata, or null if the search failed.</returns>
-    Task<OutputAdresseList?> SearchAddresses(TextSearchQuery query, Pagination? pagination = default);
+    Task<OutputAdresseList?> SearchAddresses(
+        TextSearchQuery query,
+        Pagination? pagination = default
+    );
 
     /// <summary>
     /// Implements the "/punktsok" endpoint for finding the closest address based on a geographical point and a radius defined by <see cref="PointSearchQuery"/>.

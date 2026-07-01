@@ -45,7 +45,9 @@ public class DependencyInjectionExtensionsTests
     [Fact]
     public void AddGeoNorge_WithoutApproximation_DoesNotDecorateFylkeKommuneApi()
     {
-        using var scope = BuildScope(new GeoNorgeConfig { UseApproximateSvalbardAndJanMayen = false });
+        using var scope = BuildScope(
+            new GeoNorgeConfig { UseApproximateSvalbardAndJanMayen = false }
+        );
 
         scope
             .ServiceProvider.GetRequiredService<IFylkeKommuneApi>()
@@ -55,7 +57,9 @@ public class DependencyInjectionExtensionsTests
     [Fact]
     public void AddGeoNorge_WithApproximation_DecoratesFylkeKommuneApi()
     {
-        using var scope = BuildScope(new GeoNorgeConfig { UseApproximateSvalbardAndJanMayen = true });
+        using var scope = BuildScope(
+            new GeoNorgeConfig { UseApproximateSvalbardAndJanMayen = true }
+        );
 
         scope
             .ServiceProvider.GetRequiredService<IFylkeKommuneApi>()
