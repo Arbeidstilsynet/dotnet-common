@@ -1,6 +1,6 @@
-using Arbeidstilsynet.Common.Enhetsregisteret.Model.Brreg;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Response;
+using Arbeidstilsynet.Common.Enhetsregisteret.Models;
 
 namespace Arbeidstilsynet.Common.Enhetsregisteret.Ports;
 
@@ -51,7 +51,7 @@ public interface IEnhetsregisteret
     /// <param name="query"></param>
     /// <param name="pagination"></param>
     /// <returns></returns>
-    Task<PaginationResult<Oppdatering>?> GetOppdateringerUnderenheter(
+    Task<PaginationResult<OppdateringerUnderenhet>?> GetOppdateringerUnderenheter(
         GetOppdateringerQuery query,
         Pagination pagination
     );
@@ -62,7 +62,7 @@ public interface IEnhetsregisteret
     /// <param name="query"></param>
     /// <param name="pagination"></param>
     /// <returns></returns>
-    Task<PaginationResult<Oppdatering>?> GetOppdateringerEnheter(
+    Task<PaginationResult<OppdateringerEnhet>?> GetOppdateringerEnheter(
         GetOppdateringerQuery query,
         Pagination pagination
     );

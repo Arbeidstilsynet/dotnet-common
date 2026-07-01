@@ -1,4 +1,4 @@
-using Arbeidstilsynet.Common.Enhetsregisteret.Model.Brreg;
+using Arbeidstilsynet.Common.Enhetsregisteret.Models;
 
 namespace Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 

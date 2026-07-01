@@ -1,7 +1,7 @@
-using Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
-using Arbeidstilsynet.Common.Enhetsregisteret.Model.Brreg;
+using Arbeidstilsynet.Common.Enhetsregisteret.Model;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Response;
+using Arbeidstilsynet.Common.Enhetsregisteret.Models;
 using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
 using Arbeidstilsynet.Common.Enhetsregisteret.Validation.Extensions;
 using FluentValidation;
@@ -128,12 +128,12 @@ public static class EnhetsregisteretExtensions
     }
 
     /// <summary>
-    /// Gets all <see cref="Oppdatering"/> on <see cref="Underenhet"/> based on the query.
+    /// Gets all <see cref="OppdateringerUnderenhet"/> on <see cref="Underenhet"/> based on the query.
     /// </summary>
     /// <param name="enhetsregisteret"></param>
     /// <param name="query"></param>
     /// <returns></returns>
-    public static IAsyncEnumerable<Oppdatering> GetOppdateringerUnderenheter(
+    public static IAsyncEnumerable<OppdateringerUnderenhet> GetOppdateringerUnderenheter(
         this IEnhetsregisteret enhetsregisteret,
         GetOppdateringerQuery query
     )
@@ -144,12 +144,12 @@ public static class EnhetsregisteretExtensions
     }
 
     /// <summary>
-    /// Gets all <see cref="Oppdatering"/> on <see cref="Enhet"/> based on the <see cref="GetOppdateringerQuery"/>.
+    /// Gets all <see cref="OppdateringerEnhet"/> on <see cref="Enhet"/> based on the <see cref="GetOppdateringerQuery"/>.
     /// </summary>
     /// <param name="enhetsregisteret"></param>
     /// <param name="query"></param>
     /// <returns></returns>
-    public static IAsyncEnumerable<Oppdatering> GetOppdateringerEnheter(
+    public static IAsyncEnumerable<OppdateringerEnhet> GetOppdateringerEnheter(
         this IEnhetsregisteret enhetsregisteret,
         GetOppdateringerQuery query
     )

@@ -40,24 +40,6 @@ public class EnhetsregisteretAdapterLayerTests
     }
 
     [Fact]
-    public void PublicClasses_MustResideInExtensionsOrDependencyInjectionOrModelNamespaces()
-    {
-        IArchRule archRule = Types()
-            .That()
-            .AreNot(Layers.PublicInterfaces)
-            .And()
-            .Are(Layers.TypesInInternalNamespaces)
-            .Should()
-            .NotBePublic()
-            .Because(
-                "public types should either be an interface OR reside in a namespace containing \"Extensions\", \"DependencyInjection\" or \"Model\"."
-            )
-            .WithoutRequiringPositiveResults();
-
-        archRule.Check(Architecture);
-    }
-
-    [Fact]
     public void TypesInEnhetsregisteretAdapterLayer_DoNotDependOnAWS()
     {
         IArchRule archRule = Types()

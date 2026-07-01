@@ -1,5 +1,4 @@
 using Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
-using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
 using Arbeidstilsynet.Shared.DependencyInjection;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -115,6 +114,9 @@ public static class DependencyInjectionExtensions
 
         clientBuilder.AddStandardResilienceHandler();
 
-        services.AddTransient<IEnhetsregisteret, EnhetsregisteretClient>();
+        services.AddScoped<EnhetsregisteretRequestAdapter>();
+        services.AddScoped<EnhetsregisteretClient>(serviceProvider => new EnhetsregisteretClient(
+            serviceProvider.GetRequiredService<EnhetsregisteretRequestAdapter>()
+        ));
     }
 }

@@ -66,7 +66,7 @@ public class DependencyInjectionTests
     {
         // Arrange
         var services = new ServiceCollection();
-        var expectedValidators = typeof(Enhetsregisteret.IAssemblyInfo)
+        var expectedValidators = typeof(Arbeidstilsynet.Common.Enhetsregisteret.IAssemblyInfo)
             .Assembly.GetTypes()
             .Where(t => t.IsAssignableTo(typeof(IValidator)))
             .ToList();
@@ -86,7 +86,7 @@ public class DependencyInjectionTests
     {
         // Arrange
         var services = new ServiceCollection();
-        var expectedValidators = typeof(Enhetsregisteret.IAssemblyInfo)
+        var expectedValidators = typeof(Arbeidstilsynet.Common.Enhetsregisteret.IAssemblyInfo)
             .Assembly.GetTypes()
             .Where(t => t.IsAssignableTo(typeof(IValidator)))
             .ToList();
@@ -99,5 +99,23 @@ public class DependencyInjectionTests
 
         // Assert
         validators.ShouldAllBe(v => expectedValidators.Contains(v.GetType()));
+    }
+
+    [Fact]
+    public void AddEnhetsregisteret_RegistersEnhetsregisteretClient()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        var environment = Substitute.For<IWebHostEnvironment>();
+        environment.EnvironmentName.Returns("Production");
+
+        // Act
+        services.AddEnhetsregisteret(environment);
+
+        using var serviceProvider = services.BuildServiceProvider();
+        var client = serviceProvider.GetRequiredService<EnhetsregisteretClient>();
+
+        // Assert
+        client.ShouldNotBeNull();
     }
 }

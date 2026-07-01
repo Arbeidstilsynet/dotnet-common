@@ -1,5 +1,0 @@
-﻿{
-  dato: DateTimeOffset_1,
-  oppdateringsid: 69,
-  organisasjonsnummer: 123456789,987654321
-}
