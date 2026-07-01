@@ -43,8 +43,9 @@ public static class DependencyInjectionExtensions
     /// Register GeoNorge services in the provided <see cref="IServiceCollection"/>.
     /// <br/>
     /// Exposes the Kiota-generated <see cref="AdresserClient"/> and <see cref="KommuneInfoClient"/>
-    /// for local adaptation, as well as the domain-oriented <see cref="IAddressSearch"/> and
-    /// <see cref="IFylkeKommuneApi"/> ports that map the generated models to the package's own models.
+    /// for local adaptation, as well as the <see cref="IAddressSearch"/> and
+    /// <see cref="IFylkeKommuneApi"/> ports that surface the generated models through a small,
+    /// task-oriented API.
     /// </summary>
     /// <param name="services">The service collection to register with.</param>
     /// <param name="geoNorgeConfig">Optional configuration. Uses defaults if not specified.</param>

@@ -26,6 +26,10 @@ public class FylkeKommuneClientIntegrationTests : TestBed<GeoNorgeTestFixture>
 
         // Assert
         result.ShouldNotBeEmpty();
+
+        var fylke = result.First();
+        fylke.Fylkesnummer.ShouldNotBeNull();
+        fylke.Fylkesnavn.ShouldNotBeNull();
     }
 
     [Fact]
@@ -36,6 +40,10 @@ public class FylkeKommuneClientIntegrationTests : TestBed<GeoNorgeTestFixture>
 
         // Assert
         result.ShouldNotBeEmpty();
+
+        var kommune = result.First();
+        kommune.Kommunenummer.ShouldNotBeNull();
+        kommune.Kommunenavn.ShouldNotBeNull();
     }
 
     [Fact]
@@ -46,6 +54,11 @@ public class FylkeKommuneClientIntegrationTests : TestBed<GeoNorgeTestFixture>
 
         // Assert
         result.ShouldNotBeEmpty();
+
+        var fylke = result.First();
+        fylke.Fylkesnummer.ShouldNotBeNull();
+        fylke.Kommuner.ShouldNotBeNull();
+        fylke.Kommuner.ShouldNotBeEmpty();
     }
 
     [Fact]
@@ -57,6 +70,7 @@ public class FylkeKommuneClientIntegrationTests : TestBed<GeoNorgeTestFixture>
         // Assert
         result.ShouldNotBeNull();
         result.Fylkesnummer.ShouldNotBeNull();
+        result.Kommuner.ShouldNotBeNull();
     }
 
     [Fact]
@@ -68,5 +82,6 @@ public class FylkeKommuneClientIntegrationTests : TestBed<GeoNorgeTestFixture>
         // Assert
         result.ShouldNotBeNull();
         result.Kommunenummer.ShouldNotBeNull();
+        result.Kommunenavn.ShouldNotBeNull();
     }
 }

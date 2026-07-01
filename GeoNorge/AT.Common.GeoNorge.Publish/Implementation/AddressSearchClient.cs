@@ -70,7 +70,7 @@ internal class AddressSearchClient(AdresserClient client, ILogger<AddressSearchC
         }
         catch (Exception e) when (e is HttpRequestException or ApiException)
         {
-            logger.LogWarning(e, "Failed to get address location for query: {Query}", query);
+            logger.LogWarning(e, "Failed to search addresses for query: {Query}", query);
         }
 
         return null;
@@ -108,7 +108,7 @@ internal class AddressSearchClient(AdresserClient client, ILogger<AddressSearchC
         }
         catch (Exception e) when (e is HttpRequestException or ApiException)
         {
-            logger.LogWarning(e, "Failed to get address location for query: {Query}", query);
+            logger.LogWarning(e, "Failed to search addresses by point for query: {Query}", query);
         }
 
         return null;
@@ -116,7 +116,9 @@ internal class AddressSearchClient(AdresserClient client, ILogger<AddressSearchC
 
     private static void ApplyPagination(Pagination pagination, out int? side, out int? treffPerSide)
     {
-        side = pagination.PageIndex >= 0 ? (int)pagination.PageIndex : null;
-        treffPerSide = pagination.PageSize > 0 ? (int)pagination.PageSize : null;
+        side =
+            pagination.PageIndex >= 0 ? (int)Math.Min(pagination.PageIndex, int.MaxValue) : null;
+        treffPerSide =
+            pagination.PageSize > 0 ? (int)Math.Min(pagination.PageSize, int.MaxValue) : null;
     }
 }

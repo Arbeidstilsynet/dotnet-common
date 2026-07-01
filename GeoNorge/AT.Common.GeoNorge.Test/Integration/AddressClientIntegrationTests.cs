@@ -27,6 +27,12 @@ public class AddressClientIntegrationTests : TestBed<GeoNorgeTestFixture>
 
         // Assert
         result.ShouldNotBeNull();
+        result.Metadata.ShouldNotBeNull();
         result.Adresser.ShouldNotBeNull();
+        result.Adresser.ShouldNotBeEmpty();
+
+        var address = result.Adresser.First();
+        address.Adressenavn.ShouldNotBeNull();
+        address.Representasjonspunkt.ShouldNotBeNull();
     }
 }
