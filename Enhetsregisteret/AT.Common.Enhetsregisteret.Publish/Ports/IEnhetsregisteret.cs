@@ -5,8 +5,12 @@ using Arbeidstilsynet.Common.Enhetsregisteret.Models;
 namespace Arbeidstilsynet.Common.Enhetsregisteret.Ports;
 
 /// <summary>
-/// Interface which can be dependency injected to use methods of Enhetsregisteret
+/// Interface describing common Enhetsregisteret operations.
 /// </summary>
+/// <remarks>
+/// This interface is not registered by <c>AddEnhetsregisteret(...)</c>. It is kept as a starting point
+/// for consumers who want to build their own adapter over the generated <c>EnhetsregisteretClient</c>.
+/// </remarks>
 public interface IEnhetsregisteret
 {
     /// <summary>
