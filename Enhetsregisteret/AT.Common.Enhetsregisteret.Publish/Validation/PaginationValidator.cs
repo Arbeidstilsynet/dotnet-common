@@ -1,4 +1,4 @@
-using Arbeidstilsynet.Common.Enhetsregisteret.Model.Brreg;
+using Arbeidstilsynet.Common.Enhetsregisteret.Model;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 using Arbeidstilsynet.Common.Enhetsregisteret.Validation.Extensions;
 using FluentValidation;

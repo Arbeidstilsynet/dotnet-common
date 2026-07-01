@@ -2,8 +2,9 @@
 
 ## 📚 Introduction
 
-**Enhetsregisteret** is a .NET client library for accessing the Norwegian Register of Business Enterprises (Brreg).  
-It provides a strongly-typed, easy-to-use API for querying company and organization data from official sources, enabling you to integrate business registry lookups into your .NET applications.
+**Enhetsregisteret** is a .NET client library for accessing the Norwegian Register of Business Enterprises (Brreg).
+
+The client and its request/response models are generated with [Kiota](https://learn.microsoft.com/openapi/kiota/) directly from Brreg's OpenAPI specification (`openapi.json`, shipped with the package). The package exposes the generated `EnhetsregisteretClient` together with dependency injection and environment-based configuration, so you can adapt the full Brreg API surface to your own needs.
 
 ---
 
@@ -81,76 +82,92 @@ public void ConfigureServices(IServiceCollection services)
 
 ## 🧑‍💻 Usage
 
-### Inject into your class
+`AddEnhetsregisteret(...)` registers the generated `EnhetsregisteretClient` in the service collection. Inject it directly, or — recommended — wrap it in your own narrow interface that matches the intended use in your service or bounded context. That keeps tests simpler, avoids coupling every consumer to the full Brreg API surface, and gives you a stable seam if the generated fluent API changes later.
+
+### Inject the generated client
 
 ```csharp
+using Arbeidstilsynet.Common.Enhetsregisteret;
+
 public class MyService
 {
-    private readonly IEnhetsregisteret _enhetsregisteret;
-
+    private readonly EnhetsregisteretClient _client;
     private readonly ILogger<MyService> _logger;
-    public MyService(IEnhetsregisteret enhetsregisteret, ILogger<MyService> logger)
+
+    public MyService(EnhetsregisteretClient client, ILogger<MyService> logger)
     {
-        _enhetsregisteret = enhetsregisteret;
+        _client = client;
         _logger = logger;
     }
 
-    public async Task GetEnhetExample()
+    public async Task GetEnhetExample(CancellationToken cancellationToken)
     {
-        var enhet = await _enhetsregisteret.GetEnhet("123456789");
+        var enhet = await _client
+            .Enhetsregisteret
+            .Api
+            .Enheter["123456789"]
+            .GetAsync(cancellationToken: cancellationToken);
+
         if (enhet != null)
         {
-            _logger.LogInformation("Navn: {OrgNavn}, Organisasjonsnummer: {OrgNr}", enhet.Navn, enhet.Organisasjonsnummer);
+            _logger.LogInformation(
+                "Navn: {OrgNavn}, Organisasjonsnummer: {OrgNr}",
+                enhet.Navn,
+                enhet.Organisasjonsnummer
+            );
         }
     }
 }
 ```
 
----
+### Wrap the client in your own interface (recommended)
 
-## 🚀 API Overview
+Define an interface for only the operations your service needs, and implement it as a thin adapter over `EnhetsregisteretClient`:
 
-### `Task<Underenhet?> GetUnderenhet(string organisasjonsnummer)`
-Get a single underenhet (sub-unit) by organization number.  
-Returns `null` if not found or on error.
+```csharp
+using Arbeidstilsynet.Common.Enhetsregisteret;
+using Arbeidstilsynet.Common.Enhetsregisteret.Models;
 
----
+public interface IEnhetLookup
+{
+    Task<Enhet?> GetEnhet(string organisasjonsnummer, CancellationToken cancellationToken);
+}
 
-### `Task<Enhet?> GetEnhet(string organisasjonsnummer)`
-Get a single enhet (main unit) by organization number.  
-Returns `null` if not found or on error.
+public sealed class EnhetLookup(EnhetsregisteretClient client) : IEnhetLookup
+{
+    public async Task<Enhet?> GetEnhet(
+        string organisasjonsnummer,
+        CancellationToken cancellationToken
+    )
+    {
+        return await client
+            .Enhetsregisteret
+            .Api
+            .Enheter[organisasjonsnummer]
+            .GetAsync(cancellationToken: cancellationToken);
+    }
+}
+```
 
----
+Register the adapter alongside the client:
 
-### `Task<PaginationResult<Underenhet>?> SearchUnderenheter(SearchEnheterQuery searchParameters, Pagination pagination)`
-Search for underenheter (sub-units) using search parameters and pagination.  
-Returns a paginated result of matching underenheter, or `null` on error.
+```csharp
+builder.Services.AddEnhetsregisteret(builder.Environment);
+builder.Services.AddScoped<IEnhetLookup, EnhetLookup>();
+```
 
----
+The rest of your application then depends on `IEnhetLookup`, not on `EnhetsregisteretClient` directly.
 
-### `Task<PaginationResult<Enhet>?> SearchEnheter(SearchEnheterQuery searchParameters, Pagination pagination)`
-Search for enheter (main units) using search parameters and pagination.  
-Returns a paginated result of matching enheter, or `null` on error.
-
----
-
-### `Task<PaginationResult<Oppdatering>?> GetOppdateringerUnderenheter(GetOppdateringerQuery query, Pagination pagination)`
-Get update history for underenheter (sub-units) with optional filtering and pagination.  
-Returns a paginated result of updates, or `null` on error.
-
----
-
-### `Task<PaginationResult<Oppdatering>?> GetOppdateringerEnheter(GetOppdateringerQuery query, Pagination pagination)`
-Get update history for enheter (main units) with optional filtering and pagination.  
-Returns a paginated result of updates, or `null` on error.
+> **Note:** `Ports.IEnhetsregisteret` and the `EnhetsregisteretExtensions` helper methods are still present in the package but are **not** registered or implemented out of the box. They are kept as a starting point for building your own adapter over the generated client.
 
 ---
 
 ## 📝 Notes
 
 - All API methods are asynchronous.
-- Handle `null` results and exceptions as appropriate.
-- For advanced queries or filtering, see the XML documentation in the code.
+- Requests and responses use the Kiota-generated models under `Arbeidstilsynet.Common.Enhetsregisteret.Models`.
+- The client uses in-memory caching by default. You can disable it via `config.CacheOptions = new CacheOptions { Disabled = true };`.
+- For the full API surface, explore the fluent request builders on `EnhetsregisteretClient` (e.g. `.Enhetsregisteret`, `.Frivillighetsregisteret`, `.Partiregisteret`).
 
 ---
 

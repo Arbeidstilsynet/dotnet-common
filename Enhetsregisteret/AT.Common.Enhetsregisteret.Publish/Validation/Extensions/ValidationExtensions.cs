@@ -1,5 +1,4 @@
 using System.Text.RegularExpressions;
-using Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 using FluentValidation;
 

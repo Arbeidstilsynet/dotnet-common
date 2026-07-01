@@ -1,7 +1,9 @@
+using System.Reflection;
 using Arbeidstilsynet.Common.Enhetsregisteret.DependencyInjection;
 using FluentValidation;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Kiota.Abstractions;
 using NSubstitute;
 using Shouldly;
 
@@ -66,7 +68,7 @@ public class DependencyInjectionTests
     {
         // Arrange
         var services = new ServiceCollection();
-        var expectedValidators = typeof(Enhetsregisteret.IAssemblyInfo)
+        var expectedValidators = typeof(Arbeidstilsynet.Common.Enhetsregisteret.IAssemblyInfo)
             .Assembly.GetTypes()
             .Where(t => t.IsAssignableTo(typeof(IValidator)))
             .ToList();
@@ -86,7 +88,7 @@ public class DependencyInjectionTests
     {
         // Arrange
         var services = new ServiceCollection();
-        var expectedValidators = typeof(Enhetsregisteret.IAssemblyInfo)
+        var expectedValidators = typeof(Arbeidstilsynet.Common.Enhetsregisteret.IAssemblyInfo)
             .Assembly.GetTypes()
             .Where(t => t.IsAssignableTo(typeof(IValidator)))
             .ToList();
@@ -99,5 +101,37 @@ public class DependencyInjectionTests
 
         // Assert
         validators.ShouldAllBe(v => expectedValidators.Contains(v.GetType()));
+    }
+
+    [Theory]
+    [InlineData("Development", "https://data.ppe.brreg.no")]
+    [InlineData("Production", "https://data.brreg.no")]
+    public void AddEnhetsregisteret_RegistersEnhetsregisteretClient_WithBaseUrlWithoutTrailingSlash(
+        string envName,
+        string expectedBaseUrl
+    )
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        var environment = Substitute.For<IWebHostEnvironment>();
+        environment.EnvironmentName.Returns(envName);
+
+        // Act
+        services.AddEnhetsregisteret(environment);
+
+        using var serviceProvider = services.BuildServiceProvider();
+        var client = serviceProvider.GetRequiredService<EnhetsregisteretClient>();
+
+        // Assert
+        client.ShouldNotBeNull();
+
+        var requestAdapter = (IRequestAdapter)
+            typeof(EnhetsregisteretClient)
+                .GetProperty(
+                    "RequestAdapter",
+                    BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public
+                )!
+                .GetValue(client)!;
+        requestAdapter.BaseUrl.ShouldBe(expectedBaseUrl);
     }
 }

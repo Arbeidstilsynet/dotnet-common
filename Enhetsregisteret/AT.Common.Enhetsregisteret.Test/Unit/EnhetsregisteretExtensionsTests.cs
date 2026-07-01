@@ -1,7 +1,7 @@
 using Arbeidstilsynet.Common.Enhetsregisteret.Extensions;
-using Arbeidstilsynet.Common.Enhetsregisteret.Model.Brreg;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Response;
+using Arbeidstilsynet.Common.Enhetsregisteret.Models;
 using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
 using NSubstitute;
 using Shouldly;
@@ -160,10 +160,10 @@ public class EnhetsregisteretExtensionsTests
     [Fact]
     public async Task GetOppdateringerEnheter_EnumeratesFinalPartialPage()
     {
-        var result = new PaginationResult<Oppdatering>()
+        var result = new PaginationResult<OppdateringerEnhet>()
         {
             PageIndex = 0,
-            Elements = [new Oppdatering(), new Oppdatering()],
+            Elements = [new OppdateringerEnhet(), new OppdateringerEnhet()],
             TotalElements = 5,
             PageSize = 2,
         };
@@ -184,11 +184,11 @@ public class EnhetsregisteretExtensionsTests
                 Arg.Any<GetOppdateringerQuery>(),
                 Arg.Is<Pagination>(p => p.Page == 2)
             )
-            .Returns(result with { PageIndex = 2, Elements = [new Oppdatering()] });
+            .Returns(result with { PageIndex = 2, Elements = [new OppdateringerEnhet()] });
 
         var query = new GetOppdateringerQuery { Dato = DateTime.Now };
 
-        var results = new List<Oppdatering>();
+        var results = new List<OppdateringerEnhet>();
 
         await foreach (var oppdatering in _enhetsregisteret.GetOppdateringerEnheter(query))
         {
@@ -201,10 +201,16 @@ public class EnhetsregisteretExtensionsTests
     [Fact]
     public async Task GetOppdateringerUnderenheter_EnumeratesASinglePage()
     {
-        var result = new PaginationResult<Oppdatering>()
+        var result = new PaginationResult<OppdateringerUnderenhet>()
         {
             PageIndex = 0,
-            Elements = [new Oppdatering(), new Oppdatering(), new Oppdatering(), new Oppdatering()],
+            Elements =
+            [
+                new OppdateringerUnderenhet(),
+                new OppdateringerUnderenhet(),
+                new OppdateringerUnderenhet(),
+                new OppdateringerUnderenhet(),
+            ],
             TotalElements = 4,
             PageSize = 1,
         };
@@ -217,7 +223,7 @@ public class EnhetsregisteretExtensionsTests
 
         var query = new GetOppdateringerQuery { Dato = DateTime.Now };
 
-        var results = new List<Oppdatering>();
+        var results = new List<OppdateringerUnderenhet>();
 
         await foreach (var oppdatering in _enhetsregisteret.GetOppdateringerUnderenheter(query))
         {

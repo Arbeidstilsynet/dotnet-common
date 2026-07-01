@@ -19,6 +19,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 3.0.0
+
+### Changed
+
+- **BREAKING**: Replaced the hand-written Brreg HTTP client and hand-copied models with a [Kiota](https://learn.microsoft.com/openapi/kiota/)-generated `EnhetsregisteretClient` and generated models (under `Arbeidstilsynet.Common.Enhetsregisteret.Models`), generated from Brreg's OpenAPI specification.
+- **BREAKING**: `AddEnhetsregisteret(...)` now registers and exposes the generated `EnhetsregisteretClient` instead of an `IEnhetsregisteret` implementation. Consumers are expected to adapt the client locally (e.g. wrap it in their own interface). Dependency injection and environment-based configuration are otherwise unchanged.
+
+### Removed
+
+- **BREAKING**: Removed the hand-written `IEnhetsregisteret` implementation and the hand-copied Brreg model types (`Enhet`, `Underenhet`, `Oppdatering`, etc.). `Ports.IEnhetsregisteret` and `EnhetsregisteretExtensions` remain in the package but are no longer registered or implemented; they are kept as a starting point for local adapters and now reference the generated model types.
+
 ## 2.0.2
 
 ### Changed
