@@ -1,5 +1,5 @@
+using Arbeidstilsynet.Common.GeoNorge.KommuneInfo.Models;
 using Arbeidstilsynet.Common.GeoNorge.Model.Request;
-using Arbeidstilsynet.Common.GeoNorge.Model.Response;
 using Arbeidstilsynet.Common.GeoNorge.Ports;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Implementation;
@@ -7,51 +7,101 @@ namespace Arbeidstilsynet.Common.GeoNorge.Implementation;
 internal class ApproximateSvalbardAndJanMayenFylkeKommuneApi(IFylkeKommuneApi inner)
     : IFylkeKommuneApi
 {
-    private static Fylke NewSvalbardFylke() =>
+    private static FylkerEnkel NewSvalbardFylke() =>
         new() { Fylkesnummer = "21", Fylkesnavn = "Svalbard" };
 
-    private static Kommune NewSvalbardKommune() =>
-        new() { Kommunenummer = "2100", Kommunenavn = "Svalbard" };
+    private static KomEnkelNorskNavn NewSvalbardKommune() =>
+        new()
+        {
+            Kommunenummer = "2100",
+            Kommunenavn = "Svalbard",
+            KommunenavnNorsk = "Svalbard",
+        };
 
-    private static KommuneFullInfo NewSvalbardKommuneFullInfo() =>
+    private static KomFull NewSvalbardKomFull() =>
         new()
         {
             Fylkesnummer = "21",
-            Kommune = NewSvalbardKommune(),
-            Location = new Location
-            {
-                Latitude = 78.2232,
-                Longitude = 15.6469,
-                Epsg = "4326",
-            },
+            Fylkesnavn = "Svalbard",
+            Kommunenummer = "2100",
+            Kommunenavn = "Svalbard",
+            KommunenavnNorsk = "Svalbard",
+            PunktIOmrade = NewPoint(longitude: 15.6469, latitude: 78.2232),
         };
 
-    private static FylkeFullInfo NewSvalbardFylkeFullInfo() =>
-        new() { Fylke = NewSvalbardFylke(), Kommuner = [NewSvalbardKommuneFullInfo()] };
+    private static FylkerKommunerFull NewSvalbardFylkeFullInfo() =>
+        new()
+        {
+            Fylkesnummer = "21",
+            Fylkesnavn = "Svalbard",
+            Kommuner = [NewSvalbardKomFull()],
+        };
 
-    private static Fylke NewJanMayenFylke() =>
+    private static FylkerKommunerEnkel NewSvalbardFylkerKommunerEnkel() =>
+        new()
+        {
+            Fylkesnummer = "21",
+            Fylkesnavn = "Svalbard",
+            Kommuner = [new KomEnkel { Kommunenummer = "2100", Kommunenavn = "Svalbard" }],
+        };
+
+    private static KommuneFylkeEnkel NewSvalbardKommuneFylkeEnkel() =>
+        new()
+        {
+            Fylkesnummer = "21",
+            Fylkesnavn = "Svalbard",
+            Kommunenummer = "2100",
+            Kommunenavn = "Svalbard",
+        };
+
+    private static FylkerEnkel NewJanMayenFylke() =>
         new() { Fylkesnummer = "22", Fylkesnavn = "Jan Mayen" };
 
-    private static Kommune NewJanMayenKommune() =>
-        new() { Kommunenummer = "2211", Kommunenavn = "Jan Mayen" };
+    private static KomEnkelNorskNavn NewJanMayenKommune() =>
+        new()
+        {
+            Kommunenummer = "2211",
+            Kommunenavn = "Jan Mayen",
+            KommunenavnNorsk = "Jan Mayen",
+        };
 
-    private static KommuneFullInfo NewJanMayenKommuneFullInfo() =>
+    private static KomFull NewJanMayenKomFull() =>
         new()
         {
             Fylkesnummer = "22",
-            Kommune = NewJanMayenKommune(),
-            Location = new Location
-            {
-                Latitude = 70.9821,
-                Longitude = -8.5337,
-                Epsg = "4326",
-            },
+            Fylkesnavn = "Jan Mayen",
+            Kommunenummer = "2211",
+            Kommunenavn = "Jan Mayen",
+            KommunenavnNorsk = "Jan Mayen",
+            PunktIOmrade = NewPoint(longitude: -8.5337, latitude: 70.9821),
         };
 
-    private static FylkeFullInfo NewJanMayenFylkeFullInfo() =>
-        new() { Fylke = NewJanMayenFylke(), Kommuner = [NewJanMayenKommuneFullInfo()] };
+    private static FylkerKommunerFull NewJanMayenFylkeFullInfo() =>
+        new()
+        {
+            Fylkesnummer = "22",
+            Fylkesnavn = "Jan Mayen",
+            Kommuner = [NewJanMayenKomFull()],
+        };
 
-    public async Task<IEnumerable<Fylke>> GetFylker()
+    private static FylkerKommunerEnkel NewJanMayenFylkerKommunerEnkel() =>
+        new()
+        {
+            Fylkesnummer = "22",
+            Fylkesnavn = "Jan Mayen",
+            Kommuner = [new KomEnkel { Kommunenummer = "2211", Kommunenavn = "Jan Mayen" }],
+        };
+
+    private static KommuneFylkeEnkel NewJanMayenKommuneFylkeEnkel() =>
+        new()
+        {
+            Fylkesnummer = "22",
+            Fylkesnavn = "Jan Mayen",
+            Kommunenummer = "2211",
+            Kommunenavn = "Jan Mayen",
+        };
+
+    public async Task<IEnumerable<FylkerEnkel>> GetFylker()
     {
         var fylker = (await inner.GetFylker()).ToList();
 
@@ -61,7 +111,7 @@ internal class ApproximateSvalbardAndJanMayenFylkeKommuneApi(IFylkeKommuneApi in
         return fylker;
     }
 
-    public async Task<IEnumerable<Kommune>> GetKommuner()
+    public async Task<IEnumerable<KomEnkelNorskNavn>> GetKommuner()
     {
         var kommuner = (await inner.GetKommuner()).ToList();
 
@@ -71,57 +121,60 @@ internal class ApproximateSvalbardAndJanMayenFylkeKommuneApi(IFylkeKommuneApi in
         return kommuner;
     }
 
-    public async Task<IEnumerable<FylkeFullInfo>> GetFylkerFullInfo()
+    public async Task<IEnumerable<FylkerKommunerFull>> GetFylkerFullInfo()
     {
         var fylker = (await inner.GetFylkerFullInfo()).ToList();
 
-        AddIfMissing(fylker, NewSvalbardFylkeFullInfo(), f => f.Fylke.Fylkesnummer);
-        AddIfMissing(fylker, NewJanMayenFylkeFullInfo(), f => f.Fylke.Fylkesnummer);
+        AddIfMissing(fylker, NewSvalbardFylkeFullInfo(), f => f.Fylkesnummer);
+        AddIfMissing(fylker, NewJanMayenFylkeFullInfo(), f => f.Fylkesnummer);
 
         return fylker;
     }
 
-    public Task<Fylke?> GetFylkeByNumber(string fylkesnummer)
+    public Task<FylkerKommunerEnkel?> GetFylkeByNumber(string fylkesnummer)
     {
         return fylkesnummer switch
         {
-            "21" => Task.FromResult<Fylke?>(NewSvalbardFylke()),
-            "22" => Task.FromResult<Fylke?>(NewJanMayenFylke()),
+            "21" => Task.FromResult<FylkerKommunerEnkel?>(NewSvalbardFylkerKommunerEnkel()),
+            "22" => Task.FromResult<FylkerKommunerEnkel?>(NewJanMayenFylkerKommunerEnkel()),
             _ => inner.GetFylkeByNumber(fylkesnummer),
         };
     }
 
-    public Task<KommuneFullInfo?> GetKommuneByNumber(string kommunenummer)
+    public Task<KomFull?> GetKommuneByNumber(string kommunenummer)
     {
         return kommunenummer switch
         {
-            "2100" => Task.FromResult<KommuneFullInfo?>(NewSvalbardKommuneFullInfo()),
-            "2211" => Task.FromResult<KommuneFullInfo?>(NewJanMayenKommuneFullInfo()),
+            "2100" => Task.FromResult<KomFull?>(NewSvalbardKomFull()),
+            "2211" => Task.FromResult<KomFull?>(NewJanMayenKomFull()),
             _ => inner.GetKommuneByNumber(kommunenummer),
         };
     }
 
-    public Task<Kommune?> GetKommuneByPoint(PointQuery query)
+    public Task<KommuneFylkeEnkel?> GetKommuneByPoint(PointQuery query)
     {
         if (UsesGeographicCoordinates(query) && SvalbardBoundingBoxes.Contains(query))
         {
-            return Task.FromResult<Kommune?>(NewSvalbardKommune());
+            return Task.FromResult<KommuneFylkeEnkel?>(NewSvalbardKommuneFylkeEnkel());
         }
 
         if (UsesGeographicCoordinates(query) && JanMayenBoundingBox.Contains(query))
         {
-            return Task.FromResult<Kommune?>(NewJanMayenKommune());
+            return Task.FromResult<KommuneFylkeEnkel?>(NewJanMayenKommuneFylkeEnkel());
         }
 
         return inner.GetKommuneByPoint(query);
     }
+
+    private static GeoJson NewPoint(double longitude, double latitude) =>
+        new() { Type = "Point", Coordinates = [longitude, latitude] };
 
     private static bool UsesGeographicCoordinates(PointQuery query)
     {
         return query.Epsg is 4258 or 4326;
     }
 
-    private static void AddIfMissing<T>(List<T> values, T value, Func<T, string> keySelector)
+    private static void AddIfMissing<T>(List<T> values, T value, Func<T, string?> keySelector)
     {
         var key = keySelector(value);
         if (values.All(v => keySelector(v) != key))

@@ -1,7 +1,9 @@
 using Arbeidstilsynet.Common.GeoNorge.Implementation;
+using Arbeidstilsynet.Common.GeoNorge.KommuneInfo;
+using Arbeidstilsynet.Common.GeoNorge.KommuneInfo.Models;
 using Arbeidstilsynet.Common.GeoNorge.Model.Request;
-using Arbeidstilsynet.Common.GeoNorge.Model.Response;
 using Arbeidstilsynet.Common.GeoNorge.Ports;
+using Microsoft.Kiota.Abstractions;
 using NSubstitute;
 using Shouldly;
 
@@ -10,7 +12,7 @@ namespace Arbeidstilsynet.Common.GeoNorge.Test.Unit;
 public class FylkeKommuneClientUnitTests
 {
     private readonly FylkeKommuneClient _sut = new FylkeKommuneClient(
-        Substitute.For<IHttpClientFactory>()
+        new KommuneInfoClient(Substitute.For<IRequestAdapter>())
     );
 
     [Theory]
@@ -84,10 +86,10 @@ public class ApproximateSvalbardAndJanMayenFylkeKommuneApiTests
 
         // Assert
         result.ShouldContain(f =>
-            f.Fylke.Fylkesnummer == "21" && f.Kommuner.Single().Kommune.Kommunenummer == "2100"
+            f.Fylkesnummer == "21" && f.Kommuner!.Single().Kommunenummer == "2100"
         );
         result.ShouldContain(f =>
-            f.Fylke.Fylkesnummer == "22" && f.Kommuner.Single().Kommune.Kommunenummer == "2211"
+            f.Fylkesnummer == "22" && f.Kommuner!.Single().Kommunenummer == "2211"
         );
     }
 
@@ -120,7 +122,7 @@ public class ApproximateSvalbardAndJanMayenFylkeKommuneApiTests
 
         // Assert
         result.ShouldNotBeNull();
-        result.Kommune.Kommunenavn.ShouldBe(expectedKommunenavn);
+        result.Kommunenavn.ShouldBe(expectedKommunenavn);
     }
 
     [Theory]
@@ -163,62 +165,71 @@ public class ApproximateSvalbardAndJanMayenFylkeKommuneApiTests
     {
         public bool GetKommuneByPointWasCalled { get; private set; }
 
-        public Task<IEnumerable<Fylke>> GetFylker()
+        public Task<IEnumerable<FylkerEnkel>> GetFylker()
         {
-            return Task.FromResult<IEnumerable<Fylke>>([
-                new Fylke { Fylkesnummer = "03", Fylkesnavn = "Oslo" },
+            return Task.FromResult<IEnumerable<FylkerEnkel>>([
+                new FylkerEnkel { Fylkesnummer = "03", Fylkesnavn = "Oslo" },
             ]);
         }
 
-        public Task<IEnumerable<Kommune>> GetKommuner()
+        public Task<IEnumerable<KomEnkelNorskNavn>> GetKommuner()
         {
-            return Task.FromResult<IEnumerable<Kommune>>([
-                new Kommune { Kommunenummer = "0301", Kommunenavn = "Oslo" },
+            return Task.FromResult<IEnumerable<KomEnkelNorskNavn>>([
+                new KomEnkelNorskNavn { Kommunenummer = "0301", Kommunenavn = "Oslo" },
             ]);
         }
 
-        public Task<IEnumerable<FylkeFullInfo>> GetFylkerFullInfo()
+        public Task<IEnumerable<FylkerKommunerFull>> GetFylkerFullInfo()
         {
-            return Task.FromResult<IEnumerable<FylkeFullInfo>>([
-                new FylkeFullInfo
+            return Task.FromResult<IEnumerable<FylkerKommunerFull>>([
+                new FylkerKommunerFull
                 {
-                    Fylke = new Fylke { Fylkesnummer = "03", Fylkesnavn = "Oslo" },
+                    Fylkesnummer = "03",
+                    Fylkesnavn = "Oslo",
                     Kommuner =
                     [
-                        new KommuneFullInfo
+                        new KomFull
                         {
                             Fylkesnummer = "03",
-                            Kommune = new Kommune { Kommunenummer = "0301", Kommunenavn = "Oslo" },
+                            Kommunenummer = "0301",
+                            Kommunenavn = "Oslo",
                         },
                     ],
                 },
             ]);
         }
 
-        public Task<Fylke?> GetFylkeByNumber(string fylkesnummer)
+        public Task<FylkerKommunerEnkel?> GetFylkeByNumber(string fylkesnummer)
         {
-            return Task.FromResult<Fylke?>(
-                new Fylke { Fylkesnummer = fylkesnummer, Fylkesnavn = "Inner" }
+            return Task.FromResult<FylkerKommunerEnkel?>(
+                new FylkerKommunerEnkel { Fylkesnummer = fylkesnummer, Fylkesnavn = "Inner" }
             );
         }
 
-        public Task<KommuneFullInfo?> GetKommuneByNumber(string kommunenummer)
+        public Task<KomFull?> GetKommuneByNumber(string kommunenummer)
         {
-            return Task.FromResult<KommuneFullInfo?>(
-                new KommuneFullInfo
+            return Task.FromResult<KomFull?>(
+                new KomFull
                 {
                     Fylkesnummer = "03",
-                    Kommune = new Kommune { Kommunenummer = kommunenummer, Kommunenavn = "Inner" },
+                    Kommunenummer = kommunenummer,
+                    Kommunenavn = "Inner",
                 }
             );
         }
 
-        public Task<Kommune?> GetKommuneByPoint(PointQuery query)
+        public Task<KommuneFylkeEnkel?> GetKommuneByPoint(PointQuery query)
         {
             GetKommuneByPointWasCalled = true;
 
-            return Task.FromResult<Kommune?>(
-                new Kommune { Kommunenummer = "0301", Kommunenavn = "Oslo" }
+            return Task.FromResult<KommuneFylkeEnkel?>(
+                new KommuneFylkeEnkel
+                {
+                    Fylkesnummer = "03",
+                    Fylkesnavn = "Oslo",
+                    Kommunenummer = "0301",
+                    Kommunenavn = "Oslo",
+                }
             );
         }
     }

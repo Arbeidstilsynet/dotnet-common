@@ -1,5 +1,0 @@
-﻿{
-  koordsys: 4326,
-  nord: 0,
-  ost: 0
-}

@@ -1,5 +1,5 @@
+using Arbeidstilsynet.Common.GeoNorge.Adresser.Models;
 using Arbeidstilsynet.Common.GeoNorge.Model.Request;
-using Arbeidstilsynet.Common.GeoNorge.Model.Response;
 using Arbeidstilsynet.Common.GeoNorge.Ports;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Extensions;
@@ -14,8 +14,8 @@ public static class AddressSearchExtensions
     /// </summary>
     /// <param name="addressSearch">The address search service instance.</param>
     /// <param name="query">The point search query containing coordinates and search radius.</param>
-    /// <returns>The closest <see cref="Address"/> if found, otherwise null.</returns>
-    public static async Task<Address?> GetClosestAddress(
+    /// <returns>The closest <see cref="OutputGeoPoint"/> if found, otherwise null.</returns>
+    public static async Task<OutputGeoPoint?> GetClosestAddress(
         this IAddressSearch addressSearch,
         PointSearchQuery query
     )
@@ -24,7 +24,7 @@ public static class AddressSearchExtensions
 
         var result = await addressSearch.SearchAddressesByPoint(query, pagination);
 
-        return result?.Elements.FirstOrDefault();
+        return result?.Adresser?.FirstOrDefault();
     }
 
     /// <summary>
@@ -32,8 +32,8 @@ public static class AddressSearchExtensions
     /// </summary>
     /// <param name="addressSearch">The address search service instance.</param>
     /// <param name="query">The text search query containing the search term and filters.</param>
-    /// <returns>The <see cref="Location"/> of the first matching address if found, otherwise null.</returns>
-    public static async Task<Location?> QuickSearchLocation(
+    /// <returns>The <see cref="GeomPoint"/> (representasjonspunkt) of the first matching address if found, otherwise null.</returns>
+    public static async Task<GeomPoint?> QuickSearchLocation(
         this IAddressSearch addressSearch,
         TextSearchQuery query
     )
@@ -42,6 +42,6 @@ public static class AddressSearchExtensions
 
         var result = await addressSearch.SearchAddresses(query, pagination);
 
-        return result?.Elements.FirstOrDefault()?.Location;
+        return result?.Adresser?.FirstOrDefault()?.Representasjonspunkt;
     }
 }

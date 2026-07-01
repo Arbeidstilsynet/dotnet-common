@@ -1,5 +1,0 @@
-﻿{
-  koordsys: 1234,
-  nord: 0,
-  ost: 0
-}

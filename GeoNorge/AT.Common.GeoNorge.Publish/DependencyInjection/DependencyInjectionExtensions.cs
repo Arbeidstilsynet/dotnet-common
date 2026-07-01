@@ -1,6 +1,9 @@
+using Arbeidstilsynet.Common.GeoNorge.Adresser;
 using Arbeidstilsynet.Common.GeoNorge.Implementation;
+using Arbeidstilsynet.Common.GeoNorge.KommuneInfo;
 using Arbeidstilsynet.Common.GeoNorge.Ports;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Http.Resilience;
 
 namespace Arbeidstilsynet.Common.GeoNorge.DependencyInjection;
 
@@ -10,7 +13,9 @@ namespace Arbeidstilsynet.Common.GeoNorge.DependencyInjection;
 public record GeoNorgeConfig
 {
     /// <summary>
-    /// Base URL for GeoNorge API. Default is "https://ws.geonorge.no/".
+    /// Base URL for the GeoNorge APIs. Default is "https://ws.geonorge.no/".
+    /// <br/>
+    /// The API-specific base paths ("adresser/v1" and "kommuneinfo/v1") are appended automatically.
     /// </summary>
     public string BaseUrl { get; init; } = "https://ws.geonorge.no/";
 
@@ -28,38 +33,65 @@ public record GeoNorgeConfig
 /// </summary>
 public static class DependencyInjectionExtensions
 {
-    internal const string GeoNorgeClientKey = "GeoNorgeClient";
+    internal const string AdresserHttpClientName = "GeoNorgeAdresserClient";
+    internal const string KommuneInfoHttpClientName = "GeoNorgeKommuneInfoClient";
+
+    private const string AdresserBasePath = "adresser/v1";
+    private const string KommuneInfoBasePath = "kommuneinfo/v1";
 
     /// <summary>
-    /// Register GeoNorge services in the provided <see cref="IServiceCollection"/>:
+    /// Register GeoNorge services in the provided <see cref="IServiceCollection"/>.
     /// <br/>
-    /// - <see cref="IAddressSearch"/> for address search functionality.
-    /// <br/>
-    /// - <see cref="IFylkeKommuneApi"/> for fylke and kommune information.
+    /// Exposes the Kiota-generated <see cref="AdresserClient"/> and <see cref="KommuneInfoClient"/>
+    /// for local adaptation, as well as the <see cref="IAddressSearch"/> and
+    /// <see cref="IFylkeKommuneApi"/> ports that surface the generated models through a small,
+    /// task-oriented API.
     /// </summary>
-    /// <param name="services"></param>
-    /// <param name="geoNorgeConfig"></param>
+    /// <param name="services">The service collection to register with.</param>
+    /// <param name="geoNorgeConfig">Optional configuration. Uses defaults if not specified.</param>
+    /// <param name="configureResilience">
+    /// Optional callback for customizing the standard HTTP resilience handler applied to both clients.
+    /// </param>
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
     public static IServiceCollection AddGeoNorge(
         this IServiceCollection services,
-        GeoNorgeConfig? geoNorgeConfig = null
+        GeoNorgeConfig? geoNorgeConfig = null,
+        Action<HttpStandardResilienceOptions>? configureResilience = null
     )
     {
         geoNorgeConfig ??= new GeoNorgeConfig();
 
-        services
-            .AddHttpClient(
-                GeoNorgeClientKey,
-                client =>
-                {
-                    client.BaseAddress = new Uri(geoNorgeConfig.BaseUrl);
-                }
-            )
-            .AddStandardResilienceHandler();
+        services.AddSingleton(geoNorgeConfig);
 
-        services.AddSingleton<IAddressSearch, AddressSearchClient>();
-        services.AddSingleton<FylkeKommuneClient>();
-        services.AddSingleton<IFylkeKommuneApi>(serviceProvider =>
+        services
+            .AddHttpClient(AdresserHttpClientName)
+            .AddStandardResilienceHandler(options => configureResilience?.Invoke(options));
+
+        services
+            .AddHttpClient(KommuneInfoHttpClientName)
+            .AddStandardResilienceHandler(options => configureResilience?.Invoke(options));
+
+        services.AddScoped<AdresserRequestAdapter>();
+        services.AddScoped<KommuneInfoRequestAdapter>();
+
+        services.AddScoped(serviceProvider =>
+        {
+            var requestAdapter = serviceProvider.GetRequiredService<AdresserRequestAdapter>();
+            requestAdapter.BaseUrl = CombineBaseUrl(geoNorgeConfig.BaseUrl, AdresserBasePath);
+            return new AdresserClient(requestAdapter);
+        });
+
+        services.AddScoped(serviceProvider =>
+        {
+            var requestAdapter = serviceProvider.GetRequiredService<KommuneInfoRequestAdapter>();
+            requestAdapter.BaseUrl = CombineBaseUrl(geoNorgeConfig.BaseUrl, KommuneInfoBasePath);
+            return new KommuneInfoClient(requestAdapter);
+        });
+
+        services.AddScoped<IAddressSearch, AddressSearchClient>();
+
+        services.AddScoped<FylkeKommuneClient>();
+        services.AddScoped<IFylkeKommuneApi>(serviceProvider =>
         {
             var fylkeKommuneClient = serviceProvider.GetRequiredService<FylkeKommuneClient>();
 
@@ -69,5 +101,10 @@ public static class DependencyInjectionExtensions
         });
 
         return services;
+    }
+
+    private static string CombineBaseUrl(string baseUrl, string basePath)
+    {
+        return $"{baseUrl.TrimEnd('/')}/{basePath}";
     }
 }

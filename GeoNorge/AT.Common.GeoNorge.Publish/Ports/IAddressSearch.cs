@@ -1,5 +1,5 @@
+using Arbeidstilsynet.Common.GeoNorge.Adresser.Models;
 using Arbeidstilsynet.Common.GeoNorge.Model.Request;
-using Arbeidstilsynet.Common.GeoNorge.Model.Response;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Ports;
 
@@ -13,8 +13,8 @@ public interface IAddressSearch
     /// </summary>
     /// <param name="query">The text search query containing search terms and filters.</param>
     /// <param name="pagination">Optional pagination parameters. Uses default pagination if not specified.</param>
-    /// <returns>A paginated result containing matching addresses, or null if the search failed.</returns>
-    Task<PaginationResult<Address>?> SearchAddresses(
+    /// <returns>The generated <see cref="OutputAdresseList"/> containing matching addresses and pagination metadata, or null if the search failed.</returns>
+    Task<OutputAdresseList?> SearchAddresses(
         TextSearchQuery query,
         Pagination? pagination = default
     );
@@ -24,8 +24,8 @@ public interface IAddressSearch
     /// </summary>
     /// <param name="query">The point search query containing coordinates and search radius.</param>
     /// <param name="pagination">Optional pagination parameters. Uses default pagination if not specified.</param>
-    /// <returns>A paginated result containing addresses within the specified radius, or null if the search failed.</returns>
-    Task<PaginationResult<Address>?> SearchAddressesByPoint(
+    /// <returns>The generated <see cref="OutputGeoPointList"/> containing addresses within the specified radius and pagination metadata, or null if the search failed.</returns>
+    Task<OutputGeoPointList?> SearchAddressesByPoint(
         PointSearchQuery query,
         Pagination? pagination = default
     );
