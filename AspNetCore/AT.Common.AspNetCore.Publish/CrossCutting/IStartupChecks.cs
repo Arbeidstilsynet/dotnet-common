@@ -4,6 +4,7 @@ namespace Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
 /// A functional delegate that defines tasks to be executed during application startup before the application is marked as ready.
 /// </summary>
 /// <param name="serviceProvider">The service provider for resolving dependencies. This is a scoped service provider.</param>
+/// <param name="cancellationToken"></param>
 /// <returns>A list of tasks to await during startup.</returns>
 /// <remarks>
 /// Use this delegate to define initialization tasks such as database migrations, cache warming,
