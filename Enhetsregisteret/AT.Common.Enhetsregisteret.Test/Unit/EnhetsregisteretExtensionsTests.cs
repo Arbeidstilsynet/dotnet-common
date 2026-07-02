@@ -38,7 +38,9 @@ public class EnhetsregisteretExtensionsTests
         await _enhetsregisteret
             .Received(1)
             .SearchUnderenheter(
-                Arg.Is<SearchEnheterQuery>(q => q.OverordnetEnhetOrganisasjonsnummer == "123456789"),
+                Arg.Is<SearchEnheterQuery>(q =>
+                    q.OverordnetEnhetOrganisasjonsnummer == "123456789"
+                ),
                 Arg.Any<Pagination>()
             );
     }
@@ -179,11 +181,7 @@ public class EnhetsregisteretExtensionsTests
                 Arg.Is<Pagination>(p => p.Page == 2)
             )
             .Returns(
-                BuildOppdateringerEnheter(
-                    [new OppdateringerEnhet()],
-                    pageSize: 2,
-                    totalElements: 5
-                )
+                BuildOppdateringerEnheter([new OppdateringerEnhet()], pageSize: 2, totalElements: 5)
             );
 
         var query = new GetOppdateringerQuery { Dato = DateTime.Now };
