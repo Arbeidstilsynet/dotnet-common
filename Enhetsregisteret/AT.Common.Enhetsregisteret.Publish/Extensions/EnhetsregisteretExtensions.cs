@@ -3,6 +3,8 @@ using Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
 using Arbeidstilsynet.Common.Enhetsregisteret.Models;
 using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
 using Arbeidstilsynet.Common.Enhetsregisteret.Validation.Extensions;
+using Arbeidstilsynet.Shared.Extensions;
+using static Arbeidstilsynet.Shared.Extensions.PaginationExtensions;
 using EnheterQueryParameters = global::Arbeidstilsynet.Common.Enhetsregisteret.Enhetsregisteret.Api.Enheter.EnheterRequestBuilder.EnheterRequestBuilderGetQueryParameters;
 using OppdateringerEnheterQueryParameters = global::Arbeidstilsynet.Common.Enhetsregisteret.Enhetsregisteret.Api.Oppdateringer.Enheter.EnheterRequestBuilder.EnheterRequestBuilderGetQueryParameters;
 using OppdateringerUnderenheterQueryParameters = global::Arbeidstilsynet.Common.Enhetsregisteret.Enhetsregisteret.Api.Oppdateringer.Underenheter.UnderenheterRequestBuilder.UnderenheterRequestBuilderGetQueryParameters;
@@ -177,41 +179,6 @@ public static class EnhetsregisteretExtensions
                 })
             )?.ToPaginatedResponse()
         );
-    }
-
-    internal static async IAsyncEnumerable<T> EnumeratePaginatedElements<T>(
-        Func<int, Task<IPaginatedResponse<T>?>> fetchPage
-    )
-    {
-        const int firstPage = 0;
-
-        var result = await fetchPage(firstPage);
-
-        if (result == null)
-        {
-            yield break;
-        }
-
-        foreach (var element in result.Elements)
-        {
-            yield return element;
-        }
-
-        var lastPage = result.TotalPages - 1;
-        for (var page = firstPage + 1; page <= lastPage; page++)
-        {
-            result = await fetchPage(page);
-
-            if (result == null)
-            {
-                yield break;
-            }
-
-            foreach (var element in result.Elements)
-            {
-                yield return element;
-            }
-        }
     }
 
     private static async Task<IEnumerable<T>> ToListAsync<T>(

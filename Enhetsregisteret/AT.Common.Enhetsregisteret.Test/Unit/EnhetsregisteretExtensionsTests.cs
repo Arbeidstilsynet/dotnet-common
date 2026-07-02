@@ -2,6 +2,7 @@ using Arbeidstilsynet.Common.Enhetsregisteret.Extensions;
 using Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
 using Arbeidstilsynet.Common.Enhetsregisteret.Models;
 using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
+using Arbeidstilsynet.Shared.Extensions;
 using NSubstitute;
 using Shouldly;
 using EnheterQueryParameters = global::Arbeidstilsynet.Common.Enhetsregisteret.Enhetsregisteret.Api.Enheter.EnheterRequestBuilder.EnheterRequestBuilderGetQueryParameters;
@@ -243,7 +244,7 @@ public class EnhetsregisteretExtensionsTests
         var results = new List<int>();
 
         await foreach (
-            var result in EnhetsregisteretExtensions.EnumeratePaginatedElements(FetchPage)
+            var result in PaginationExtensions.EnumeratePaginatedElements(FetchPage)
         )
         {
             results.Add(result);

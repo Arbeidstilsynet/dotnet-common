@@ -1,30 +1,15 @@
 using Arbeidstilsynet.Common.Enhetsregisteret.Models;
+using Arbeidstilsynet.Shared.Extensions;
 
 namespace Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
 
 /// <summary>
-/// Internal abstraction over the various generated paginated response wrappers
+/// Maps the various generated paginated response wrappers
 /// (<see cref="Enheter"/>, <see cref="Underenheter"/>, <see cref="OppdateringerEnheter"/>,
-/// <see cref="OppdateringerUnderenheter"/>) so that pagination logic can be implemented once,
-/// independent of the concrete response shape.
+/// <see cref="OppdateringerUnderenheter"/>) onto the shared <see cref="IPaginatedResponse{T}"/>
+/// abstraction so that pagination logic can be implemented once, independent of the concrete
+/// response shape.
 /// </summary>
-/// <typeparam name="T">The type of the elements on a page.</typeparam>
-internal interface IPaginatedResponse<out T>
-{
-    /// <summary>
-    /// Elements on the current page.
-    /// </summary>
-    IReadOnlyList<T> Elements { get; }
-
-    /// <summary>
-    /// Total number of pages available for the query.
-    /// </summary>
-    long TotalPages { get; }
-}
-
-internal sealed record PaginatedResponse<T>(IReadOnlyList<T> Elements, long TotalPages)
-    : IPaginatedResponse<T>;
-
 internal static class PaginatedResponseExtensions
 {
     public static IPaginatedResponse<Enhet> ToPaginatedResponse(this Enheter response) =>
