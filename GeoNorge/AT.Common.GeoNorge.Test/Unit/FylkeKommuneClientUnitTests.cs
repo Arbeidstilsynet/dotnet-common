@@ -224,12 +224,10 @@ public class ApproximateSvalbardAndJanMayenFylkeKommuneApiTests
         inner
             .GetFylker()
             .Returns(
-                Task.FromResult<IEnumerable<FylkerEnkel>>(
-                    [
-                        new FylkerEnkel { Fylkesnummer = "21", Fylkesnavn = "Inner Svalbard" },
-                        new FylkerEnkel { Fylkesnummer = "22", Fylkesnavn = "Inner Jan Mayen" },
-                    ]
-                )
+                Task.FromResult<IEnumerable<FylkerEnkel>>([
+                    new FylkerEnkel { Fylkesnummer = "21", Fylkesnavn = "Inner Svalbard" },
+                    new FylkerEnkel { Fylkesnummer = "22", Fylkesnavn = "Inner Jan Mayen" },
+                ])
             );
         var sut = new ApproximateSvalbardAndJanMayenFylkeKommuneApi(inner);
 
@@ -251,20 +249,18 @@ public class ApproximateSvalbardAndJanMayenFylkeKommuneApiTests
         inner
             .GetKommuner()
             .Returns(
-                Task.FromResult<IEnumerable<KomEnkelNorskNavn>>(
-                    [
-                        new KomEnkelNorskNavn
-                        {
-                            Kommunenummer = "2100",
-                            Kommunenavn = "Inner Svalbard",
-                        },
-                        new KomEnkelNorskNavn
-                        {
-                            Kommunenummer = "2211",
-                            Kommunenavn = "Inner Jan Mayen",
-                        },
-                    ]
-                )
+                Task.FromResult<IEnumerable<KomEnkelNorskNavn>>([
+                    new KomEnkelNorskNavn
+                    {
+                        Kommunenummer = "2100",
+                        Kommunenavn = "Inner Svalbard",
+                    },
+                    new KomEnkelNorskNavn
+                    {
+                        Kommunenummer = "2211",
+                        Kommunenavn = "Inner Jan Mayen",
+                    },
+                ])
             );
         var sut = new ApproximateSvalbardAndJanMayenFylkeKommuneApi(inner);
 
@@ -284,12 +280,10 @@ public class ApproximateSvalbardAndJanMayenFylkeKommuneApiTests
         inner
             .GetFylkerFullInfo()
             .Returns(
-                Task.FromResult<IEnumerable<FylkerKommunerFull>>(
-                    [
-                        new FylkerKommunerFull { Fylkesnummer = "21", Fylkesnavn = "Inner Svalbard" },
-                        new FylkerKommunerFull { Fylkesnummer = "22", Fylkesnavn = "Inner Jan Mayen" },
-                    ]
-                )
+                Task.FromResult<IEnumerable<FylkerKommunerFull>>([
+                    new FylkerKommunerFull { Fylkesnummer = "21", Fylkesnavn = "Inner Svalbard" },
+                    new FylkerKommunerFull { Fylkesnummer = "22", Fylkesnavn = "Inner Jan Mayen" },
+                ])
             );
         var sut = new ApproximateSvalbardAndJanMayenFylkeKommuneApi(inner);
 
