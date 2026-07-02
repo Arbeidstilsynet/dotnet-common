@@ -1,6 +1,5 @@
-using Arbeidstilsynet.Common.Enhetsregisteret.Model;
+using Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
-using Arbeidstilsynet.Common.Enhetsregisteret.Model.Response;
 using Arbeidstilsynet.Common.Enhetsregisteret.Models;
 using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
 using Arbeidstilsynet.Common.Enhetsregisteret.Validation.Extensions;
@@ -33,8 +32,8 @@ public static class EnhetsregisteretExtensions
             OverordnetEnhetOrganisasjonsnummer = organisasjonsnummerForOverordnetEnhet,
         };
 
-        return EnumeratePaginatedElements(pagination =>
-                enhetsregisteret.SearchUnderenheter(query, pagination)
+        return EnumeratePaginatedElements(async pagination =>
+                (await enhetsregisteret.SearchUnderenheter(query, pagination))?.ToPaginatedResponse()
             )
             .ToListAsync();
     }
@@ -61,8 +60,8 @@ public static class EnhetsregisteretExtensions
 
         var query = new SearchEnheterQuery { Organisasjonsnummer = validOrganisasjonsnummer };
 
-        return EnumeratePaginatedElements(pagination =>
-                enhetsregisteret.SearchUnderenheter(query, pagination)
+        return EnumeratePaginatedElements(async pagination =>
+                (await enhetsregisteret.SearchUnderenheter(query, pagination))?.ToPaginatedResponse()
             )
             .ToListAsync();
     }
@@ -89,8 +88,8 @@ public static class EnhetsregisteretExtensions
 
         var query = new SearchEnheterQuery { Organisasjonsnummer = validOrganisasjonsnummer };
 
-        return EnumeratePaginatedElements(pagination =>
-                enhetsregisteret.SearchEnheter(query, pagination)
+        return EnumeratePaginatedElements(async pagination =>
+                (await enhetsregisteret.SearchEnheter(query, pagination))?.ToPaginatedResponse()
             )
             .ToListAsync();
     }
@@ -106,8 +105,8 @@ public static class EnhetsregisteretExtensions
         SearchEnheterQuery query
     )
     {
-        return EnumeratePaginatedElements(pagination =>
-            enhetsregisteret.SearchUnderenheter(query, pagination)
+        return EnumeratePaginatedElements(async pagination =>
+            (await enhetsregisteret.SearchUnderenheter(query, pagination))?.ToPaginatedResponse()
         );
     }
 
@@ -122,8 +121,8 @@ public static class EnhetsregisteretExtensions
         SearchEnheterQuery query
     )
     {
-        return EnumeratePaginatedElements(pagination =>
-            enhetsregisteret.SearchEnheter(query, pagination)
+        return EnumeratePaginatedElements(async pagination =>
+            (await enhetsregisteret.SearchEnheter(query, pagination))?.ToPaginatedResponse()
         );
     }
 
@@ -138,8 +137,8 @@ public static class EnhetsregisteretExtensions
         GetOppdateringerQuery query
     )
     {
-        return EnumeratePaginatedElements(pagination =>
-            enhetsregisteret.GetOppdateringerUnderenheter(query, pagination)
+        return EnumeratePaginatedElements(async pagination =>
+            (await enhetsregisteret.GetOppdateringerUnderenheter(query, pagination))?.ToPaginatedResponse()
         );
     }
 
@@ -154,13 +153,13 @@ public static class EnhetsregisteretExtensions
         GetOppdateringerQuery query
     )
     {
-        return EnumeratePaginatedElements(pagination =>
-            enhetsregisteret.GetOppdateringerEnheter(query, pagination)
+        return EnumeratePaginatedElements(async pagination =>
+            (await enhetsregisteret.GetOppdateringerEnheter(query, pagination))?.ToPaginatedResponse()
         );
     }
 
     internal static async IAsyncEnumerable<T> EnumeratePaginatedElements<T>(
-        Func<Pagination, Task<PaginationResult<T>?>> fetchFunction
+        Func<Pagination, Task<IPaginatedResponse<T>?>> fetchFunction
     )
     {
         const int FIRST_PAGE = 0;
@@ -179,7 +178,7 @@ public static class EnhetsregisteretExtensions
             yield return element;
         }
 
-        var lastPage = result.TotalPages() - 1;
+        var lastPage = result.TotalPages - 1;
         for (var nextPage = FIRST_PAGE + 1; nextPage <= lastPage; nextPage++)
         {
             var nextPagination = pagination with { Page = nextPage };
@@ -216,19 +215,5 @@ public static class EnhetsregisteretExtensions
         }
 
         return list;
-    }
-
-    private static long TotalPages<T>(this PaginationResult<T> paginationResult)
-    {
-        if (paginationResult.PageSize == 0)
-        {
-            return 0;
-        }
-
-        var partialPage = paginationResult.TotalElements % paginationResult.PageSize == 0 ? 0 : 1;
-
-        var totalFullPages = paginationResult.TotalElements / paginationResult.PageSize;
-
-        return totalFullPages + partialPage;
     }
 }

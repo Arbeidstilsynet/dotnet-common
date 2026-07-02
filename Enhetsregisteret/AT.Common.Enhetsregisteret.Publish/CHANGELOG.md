@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- **BREAKING**: Removed the hand-written `IEnhetsregisteret` implementation and the hand-copied Brreg model types (`Enhet`, `Underenhet`, `Oppdatering`, etc.). `Ports.IEnhetsregisteret` and `EnhetsregisteretExtensions` remain in the package but are no longer registered or implemented; they are kept as a starting point for local adapters and now reference the generated model types.
+- **BREAKING**: Removed the hand-written `IEnhetsregisteret` implementation and the hand-copied Brreg model types (`Enhet`, `Underenhet`, `Oppdatering`, etc.), including the `PaginationResult<T>` response wrapper. `Ports.IEnhetsregisteret` and `EnhetsregisteretExtensions` remain in the package but are no longer registered or implemented; they are kept as a starting point for local adapters. The port's search/oppdateringer methods now return the generated paginated response types (`Enheter`, `Underenheter`, `OppdateringerEnheter`, `OppdateringerUnderenheter`).
 
 ## 2.0.2
 

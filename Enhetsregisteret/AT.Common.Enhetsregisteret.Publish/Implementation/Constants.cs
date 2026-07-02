@@ -1,4 +1,4 @@
-namespace Arbeidstilsynet.Common.Enhetsregisteret.Model;
+namespace Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
 
 /// <summary>
 /// Known constants for Enhetsregisteret/Brreg

@@ -1,6 +1,6 @@
 using Arbeidstilsynet.Common.Enhetsregisteret.Extensions;
+using Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
-using Arbeidstilsynet.Common.Enhetsregisteret.Model.Response;
 using Arbeidstilsynet.Common.Enhetsregisteret.Models;
 using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
 using NSubstitute;
@@ -38,9 +38,7 @@ public class EnhetsregisteretExtensionsTests
         await _enhetsregisteret
             .Received(1)
             .SearchUnderenheter(
-                Arg.Is<SearchEnheterQuery>(q =>
-                    q.OverordnetEnhetOrganisasjonsnummer == "123456789"
-                ),
+                Arg.Is<SearchEnheterQuery>(q => q.OverordnetEnhetOrganisasjonsnummer == "123456789"),
                 Arg.Any<Pagination>()
             );
     }
@@ -99,22 +97,17 @@ public class EnhetsregisteretExtensionsTests
     [Fact]
     public async Task SearchEnheter_EnumeratesAllPages()
     {
-        var result = new PaginationResult<Enhet>()
-        {
-            PageIndex = 0,
-            Elements = [new Enhet()],
-            TotalElements = 3,
-            PageSize = 1,
-        };
+        Enheter Page() => BuildEnheter([new Enhet()], pageSize: 1, totalElements: 3);
+
         _enhetsregisteret
             .SearchEnheter(Arg.Any<SearchEnheterQuery>(), Arg.Is<Pagination>(p => p.Page == 0))
-            .Returns(result);
+            .Returns(Page());
         _enhetsregisteret
             .SearchEnheter(Arg.Any<SearchEnheterQuery>(), Arg.Is<Pagination>(p => p.Page == 1))
-            .Returns(result with { PageIndex = 1 });
+            .Returns(Page());
         _enhetsregisteret
             .SearchEnheter(Arg.Any<SearchEnheterQuery>(), Arg.Is<Pagination>(p => p.Page == 2))
-            .Returns(result with { PageIndex = 2 });
+            .Returns(Page());
 
         var query = new SearchEnheterQuery();
 
@@ -131,19 +124,15 @@ public class EnhetsregisteretExtensionsTests
     [Fact]
     public async Task SearchUnderenheter_EnumeratesAllPages()
     {
-        var result = new PaginationResult<Underenhet>()
-        {
-            PageIndex = 0,
-            Elements = [new Underenhet(), new Underenhet()],
-            TotalElements = 4,
-            PageSize = 2,
-        };
+        Underenheter Page() =>
+            BuildUnderenheter([new Underenhet(), new Underenhet()], pageSize: 2, totalElements: 4);
+
         _enhetsregisteret
             .SearchUnderenheter(Arg.Any<SearchEnheterQuery>(), Arg.Is<Pagination>(p => p.Page == 0))
-            .Returns(result);
+            .Returns(Page());
         _enhetsregisteret
             .SearchUnderenheter(Arg.Any<SearchEnheterQuery>(), Arg.Is<Pagination>(p => p.Page == 1))
-            .Returns(result with { PageIndex = 1 });
+            .Returns(Page());
 
         var query = new SearchEnheterQuery();
 
@@ -160,31 +149,42 @@ public class EnhetsregisteretExtensionsTests
     [Fact]
     public async Task GetOppdateringerEnheter_EnumeratesFinalPartialPage()
     {
-        var result = new PaginationResult<OppdateringerEnhet>()
-        {
-            PageIndex = 0,
-            Elements = [new OppdateringerEnhet(), new OppdateringerEnhet()],
-            TotalElements = 5,
-            PageSize = 2,
-        };
         _enhetsregisteret
             .GetOppdateringerEnheter(
                 Arg.Any<GetOppdateringerQuery>(),
                 Arg.Is<Pagination>(p => p.Page == 0)
             )
-            .Returns(result);
+            .Returns(
+                BuildOppdateringerEnheter(
+                    [new OppdateringerEnhet(), new OppdateringerEnhet()],
+                    pageSize: 2,
+                    totalElements: 5
+                )
+            );
         _enhetsregisteret
             .GetOppdateringerEnheter(
                 Arg.Any<GetOppdateringerQuery>(),
                 Arg.Is<Pagination>(p => p.Page == 1)
             )
-            .Returns(result with { PageIndex = 1 });
+            .Returns(
+                BuildOppdateringerEnheter(
+                    [new OppdateringerEnhet(), new OppdateringerEnhet()],
+                    pageSize: 2,
+                    totalElements: 5
+                )
+            );
         _enhetsregisteret
             .GetOppdateringerEnheter(
                 Arg.Any<GetOppdateringerQuery>(),
                 Arg.Is<Pagination>(p => p.Page == 2)
             )
-            .Returns(result with { PageIndex = 2, Elements = [new OppdateringerEnhet()] });
+            .Returns(
+                BuildOppdateringerEnheter(
+                    [new OppdateringerEnhet()],
+                    pageSize: 2,
+                    totalElements: 5
+                )
+            );
 
         var query = new GetOppdateringerQuery { Dato = DateTime.Now };
 
@@ -201,25 +201,23 @@ public class EnhetsregisteretExtensionsTests
     [Fact]
     public async Task GetOppdateringerUnderenheter_EnumeratesASinglePage()
     {
-        var result = new PaginationResult<OppdateringerUnderenhet>()
-        {
-            PageIndex = 0,
-            Elements =
-            [
-                new OppdateringerUnderenhet(),
-                new OppdateringerUnderenhet(),
-                new OppdateringerUnderenhet(),
-                new OppdateringerUnderenhet(),
-            ],
-            TotalElements = 4,
-            PageSize = 1,
-        };
         _enhetsregisteret
             .GetOppdateringerUnderenheter(
                 Arg.Any<GetOppdateringerQuery>(),
                 Arg.Is<Pagination>(p => p.Page == 0)
             )
-            .Returns(result);
+            .Returns(
+                BuildOppdateringerUnderenheter(
+                    [
+                        new OppdateringerUnderenhet(),
+                        new OppdateringerUnderenhet(),
+                        new OppdateringerUnderenhet(),
+                        new OppdateringerUnderenhet(),
+                    ],
+                    pageSize: 4,
+                    totalElements: 4
+                )
+            );
 
         var query = new GetOppdateringerQuery { Dato = DateTime.Now };
 
@@ -245,6 +243,8 @@ public class EnhetsregisteretExtensionsTests
     {
         var elements = Enumerable.Range(1, totalElements).ToList();
 
+        var totalPages = (long)Math.Ceiling((double)totalElements / pageSize);
+
         var results = new List<int>();
 
         await foreach (
@@ -257,19 +257,97 @@ public class EnhetsregisteretExtensionsTests
         results.ShouldBe(elements);
         return;
 
-        Task<PaginationResult<int>?> FetchPage(Pagination pagination)
+        Task<IPaginatedResponse<int>?> FetchPage(Pagination pagination)
         {
             var startIndex = (int)pagination.Page * pageSize;
 
-            return Task.FromResult<PaginationResult<int>?>(
-                new PaginationResult<int>()
-                {
-                    PageIndex = pagination.Page,
-                    Elements = elements.Skip(startIndex).Take(pageSize),
-                    TotalElements = totalElements,
-                    PageSize = pageSize,
-                }
+            return Task.FromResult<IPaginatedResponse<int>?>(
+                new PaginatedResponse<int>(
+                    elements.Skip(startIndex).Take(pageSize).ToList(),
+                    totalPages
+                )
             );
         }
     }
+
+    [Fact]
+    public async Task EnumeratePaginatedElements_StopsAtMaxSearchResultSize()
+    {
+        // EnumeratePaginatedElements drives pagination with a fixed page size of 1000.
+        // The page extent guard ((page + 1) * 1000) exceeds Constants.MaxSearchResultSize (10_000)
+        // at page 10, so enumeration stops after fetching pages 0..9 even though more pages exist.
+        var callCount = 0;
+
+        var results = new List<int>();
+
+        await foreach (
+            var result in EnhetsregisteretExtensions.EnumeratePaginatedElements(FetchPage)
+        )
+        {
+            results.Add(result);
+        }
+
+        callCount.ShouldBe(10);
+        results.Count.ShouldBe(10);
+
+        return;
+
+        Task<IPaginatedResponse<int>?> FetchPage(Pagination pagination)
+        {
+            callCount++;
+            return Task.FromResult<IPaginatedResponse<int>?>(
+                new PaginatedResponse<int>([1], TotalPages: 100)
+            );
+        }
+    }
+
+    private static Enheter BuildEnheter(
+        IEnumerable<Enhet> elements,
+        long pageSize,
+        long totalElements
+    ) =>
+        new()
+        {
+            Embedded = new Enheter_embedded { Enheter = elements.ToList() },
+            Page = BuildPage(pageSize, totalElements),
+        };
+
+    private static Underenheter BuildUnderenheter(
+        IEnumerable<Underenhet> elements,
+        long pageSize,
+        long totalElements
+    ) =>
+        new()
+        {
+            Embedded = new Underenheter_embedded { Underenheter = elements.ToList() },
+            Page = BuildPage(pageSize, totalElements),
+        };
+
+    private static OppdateringerEnheter BuildOppdateringerEnheter(
+        IEnumerable<OppdateringerEnhet> elements,
+        long pageSize,
+        long totalElements
+    ) =>
+        new()
+        {
+            Embedded = new OppdateringerEnheter_embedded { OppdaterteEnheter = elements.ToList() },
+            Page = BuildPage(pageSize, totalElements),
+        };
+
+    private static OppdateringerUnderenheter BuildOppdateringerUnderenheter(
+        IEnumerable<OppdateringerUnderenhet> elements,
+        long pageSize,
+        long totalElements
+    ) =>
+        new()
+        {
+            Embedded = new OppdateringerUnderenheter_embedded
+            {
+                OppdaterteUnderenheter = elements.ToList(),
+            },
+            Page = BuildPage(pageSize, totalElements),
+        };
+
+    private static Page BuildPage(long pageSize, long totalElements) =>
+        new() { Size = pageSize, TotalElements = totalElements };
 }

@@ -1,5 +1,4 @@
 using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
-using Arbeidstilsynet.Common.Enhetsregisteret.Model.Response;
 using Arbeidstilsynet.Common.Enhetsregisteret.Models;
 
 namespace Arbeidstilsynet.Common.Enhetsregisteret.Ports;
@@ -33,7 +32,7 @@ public interface IEnhetsregisteret
     /// <param name="searchParameters">Søkeparametrene</param>
     /// <param name="pagination"></param>
     /// <returns>Underenhetene som matcher søket</returns>
-    Task<PaginationResult<Underenhet>?> SearchUnderenheter(
+    Task<Underenheter?> SearchUnderenheter(
         SearchEnheterQuery searchParameters,
         Pagination pagination
     );
@@ -44,10 +43,7 @@ public interface IEnhetsregisteret
     /// <param name="searchParameters">Søkeparametrene</param>
     /// <param name="pagination"></param>
     /// <returns>Enhetene som matcher søket</returns>
-    Task<PaginationResult<Enhet>?> SearchEnheter(
-        SearchEnheterQuery searchParameters,
-        Pagination pagination
-    );
+    Task<Enheter?> SearchEnheter(SearchEnheterQuery searchParameters, Pagination pagination);
 
     /// <summary>
     /// Hent oppdateringshistorikk for underenheter i enhetsregisteret.
@@ -55,7 +51,7 @@ public interface IEnhetsregisteret
     /// <param name="query"></param>
     /// <param name="pagination"></param>
     /// <returns></returns>
-    Task<PaginationResult<OppdateringerUnderenhet>?> GetOppdateringerUnderenheter(
+    Task<OppdateringerUnderenheter?> GetOppdateringerUnderenheter(
         GetOppdateringerQuery query,
         Pagination pagination
     );
@@ -66,7 +62,7 @@ public interface IEnhetsregisteret
     /// <param name="query"></param>
     /// <param name="pagination"></param>
     /// <returns></returns>
-    Task<PaginationResult<OppdateringerEnhet>?> GetOppdateringerEnheter(
+    Task<OppdateringerEnheter?> GetOppdateringerEnheter(
         GetOppdateringerQuery query,
         Pagination pagination
     );
