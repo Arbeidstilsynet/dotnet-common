@@ -48,7 +48,8 @@ internal sealed class EnhetsregisteretAdapter : IEnhetsregisteret
     public Task<Enheter?> SearchEnheter(
         Action<EnheterQueryParameters>? configureQuery = null,
         CancellationToken cancellationToken = default
-    ) => _client.Enhetsregisteret.Api.Enheter.GetAsync(Configure(configureQuery), cancellationToken);
+    ) =>
+        _client.Enhetsregisteret.Api.Enheter.GetAsync(Configure(configureQuery), cancellationToken);
 
     public Task<Underenheter?> SearchUnderenheter(
         Action<UnderenheterQueryParameters>? configureQuery = null,

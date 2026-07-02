@@ -33,7 +33,10 @@ public interface IEnhetsregisteret
     /// <param name="organisasjonsnummer">Organisasjonsnummeret til enheten.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>En <see cref="Enhet"/>. Null hvis enheten ikke finnes (eller er slettet), eller hvis det oppstår en feil under henting.</returns>
-    Task<Enhet?> GetEnhet(string organisasjonsnummer, CancellationToken cancellationToken = default);
+    Task<Enhet?> GetEnhet(
+        string organisasjonsnummer,
+        CancellationToken cancellationToken = default
+    );
 
     /// <summary>
     /// Søk etter underenheter basert på søkeparametere.

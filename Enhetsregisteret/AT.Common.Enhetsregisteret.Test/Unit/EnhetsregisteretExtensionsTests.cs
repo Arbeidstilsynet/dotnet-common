@@ -185,9 +185,7 @@ public class EnhetsregisteretExtensionsTests
 
         var results = new List<OppdateringerEnhet>();
 
-        await foreach (
-            var oppdatering in _enhetsregisteret.EnumerateOppdateringerEnheter(_ => { })
-        )
+        await foreach (var oppdatering in _enhetsregisteret.EnumerateOppdateringerEnheter(_ => { }))
         {
             results.Add(oppdatering);
         }
