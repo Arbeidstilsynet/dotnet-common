@@ -1,11 +1,11 @@
 using Arbeidstilsynet.Common.GeoNorge.Implementation;
 using Arbeidstilsynet.Common.GeoNorge.KommuneInfo;
 using Arbeidstilsynet.Common.GeoNorge.KommuneInfo.Models;
-using Arbeidstilsynet.Common.GeoNorge.Model.Request;
 using Arbeidstilsynet.Common.GeoNorge.Ports;
 using Microsoft.Kiota.Abstractions;
 using NSubstitute;
 using Shouldly;
+using PunktQueryParameters = Arbeidstilsynet.Common.GeoNorge.KommuneInfo.Punkt.PunktRequestBuilder.PunktRequestBuilderGetQueryParameters;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Test.Unit;
 
@@ -138,7 +138,12 @@ public class ApproximateSvalbardAndJanMayenFylkeKommuneApiTests
     {
         // Act
         var result = await _sut.GetKommuneByPoint(
-            new PointQuery { Latitude = latitude, Longitude = longitude }
+            new PunktQueryParameters
+            {
+                Nord = latitude,
+                Ost = longitude,
+                Koordsys = 4326,
+            }
         );
 
         // Assert
@@ -152,7 +157,12 @@ public class ApproximateSvalbardAndJanMayenFylkeKommuneApiTests
     {
         // Act
         var result = await _sut.GetKommuneByPoint(
-            new PointQuery { Latitude = 59.91, Longitude = 10.75 }
+            new PunktQueryParameters
+            {
+                Nord = 59.91,
+                Ost = 10.75,
+                Koordsys = 4326,
+            }
         );
 
         // Assert
@@ -218,7 +228,7 @@ public class ApproximateSvalbardAndJanMayenFylkeKommuneApiTests
             );
         }
 
-        public Task<KommuneFylkeEnkel?> GetKommuneByPoint(PointQuery query)
+        public Task<KommuneFylkeEnkel?> GetKommuneByPoint(PunktQueryParameters queryParameters)
         {
             GetKommuneByPointWasCalled = true;
 

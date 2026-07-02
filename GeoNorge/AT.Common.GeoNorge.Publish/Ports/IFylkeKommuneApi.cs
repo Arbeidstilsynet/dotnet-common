@@ -1,5 +1,5 @@
 using Arbeidstilsynet.Common.GeoNorge.KommuneInfo.Models;
-using Arbeidstilsynet.Common.GeoNorge.Model.Request;
+using PunktQueryParameters = Arbeidstilsynet.Common.GeoNorge.KommuneInfo.Punkt.PunktRequestBuilder.PunktRequestBuilderGetQueryParameters;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Ports;
 
@@ -43,7 +43,7 @@ public interface IFylkeKommuneApi
     /// <summary>
     /// Finds the municipality (kommune) that contains the specified geographical point.
     /// </summary>
-    /// <param name="query">The geographical point query with coordinates.</param>
+    /// <param name="queryParameters">The generated query parameters describing the geographical point.</param>
     /// <returns>A generated <see cref="KommuneFylkeEnkel"/> object if found, otherwise null.</returns>
-    Task<KommuneFylkeEnkel?> GetKommuneByPoint(PointQuery query);
+    Task<KommuneFylkeEnkel?> GetKommuneByPoint(PunktQueryParameters queryParameters);
 }

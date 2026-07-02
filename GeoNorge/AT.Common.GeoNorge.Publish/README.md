@@ -64,6 +64,9 @@ builder.Services.AddGeoNorge(
 ### Address Search Examples
 
 ```csharp
+using Arbeidstilsynet.Common.GeoNorge.Adresser.Punktsok;
+using Arbeidstilsynet.Common.GeoNorge.Adresser.Sok;
+
 public class AddressService
 {
     private readonly IAddressSearch _addressSearch;
@@ -77,31 +80,40 @@ public class AddressService
     public async Task Examples()
     {
         // Find the closest address to a given coordinate:
-        var address = await _addressSearch.GetClosestAddress(new PointSearchQuery{
-            Latitude = 59.9139,
-            Longitude = 10.7522,
-            RadiusInMeters = 1000
-        });
+        var address = await _addressSearch.GetClosestAddress(
+            new PunktsokRequestBuilder.PunktsokRequestBuilderGetQueryParameters
+            {
+                Lat = 59.9139f,
+                Lon = 10.7522f,
+                Radius = 1000,
+            }
+        );
 
         // If you want to find all addresses within a certain radius of a point:
-        var paginatedResult = await _addressSearch.SearchAddressesByPoint(new PointSearchQuery
-        {
-            Latitude = 59.9139,
-            Longitude = 10.7522,
-            RadiusInMeters = 1000
-        });
+        var paginatedResult = await _addressSearch.SearchAddressesByPoint(
+            new PunktsokRequestBuilder.PunktsokRequestBuilderGetQueryParameters
+            {
+                Lat = 59.9139f,
+                Lon = 10.7522f,
+                Radius = 1000,
+            }
+        );
 
         // Search for addresses by a text query:
-        var searchResult = await _addressSearch.SearchAddresses(new TextSearchQuery
-        {
-            SearchTerm = "Karl Johans gate 1, Oslo"
-        });
+        var searchResult = await _addressSearch.SearchAddresses(
+            new SokRequestBuilder.SokRequestBuilderGetQueryParameters
+            {
+                Sok = "Karl Johans gate 1, Oslo",
+            }
+        );
 
         // If you only want the first result, you can use the QuickSearchLocation extension method:
-        var location = await _addressSearch.QuickSearchLocation(new TextSearchQuery
-        {
-            SearchTerm = "Karl Johans gate 1, Oslo"
-        });
+        var location = await _addressSearch.QuickSearchLocation(
+            new SokRequestBuilder.SokRequestBuilderGetQueryParameters
+            {
+                Sok = "Karl Johans gate 1, Oslo",
+            }
+        );
     }
 }
 ```
@@ -109,6 +121,8 @@ public class AddressService
 ### County and Municipality Examples
 
 ```csharp
+using Arbeidstilsynet.Common.GeoNorge.KommuneInfo.Punkt;
+
 public class LocationService
 {
     private readonly IFylkeKommuneApi _fylkeKommuneApi;
@@ -137,11 +151,14 @@ public class LocationService
         var osloKommune = await _fylkeKommuneApi.GetKommuneByNumber("0301");
 
         // Find which municipality contains a specific point:
-        var kommune = await _fylkeKommuneApi.GetKommuneByPoint(new PointQuery
-        {
-            Latitude = 59.9139,
-            Longitude = 10.7522
-        });
+        var kommune = await _fylkeKommuneApi.GetKommuneByPoint(
+            new PunktRequestBuilder.PunktRequestBuilderGetQueryParameters
+            {
+                Nord = 59.9139,
+                Ost = 10.7522,
+                Koordsys = 4326,
+            }
+        );
     }
 }
 ```

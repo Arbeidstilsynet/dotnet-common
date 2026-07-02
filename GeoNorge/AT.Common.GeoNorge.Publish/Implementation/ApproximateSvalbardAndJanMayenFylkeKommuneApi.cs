@@ -1,6 +1,6 @@
 using Arbeidstilsynet.Common.GeoNorge.KommuneInfo.Models;
-using Arbeidstilsynet.Common.GeoNorge.Model.Request;
 using Arbeidstilsynet.Common.GeoNorge.Ports;
+using PunktQueryParameters = Arbeidstilsynet.Common.GeoNorge.KommuneInfo.Punkt.PunktRequestBuilder.PunktRequestBuilderGetQueryParameters;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Implementation;
 
@@ -151,27 +151,33 @@ internal class ApproximateSvalbardAndJanMayenFylkeKommuneApi(IFylkeKommuneApi in
         };
     }
 
-    public Task<KommuneFylkeEnkel?> GetKommuneByPoint(PointQuery query)
+    public Task<KommuneFylkeEnkel?> GetKommuneByPoint(PunktQueryParameters queryParameters)
     {
-        if (UsesGeographicCoordinates(query) && SvalbardBoundingBoxes.Contains(query))
+        if (
+            UsesGeographicCoordinates(queryParameters)
+            && SvalbardBoundingBoxes.Contains(queryParameters)
+        )
         {
             return Task.FromResult<KommuneFylkeEnkel?>(NewSvalbardKommuneFylkeEnkel());
         }
 
-        if (UsesGeographicCoordinates(query) && JanMayenBoundingBox.Contains(query))
+        if (
+            UsesGeographicCoordinates(queryParameters)
+            && JanMayenBoundingBox.Contains(queryParameters)
+        )
         {
             return Task.FromResult<KommuneFylkeEnkel?>(NewJanMayenKommuneFylkeEnkel());
         }
 
-        return inner.GetKommuneByPoint(query);
+        return inner.GetKommuneByPoint(queryParameters);
     }
 
     private static GeoJson NewPoint(double longitude, double latitude) =>
         new() { Type = "Point", Coordinates = [longitude, latitude] };
 
-    private static bool UsesGeographicCoordinates(PointQuery query)
+    private static bool UsesGeographicCoordinates(PunktQueryParameters query)
     {
-        return query.Epsg is 4258 or 4326;
+        return query.Koordsys is 4258 or 4326;
     }
 
     private static void AddIfMissing<T>(List<T> values, T value, Func<T, string?> keySelector)
@@ -185,7 +191,7 @@ internal class ApproximateSvalbardAndJanMayenFylkeKommuneApi(IFylkeKommuneApi in
 
     private static class SvalbardBoundingBoxes
     {
-        public static bool Contains(PointQuery query) =>
+        public static bool Contains(PunktQueryParameters query) =>
             SvalbardMainlandBoundingBox.Contains(query)
             || BjornoyaBoundingBox.Contains(query)
             || HopenBoundingBox.Contains(query);
@@ -193,25 +199,25 @@ internal class ApproximateSvalbardAndJanMayenFylkeKommuneApi(IFylkeKommuneApi in
 
     private static class SvalbardMainlandBoundingBox
     {
-        public static bool Contains(PointQuery query) =>
-            query.Latitude is >= 74.0 and <= 81.5 && query.Longitude is >= 10.0 and <= 35.5;
+        public static bool Contains(PunktQueryParameters query) =>
+            query.Nord is >= 74.0 and <= 81.5 && query.Ost is >= 10.0 and <= 35.5;
     }
 
     private static class BjornoyaBoundingBox
     {
-        public static bool Contains(PointQuery query) =>
-            query.Latitude is >= 74.2 and <= 74.7 && query.Longitude is >= 18.7 and <= 19.5;
+        public static bool Contains(PunktQueryParameters query) =>
+            query.Nord is >= 74.2 and <= 74.7 && query.Ost is >= 18.7 and <= 19.5;
     }
 
     private static class HopenBoundingBox
     {
-        public static bool Contains(PointQuery query) =>
-            query.Latitude is >= 76.3 and <= 76.8 && query.Longitude is >= 24.5 and <= 25.6;
+        public static bool Contains(PunktQueryParameters query) =>
+            query.Nord is >= 76.3 and <= 76.8 && query.Ost is >= 24.5 and <= 25.6;
     }
 
     private static class JanMayenBoundingBox
     {
-        public static bool Contains(PointQuery query) =>
-            query.Latitude is >= 70.5 and <= 71.5 && query.Longitude is >= -10.0 and <= -7.0;
+        public static bool Contains(PunktQueryParameters query) =>
+            query.Nord is >= 70.5 and <= 71.5 && query.Ost is >= -10.0 and <= -7.0;
     }
 }

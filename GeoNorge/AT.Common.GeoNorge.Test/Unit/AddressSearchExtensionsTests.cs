@@ -1,9 +1,10 @@
 using Arbeidstilsynet.Common.GeoNorge.Adresser.Models;
 using Arbeidstilsynet.Common.GeoNorge.Extensions;
-using Arbeidstilsynet.Common.GeoNorge.Model.Request;
 using Arbeidstilsynet.Common.GeoNorge.Ports;
 using NSubstitute;
 using Shouldly;
+using PunktsokQueryParameters = Arbeidstilsynet.Common.GeoNorge.Adresser.Punktsok.PunktsokRequestBuilder.PunktsokRequestBuilderGetQueryParameters;
+using SokQueryParameters = Arbeidstilsynet.Common.GeoNorge.Adresser.Sok.SokRequestBuilder.SokRequestBuilderGetQueryParameters;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Test.Unit;
 
@@ -15,11 +16,11 @@ public class AddressSearchExtensionsTests
     public async Task GetClosestAddress_MapsRequestCorrectly()
     {
         // Arrange
-        var query = new PointSearchQuery()
+        var query = new PunktsokQueryParameters
         {
-            Latitude = 60.0,
-            Longitude = 10.0,
-            RadiusInMeters = 1000,
+            Lat = 60.0f,
+            Lon = 10.0f,
+            Radius = 1000,
         };
 
         // Act
@@ -28,18 +29,22 @@ public class AddressSearchExtensionsTests
         // Assert
         await _addressSearch
             .Received(1)
-            .SearchAddressesByPoint(query, new Pagination() { PageIndex = 0, PageSize = 1 });
+            .SearchAddressesByPoint(
+                Arg.Is<PunktsokQueryParameters>(q =>
+                    ReferenceEquals(q, query) && q.Side == 0 && q.TreffPerSide == 1
+                )
+            );
     }
 
     [Fact]
     public async Task GetClosestAddress_MapsResultCorrectly()
     {
         // Arrange
-        var query = new PointSearchQuery()
+        var query = new PunktsokQueryParameters
         {
-            Latitude = 60.0,
-            Longitude = 10.0,
-            RadiusInMeters = 1000,
+            Lat = 60.0f,
+            Lon = 10.0f,
+            Radius = 1000,
         };
 
         var returnedList = new OutputGeoPointList
@@ -64,9 +69,9 @@ public class AddressSearchExtensionsTests
     public async Task QuickSearchLocation_MapsRequestCorrectly()
     {
         // Arrange
-        var query = new TextSearchQuery()
+        var query = new SokQueryParameters
         {
-            SearchTerm = "Testveien",
+            Sok = "Testveien",
             Adressenavn = "Testveien",
             Postnummer = "1234",
             Poststed = "Testby",
@@ -79,16 +84,20 @@ public class AddressSearchExtensionsTests
         // Assert
         await _addressSearch
             .Received(1)
-            .SearchAddresses(query, new Pagination() { PageIndex = 0, PageSize = 1 });
+            .SearchAddresses(
+                Arg.Is<SokQueryParameters>(q =>
+                    ReferenceEquals(q, query) && q.Side == 0 && q.TreffPerSide == 1
+                )
+            );
     }
 
     [Fact]
     public async Task QuickSearchLocation_MapsResultCorrectly()
     {
         // Arrange
-        var query = new TextSearchQuery()
+        var query = new SokQueryParameters
         {
-            SearchTerm = "Testveien",
+            Sok = "Testveien",
             Adressenavn = "Testveien",
             Postnummer = "1234",
             Poststed = "Testby",
@@ -110,7 +119,7 @@ public class AddressSearchExtensionsTests
             ],
         };
 
-        _addressSearch.SearchAddresses(default!, default!).ReturnsForAnyArgs(returnedList);
+        _addressSearch.SearchAddresses(default!).ReturnsForAnyArgs(returnedList);
 
         // Act
         var result = await _addressSearch.QuickSearchLocation(query);

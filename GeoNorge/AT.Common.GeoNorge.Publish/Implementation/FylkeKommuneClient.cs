@@ -1,8 +1,8 @@
 using System.Text.RegularExpressions;
 using Arbeidstilsynet.Common.GeoNorge.KommuneInfo;
 using Arbeidstilsynet.Common.GeoNorge.KommuneInfo.Models;
-using Arbeidstilsynet.Common.GeoNorge.Model.Request;
 using Arbeidstilsynet.Common.GeoNorge.Ports;
+using PunktQueryParameters = Arbeidstilsynet.Common.GeoNorge.KommuneInfo.Punkt.PunktRequestBuilder.PunktRequestBuilderGetQueryParameters;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Implementation;
 
@@ -49,14 +49,9 @@ internal partial class FylkeKommuneClient(KommuneInfoClient client) : IFylkeKomm
         return await client.Kommuner[kommunenummer].GetAsync();
     }
 
-    public async Task<KommuneFylkeEnkel?> GetKommuneByPoint(PointQuery query)
+    public async Task<KommuneFylkeEnkel?> GetKommuneByPoint(PunktQueryParameters queryParameters)
     {
-        return await client.Punkt.GetAsync(config =>
-        {
-            config.QueryParameters.Nord = query.Latitude;
-            config.QueryParameters.Ost = query.Longitude;
-            config.QueryParameters.Koordsys = query.Epsg;
-        });
+        return await client.Punkt.GetAsync(config => config.QueryParameters = queryParameters);
     }
 
     [GeneratedRegex(@"^\d{4}$", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-GB")]
