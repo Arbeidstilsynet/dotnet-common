@@ -82,7 +82,10 @@ public void ConfigureServices(IServiceCollection services)
 
 ## 🧑‍💻 Usage
 
-`AddEnhetsregisteret(...)` registers the generated `EnhetsregisteretClient` in the service collection. Inject it directly, or — recommended — wrap it in your own narrow interface that matches the intended use in your service or bounded context. That keeps tests simpler, avoids coupling every consumer to the full Brreg API surface, and gives you a stable seam if the generated fluent API changes later.
+`AddEnhetsregisteret(...)` registers two things you can inject:
+
+- `Ports.IEnhetsregisteret` — a ready-to-use adapter over the generated client covering the most common operations (get/search enheter and underenheter, plus oppdateringshistorikk), returning the generated models. Pair it with the `EnhetsregisteretExtensions` helpers (e.g. `GetUnderenheterByHovedenhet`, `EnumerateEnheter`) for pagination-aware enumeration.
+- The generated `EnhetsregisteretClient` — the full Brreg API surface. Inject it directly, or — for a narrower seam — wrap it in your own interface that matches the intended use in your service or bounded context.
 
 ### Inject the generated client
 
@@ -158,7 +161,7 @@ builder.Services.AddScoped<IEnhetLookup, EnhetLookup>();
 
 The rest of your application then depends on `IEnhetLookup`, not on `EnhetsregisteretClient` directly.
 
-> **Note:** `Ports.IEnhetsregisteret` and the `EnhetsregisteretExtensions` helper methods are still present in the package but are **not** registered or implemented out of the box. They are kept as a starting point for building your own adapter over the generated client.
+> **Note:** `Ports.IEnhetsregisteret` is registered and implemented out of the box as a thin adapter over the generated client. Use it (with `EnhetsregisteretExtensions`) for common operations, or drop down to `EnhetsregisteretClient` for the full API surface.
 
 ---
 

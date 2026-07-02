@@ -24,11 +24,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **BREAKING**: Replaced the hand-written Brreg HTTP client and hand-copied models with a [Kiota](https://learn.microsoft.com/openapi/kiota/)-generated `EnhetsregisteretClient` and generated models (under `Arbeidstilsynet.Common.Enhetsregisteret.Models`), generated from Brreg's OpenAPI specification.
-- **BREAKING**: `AddEnhetsregisteret(...)` now registers and exposes the generated `EnhetsregisteretClient` instead of an `IEnhetsregisteret` implementation. Consumers are expected to adapt the client locally (e.g. wrap it in their own interface). Dependency injection and environment-based configuration are otherwise unchanged.
+- **BREAKING**: `AddEnhetsregisteret(...)` now registers an `IEnhetsregisteret` implementation backed by the generated `EnhetsregisteretClient`, and also exposes the generated `EnhetsregisteretClient` directly for local adaptation. Dependency injection and environment-based configuration are otherwise unchanged.
+- **BREAKING**: `Ports.IEnhetsregisteret` now exposes the generated models directly. `GetEnhet`/`GetUnderenhet` return the generated `Enhet`/`Underenhet`, the search/oppdateringer methods take `Action<T>` query-parameter delegates (the generated Kiota query-parameter types) and return the generated paginated response types (`Enheter`, `Underenheter`, `OppdateringerEnheter`, `OppdateringerUnderenheter`).
+- **BREAKING**: `EnhetsregisteretExtensions` convenience methods now build on the generated query-parameter delegates. The general-purpose enumeration helpers were renamed to `EnumerateEnheter`, `EnumerateUnderenheter`, `EnumerateOppdateringerEnheter` and `EnumerateOppdateringerUnderenheter`.
 
 ### Removed
 
-- **BREAKING**: Removed the hand-written `IEnhetsregisteret` implementation and the hand-copied Brreg model types (`Enhet`, `Underenhet`, `Oppdatering`, etc.), including the `PaginationResult<T>` response wrapper. `Ports.IEnhetsregisteret` and `EnhetsregisteretExtensions` remain in the package but are no longer registered or implemented; they are kept as a starting point for local adapters. The port's search/oppdateringer methods now return the generated paginated response types (`Enheter`, `Underenheter`, `OppdateringerEnheter`, `OppdateringerUnderenheter`).
+- **BREAKING**: Removed the hand-written `IEnhetsregisteret` implementation and the hand-copied Brreg model types (`Enhet`, `Underenhet`, `Oppdatering`, etc.), including the `PaginationResult<T>` response wrapper.
+- **BREAKING**: Removed the custom request models (`SearchEnheterQuery`, `GetOppdateringerQuery`, `Pagination`) and their validators. Queries are now expressed using the generated Kiota query-parameter types.
 
 ## 2.0.2
 

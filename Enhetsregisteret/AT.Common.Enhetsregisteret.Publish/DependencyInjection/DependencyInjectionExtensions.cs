@@ -118,5 +118,6 @@ public static class DependencyInjectionExtensions
         services.AddScoped<EnhetsregisteretClient>(serviceProvider => new EnhetsregisteretClient(
             serviceProvider.GetRequiredService<EnhetsregisteretRequestAdapter>()
         ));
+        services.AddScoped<Ports.IEnhetsregisteret, EnhetsregisteretAdapter>();
     }
 }

@@ -1,10 +1,13 @@
 using Arbeidstilsynet.Common.Enhetsregisteret.Extensions;
 using Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
-using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 using Arbeidstilsynet.Common.Enhetsregisteret.Models;
 using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
 using NSubstitute;
 using Shouldly;
+using EnheterQueryParameters = global::Arbeidstilsynet.Common.Enhetsregisteret.Enhetsregisteret.Api.Enheter.EnheterRequestBuilder.EnheterRequestBuilderGetQueryParameters;
+using OppdateringerEnheterQueryParameters = global::Arbeidstilsynet.Common.Enhetsregisteret.Enhetsregisteret.Api.Oppdateringer.Enheter.EnheterRequestBuilder.EnheterRequestBuilderGetQueryParameters;
+using OppdateringerUnderenheterQueryParameters = global::Arbeidstilsynet.Common.Enhetsregisteret.Enhetsregisteret.Api.Oppdateringer.Underenheter.UnderenheterRequestBuilder.UnderenheterRequestBuilderGetQueryParameters;
+using UnderenheterQueryParameters = global::Arbeidstilsynet.Common.Enhetsregisteret.Enhetsregisteret.Api.Underenheter.UnderenheterRequestBuilder.UnderenheterRequestBuilderGetQueryParameters;
 
 namespace Arbeidstilsynet.Common.Enhetsregisteret.Test;
 
@@ -17,7 +20,7 @@ public class EnhetsregisteretExtensionsTests
     [InlineData(null)]
     [InlineData("69")]
     [InlineData("bokstaver")]
-    public async Task GetUnderenheter_InvalidOverordnetEnhet_ThrowsArgumentException(
+    public async Task GetUnderenheterByHovedenhet_InvalidOverordnetEnhet_ThrowsArgumentException(
         string? organisasjonsnummer
     )
     {
@@ -29,7 +32,7 @@ public class EnhetsregisteretExtensionsTests
     }
 
     [Fact]
-    public async Task GetUnderenheter_ValidAntall_CallsSearchUnderenhteterCorrectly()
+    public async Task GetUnderenheterByHovedenhet_ValidOrgnummer_ConfiguresOverordnetEnhet()
     {
         // Act
         _ = await _enhetsregisteret.GetUnderenheterByHovedenhet("123456789");
@@ -38,10 +41,10 @@ public class EnhetsregisteretExtensionsTests
         await _enhetsregisteret
             .Received(1)
             .SearchUnderenheter(
-                Arg.Is<SearchEnheterQuery>(q =>
-                    q.OverordnetEnhetOrganisasjonsnummer == "123456789"
+                Arg.Is<Action<UnderenheterQueryParameters>>(configure =>
+                    Applied(configure).OverordnetEnhet == "123456789"
                 ),
-                Arg.Any<Pagination>()
+                Arg.Any<CancellationToken>()
             );
     }
 
@@ -58,7 +61,28 @@ public class EnhetsregisteretExtensionsTests
         result.ShouldBeEmpty();
         await _enhetsregisteret
             .DidNotReceive()
-            .SearchUnderenheter(Arg.Any<SearchEnheterQuery>(), Arg.Any<Pagination>());
+            .SearchUnderenheter(
+                Arg.Any<Action<UnderenheterQueryParameters>>(),
+                Arg.Any<CancellationToken>()
+            );
+    }
+
+    [Fact]
+    public async Task GetUnderenheter_ValidOrgnummer_ConfiguresOrganisasjonsnummer()
+    {
+        // Act
+        _ = await _enhetsregisteret.GetUnderenheter(["123456789", "987654321"]);
+
+        // Assert
+        await _enhetsregisteret
+            .Received(1)
+            .SearchUnderenheter(
+                Arg.Is<Action<UnderenheterQueryParameters>>(configure =>
+                    Applied(configure)
+                        .Organisasjonsnummer!.SequenceEqual(new[] { "123456789", "987654321" })
+                ),
+                Arg.Any<CancellationToken>()
+            );
     }
 
     [Fact]
@@ -74,11 +98,11 @@ public class EnhetsregisteretExtensionsTests
         result.ShouldBeEmpty();
         await _enhetsregisteret
             .DidNotReceive()
-            .SearchEnheter(Arg.Any<SearchEnheterQuery>(), Arg.Any<Pagination>());
+            .SearchEnheter(Arg.Any<Action<EnheterQueryParameters>>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task GetEnheter_ValidAntall_CallsSearchEnheterCorrectly()
+    public async Task GetEnheter_ValidOrgnummer_ConfiguresOrganisasjonsnummer()
     {
         // Act
         _ = await _enhetsregisteret.GetEnheter(["123456789", "987654321"]);
@@ -87,35 +111,26 @@ public class EnhetsregisteretExtensionsTests
         await _enhetsregisteret
             .Received(1)
             .SearchEnheter(
-                Arg.Is<SearchEnheterQuery>(q =>
-                    q.Organisasjonsnummer.SequenceEqual(
-                        new List<string>() { "123456789", "987654321" }
-                    )
+                Arg.Is<Action<EnheterQueryParameters>>(configure =>
+                    Applied(configure)
+                        .Organisasjonsnummer!.SequenceEqual(new[] { "123456789", "987654321" })
                 ),
-                Arg.Any<Pagination>()
+                Arg.Any<CancellationToken>()
             );
     }
 
     [Fact]
-    public async Task SearchEnheter_EnumeratesAllPages()
+    public async Task EnumerateEnheter_EnumeratesAllPages()
     {
         Enheter Page() => BuildEnheter([new Enhet()], pageSize: 1, totalElements: 3);
 
         _enhetsregisteret
-            .SearchEnheter(Arg.Any<SearchEnheterQuery>(), Arg.Is<Pagination>(p => p.Page == 0))
-            .Returns(Page());
-        _enhetsregisteret
-            .SearchEnheter(Arg.Any<SearchEnheterQuery>(), Arg.Is<Pagination>(p => p.Page == 1))
-            .Returns(Page());
-        _enhetsregisteret
-            .SearchEnheter(Arg.Any<SearchEnheterQuery>(), Arg.Is<Pagination>(p => p.Page == 2))
-            .Returns(Page());
-
-        var query = new SearchEnheterQuery();
+            .SearchEnheter(Arg.Any<Action<EnheterQueryParameters>>(), Arg.Any<CancellationToken>())
+            .Returns(Page(), Page(), Page());
 
         var results = new List<Enhet>();
 
-        await foreach (var enhet in _enhetsregisteret.SearchEnheter(query))
+        await foreach (var enhet in _enhetsregisteret.EnumerateEnheter(_ => { }))
         {
             results.Add(enhet);
         }
@@ -124,23 +139,21 @@ public class EnhetsregisteretExtensionsTests
     }
 
     [Fact]
-    public async Task SearchUnderenheter_EnumeratesAllPages()
+    public async Task EnumerateUnderenheter_EnumeratesAllPages()
     {
         Underenheter Page() =>
             BuildUnderenheter([new Underenhet(), new Underenhet()], pageSize: 2, totalElements: 4);
 
         _enhetsregisteret
-            .SearchUnderenheter(Arg.Any<SearchEnheterQuery>(), Arg.Is<Pagination>(p => p.Page == 0))
-            .Returns(Page());
-        _enhetsregisteret
-            .SearchUnderenheter(Arg.Any<SearchEnheterQuery>(), Arg.Is<Pagination>(p => p.Page == 1))
-            .Returns(Page());
-
-        var query = new SearchEnheterQuery();
+            .SearchUnderenheter(
+                Arg.Any<Action<UnderenheterQueryParameters>>(),
+                Arg.Any<CancellationToken>()
+            )
+            .Returns(Page(), Page());
 
         var results = new List<Underenhet>();
 
-        await foreach (var enhet in _enhetsregisteret.SearchUnderenheter(query))
+        await foreach (var enhet in _enhetsregisteret.EnumerateUnderenheter(_ => { }))
         {
             results.Add(enhet);
         }
@@ -149,46 +162,32 @@ public class EnhetsregisteretExtensionsTests
     }
 
     [Fact]
-    public async Task GetOppdateringerEnheter_EnumeratesFinalPartialPage()
+    public async Task EnumerateOppdateringerEnheter_EnumeratesFinalPartialPage()
     {
         _enhetsregisteret
             .GetOppdateringerEnheter(
-                Arg.Any<GetOppdateringerQuery>(),
-                Arg.Is<Pagination>(p => p.Page == 0)
+                Arg.Any<Action<OppdateringerEnheterQueryParameters>>(),
+                Arg.Any<CancellationToken>()
             )
             .Returns(
                 BuildOppdateringerEnheter(
                     [new OppdateringerEnhet(), new OppdateringerEnhet()],
                     pageSize: 2,
                     totalElements: 5
-                )
-            );
-        _enhetsregisteret
-            .GetOppdateringerEnheter(
-                Arg.Any<GetOppdateringerQuery>(),
-                Arg.Is<Pagination>(p => p.Page == 1)
-            )
-            .Returns(
+                ),
                 BuildOppdateringerEnheter(
                     [new OppdateringerEnhet(), new OppdateringerEnhet()],
                     pageSize: 2,
                     totalElements: 5
-                )
-            );
-        _enhetsregisteret
-            .GetOppdateringerEnheter(
-                Arg.Any<GetOppdateringerQuery>(),
-                Arg.Is<Pagination>(p => p.Page == 2)
-            )
-            .Returns(
+                ),
                 BuildOppdateringerEnheter([new OppdateringerEnhet()], pageSize: 2, totalElements: 5)
             );
 
-        var query = new GetOppdateringerQuery { Dato = DateTime.Now };
-
         var results = new List<OppdateringerEnhet>();
 
-        await foreach (var oppdatering in _enhetsregisteret.GetOppdateringerEnheter(query))
+        await foreach (
+            var oppdatering in _enhetsregisteret.EnumerateOppdateringerEnheter(_ => { })
+        )
         {
             results.Add(oppdatering);
         }
@@ -197,12 +196,12 @@ public class EnhetsregisteretExtensionsTests
     }
 
     [Fact]
-    public async Task GetOppdateringerUnderenheter_EnumeratesASinglePage()
+    public async Task EnumerateOppdateringerUnderenheter_EnumeratesASinglePage()
     {
         _enhetsregisteret
             .GetOppdateringerUnderenheter(
-                Arg.Any<GetOppdateringerQuery>(),
-                Arg.Is<Pagination>(p => p.Page == 0)
+                Arg.Any<Action<OppdateringerUnderenheterQueryParameters>>(),
+                Arg.Any<CancellationToken>()
             )
             .Returns(
                 BuildOppdateringerUnderenheter(
@@ -217,11 +216,11 @@ public class EnhetsregisteretExtensionsTests
                 )
             );
 
-        var query = new GetOppdateringerQuery { Dato = DateTime.Now };
-
         var results = new List<OppdateringerUnderenhet>();
 
-        await foreach (var oppdatering in _enhetsregisteret.GetOppdateringerUnderenheter(query))
+        await foreach (
+            var oppdatering in _enhetsregisteret.EnumerateOppdateringerUnderenheter(_ => { })
+        )
         {
             results.Add(oppdatering);
         }
@@ -255,9 +254,9 @@ public class EnhetsregisteretExtensionsTests
         results.ShouldBe(elements);
         return;
 
-        Task<IPaginatedResponse<int>?> FetchPage(Pagination pagination)
+        Task<IPaginatedResponse<int>?> FetchPage(int page)
         {
-            var startIndex = (int)pagination.Page * pageSize;
+            var startIndex = page * pageSize;
 
             return Task.FromResult<IPaginatedResponse<int>?>(
                 new PaginatedResponse<int>(
@@ -290,13 +289,21 @@ public class EnhetsregisteretExtensionsTests
 
         return;
 
-        Task<IPaginatedResponse<int>?> FetchPage(Pagination pagination)
+        Task<IPaginatedResponse<int>?> FetchPage(int page)
         {
             callCount++;
             return Task.FromResult<IPaginatedResponse<int>?>(
                 new PaginatedResponse<int>([1], TotalPages: 100)
             );
         }
+    }
+
+    private static T Applied<T>(Action<T> configure)
+        where T : new()
+    {
+        var queryParameters = new T();
+        configure(queryParameters);
+        return queryParameters;
     }
 
     private static Enheter BuildEnheter(

@@ -1,69 +1,81 @@
-using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
 using Arbeidstilsynet.Common.Enhetsregisteret.Models;
+using EnheterQueryParameters = global::Arbeidstilsynet.Common.Enhetsregisteret.Enhetsregisteret.Api.Enheter.EnheterRequestBuilder.EnheterRequestBuilderGetQueryParameters;
+using OppdateringerEnheterQueryParameters = global::Arbeidstilsynet.Common.Enhetsregisteret.Enhetsregisteret.Api.Oppdateringer.Enheter.EnheterRequestBuilder.EnheterRequestBuilderGetQueryParameters;
+using OppdateringerUnderenheterQueryParameters = global::Arbeidstilsynet.Common.Enhetsregisteret.Enhetsregisteret.Api.Oppdateringer.Underenheter.UnderenheterRequestBuilder.UnderenheterRequestBuilderGetQueryParameters;
+using UnderenheterQueryParameters = global::Arbeidstilsynet.Common.Enhetsregisteret.Enhetsregisteret.Api.Underenheter.UnderenheterRequestBuilder.UnderenheterRequestBuilderGetQueryParameters;
 
 namespace Arbeidstilsynet.Common.Enhetsregisteret.Ports;
 
 /// <summary>
-/// Interface describing common Enhetsregisteret operations.
+/// Interface describing common Enhetsregisteret operations, exposing the generated models directly.
 /// </summary>
 /// <remarks>
-/// This interface is not registered by <c>AddEnhetsregisteret(...)</c>. It is kept as a starting point
-/// for consumers who want to build their own adapter over the generated <c>EnhetsregisteretClient</c>.
+/// An implementation is registered by <c>AddEnhetsregisteret(...)</c>. It is a thin adapter over the
+/// generated <c>EnhetsregisteretClient</c> and can be used directly or extended via
+/// <see cref="Extensions.EnhetsregisteretExtensions"/>.
 /// </remarks>
 public interface IEnhetsregisteret
 {
     /// <summary>
-    /// Get the <see cref="Underenhet"/> with <see cref="organisasjonsnummer"/>.
+    /// Hent en <see cref="Underenhet"/> basert på organisasjonsnummeret.
     /// </summary>
-    /// <param name="organisasjonsnummer"></param>
-    /// <returns>En <see cref="Underenhet"/>. Null hvis enheten ikke finnes, eller hvis det oppstår en feil under henting.</returns>
-    Task<Underenhet?> GetUnderenhet(string organisasjonsnummer);
+    /// <param name="organisasjonsnummer">Organisasjonsnummeret til underenheten.</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>En <see cref="Underenhet"/>. Null hvis underenheten ikke finnes (eller er slettet), eller hvis det oppstår en feil under henting.</returns>
+    Task<Underenhet?> GetUnderenhet(
+        string organisasjonsnummer,
+        CancellationToken cancellationToken = default
+    );
 
     /// <summary>
     /// Hent en <see cref="Enhet"/> basert på organisasjonsnummeret.
     /// </summary>
     /// <param name="organisasjonsnummer">Organisasjonsnummeret til enheten.</param>
-    /// <returns>En <see cref="Enhet"/>. Null hvis enheten ikke finnes, eller hvis det oppstår en feil under henting.</returns>
-    Task<Enhet?> GetEnhet(string organisasjonsnummer);
+    /// <param name="cancellationToken"></param>
+    /// <returns>En <see cref="Enhet"/>. Null hvis enheten ikke finnes (eller er slettet), eller hvis det oppstår en feil under henting.</returns>
+    Task<Enhet?> GetEnhet(string organisasjonsnummer, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Søk etter underenheter basert på søkeparametere.
     /// </summary>
-    /// <param name="searchParameters">Søkeparametrene</param>
-    /// <param name="pagination"></param>
+    /// <param name="configureQuery">Konfigurer søkeparametrene, inkludert paginering.</param>
+    /// <param name="cancellationToken"></param>
     /// <returns>Underenhetene som matcher søket</returns>
     Task<Underenheter?> SearchUnderenheter(
-        SearchEnheterQuery searchParameters,
-        Pagination pagination
+        Action<UnderenheterQueryParameters>? configureQuery = null,
+        CancellationToken cancellationToken = default
     );
 
     /// <summary>
     /// Søk etter enheter basert på søkeparametere.
     /// </summary>
-    /// <param name="searchParameters">Søkeparametrene</param>
-    /// <param name="pagination"></param>
+    /// <param name="configureQuery">Konfigurer søkeparametrene, inkludert paginering.</param>
+    /// <param name="cancellationToken"></param>
     /// <returns>Enhetene som matcher søket</returns>
-    Task<Enheter?> SearchEnheter(SearchEnheterQuery searchParameters, Pagination pagination);
+    Task<Enheter?> SearchEnheter(
+        Action<EnheterQueryParameters>? configureQuery = null,
+        CancellationToken cancellationToken = default
+    );
 
     /// <summary>
     /// Hent oppdateringshistorikk for underenheter i enhetsregisteret.
     /// </summary>
-    /// <param name="query"></param>
-    /// <param name="pagination"></param>
+    /// <param name="configureQuery">Konfigurer spørringen, inkludert paginering.</param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<OppdateringerUnderenheter?> GetOppdateringerUnderenheter(
-        GetOppdateringerQuery query,
-        Pagination pagination
+        Action<OppdateringerUnderenheterQueryParameters>? configureQuery = null,
+        CancellationToken cancellationToken = default
     );
 
     /// <summary>
     /// Hent oppdateringshistorikk for enheter i enhetsregisteret.
     /// </summary>
-    /// <param name="query"></param>
-    /// <param name="pagination"></param>
+    /// <param name="configureQuery">Konfigurer spørringen, inkludert paginering.</param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<OppdateringerEnheter?> GetOppdateringerEnheter(
-        GetOppdateringerQuery query,
-        Pagination pagination
+        Action<OppdateringerEnheterQueryParameters>? configureQuery = null,
+        CancellationToken cancellationToken = default
     );
 }

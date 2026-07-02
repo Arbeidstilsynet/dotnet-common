@@ -6,5 +6,4 @@ namespace Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
 internal static class Constants
 {
     public const int MaxSearchResultSize = 10_000;
-    public const int MaxSearchStringLength = 180;
 }
