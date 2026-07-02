@@ -200,12 +200,6 @@ public static class EnhetsregisteretExtensions
         var lastPage = result.TotalPages - 1;
         for (var page = firstPage + 1; page <= lastPage; page++)
         {
-            if ((long)(page + 1) * PageSize > Constants.MaxSearchResultSize)
-            {
-                // Prevent known validation exception on Brreg's side.
-                yield break;
-            }
-
             result = await fetchPage(page);
 
             if (result == null)

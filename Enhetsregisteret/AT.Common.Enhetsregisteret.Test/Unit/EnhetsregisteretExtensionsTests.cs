@@ -267,37 +267,6 @@ public class EnhetsregisteretExtensionsTests
         }
     }
 
-    [Fact]
-    public async Task EnumeratePaginatedElements_StopsAtMaxSearchResultSize()
-    {
-        // EnumeratePaginatedElements drives pagination with a fixed page size of 1000.
-        // The page extent guard ((page + 1) * 1000) exceeds Constants.MaxSearchResultSize (10_000)
-        // at page 10, so enumeration stops after fetching pages 0..9 even though more pages exist.
-        var callCount = 0;
-
-        var results = new List<int>();
-
-        await foreach (
-            var result in EnhetsregisteretExtensions.EnumeratePaginatedElements(FetchPage)
-        )
-        {
-            results.Add(result);
-        }
-
-        callCount.ShouldBe(10);
-        results.Count.ShouldBe(10);
-
-        return;
-
-        Task<IPaginatedResponse<int>?> FetchPage(int page)
-        {
-            callCount++;
-            return Task.FromResult<IPaginatedResponse<int>?>(
-                new PaginatedResponse<int>([1], TotalPages: 100)
-            );
-        }
-    }
-
     private static T Applied<T>(Action<T> configure)
         where T : new()
     {

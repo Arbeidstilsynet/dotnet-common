@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **BREAKING**: Removed the hand-written `IEnhetsregisteret` implementation and the hand-copied Brreg model types (`Enhet`, `Underenhet`, `Oppdatering`, etc.), including the `PaginationResult<T>` response wrapper.
 - **BREAKING**: Removed the custom request models (`SearchEnheterQuery`, `GetOppdateringerQuery`, `Pagination`) and their validators. Queries are now expressed using the generated Kiota query-parameter types.
+- Removed the internal 10&nbsp;000-element cap previously enforced when enumerating paginated results. Enumeration now follows all pages reported by Brreg; consumers are responsible for handling any errors (e.g. a `400`) returned for very large result sets.
 
 ## 2.0.2
 
