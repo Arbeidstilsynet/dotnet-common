@@ -33,7 +33,9 @@ public static class EnhetsregisteretExtensions
         };
 
         return EnumeratePaginatedElements(async pagination =>
-                (await enhetsregisteret.SearchUnderenheter(query, pagination))?.ToPaginatedResponse()
+                (
+                    await enhetsregisteret.SearchUnderenheter(query, pagination)
+                )?.ToPaginatedResponse()
             )
             .ToListAsync();
     }
@@ -61,7 +63,9 @@ public static class EnhetsregisteretExtensions
         var query = new SearchEnheterQuery { Organisasjonsnummer = validOrganisasjonsnummer };
 
         return EnumeratePaginatedElements(async pagination =>
-                (await enhetsregisteret.SearchUnderenheter(query, pagination))?.ToPaginatedResponse()
+                (
+                    await enhetsregisteret.SearchUnderenheter(query, pagination)
+                )?.ToPaginatedResponse()
             )
             .ToListAsync();
     }
@@ -138,7 +142,9 @@ public static class EnhetsregisteretExtensions
     )
     {
         return EnumeratePaginatedElements(async pagination =>
-            (await enhetsregisteret.GetOppdateringerUnderenheter(query, pagination))?.ToPaginatedResponse()
+            (
+                await enhetsregisteret.GetOppdateringerUnderenheter(query, pagination)
+            )?.ToPaginatedResponse()
         );
     }
 
@@ -154,7 +160,9 @@ public static class EnhetsregisteretExtensions
     )
     {
         return EnumeratePaginatedElements(async pagination =>
-            (await enhetsregisteret.GetOppdateringerEnheter(query, pagination))?.ToPaginatedResponse()
+            (
+                await enhetsregisteret.GetOppdateringerEnheter(query, pagination)
+            )?.ToPaginatedResponse()
         );
     }
 
