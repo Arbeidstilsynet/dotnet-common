@@ -24,15 +24,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **BREAKING**: Replaced the hand-written Brreg HTTP client and hand-copied models with a [Kiota](https://learn.microsoft.com/openapi/kiota/)-generated `EnhetsregisteretClient` and generated models (under `Arbeidstilsynet.Common.Enhetsregisteret.Models`), generated from Brreg's OpenAPI specification.
-- **BREAKING**: `AddEnhetsregisteret(...)` now registers an `IEnhetsregisteret` implementation backed by the generated `EnhetsregisteretClient`, and also exposes the generated `EnhetsregisteretClient` directly for local adaptation. Dependency injection and environment-based configuration are otherwise unchanged.
-- **BREAKING**: `Ports.IEnhetsregisteret` now exposes the generated models directly. `GetEnhet`/`GetUnderenhet` return the generated `Enhet`/`Underenhet`, the search/oppdateringer methods take `Action<T>` query-parameter delegates (the generated Kiota query-parameter types) and return the generated paginated response types (`Enheter`, `Underenheter`, `OppdateringerEnheter`, `OppdateringerUnderenheter`).
-- **BREAKING**: `EnhetsregisteretExtensions` convenience methods now build on the generated query-parameter delegates. The general-purpose enumeration helpers were renamed to `EnumerateEnheter`, `EnumerateUnderenheter`, `EnumerateOppdateringerEnheter` and `EnumerateOppdateringerUnderenheter`.
+- **BREAKING**: `AddEnhetsregisteret(...)` now registers an `IEnhetsregisteret` implementation backed by the generated client, and also exposes the generated `EnhetsregisteretClient` directly for local adaptation. Dependency injection and environment-based configuration are otherwise unchanged.
+- **BREAKING**: `Ports.IEnhetsregisteret` and the `EnhetsregisteretExtensions` helpers now work against the generated models and Kiota query-parameter delegates. `GetEnhet`/`GetUnderenhet` return `null` on a `404` (unknown organisasjonsnummer); other errors propagate.
 
 ### Removed
 
-- **BREAKING**: Removed the hand-written `IEnhetsregisteret` implementation and the hand-copied Brreg model types (`Enhet`, `Underenhet`, `Oppdatering`, etc.), including the `PaginationResult<T>` response wrapper.
-- **BREAKING**: Removed the custom request models (`SearchEnheterQuery`, `GetOppdateringerQuery`, `Pagination`) and their validators. Queries are now expressed using the generated Kiota query-parameter types.
-- Removed the internal 10&nbsp;000-element cap previously enforced when enumerating paginated results. Enumeration now follows all pages reported by Brreg; consumers are responsible for handling any errors (e.g. a `400`) returned for very large result sets.
+- **BREAKING**: Removed the hand-written client, hand-copied model types, custom request/query models and their validators, and the previous pagination wrapper. Queries are now expressed with the generated Kiota query-parameter types.
+- Removed the internal 10&nbsp;000-element cap when enumerating paginated results. Enumeration now follows all pages reported by Brreg; consumers handle any errors (e.g. a `400`) returned for very large result sets.
 
 ## 2.0.2
 

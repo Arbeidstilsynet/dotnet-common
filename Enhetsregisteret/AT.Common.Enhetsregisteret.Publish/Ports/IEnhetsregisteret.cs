@@ -21,7 +21,14 @@ public interface IEnhetsregisteret
     /// </summary>
     /// <param name="organisasjonsnummer">Organisasjonsnummeret til underenheten.</param>
     /// <param name="cancellationToken"></param>
-    /// <returns>En <see cref="Underenhet"/>. Null hvis underenheten ikke finnes (eller er slettet), eller hvis det oppstår en feil under henting.</returns>
+    /// <returns>
+    /// En <see cref="Underenhet"/>, eller <c>null</c> dersom underenheten ikke finnes
+    /// (Enhetsregisteret svarer med HTTP 404).
+    /// </returns>
+    /// <remarks>
+    /// Kun HTTP 404 fanges og oversettes til <c>null</c>. Andre feil (f.eks. 400 for ugyldig
+    /// organisasjonsnummer eller 5xx) kastes videre som unntak.
+    /// </remarks>
     Task<Underenhet?> GetUnderenhet(
         string organisasjonsnummer,
         CancellationToken cancellationToken = default
@@ -32,7 +39,14 @@ public interface IEnhetsregisteret
     /// </summary>
     /// <param name="organisasjonsnummer">Organisasjonsnummeret til enheten.</param>
     /// <param name="cancellationToken"></param>
-    /// <returns>En <see cref="Enhet"/>. Null hvis enheten ikke finnes (eller er slettet), eller hvis det oppstår en feil under henting.</returns>
+    /// <returns>
+    /// En <see cref="Enhet"/>, eller <c>null</c> dersom enheten ikke finnes
+    /// (Enhetsregisteret svarer med HTTP 404).
+    /// </returns>
+    /// <remarks>
+    /// Kun HTTP 404 fanges og oversettes til <c>null</c>. Andre feil (f.eks. 400 for ugyldig
+    /// organisasjonsnummer eller 5xx) kastes videre som unntak.
+    /// </remarks>
     Task<Enhet?> GetEnhet(
         string organisasjonsnummer,
         CancellationToken cancellationToken = default

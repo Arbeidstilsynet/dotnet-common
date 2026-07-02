@@ -14,6 +14,8 @@ namespace Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
 /// </summary>
 internal sealed class EnhetsregisteretAdapter : IEnhetsregisteret
 {
+    private const int NotFoundStatusCode = 404;
+
     private readonly EnhetsregisteretClient _client;
 
     public EnhetsregisteretAdapter(EnhetsregisteretClient client)
@@ -21,29 +23,41 @@ internal sealed class EnhetsregisteretAdapter : IEnhetsregisteret
         _client = client;
     }
 
-    public async Task<Enhet?> GetEnhet(
+    /// <summary>
+    /// Henter en <see cref="Enhet"/> på organisasjonsnummer. Returnerer <c>null</c> dersom
+    /// Enhetsregisteret svarer med HTTP 404 (ukjent organisasjonsnummer), slik at kallere kan
+    /// håndtere "ikke funnet" som et tomt resultat i stedet for et unntak.
+    /// </summary>
+    public Task<Enhet?> GetEnhet(
         string organisasjonsnummer,
         CancellationToken cancellationToken = default
-    )
-    {
-        var response = await _client
-            .Enhetsregisteret.Api.Enheter[organisasjonsnummer]
-            .GetAsync(cancellationToken: cancellationToken);
+    ) =>
+        NullOnNotFound(async () =>
+        {
+            var response = await _client
+                .Enhetsregisteret.Api.Enheter[organisasjonsnummer]
+                .GetAsync(cancellationToken: cancellationToken);
 
-        return response?.Enhet;
-    }
+            return response?.Enhet;
+        });
 
-    public async Task<Underenhet?> GetUnderenhet(
+    /// <summary>
+    /// Henter en <see cref="Underenhet"/> på organisasjonsnummer. Returnerer <c>null</c> dersom
+    /// Enhetsregisteret svarer med HTTP 404 (ukjent organisasjonsnummer), slik at kallere kan
+    /// håndtere "ikke funnet" som et tomt resultat i stedet for et unntak.
+    /// </summary>
+    public Task<Underenhet?> GetUnderenhet(
         string organisasjonsnummer,
         CancellationToken cancellationToken = default
-    )
-    {
-        var response = await _client
-            .Enhetsregisteret.Api.Underenheter[organisasjonsnummer]
-            .GetAsync(cancellationToken: cancellationToken);
+    ) =>
+        NullOnNotFound(async () =>
+        {
+            var response = await _client
+                .Enhetsregisteret.Api.Underenheter[organisasjonsnummer]
+                .GetAsync(cancellationToken: cancellationToken);
 
-        return response?.Underenhet;
-    }
+            return response?.Underenhet;
+        });
 
     public Task<Enheter?> SearchEnheter(
         Action<EnheterQueryParameters>? configureQuery = null,
@@ -83,4 +97,17 @@ internal sealed class EnhetsregisteretAdapter : IEnhetsregisteret
     )
         where TQueryParameters : class, new() =>
         configureQuery is null ? null : config => configureQuery(config.QueryParameters);
+
+    private static async Task<T?> NullOnNotFound<T>(Func<Task<T?>> fetch)
+        where T : class
+    {
+        try
+        {
+            return await fetch();
+        }
+        catch (ApiException ex) when (ex.ResponseStatusCode == NotFoundStatusCode)
+        {
+            return null;
+        }
+    }
 }

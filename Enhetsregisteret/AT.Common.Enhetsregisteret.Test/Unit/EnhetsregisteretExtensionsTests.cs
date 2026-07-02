@@ -264,6 +264,42 @@ public class EnhetsregisteretExtensionsTests
         }
     }
 
+    [Fact]
+    public async Task EnumeratePaginatedElements_FirstPageNull_YieldsNothing()
+    {
+        var results = new List<int>();
+
+        await foreach (
+            var result in PaginationExtensions.EnumeratePaginatedElements<int>(_ =>
+                Task.FromResult<IPaginatedResponse<int>?>(null)
+            )
+        )
+        {
+            results.Add(result);
+        }
+
+        results.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task EnumeratePaginatedElements_LaterPageNull_StopsEnumeration()
+    {
+        var results = new List<int>();
+
+        await foreach (var result in PaginationExtensions.EnumeratePaginatedElements(FetchPage))
+        {
+            results.Add(result);
+        }
+
+        results.ShouldBe([1, 2]);
+        return;
+
+        Task<IPaginatedResponse<int>?> FetchPage(int page) =>
+            Task.FromResult<IPaginatedResponse<int>?>(
+                page == 0 ? new PaginatedResponse<int>([1, 2], TotalPages: 3) : null
+            );
+    }
+
     private static T Applied<T>(Action<T> configure)
         where T : new()
     {

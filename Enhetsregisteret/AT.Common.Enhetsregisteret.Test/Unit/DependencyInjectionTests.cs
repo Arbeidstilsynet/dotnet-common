@@ -1,5 +1,7 @@
 using System.Reflection;
 using Arbeidstilsynet.Common.Enhetsregisteret.DependencyInjection;
+using Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
+using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
 using FluentValidation;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -133,5 +135,108 @@ public class DependencyInjectionTests
                 )!
                 .GetValue(client)!;
         requestAdapter.BaseUrl.ShouldBe(expectedBaseUrl);
+    }
+
+    [Fact]
+    public void AddEnhetsregisteret_RegistersIEnhetsregisteret_AsAdapter()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+
+        // Act
+        services.AddEnhetsregisteret(Substitute.For<IWebHostEnvironment>());
+
+        using var serviceProvider = services.BuildServiceProvider();
+        var enhetsregisteret = serviceProvider
+            .CreateScope()
+            .ServiceProvider.GetRequiredService<IEnhetsregisteret>();
+
+        // Assert
+        enhetsregisteret.ShouldBeOfType<EnhetsregisteretAdapter>();
+    }
+
+    [Fact]
+    public void AddEnhetsregisteret_Overload_RegistersIEnhetsregisteret_AsAdapter()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+
+        // Act
+        services.AddEnhetsregisteret(Substitute.For<IWebHostEnvironment>(), _ => { });
+
+        using var serviceProvider = services.BuildServiceProvider();
+        var enhetsregisteret = serviceProvider
+            .CreateScope()
+            .ServiceProvider.GetRequiredService<IEnhetsregisteret>();
+
+        // Assert
+        enhetsregisteret.ShouldBeOfType<EnhetsregisteretAdapter>();
+    }
+
+    [Fact]
+    public void AddEnhetsregisteret_BrregApiBaseUrlOverwrite_TakesPrecedenceOverEnvironment()
+    {
+        // Arrange
+        const string overrideUrl = "https://custom-brreg.example.com/";
+        var services = new ServiceCollection();
+        var environment = Substitute.For<IWebHostEnvironment>();
+        environment.EnvironmentName.Returns("Production");
+
+        // Act
+        services.AddEnhetsregisteret(
+            environment,
+            config => config.BrregApiBaseUrlOverwrite = overrideUrl
+        );
+
+        using var serviceProvider = services.BuildServiceProvider();
+        var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+        var httpClient = httpClientFactory.CreateClient(DependencyInjectionExtensions.Clientkey);
+
+        // Assert
+        httpClient.BaseAddress!.AbsoluteUri.ShouldBe(overrideUrl);
+    }
+
+    [Fact]
+    public void AddEnhetsregisteret_RegistersConfigAsSingleton()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        var config = new EnhetsregisteretConfig
+        {
+            BrregApiBaseUrlOverwrite = "https://custom-brreg.example.com/",
+        };
+
+        // Act
+        services.AddEnhetsregisteret(Substitute.For<IWebHostEnvironment>(), config);
+
+        using var serviceProvider = services.BuildServiceProvider();
+
+        // Assert
+        serviceProvider.GetRequiredService<EnhetsregisteretConfig>().ShouldBeSameAs(config);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void AddEnhetsregisteret_ResolvesClient_RegardlessOfCacheOption(bool cacheDisabled)
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        var environment = Substitute.For<IWebHostEnvironment>();
+        environment.EnvironmentName.Returns("Production");
+
+        // Act
+        services.AddEnhetsregisteret(
+            environment,
+            config => config.CacheOptions = new CacheOptions(Disabled: cacheDisabled)
+        );
+
+        using var serviceProvider = services.BuildServiceProvider();
+        var client = serviceProvider
+            .CreateScope()
+            .ServiceProvider.GetRequiredService<EnhetsregisteretClient>();
+
+        // Assert
+        client.ShouldNotBeNull();
     }
 }
