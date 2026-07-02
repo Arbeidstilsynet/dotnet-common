@@ -84,53 +84,21 @@ public void ConfigureServices(IServiceCollection services)
 
 `AddEnhetsregisteret(...)` registers two things you can inject:
 
-- `Ports.IEnhetsregisteret` — a ready-to-use adapter over the generated client covering the most common operations (get/search enheter and underenheter, plus oppdateringshistorikk), returning the generated models. Pair it with the `EnhetsregisteretExtensions` helpers (e.g. `GetUnderenheterByHovedenhet`, `EnumerateEnheter`) for pagination-aware enumeration.
-- The generated `EnhetsregisteretClient` — the full Brreg API surface. Inject it directly, or — for a narrower seam — wrap it in your own interface that matches the intended use in your service or bounded context.
+- The generated `EnhetsregisteretClient` — the full Brreg API surface, exposed as fluent request builders.
+- `Ports.IEnhetsregisteret` — a ready-made adapter over the client covering the most common operations (get/search enheter and underenheter, plus oppdateringshistorikk), returning the generated models. Pair it with the `EnhetsregisteretExtensions` helpers (e.g. `GetUnderenheterByHovedenhet`, `EnumerateEnheter`) for pagination-aware enumeration.
 
-### Inject the generated client
+### Recommended: wrap the client in your own adapter interface
 
-```csharp
-using Arbeidstilsynet.Common.Enhetsregisteret;
+The generated `EnhetsregisteretClient` exposes the _entire_ Brreg API. Depending on it directly couples your code to that large, generated surface. Instead, **define a small interface describing only the operations your service actually needs, and implement it as a thin adapter over the client.** This keeps the rest of your application decoupled from Brreg, makes the seam trivial to mock in tests, and lets you translate Brreg's transport-level behaviour (e.g. HTTP status codes) into domain semantics that fit your use case.
 
-public class MyService
-{
-    private readonly EnhetsregisteretClient _client;
-    private readonly ILogger<MyService> _logger;
-
-    public MyService(EnhetsregisteretClient client, ILogger<MyService> logger)
-    {
-        _client = client;
-        _logger = logger;
-    }
-
-    public async Task GetEnhetExample(CancellationToken cancellationToken)
-    {
-        var enhet = await _client
-            .Enhetsregisteret
-            .Api
-            .Enheter["123456789"]
-            .GetAsync(cancellationToken: cancellationToken);
-
-        if (enhet != null)
-        {
-            _logger.LogInformation(
-                "Navn: {OrgNavn}, Organisasjonsnummer: {OrgNr}",
-                enhet.Navn,
-                enhet.Organisasjonsnummer
-            );
-        }
-    }
-}
-```
-
-### Wrap the client in your own interface (recommended)
-
-Define an interface for only the operations your service needs, and implement it as a thin adapter over `EnhetsregisteretClient`:
+The example below exposes a single "look up an enhet by organisasjonsnummer" operation. A missing enhet surfaces from Brreg as an HTTP `404`, which Kiota raises as an `ApiException`; the adapter catches it and returns `null` so callers deal with a simple nullable result instead of exception handling:
 
 ```csharp
 using Arbeidstilsynet.Common.Enhetsregisteret;
 using Arbeidstilsynet.Common.Enhetsregisteret.Models;
+using Microsoft.Kiota.Abstractions;
 
+// Minimal, use-case-specific interface — the only Brreg surface the rest of your app sees.
 public interface IEnhetLookup
 {
     Task<Enhet?> GetEnhet(string organisasjonsnummer, CancellationToken cancellationToken);
@@ -143,11 +111,21 @@ public sealed class EnhetLookup(EnhetsregisteretClient client) : IEnhetLookup
         CancellationToken cancellationToken
     )
     {
-        return await client
-            .Enhetsregisteret
-            .Api
-            .Enheter[organisasjonsnummer]
-            .GetAsync(cancellationToken: cancellationToken);
+        try
+        {
+            var response = await client
+                .Enhetsregisteret
+                .Api
+                .Enheter[organisasjonsnummer]
+                .GetAsync(cancellationToken: cancellationToken);
+
+            return response?.Enhet;
+        }
+        catch (ApiException ex) when (ex.ResponseStatusCode == 404)
+        {
+            // Unknown organisasjonsnummer — treat "not found" as an empty result.
+            return null;
+        }
     }
 }
 ```
@@ -159,9 +137,34 @@ builder.Services.AddEnhetsregisteret(builder.Environment);
 builder.Services.AddScoped<IEnhetLookup, EnhetLookup>();
 ```
 
-The rest of your application then depends on `IEnhetLookup`, not on `EnhetsregisteretClient` directly.
+The rest of your application then depends on `IEnhetLookup` — not on `EnhetsregisteretClient` — so it only ever sees the narrow surface you chose to expose.
 
-> **Note:** `Ports.IEnhetsregisteret` is registered and implemented out of the box as a thin adapter over the generated client. Use it (with `EnhetsregisteretExtensions`) for common operations, or drop down to `EnhetsregisteretClient` for the full API surface.
+> **Note:** `Ports.IEnhetsregisteret` is registered and implemented out of the box as a thin adapter over the generated client. Use it (with `EnhetsregisteretExtensions`) for common operations, or write your own adapter as shown above when you want an even narrower, domain-specific seam.
+
+### Injecting the generated client directly
+
+If you prefer, you can inject `EnhetsregisteretClient` and use its fluent request builders directly. Prefer the adapter pattern above for anything beyond quick prototypes:
+
+```csharp
+using Arbeidstilsynet.Common.Enhetsregisteret;
+
+public class MyService(EnhetsregisteretClient client)
+{
+    public async Task<string?> GetNavn(
+        string organisasjonsnummer,
+        CancellationToken cancellationToken
+    )
+    {
+        var response = await client
+            .Enhetsregisteret
+            .Api
+            .Enheter[organisasjonsnummer]
+            .GetAsync(cancellationToken: cancellationToken);
+
+        return response?.Enhet?.Navn;
+    }
+}
+```
 
 ---
 
