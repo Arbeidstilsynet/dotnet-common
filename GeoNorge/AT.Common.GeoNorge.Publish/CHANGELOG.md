@@ -23,19 +23,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **BREAKING**: Replaced the hand-written GeoNorge HTTP client implementations with [Kiota](https://learn.microsoft.com/openapi/kiota/)-generated clients (`AdresserClient` and `KommuneInfoClient`), generated from the official OpenAPI specifications. The `IAddressSearch` and `IFylkeKommuneApi` ports and the `GetClosestAddress`/`QuickSearchLocation` extensions now accept and expose the generated models directly instead of the package's own domain models:
-  - `IAddressSearch.SearchAddresses` takes the generated `SokRequestBuilderGetQueryParameters` and returns `OutputAdresseList?`; `SearchAddressesByPoint` takes `PunktsokRequestBuilderGetQueryParameters` and returns `OutputGeoPointList?`.
-  - `IFylkeKommuneApi.GetKommuneByPoint` takes the generated `PunktRequestBuilderGetQueryParameters`; the API returns `FylkerEnkel`, `KomEnkelNorskNavn`, `FylkerKommunerFull`, `FylkerKommunerEnkel`, `KomFull`, and `KommuneFylkeEnkel`.
-  - `GetClosestAddress` takes `PunktsokRequestBuilderGetQueryParameters` and returns `OutputGeoPoint?`; `QuickSearchLocation` takes `SokRequestBuilderGetQueryParameters` and returns `GeomPoint?`.
-- Exposed the generated `AdresserClient` and `KommuneInfoClient` through `AddGeoNorge` (following the Saksarkiv pattern), so consumers can adapt the raw GeoNorge API surface locally.
+- **BREAKING**: Replaced the hand-written GeoNorge HTTP client implementations with [Kiota](https://learn.microsoft.com/openapi/kiota/)-generated clients (`AdresserClient` and `KommuneInfoClient`), generated from the official OpenAPI specifications. The `IAddressSearch` and `IFylkeKommuneApi` ports and their extensions now accept and expose the generated models directly instead of the package's own domain models. The generated `AdresserClient` and `KommuneInfoClient` are also registered by `AddGeoNorge` (following the Saksarkiv pattern) so consumers can adapt the raw GeoNorge API surface locally.
 - The `UseApproximateSvalbardAndJanMayen` option is preserved and now supplements the generated models with synthetic entries for Svalbard and Jan Mayen.
-- `IAddressSearch` now defaults the coordinate system to EPSG:4326 (WGS84) when it is not specified on the query parameters: `SearchAddresses` defaults `utkoordsys`, and `SearchAddressesByPoint` defaults both `koordsys` and `utkoordsys`. This differs from the GeoNorge API default of EPSG:4258. Callers can still override these by setting the values explicitly.
+- `IAddressSearch` defaults the coordinate system to EPSG:4326 (WGS84) when it is not specified on the query parameters, instead of the GeoNorge API default of EPSG:4258. Callers can still override this by setting the values explicitly.
 
 ### Removed
 
-- **BREAKING**: Removed the hand-written GeoNorge domain response models (`Address`, `Fylke`, `FylkeFullInfo`, `Kommune`, `KommuneFullInfo`, `Location`, `PaginationResult`). Consumers should use the generated models exposed through the ports and extensions.
-- **BREAKING**: Removed the hand-written request models (`TextSearchQuery`, `PointSearchQuery`, `PointQuery`, `Pagination`). The ports and extensions now accept the generated Kiota query-parameter types (`SokRequestBuilderGetQueryParameters`, `PunktsokRequestBuilderGetQueryParameters`, `PunktRequestBuilderGetQueryParameters`) directly.
-- **BREAKING**: Removed the unused `UriExtensions` helper (`AddQueryParameters`), which is no longer needed now that URL/query construction is handled by the generated Kiota clients.
+- **BREAKING**: Removed the hand-written GeoNorge domain models (both response and request models) and the unused `UriExtensions` helper. Consumers should use the generated Kiota models and query parameter types exposed through the ports and extensions.
 
 ## 3.1.1
 
