@@ -243,9 +243,7 @@ public class EnhetsregisteretExtensionsTests
 
         var results = new List<int>();
 
-        await foreach (
-            var result in PaginationExtensions.EnumeratePaginatedElements(FetchPage)
-        )
+        await foreach (var result in PaginationExtensions.EnumeratePaginatedElements(FetchPage))
         {
             results.Add(result);
         }
