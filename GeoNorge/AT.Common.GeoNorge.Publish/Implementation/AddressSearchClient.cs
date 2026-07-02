@@ -11,8 +11,12 @@ namespace Arbeidstilsynet.Common.GeoNorge.Implementation;
 internal class AddressSearchClient(AdresserClient client, ILogger<AddressSearchClient> logger)
     : IAddressSearch
 {
+    private const int DefaultKoordsys = 4326;
+
     public async Task<OutputAdresseList?> SearchAddresses(SokQueryParameters queryParameters)
     {
+        queryParameters.Utkoordsys ??= DefaultKoordsys;
+
         try
         {
             return await client.Sok.GetAsync(config => config.QueryParameters = queryParameters);
@@ -29,6 +33,9 @@ internal class AddressSearchClient(AdresserClient client, ILogger<AddressSearchC
         PunktsokQueryParameters queryParameters
     )
     {
+        queryParameters.Koordsys ??= DefaultKoordsys;
+        queryParameters.Utkoordsys ??= DefaultKoordsys;
+
         try
         {
             return await client.Punktsok.GetAsync(config =>

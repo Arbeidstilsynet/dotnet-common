@@ -13,6 +13,10 @@ public interface IAddressSearch
     /// Implements the "/sok" endpoint for searching for addresses based on the generated query parameters.
     /// </summary>
     /// <param name="queryParameters">The generated query parameters containing search terms and filters.</param>
+    /// <remarks>
+    /// If the output coordinate system (<c>utkoordsys</c>) is not specified on <paramref name="queryParameters"/>,
+    /// it defaults to EPSG:4326 (WGS84) instead of the GeoNorge API default of EPSG:4258.
+    /// </remarks>
     /// <returns>The generated <see cref="OutputAdresseList"/> containing matching addresses and pagination metadata, or null if the search failed.</returns>
     Task<OutputAdresseList?> SearchAddresses(SokQueryParameters queryParameters);
 
@@ -20,6 +24,11 @@ public interface IAddressSearch
     /// Implements the "/punktsok" endpoint for finding addresses based on a geographical point and a radius.
     /// </summary>
     /// <param name="queryParameters">The generated query parameters containing coordinates and search radius.</param>
+    /// <remarks>
+    /// If the input coordinate system (<c>koordsys</c>) and/or the output coordinate system (<c>utkoordsys</c>)
+    /// are not specified on <paramref name="queryParameters"/>, they default to EPSG:4326 (WGS84) instead of the
+    /// GeoNorge API default of EPSG:4258.
+    /// </remarks>
     /// <returns>The generated <see cref="OutputGeoPointList"/> containing addresses within the specified radius and pagination metadata, or null if the search failed.</returns>
     Task<OutputGeoPointList?> SearchAddressesByPoint(PunktsokQueryParameters queryParameters);
 }

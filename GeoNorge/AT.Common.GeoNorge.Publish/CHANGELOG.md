@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `GetClosestAddress` takes `PunktsokRequestBuilderGetQueryParameters` and returns `OutputGeoPoint?`; `QuickSearchLocation` takes `SokRequestBuilderGetQueryParameters` and returns `GeomPoint?`.
 - Exposed the generated `AdresserClient` and `KommuneInfoClient` through `AddGeoNorge` (following the Saksarkiv pattern), so consumers can adapt the raw GeoNorge API surface locally.
 - The `UseApproximateSvalbardAndJanMayen` option is preserved and now supplements the generated models with synthetic entries for Svalbard and Jan Mayen.
+- `IAddressSearch` now defaults the coordinate system to EPSG:4326 (WGS84) when it is not specified on the query parameters: `SearchAddresses` defaults `utkoordsys`, and `SearchAddressesByPoint` defaults both `koordsys` and `utkoordsys`. This differs from the GeoNorge API default of EPSG:4258. Callers can still override these by setting the values explicitly.
 
 ### Removed
 
