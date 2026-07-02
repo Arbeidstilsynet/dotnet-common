@@ -171,6 +171,136 @@ public class ApproximateSvalbardAndJanMayenFylkeKommuneApiTests
         _inner.GetKommuneByPointWasCalled.ShouldBeTrue();
     }
 
+    [Theory]
+    [InlineData(25833)] // UTM zone 33N (projected)
+    [InlineData(null)] // no coordinate system specified
+    public async Task GetKommuneByPoint_PointInsideBoundingBoxButNonGeographicKoordsys_UsesInnerApi(
+        int? koordsys
+    )
+    {
+        // Act
+        var result = await _sut.GetKommuneByPoint(
+            new PunktQueryParameters
+            {
+                Nord = 78.2232,
+                Ost = 15.6469,
+                Koordsys = koordsys,
+            }
+        );
+
+        // Assert
+        result.ShouldNotBeNull();
+        result.Kommunenummer.ShouldBe("0301");
+        _inner.GetKommuneByPointWasCalled.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task GetFylkeByNumber_NonSvalbardOrJanMayen_UsesInnerApi()
+    {
+        // Act
+        var result = await _sut.GetFylkeByNumber("03");
+
+        // Assert
+        result.ShouldNotBeNull();
+        result.Fylkesnavn.ShouldBe("Inner");
+    }
+
+    [Fact]
+    public async Task GetKommuneByNumber_NonSvalbardOrJanMayen_UsesInnerApi()
+    {
+        // Act
+        var result = await _sut.GetKommuneByNumber("0301");
+
+        // Assert
+        result.ShouldNotBeNull();
+        result.Kommunenavn.ShouldBe("Inner");
+    }
+
+    [Fact]
+    public async Task GetFylker_InnerAlreadyContainsSvalbardAndJanMayen_DoesNotDuplicate()
+    {
+        // Arrange
+        var inner = Substitute.For<IFylkeKommuneApi>();
+        inner
+            .GetFylker()
+            .Returns(
+                Task.FromResult<IEnumerable<FylkerEnkel>>(
+                    [
+                        new FylkerEnkel { Fylkesnummer = "21", Fylkesnavn = "Inner Svalbard" },
+                        new FylkerEnkel { Fylkesnummer = "22", Fylkesnavn = "Inner Jan Mayen" },
+                    ]
+                )
+            );
+        var sut = new ApproximateSvalbardAndJanMayenFylkeKommuneApi(inner);
+
+        // Act
+        var result = (await sut.GetFylker()).ToList();
+
+        // Assert
+        result.Count(f => f.Fylkesnummer == "21").ShouldBe(1);
+        result.Count(f => f.Fylkesnummer == "22").ShouldBe(1);
+        result.ShouldContain(f => f.Fylkesnummer == "21" && f.Fylkesnavn == "Inner Svalbard");
+        result.ShouldContain(f => f.Fylkesnummer == "22" && f.Fylkesnavn == "Inner Jan Mayen");
+    }
+
+    [Fact]
+    public async Task GetKommuner_InnerAlreadyContainsSvalbardAndJanMayen_DoesNotDuplicate()
+    {
+        // Arrange
+        var inner = Substitute.For<IFylkeKommuneApi>();
+        inner
+            .GetKommuner()
+            .Returns(
+                Task.FromResult<IEnumerable<KomEnkelNorskNavn>>(
+                    [
+                        new KomEnkelNorskNavn
+                        {
+                            Kommunenummer = "2100",
+                            Kommunenavn = "Inner Svalbard",
+                        },
+                        new KomEnkelNorskNavn
+                        {
+                            Kommunenummer = "2211",
+                            Kommunenavn = "Inner Jan Mayen",
+                        },
+                    ]
+                )
+            );
+        var sut = new ApproximateSvalbardAndJanMayenFylkeKommuneApi(inner);
+
+        // Act
+        var result = (await sut.GetKommuner()).ToList();
+
+        // Assert
+        result.Count(k => k.Kommunenummer == "2100").ShouldBe(1);
+        result.Count(k => k.Kommunenummer == "2211").ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task GetFylkerFullInfo_InnerAlreadyContainsSvalbardAndJanMayen_DoesNotDuplicate()
+    {
+        // Arrange
+        var inner = Substitute.For<IFylkeKommuneApi>();
+        inner
+            .GetFylkerFullInfo()
+            .Returns(
+                Task.FromResult<IEnumerable<FylkerKommunerFull>>(
+                    [
+                        new FylkerKommunerFull { Fylkesnummer = "21", Fylkesnavn = "Inner Svalbard" },
+                        new FylkerKommunerFull { Fylkesnummer = "22", Fylkesnavn = "Inner Jan Mayen" },
+                    ]
+                )
+            );
+        var sut = new ApproximateSvalbardAndJanMayenFylkeKommuneApi(inner);
+
+        // Act
+        var result = (await sut.GetFylkerFullInfo()).ToList();
+
+        // Assert
+        result.Count(f => f.Fylkesnummer == "21").ShouldBe(1);
+        result.Count(f => f.Fylkesnummer == "22").ShouldBe(1);
+    }
+
     private class StubFylkeKommuneApi : IFylkeKommuneApi
     {
         public bool GetKommuneByPointWasCalled { get; private set; }
