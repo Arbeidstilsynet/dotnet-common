@@ -54,45 +54,41 @@ Renovate is configured to group all non-major versions together. Check Renovate'
 
 ## 🔄 Refreshing generated clients
 
-Some packages contain a generated client produced from an OpenAPI specification. When the upstream API publishes a new spec, the generated code needs to be regenerated.
+Some packages ship a [Kiota](https://learn.microsoft.com/openapi/kiota/)-generated client produced from an OpenAPI specification. When the upstream API publishes a new spec, the generated code needs to be regenerated.
 
-### Saksarkiv
+Kiota is installed as a **local dotnet tool** (pinned in [`.config/dotnet-tools.json`](.config/dotnet-tools.json)), so every contributor regenerates with the exact same version and there is no global install to manage. Each package with a generated client exposes a `generate:client` npm script that wraps the correct Kiota command.
 
-1. Replace `openApi.json` in `Saksarkiv\AT.Common.Saksarkiv.Publish`.
-2. Ensure Kiota `1.32.2` is available:
+Packages that use this workflow:
 
-   ```bash
-   dotnet tool install --global Microsoft.OpenApi.Kiota --version 1.32.2
-   ```
+| Package | Spec file | npm script |
+| --- | --- | --- |
+| `Enhetsregisteret` | `AT.Common.Enhetsregisteret.Publish/openapi.json` | `generate:client` |
+| `Saksarkiv` | `AT.Common.Saksarkiv.Publish/openApi.json` | `generate:client` |
 
-   or update it:
+### Steps
 
-   ```bash
-   dotnet tool update --global Microsoft.OpenApi.Kiota --version 1.32.2
-   ```
-
-3. Regenerate the client from `Saksarkiv\AT.Common.Saksarkiv.Publish`:
+1. Replace the package's OpenAPI spec (`openapi.json` / `openApi.json`) with the new version from the upstream API.
+2. Restore the local tools (only needed once per checkout, or after the pinned Kiota version changes):
 
    ```bash
-   kiota generate \
-     --openapi openApi.json \
-     --language csharp \
-     --class-name SaksarkivClient \
-     --namespace-name Arbeidstilsynet.Common.Saksarkiv \
-     --output Generated \
-     --type-access-modifier Public \
-     --exclude-backward-compatible \
-     --clean-output
+   dotnet tool restore
    ```
 
-4. Run the package tests from `dotnet-common\Saksarkiv`:
+3. Regenerate the client from the package directory:
 
    ```bash
-   dotnet test Saksarkiv.sln
+   cd Enhetsregisteret   # or: cd Saksarkiv
+   npm run generate:client
    ```
 
-Notes:
+4. Review the diff in the `Generated/` folder and run the package tests:
 
-- The generated code is expected to stay in the `Generated` folder.
-- The checked-in `Generated\kiota-lock.json` is part of the regeneration workflow and should stay in sync with the generated output.
-- If the OpenAPI contract changes the path structure used by consumers, review the fluent API call sites after regeneration.
+   ```bash
+   dotnet test Enhetsregisteret.sln   # or: dotnet test Saksarkiv.sln
+   ```
+
+### Notes
+
+- The generated code (including `Generated/kiota-lock.json`) is checked in and should be committed together with the spec change.
+- To bump the Kiota version for all packages, update `microsoft.openapi.kiota` in `.config/dotnet-tools.json`, run `dotnet tool restore`, then regenerate every client so the checked-in output stays in sync.
+- If the OpenAPI contract changes the path structure used by consumers, review the fluent API call sites (and any local adapters) after regeneration.

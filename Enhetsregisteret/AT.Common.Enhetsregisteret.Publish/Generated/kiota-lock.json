@@ -2,7 +2,7 @@
   "descriptionHash": "FDE8C34E4D769AED29114FCA53F587286930207D608C69C27BD510106DDCC7618BDAFC8149DD1E2744B4D9DF88E3FE05A7F0FF577FB1652DFCCB091A7AC80F03",
   "descriptionLocation": "../openapi.json",
   "lockFileVersion": "1.0.0",
-  "kiotaVersion": "1.31.1",
+  "kiotaVersion": "1.32.2",
   "clientClassName": "EnhetsregisteretClient",
   "typeAccessModifier": "Public",
   "clientNamespaceName": "Arbeidstilsynet.Common.Enhetsregisteret",

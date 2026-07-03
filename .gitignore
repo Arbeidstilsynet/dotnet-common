@@ -63,3 +63,6 @@ nunit-*.xml
 # Verify (Snapshot Testing)
 *.received.*
 *.received/
+
+# Kiota client generation log
+.kiota.log

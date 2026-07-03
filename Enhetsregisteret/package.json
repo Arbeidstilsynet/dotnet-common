@@ -1,0 +1,9 @@
+{
+  "name": "enhetsregisteret",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tooling scripts for the Arbeidstilsynet.Common.Enhetsregisteret package.",
+  "scripts": {
+    "generate:client": "dotnet kiota generate -l CSharp -c EnhetsregisteretClient -n Arbeidstilsynet.Common.Enhetsregisteret -d AT.Common.Enhetsregisteret.Publish/openapi.json -o AT.Common.Enhetsregisteret.Publish/Generated --exclude-backward-compatible --clean-output"
+  }
+}
