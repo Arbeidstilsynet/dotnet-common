@@ -1,10 +1,14 @@
+using System.Globalization;
 using Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
-using Arbeidstilsynet.Common.Enhetsregisteret.Model.Brreg;
-using Arbeidstilsynet.Common.Enhetsregisteret.Model.Request;
-using Arbeidstilsynet.Common.Enhetsregisteret.Model.Response;
+using Arbeidstilsynet.Common.Enhetsregisteret.Models;
 using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
 using Arbeidstilsynet.Common.Enhetsregisteret.Validation.Extensions;
-using FluentValidation;
+using Arbeidstilsynet.Shared.Extensions;
+using static Arbeidstilsynet.Shared.Extensions.PaginationExtensions;
+using EnheterQueryParameters = global::Arbeidstilsynet.Common.Enhetsregisteret.Enhetsregisteret.Api.Enheter.EnheterRequestBuilder.EnheterRequestBuilderGetQueryParameters;
+using OppdateringerEnheterQueryParameters = global::Arbeidstilsynet.Common.Enhetsregisteret.Enhetsregisteret.Api.Oppdateringer.Enheter.EnheterRequestBuilder.EnheterRequestBuilderGetQueryParameters;
+using OppdateringerUnderenheterQueryParameters = global::Arbeidstilsynet.Common.Enhetsregisteret.Enhetsregisteret.Api.Oppdateringer.Underenheter.UnderenheterRequestBuilder.UnderenheterRequestBuilderGetQueryParameters;
+using UnderenheterQueryParameters = global::Arbeidstilsynet.Common.Enhetsregisteret.Enhetsregisteret.Api.Underenheter.UnderenheterRequestBuilder.UnderenheterRequestBuilderGetQueryParameters;
 
 namespace Arbeidstilsynet.Common.Enhetsregisteret.Extensions;
 
@@ -13,6 +17,8 @@ namespace Arbeidstilsynet.Common.Enhetsregisteret.Extensions;
 /// </summary>
 public static class EnhetsregisteretExtensions
 {
+    private const int PageSize = 1000;
+
     /// <summary>
     /// Gets <see cref="Underenhet"/>s that are under the given hovedenhet.
     /// </summary>
@@ -28,14 +34,8 @@ public static class EnhetsregisteretExtensions
             nameof(organisasjonsnummerForOverordnetEnhet)
         );
 
-        var query = new SearchEnheterQuery
-        {
-            OverordnetEnhetOrganisasjonsnummer = organisasjonsnummerForOverordnetEnhet,
-        };
-
-        return EnumeratePaginatedElements(pagination =>
-                enhetsregisteret.SearchUnderenheter(query, pagination)
-            )
+        return enhetsregisteret
+            .EnumerateUnderenheter(q => q.OverordnetEnhet = organisasjonsnummerForOverordnetEnhet)
             .ToListAsync();
     }
 
@@ -44,7 +44,7 @@ public static class EnhetsregisteretExtensions
     /// </summary>
     /// <param name="enhetsregisteret"></param>
     /// <param name="organisasjonsnumre"></param>
-    /// <returns><see cref="Underenhet"/> matching <see cref="organisasjonsnumre"/>.</returns>
+    /// <returns><see cref="Underenhet"/> matching <paramref name="organisasjonsnumre"/>.</returns>
     public static Task<IEnumerable<Underenhet>> GetUnderenheter(
         this IEnhetsregisteret enhetsregisteret,
         IEnumerable<string> organisasjonsnumre
@@ -59,11 +59,8 @@ public static class EnhetsregisteretExtensions
             return Task.FromResult<IEnumerable<Underenhet>>([]);
         }
 
-        var query = new SearchEnheterQuery { Organisasjonsnummer = validOrganisasjonsnummer };
-
-        return EnumeratePaginatedElements(pagination =>
-                enhetsregisteret.SearchUnderenheter(query, pagination)
-            )
+        return enhetsregisteret
+            .EnumerateUnderenheter(q => q.Organisasjonsnummer = validOrganisasjonsnummer)
             .ToListAsync();
     }
 
@@ -72,7 +69,7 @@ public static class EnhetsregisteretExtensions
     /// </summary>
     /// <param name="enhetsregisteret"></param>
     /// <param name="organisasjonsnumre"></param>
-    /// <returns><see cref="Enhet"/>s matching <see cref="organisasjonsnumre"/></returns>
+    /// <returns><see cref="Enhet"/>s matching <paramref name="organisasjonsnumre"/></returns>
     public static Task<IEnumerable<Enhet>> GetEnheter(
         this IEnhetsregisteret enhetsregisteret,
         IEnumerable<string> organisasjonsnumre
@@ -87,121 +84,101 @@ public static class EnhetsregisteretExtensions
             return Task.FromResult<IEnumerable<Enhet>>([]);
         }
 
-        var query = new SearchEnheterQuery { Organisasjonsnummer = validOrganisasjonsnummer };
-
-        return EnumeratePaginatedElements(pagination =>
-                enhetsregisteret.SearchEnheter(query, pagination)
-            )
+        return enhetsregisteret
+            .EnumerateEnheter(q => q.Organisasjonsnummer = validOrganisasjonsnummer)
             .ToListAsync();
     }
 
     /// <summary>
-    /// Gets <see cref="Enhet"/> based on the <see cref="SearchEnheterQuery"/>.
+    /// Enumerates all <see cref="Underenhet"/>s matching the configured search query, following pagination.
     /// </summary>
     /// <param name="enhetsregisteret"></param>
-    /// <param name="query"></param>
+    /// <param name="configureQuery">Configures the search query parameters (paging is applied automatically).</param>
     /// <returns></returns>
-    public static IAsyncEnumerable<Underenhet> SearchUnderenheter(
+    public static IAsyncEnumerable<Underenhet> EnumerateUnderenheter(
         this IEnhetsregisteret enhetsregisteret,
-        SearchEnheterQuery query
+        Action<UnderenheterQueryParameters> configureQuery
     )
     {
-        return EnumeratePaginatedElements(pagination =>
-            enhetsregisteret.SearchUnderenheter(query, pagination)
+        return EnumeratePaginatedElements(async page =>
+            (
+                await enhetsregisteret.SearchUnderenheter(q =>
+                {
+                    configureQuery(q);
+                    q.Page = page;
+                    q.Size = PageSize;
+                })
+            )?.ToPaginatedResponse()
         );
     }
 
     /// <summary>
-    /// Gets <see cref="Enhet"/> based on the <see cref="SearchEnheterQuery"/>.
+    /// Enumerates all <see cref="Enhet"/>s matching the configured search query, following pagination.
     /// </summary>
     /// <param name="enhetsregisteret"></param>
-    /// <param name="query"></param>
+    /// <param name="configureQuery">Configures the search query parameters (paging is applied automatically).</param>
     /// <returns></returns>
-    public static IAsyncEnumerable<Enhet> SearchEnheter(
+    public static IAsyncEnumerable<Enhet> EnumerateEnheter(
         this IEnhetsregisteret enhetsregisteret,
-        SearchEnheterQuery query
+        Action<EnheterQueryParameters> configureQuery
     )
     {
-        return EnumeratePaginatedElements(pagination =>
-            enhetsregisteret.SearchEnheter(query, pagination)
+        return EnumeratePaginatedElements(async page =>
+            (
+                await enhetsregisteret.SearchEnheter(q =>
+                {
+                    configureQuery(q);
+                    q.Page = page;
+                    q.Size = PageSize;
+                })
+            )?.ToPaginatedResponse()
         );
     }
 
     /// <summary>
-    /// Gets all <see cref="Oppdatering"/> on <see cref="Underenhet"/> based on the query.
+    /// Enumerates all <see cref="OppdateringerUnderenhet"/> matching the configured query, following pagination.
     /// </summary>
     /// <param name="enhetsregisteret"></param>
-    /// <param name="query"></param>
+    /// <param name="configureQuery">Configures the query parameters (paging is applied automatically).</param>
     /// <returns></returns>
-    public static IAsyncEnumerable<Oppdatering> GetOppdateringerUnderenheter(
+    public static IAsyncEnumerable<OppdateringerUnderenhet> EnumerateOppdateringerUnderenheter(
         this IEnhetsregisteret enhetsregisteret,
-        GetOppdateringerQuery query
+        Action<OppdateringerUnderenheterQueryParameters> configureQuery
     )
     {
-        return EnumeratePaginatedElements(pagination =>
-            enhetsregisteret.GetOppdateringerUnderenheter(query, pagination)
+        return EnumeratePaginatedElements(async page =>
+            (
+                await enhetsregisteret.GetOppdateringerUnderenheter(q =>
+                {
+                    configureQuery(q);
+                    q.Page = page.ToString(CultureInfo.InvariantCulture);
+                    q.Size = PageSize.ToString(CultureInfo.InvariantCulture);
+                })
+            )?.ToPaginatedResponse()
         );
     }
 
     /// <summary>
-    /// Gets all <see cref="Oppdatering"/> on <see cref="Enhet"/> based on the <see cref="GetOppdateringerQuery"/>.
+    /// Enumerates all <see cref="OppdateringerEnhet"/> matching the configured query, following pagination.
     /// </summary>
     /// <param name="enhetsregisteret"></param>
-    /// <param name="query"></param>
+    /// <param name="configureQuery">Configures the query parameters (paging is applied automatically).</param>
     /// <returns></returns>
-    public static IAsyncEnumerable<Oppdatering> GetOppdateringerEnheter(
+    public static IAsyncEnumerable<OppdateringerEnhet> EnumerateOppdateringerEnheter(
         this IEnhetsregisteret enhetsregisteret,
-        GetOppdateringerQuery query
+        Action<OppdateringerEnheterQueryParameters> configureQuery
     )
     {
-        return EnumeratePaginatedElements(pagination =>
-            enhetsregisteret.GetOppdateringerEnheter(query, pagination)
+        return EnumeratePaginatedElements(async page =>
+            (
+                await enhetsregisteret.GetOppdateringerEnheter(q =>
+                {
+                    configureQuery(q);
+                    q.Page = page.ToString(CultureInfo.InvariantCulture);
+                    q.Size = PageSize.ToString(CultureInfo.InvariantCulture);
+                })
+            )?.ToPaginatedResponse()
         );
-    }
-
-    internal static async IAsyncEnumerable<T> EnumeratePaginatedElements<T>(
-        Func<Pagination, Task<PaginationResult<T>?>> fetchFunction
-    )
-    {
-        const int FIRST_PAGE = 0;
-
-        var pagination = new Pagination { Page = FIRST_PAGE, Size = 1000 };
-
-        var result = await fetchFunction(pagination);
-
-        if (result == null)
-        {
-            yield break;
-        }
-
-        foreach (var element in result.Elements)
-        {
-            yield return element;
-        }
-
-        var lastPage = result.TotalPages() - 1;
-        for (var nextPage = FIRST_PAGE + 1; nextPage <= lastPage; nextPage++)
-        {
-            var nextPagination = pagination with { Page = nextPage };
-
-            if (nextPagination.PageExtents() > Constants.MaxSearchResultSize)
-            {
-                // Prevent known validation exception
-                yield break;
-            }
-
-            result = await fetchFunction(nextPagination);
-
-            if (result == null)
-            {
-                yield break;
-            }
-
-            foreach (var element in result.Elements)
-            {
-                yield return element;
-            }
-        }
     }
 
     private static async Task<IEnumerable<T>> ToListAsync<T>(
@@ -216,19 +193,5 @@ public static class EnhetsregisteretExtensions
         }
 
         return list;
-    }
-
-    private static long TotalPages<T>(this PaginationResult<T> paginationResult)
-    {
-        if (paginationResult.PageSize == 0)
-        {
-            return 0;
-        }
-
-        var partialPage = paginationResult.TotalElements % paginationResult.PageSize == 0 ? 0 : 1;
-
-        var totalFullPages = paginationResult.TotalElements / paginationResult.PageSize;
-
-        return totalFullPages + partialPage;
     }
 }

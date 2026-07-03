@@ -2,8 +2,9 @@
 
 ## 📚 Introduction
 
-**Enhetsregisteret** is a .NET client library for accessing the Norwegian Register of Business Enterprises (Brreg).  
-It provides a strongly-typed, easy-to-use API for querying company and organization data from official sources, enabling you to integrate business registry lookups into your .NET applications.
+**Enhetsregisteret** is a .NET client library for accessing the Norwegian Register of Business Enterprises (Brreg).
+
+The client and its request/response models are generated with [Kiota](https://learn.microsoft.com/openapi/kiota/) directly from Brreg's OpenAPI specification (`openapi.json`, shipped with the package). The package exposes the generated `EnhetsregisteretClient` together with dependency injection and environment-based configuration, so you can adapt the full Brreg API surface to your own needs.
 
 ---
 
@@ -81,76 +82,98 @@ public void ConfigureServices(IServiceCollection services)
 
 ## 🧑‍💻 Usage
 
-### Inject into your class
+`AddEnhetsregisteret(...)` registers two things you can inject:
+
+- The generated `EnhetsregisteretClient` — the full Brreg API surface, exposed as fluent request builders.
+- `Ports.IEnhetsregisteret` — a ready-made adapter over the client covering the most common operations (get/search enheter and underenheter, plus oppdateringshistorikk), returning the generated models. Pair it with the `EnhetsregisteretExtensions` helpers (e.g. `GetUnderenheterByHovedenhet`, `EnumerateEnheter`) for pagination-aware enumeration.
+
+### Recommended: wrap the client in your own adapter interface
+
+The generated `EnhetsregisteretClient` exposes the _entire_ Brreg API. Depending on it directly couples your code to that large, generated surface. Instead, **define a small interface describing only the operations your service actually needs, and implement it as a thin adapter over the client.** This keeps the rest of your application decoupled from Brreg, makes the seam trivial to mock in tests, and lets you translate Brreg's transport-level behaviour (e.g. HTTP status codes) into domain semantics that fit your use case.
+
+The example below exposes a single "look up an enhet by organisasjonsnummer" operation. A missing enhet surfaces from Brreg as an HTTP `404`, which Kiota raises as an `ApiException`; the adapter catches it and returns `null` so callers deal with a simple nullable result instead of exception handling:
 
 ```csharp
-public class MyService
+using Arbeidstilsynet.Common.Enhetsregisteret;
+using Arbeidstilsynet.Common.Enhetsregisteret.Models;
+using Microsoft.Kiota.Abstractions;
+
+// Minimal, use-case-specific interface — the only Brreg surface the rest of your app sees.
+public interface IEnhetLookup
 {
-    private readonly IEnhetsregisteret _enhetsregisteret;
+    Task<Enhet?> GetEnhet(string organisasjonsnummer, CancellationToken cancellationToken);
+}
 
-    private readonly ILogger<MyService> _logger;
-    public MyService(IEnhetsregisteret enhetsregisteret, ILogger<MyService> logger)
+public sealed class EnhetLookup(EnhetsregisteretClient client) : IEnhetLookup
+{
+    public async Task<Enhet?> GetEnhet(
+        string organisasjonsnummer,
+        CancellationToken cancellationToken
+    )
     {
-        _enhetsregisteret = enhetsregisteret;
-        _logger = logger;
-    }
-
-    public async Task GetEnhetExample()
-    {
-        var enhet = await _enhetsregisteret.GetEnhet("123456789");
-        if (enhet != null)
+        try
         {
-            _logger.LogInformation("Navn: {OrgNavn}, Organisasjonsnummer: {OrgNr}", enhet.Navn, enhet.Organisasjonsnummer);
+            var response = await client
+                .Enhetsregisteret
+                .Api
+                .Enheter[organisasjonsnummer]
+                .GetAsync(cancellationToken: cancellationToken);
+
+            return response?.Enhet;
         }
+        catch (ApiException ex) when (ex.ResponseStatusCode == 404)
+        {
+            // Unknown organisasjonsnummer — treat "not found" as an empty result.
+            return null;
+        }
+    }
+}
+```
+
+Register the adapter alongside the client:
+
+```csharp
+builder.Services.AddEnhetsregisteret(builder.Environment);
+builder.Services.AddScoped<IEnhetLookup, EnhetLookup>();
+```
+
+The rest of your application then depends on `IEnhetLookup` — not on `EnhetsregisteretClient` — so it only ever sees the narrow surface you chose to expose.
+
+> **Note:** `Ports.IEnhetsregisteret` is registered and implemented out of the box as a thin adapter over the generated client. Use it (with `EnhetsregisteretExtensions`) for common operations, or write your own adapter as shown above when you want an even narrower, domain-specific seam.
+
+### Injecting the generated client directly
+
+If you prefer, you can inject `EnhetsregisteretClient` and use its fluent request builders directly. Prefer the adapter pattern above for anything beyond quick prototypes:
+
+```csharp
+using Arbeidstilsynet.Common.Enhetsregisteret;
+
+public class MyService(EnhetsregisteretClient client)
+{
+    public async Task<string?> GetNavn(
+        string organisasjonsnummer,
+        CancellationToken cancellationToken
+    )
+    {
+        var response = await client
+            .Enhetsregisteret
+            .Api
+            .Enheter[organisasjonsnummer]
+            .GetAsync(cancellationToken: cancellationToken);
+
+        return response?.Enhet?.Navn;
     }
 }
 ```
 
 ---
 
-## 🚀 API Overview
-
-### `Task<Underenhet?> GetUnderenhet(string organisasjonsnummer)`
-Get a single underenhet (sub-unit) by organization number.  
-Returns `null` if not found or on error.
-
----
-
-### `Task<Enhet?> GetEnhet(string organisasjonsnummer)`
-Get a single enhet (main unit) by organization number.  
-Returns `null` if not found or on error.
-
----
-
-### `Task<PaginationResult<Underenhet>?> SearchUnderenheter(SearchEnheterQuery searchParameters, Pagination pagination)`
-Search for underenheter (sub-units) using search parameters and pagination.  
-Returns a paginated result of matching underenheter, or `null` on error.
-
----
-
-### `Task<PaginationResult<Enhet>?> SearchEnheter(SearchEnheterQuery searchParameters, Pagination pagination)`
-Search for enheter (main units) using search parameters and pagination.  
-Returns a paginated result of matching enheter, or `null` on error.
-
----
-
-### `Task<PaginationResult<Oppdatering>?> GetOppdateringerUnderenheter(GetOppdateringerQuery query, Pagination pagination)`
-Get update history for underenheter (sub-units) with optional filtering and pagination.  
-Returns a paginated result of updates, or `null` on error.
-
----
-
-### `Task<PaginationResult<Oppdatering>?> GetOppdateringerEnheter(GetOppdateringerQuery query, Pagination pagination)`
-Get update history for enheter (main units) with optional filtering and pagination.  
-Returns a paginated result of updates, or `null` on error.
-
----
-
 ## 📝 Notes
 
 - All API methods are asynchronous.
-- Handle `null` results and exceptions as appropriate.
-- For advanced queries or filtering, see the XML documentation in the code.
+- Requests and responses use the Kiota-generated models under `Arbeidstilsynet.Common.Enhetsregisteret.Models`.
+- The client uses in-memory caching by default. You can disable it via `config.CacheOptions = new CacheOptions { Disabled = true };`.
+- For the full API surface, explore the fluent request builders on `EnhetsregisteretClient` (e.g. `.Enhetsregisteret`, `.Frivillighetsregisteret`, `.Partiregisteret`).
 
 ---
 
