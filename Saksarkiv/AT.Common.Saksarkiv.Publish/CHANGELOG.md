@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 1.0.3
+
+### Changed
+
+- changed(deps): Regenerated the client with Kiota `1.32.4`.
+
 ## 1.0.2
 
 ### Changed
