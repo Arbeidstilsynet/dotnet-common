@@ -7,25 +7,28 @@ namespace Arbeidstilsynet.Common.GeoNorge.Implementation;
 internal class ApproximateSvalbardAndJanMayenFylkeKommuneApi(IFylkeKommuneApi inner)
     : IFylkeKommuneApi
 {
+    private const string SvalbardName = "Svalbard";
+    private const string JanMayenName = "Jan Mayen";
+
     private static FylkerEnkel NewSvalbardFylke() =>
-        new() { Fylkesnummer = "21", Fylkesnavn = "Svalbard" };
+        new() { Fylkesnummer = "21", Fylkesnavn = SvalbardName };
 
     private static KomEnkelNorskNavn NewSvalbardKommune() =>
         new()
         {
             Kommunenummer = "2100",
-            Kommunenavn = "Svalbard",
-            KommunenavnNorsk = "Svalbard",
+            Kommunenavn = SvalbardName,
+            KommunenavnNorsk = SvalbardName,
         };
 
     private static KomFull NewSvalbardKomFull() =>
         new()
         {
             Fylkesnummer = "21",
-            Fylkesnavn = "Svalbard",
+            Fylkesnavn = SvalbardName,
             Kommunenummer = "2100",
-            Kommunenavn = "Svalbard",
-            KommunenavnNorsk = "Svalbard",
+            Kommunenavn = SvalbardName,
+            KommunenavnNorsk = SvalbardName,
             PunktIOmrade = NewPoint(longitude: 15.6469, latitude: 78.2232),
         };
 
@@ -33,7 +36,7 @@ internal class ApproximateSvalbardAndJanMayenFylkeKommuneApi(IFylkeKommuneApi in
         new()
         {
             Fylkesnummer = "21",
-            Fylkesnavn = "Svalbard",
+            Fylkesnavn = SvalbardName,
             Kommuner = [NewSvalbardKomFull()],
         };
 
@@ -41,38 +44,38 @@ internal class ApproximateSvalbardAndJanMayenFylkeKommuneApi(IFylkeKommuneApi in
         new()
         {
             Fylkesnummer = "21",
-            Fylkesnavn = "Svalbard",
-            Kommuner = [new KomEnkel { Kommunenummer = "2100", Kommunenavn = "Svalbard" }],
+            Fylkesnavn = SvalbardName,
+            Kommuner = [new KomEnkel { Kommunenummer = "2100", Kommunenavn = SvalbardName }],
         };
 
     private static KommuneFylkeEnkel NewSvalbardKommuneFylkeEnkel() =>
         new()
         {
             Fylkesnummer = "21",
-            Fylkesnavn = "Svalbard",
+            Fylkesnavn = SvalbardName,
             Kommunenummer = "2100",
-            Kommunenavn = "Svalbard",
+            Kommunenavn = SvalbardName,
         };
 
     private static FylkerEnkel NewJanMayenFylke() =>
-        new() { Fylkesnummer = "22", Fylkesnavn = "Jan Mayen" };
+        new() { Fylkesnummer = "22", Fylkesnavn = JanMayenName };
 
     private static KomEnkelNorskNavn NewJanMayenKommune() =>
         new()
         {
             Kommunenummer = "2211",
-            Kommunenavn = "Jan Mayen",
-            KommunenavnNorsk = "Jan Mayen",
+            Kommunenavn = JanMayenName,
+            KommunenavnNorsk = JanMayenName,
         };
 
     private static KomFull NewJanMayenKomFull() =>
         new()
         {
             Fylkesnummer = "22",
-            Fylkesnavn = "Jan Mayen",
+            Fylkesnavn = JanMayenName,
             Kommunenummer = "2211",
-            Kommunenavn = "Jan Mayen",
-            KommunenavnNorsk = "Jan Mayen",
+            Kommunenavn = JanMayenName,
+            KommunenavnNorsk = JanMayenName,
             PunktIOmrade = NewPoint(longitude: -8.5337, latitude: 70.9821),
         };
 
@@ -80,7 +83,7 @@ internal class ApproximateSvalbardAndJanMayenFylkeKommuneApi(IFylkeKommuneApi in
         new()
         {
             Fylkesnummer = "22",
-            Fylkesnavn = "Jan Mayen",
+            Fylkesnavn = JanMayenName,
             Kommuner = [NewJanMayenKomFull()],
         };
 
@@ -88,17 +91,17 @@ internal class ApproximateSvalbardAndJanMayenFylkeKommuneApi(IFylkeKommuneApi in
         new()
         {
             Fylkesnummer = "22",
-            Fylkesnavn = "Jan Mayen",
-            Kommuner = [new KomEnkel { Kommunenummer = "2211", Kommunenavn = "Jan Mayen" }],
+            Fylkesnavn = JanMayenName,
+            Kommuner = [new KomEnkel { Kommunenummer = "2211", Kommunenavn = JanMayenName }],
         };
 
     private static KommuneFylkeEnkel NewJanMayenKommuneFylkeEnkel() =>
         new()
         {
             Fylkesnummer = "22",
-            Fylkesnavn = "Jan Mayen",
+            Fylkesnavn = JanMayenName,
             Kommunenummer = "2211",
-            Kommunenavn = "Jan Mayen",
+            Kommunenavn = JanMayenName,
         };
 
     public async Task<IEnumerable<FylkerEnkel>> GetFylker()
