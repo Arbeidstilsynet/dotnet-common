@@ -31,14 +31,19 @@ internal static class PaginatedResponseExtensions
 
     private static long ComputeTotalPages(Page? page)
     {
-        var pageSize = (long)(page?.Size ?? 0);
+        if (page is null)
+        {
+            return 0;
+        }
+
+        var pageSize = (long)(page.Size ?? 0);
 
         if (pageSize == 0)
         {
             return 0;
         }
 
-        var totalElements = (long)(page?.TotalElements ?? 0);
+        var totalElements = (long)(page.TotalElements ?? 0);
         var partialPage = totalElements % pageSize == 0 ? 0 : 1;
 
         return totalElements / pageSize + partialPage;
