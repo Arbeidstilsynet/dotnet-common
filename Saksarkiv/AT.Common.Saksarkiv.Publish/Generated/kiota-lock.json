@@ -2,7 +2,7 @@
   "descriptionHash": "86A1A2392180C04707CFEB428F03C47A3F0814192A09599B1316841590458BAECC4FFA23F6EE4CB21415810A0BAE3C7863A1BFEE0FA68A3E98D9EEDCB99C9943",
   "descriptionLocation": "../openApi.json",
   "lockFileVersion": "1.0.0",
-  "kiotaVersion": "1.32.2",
+  "kiotaVersion": "1.32.4",
   "clientClassName": "SaksarkivClient",
   "typeAccessModifier": "Public",
   "clientNamespaceName": "Arbeidstilsynet.Common.Saksarkiv",
