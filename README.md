@@ -63,11 +63,12 @@ Packages that use this workflow:
 | Package | Spec file | npm script |
 | --- | --- | --- |
 | `Enhetsregisteret` | `AT.Common.Enhetsregisteret.Publish/openapi.json` | `generate:client` |
+| `GeoNorge` | `AT.Common.GeoNorge.Publish/openapi-adresser.json`, `AT.Common.GeoNorge.Publish/openapi-kommuneinfo.json` | `generate:client` |
 | `Saksarkiv` | `AT.Common.Saksarkiv.Publish/openApi.json` | `generate:client` |
 
 ### Steps
 
-1. Replace the package's OpenAPI spec (`openapi.json` / `openApi.json`) with the new version from the upstream API.
+1. Replace the package's OpenAPI spec (`openapi.json` / `openApi.json`) with the new version from the upstream API. Some packages (e.g. `GeoNorge`) ship more than one spec — replace each one.
 2. Restore the local tools (only needed once per checkout, or after the pinned Kiota version changes):
 
    ```bash
@@ -77,14 +78,16 @@ Packages that use this workflow:
 3. Regenerate the client from the package directory:
 
    ```bash
-   cd Enhetsregisteret   # or: cd Saksarkiv
+   cd Enhetsregisteret   # or: cd GeoNorge / cd Saksarkiv
    npm run generate:client
    ```
+
+   Packages with multiple specs regenerate every client from the single `generate:client` script (`GeoNorge` also exposes `generate:client:adresser` and `generate:client:kommuneinfo` if you need to regenerate just one).
 
 4. Review the diff in the `Generated/` folder and run the package tests:
 
    ```bash
-   dotnet test Enhetsregisteret.sln   # or: dotnet test Saksarkiv.sln
+   dotnet test Enhetsregisteret.sln   # or: dotnet test GeoNorge.sln / dotnet test Saksarkiv.sln
    ```
 
 ### Notes

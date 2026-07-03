@@ -19,6 +19,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 4.0.0
+
+### Changed
+
+- **BREAKING**: Replaced the hand-written GeoNorge HTTP client implementations with [Kiota](https://learn.microsoft.com/openapi/kiota/)-generated clients (`AdresserClient` and `KommuneInfoClient`), generated from the official OpenAPI specifications. The `IAddressSearch` and `IFylkeKommuneApi` ports and their extensions now accept and expose the generated models directly instead of the package's own domain models. The generated `AdresserClient` and `KommuneInfoClient` are also registered by `AddGeoNorge` (following the Saksarkiv pattern) so consumers can adapt the raw GeoNorge API surface locally.
+- The `UseApproximateSvalbardAndJanMayen` option is preserved and now supplements the generated models with synthetic entries for Svalbard and Jan Mayen.
+- `IAddressSearch` defaults the coordinate system to EPSG:4326 (WGS84) when it is not specified on the query parameters, instead of the GeoNorge API default of EPSG:4258. Callers can still override this by setting the values explicitly.
+
+### Removed
+
+- **BREAKING**: Removed the hand-written GeoNorge domain models (both response and request models) and the unused `UriExtensions` helper. Consumers should use the generated Kiota models and query parameter types exposed through the ports and extensions.
+
 ## 3.1.1
 
 ### Changed

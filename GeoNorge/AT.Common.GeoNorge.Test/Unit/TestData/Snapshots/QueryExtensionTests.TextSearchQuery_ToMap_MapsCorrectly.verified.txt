@@ -1,8 +1,0 @@
-﻿{
-  adressenavn: Testveien,
-  fuzzy: true,
-  kommunenummer: 2510,
-  postnummer: 1234,
-  poststed: Testby,
-  sok: TestTerm
-}

@@ -1,4 +1,0 @@
-﻿{
-  Kommunenummer: example-string,
-  Kommunenavn: example-string
-}

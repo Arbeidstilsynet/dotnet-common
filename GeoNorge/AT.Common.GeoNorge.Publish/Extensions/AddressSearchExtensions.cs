@@ -1,6 +1,7 @@
-using Arbeidstilsynet.Common.GeoNorge.Model.Request;
-using Arbeidstilsynet.Common.GeoNorge.Model.Response;
+using Arbeidstilsynet.Common.GeoNorge.Adresser.Models;
 using Arbeidstilsynet.Common.GeoNorge.Ports;
+using PunktsokQueryParameters = Arbeidstilsynet.Common.GeoNorge.Adresser.Punktsok.PunktsokRequestBuilder.PunktsokRequestBuilderGetQueryParameters;
+using SokQueryParameters = Arbeidstilsynet.Common.GeoNorge.Adresser.Sok.SokRequestBuilder.SokRequestBuilderGetQueryParameters;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Extensions;
 
@@ -10,38 +11,40 @@ namespace Arbeidstilsynet.Common.GeoNorge.Extensions;
 public static class AddressSearchExtensions
 {
     /// <summary>
-    /// Gets the closest address based on a geographical point defined by <see cref="PointSearchQuery"/>.
+    /// Gets the closest address based on a geographical point defined by the generated query parameters.
     /// </summary>
     /// <param name="addressSearch">The address search service instance.</param>
-    /// <param name="query">The point search query containing coordinates and search radius.</param>
-    /// <returns>The closest <see cref="Address"/> if found, otherwise null.</returns>
-    public static async Task<Address?> GetClosestAddress(
+    /// <param name="queryParameters">The generated query parameters containing coordinates and search radius.</param>
+    /// <returns>The closest <see cref="OutputGeoPoint"/> if found, otherwise null.</returns>
+    public static async Task<OutputGeoPoint?> GetClosestAddress(
         this IAddressSearch addressSearch,
-        PointSearchQuery query
+        PunktsokQueryParameters queryParameters
     )
     {
-        var pagination = new Pagination { PageIndex = 0, PageSize = 1 };
+        queryParameters.Side = 0;
+        queryParameters.TreffPerSide = 1;
 
-        var result = await addressSearch.SearchAddressesByPoint(query, pagination);
+        var result = await addressSearch.SearchAddressesByPoint(queryParameters);
 
-        return result?.Elements.FirstOrDefault();
+        return result?.Adresser?.FirstOrDefault();
     }
 
     /// <summary>
-    /// Searches for a location based on a text query defined by <see cref="TextSearchQuery"/>.
+    /// Searches for a location based on the generated query parameters.
     /// </summary>
     /// <param name="addressSearch">The address search service instance.</param>
-    /// <param name="query">The text search query containing the search term and filters.</param>
-    /// <returns>The <see cref="Location"/> of the first matching address if found, otherwise null.</returns>
-    public static async Task<Location?> QuickSearchLocation(
+    /// <param name="queryParameters">The generated query parameters containing the search term and filters.</param>
+    /// <returns>The <see cref="GeomPoint"/> (representasjonspunkt) of the first matching address if found, otherwise null.</returns>
+    public static async Task<GeomPoint?> QuickSearchLocation(
         this IAddressSearch addressSearch,
-        TextSearchQuery query
+        SokQueryParameters queryParameters
     )
     {
-        var pagination = new Pagination { PageIndex = 0, PageSize = 1 };
+        queryParameters.Side = 0;
+        queryParameters.TreffPerSide = 1;
 
-        var result = await addressSearch.SearchAddresses(query, pagination);
+        var result = await addressSearch.SearchAddresses(queryParameters);
 
-        return result?.Elements.FirstOrDefault()?.Location;
+        return result?.Adresser?.FirstOrDefault()?.Representasjonspunkt;
     }
 }

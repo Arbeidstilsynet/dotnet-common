@@ -1,5 +1,7 @@
+using Arbeidstilsynet.Common.GeoNorge.Adresser;
 using Arbeidstilsynet.Common.GeoNorge.DependencyInjection;
 using Arbeidstilsynet.Common.GeoNorge.Implementation;
+using Arbeidstilsynet.Common.GeoNorge.KommuneInfo;
 using Arbeidstilsynet.Common.GeoNorge.Ports;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -9,34 +11,129 @@ namespace Arbeidstilsynet.Common.GeoNorge.Test.Unit;
 public class DependencyInjectionExtensionsTests
 {
     [Fact]
-    public void AddGeoNorge_ApproximationEnabled_RegistersApproximateFylkeKommuneApi()
+    public void AddGeoNorge_RegistersAdresserClient()
     {
-        // Arrange
-        var services = new ServiceCollection();
+        using var scope = BuildScope();
 
-        // Act
-        services.AddGeoNorge(new GeoNorgeConfig { UseApproximateSvalbardAndJanMayen = true });
-        using var serviceProvider = services.BuildServiceProvider();
+        scope.ServiceProvider.GetService<AdresserClient>().ShouldNotBeNull();
+    }
 
-        // Assert
-        serviceProvider
-            .GetRequiredService<IFylkeKommuneApi>()
+    [Fact]
+    public void AddGeoNorge_RegistersKommuneInfoClient()
+    {
+        using var scope = BuildScope();
+
+        scope.ServiceProvider.GetService<KommuneInfoClient>().ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void AddGeoNorge_RegistersAddressSearchPort()
+    {
+        using var scope = BuildScope();
+
+        scope.ServiceProvider.GetService<IAddressSearch>().ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void AddGeoNorge_RegistersFylkeKommunePort()
+    {
+        using var scope = BuildScope();
+
+        scope.ServiceProvider.GetService<IFylkeKommuneApi>().ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void AddGeoNorge_WithoutApproximation_DoesNotDecorateFylkeKommuneApi()
+    {
+        using var scope = BuildScope(
+            new GeoNorgeConfig { UseApproximateSvalbardAndJanMayen = false }
+        );
+
+        scope
+            .ServiceProvider.GetRequiredService<IFylkeKommuneApi>()
+            .ShouldBeOfType<FylkeKommuneClient>();
+    }
+
+    [Fact]
+    public void AddGeoNorge_WithApproximation_DecoratesFylkeKommuneApi()
+    {
+        using var scope = BuildScope(
+            new GeoNorgeConfig { UseApproximateSvalbardAndJanMayen = true }
+        );
+
+        scope
+            .ServiceProvider.GetRequiredService<IFylkeKommuneApi>()
             .ShouldBeOfType<ApproximateSvalbardAndJanMayenFylkeKommuneApi>();
     }
 
     [Fact]
-    public void AddGeoNorge_ApproximationDisabled_RegistersDefaultFylkeKommuneApi()
+    public void AddGeoNorge_DefaultConfig_SetsAdresserBaseUrlWithBasePath()
     {
-        // Arrange
+        using var scope = BuildScope();
+
+        // Resolving the client triggers the factory that sets BaseUrl on the shared adapter.
+        scope.ServiceProvider.GetRequiredService<AdresserClient>();
+
+        scope
+            .ServiceProvider.GetRequiredService<AdresserRequestAdapter>()
+            .BaseUrl.ShouldBe("https://ws.geonorge.no/adresser/v1");
+    }
+
+    [Fact]
+    public void AddGeoNorge_DefaultConfig_SetsKommuneInfoBaseUrlWithBasePath()
+    {
+        using var scope = BuildScope();
+
+        scope.ServiceProvider.GetRequiredService<KommuneInfoClient>();
+
+        scope
+            .ServiceProvider.GetRequiredService<KommuneInfoRequestAdapter>()
+            .BaseUrl.ShouldBe("https://ws.geonorge.no/kommuneinfo/v1");
+    }
+
+    [Theory]
+    [InlineData("https://example.com/")]
+    [InlineData("https://example.com")]
+    public void AddGeoNorge_CustomBaseUrl_TrimsTrailingSlashAndAppendsBasePath(string baseUrl)
+    {
+        using var scope = BuildScope(new GeoNorgeConfig { BaseUrl = baseUrl });
+
+        scope.ServiceProvider.GetRequiredService<AdresserClient>();
+        scope.ServiceProvider.GetRequiredService<KommuneInfoClient>();
+
+        scope
+            .ServiceProvider.GetRequiredService<AdresserRequestAdapter>()
+            .BaseUrl.ShouldBe("https://example.com/adresser/v1");
+        scope
+            .ServiceProvider.GetRequiredService<KommuneInfoRequestAdapter>()
+            .BaseUrl.ShouldBe("https://example.com/kommuneinfo/v1");
+    }
+
+    private static IServiceScope BuildScope(GeoNorgeConfig? config = null)
+    {
         var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddGeoNorge(config);
 
-        // Act
-        services.AddGeoNorge(new GeoNorgeConfig { UseApproximateSvalbardAndJanMayen = false });
-        using var serviceProvider = services.BuildServiceProvider();
+        var serviceProvider = services.BuildServiceProvider();
 
-        // Assert
-        serviceProvider
-            .GetRequiredService<IFylkeKommuneApi>()
-            .ShouldBeOfType<FylkeKommuneClient>();
+        return new RootDisposingServiceScope(serviceProvider);
+    }
+
+    /// <summary>
+    /// Wraps a scope created from a root <see cref="ServiceProvider"/> so that disposing the scope
+    /// also disposes the root provider, preventing it from leaking across the test run.
+    /// </summary>
+    private sealed class RootDisposingServiceScope(ServiceProvider rootProvider) : IServiceScope
+    {
+        private readonly IServiceScope _scope = rootProvider.CreateScope();
+
+        public IServiceProvider ServiceProvider => _scope.ServiceProvider;
+
+        public void Dispose()
+        {
+            _scope.Dispose();
+            rootProvider.Dispose();
+        }
     }
 }
