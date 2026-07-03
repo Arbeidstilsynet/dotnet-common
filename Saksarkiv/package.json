@@ -1,8 +1,5 @@
 {
-  "name": "saksarkiv",
-  "version": "1.0.0",
   "private": true,
-  "description": "Tooling scripts for the Arbeidstilsynet.Common.Saksarkiv package.",
   "scripts": {
     "generate:client": "dotnet kiota generate -l CSharp -c SaksarkivClient -n Arbeidstilsynet.Common.Saksarkiv -d AT.Common.Saksarkiv.Publish/openApi.json -o AT.Common.Saksarkiv.Publish/Generated --exclude-backward-compatible --clean-output"
   }
