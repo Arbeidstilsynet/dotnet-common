@@ -117,6 +117,23 @@ public class DependencyInjectionExtensionsTests
 
         var serviceProvider = services.BuildServiceProvider();
 
-        return serviceProvider.CreateScope();
+        return new RootDisposingServiceScope(serviceProvider);
+    }
+
+    /// <summary>
+    /// Wraps a scope created from a root <see cref="ServiceProvider"/> so that disposing the scope
+    /// also disposes the root provider, preventing it from leaking across the test run.
+    /// </summary>
+    private sealed class RootDisposingServiceScope(ServiceProvider rootProvider) : IServiceScope
+    {
+        private readonly IServiceScope _scope = rootProvider.CreateScope();
+
+        public IServiceProvider ServiceProvider => _scope.ServiceProvider;
+
+        public void Dispose()
+        {
+            _scope.Dispose();
+            rootProvider.Dispose();
+        }
     }
 }
