@@ -2,7 +2,7 @@
   "descriptionHash": "4EDEEFE9C2DFE4E6B6C7F2349E14D678C24E269062C11F644457158A2532957CC627E8DD49B449A9CDF1A548B8420906C3F32F1F134B17AB87E37E727109E3DB",
   "descriptionLocation": "../../openapi-adresser.json",
   "lockFileVersion": "1.0.0",
-  "kiotaVersion": "1.31.1",
+  "kiotaVersion": "1.32.4",
   "clientClassName": "AdresserClient",
   "typeAccessModifier": "Public",
   "clientNamespaceName": "Arbeidstilsynet.Common.GeoNorge.Adresser",

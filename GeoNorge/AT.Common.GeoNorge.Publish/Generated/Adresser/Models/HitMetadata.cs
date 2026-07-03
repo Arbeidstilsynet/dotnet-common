@@ -40,6 +40,9 @@ namespace Arbeidstilsynet.Common.GeoNorge.Adresser.Models
         public HitMetadata()
         {
             AdditionalData = new Dictionary<string, object>();
+            AsciiKompatibel = true;
+            Side = 0;
+            TreffPerSide = 10;
         }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
