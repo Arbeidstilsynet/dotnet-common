@@ -175,7 +175,7 @@ public class StructuredDataManagerTests
                 instance,
                 Arg.Is<Dictionary<string, string?>>(d =>
                     Enumerable.SequenceEqual(
-                        d,
+                        d ?? new(),
                         new Dictionary<string, string?>()
                         {
                             {

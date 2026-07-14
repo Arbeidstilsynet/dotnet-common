@@ -146,7 +146,7 @@ public class PreSubmitProcessorTests
             .Received(1)
             .UpdateFormData(
                 instance,
-                Arg.Is<TestDataModel>(dm => dm.Value == "Processed"),
+                Arg.Is<TestDataModel>(dm => dm != null && dm.Value == "Processed"),
                 Arg.Any<DataElement>(),
                 cancellationToken: Arg.Any<CancellationToken>()
             );
@@ -225,7 +225,7 @@ public class PreSubmitProcessorTests
             .Received(1)
             .UpdateFormData(
                 instance,
-                Arg.Is<TestDataModel>(dm => dm.Value == "Processed"),
+                Arg.Is<TestDataModel>(dm => dm != null && dm.Value == "Processed"),
                 Arg.Any<DataElement>(),
                 cancellationToken: Arg.Any<CancellationToken>()
             );
@@ -296,7 +296,7 @@ public class PreSubmitProcessorTests
             .Received(1)
             .UpdateFormData(
                 instance,
-                Arg.Is<TestDataModel>(dm => dm.Value == "Processed"),
+                Arg.Is<TestDataModel>(dm => dm != null && dm.Value == "Processed"),
                 Arg.Any<DataElement>(),
                 cancellationToken: Arg.Any<CancellationToken>()
             );
