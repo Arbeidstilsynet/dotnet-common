@@ -74,7 +74,7 @@ jobs:
           working-directory: ${{ needs.check-and-prepare.outputs.package_path }}
 
       - name: Check if package version exists
-        uses: Arbeidstilsynet/action-nuget-check-published@2c621d26e55b8c30d294af5255e79356016a283a # v2
+        uses: Arbeidstilsynet/action-nuget-check-published@e9d27df91e2e0a5c4b6b041dd111127ba02d7b22 # v2
         id: nuget_version_check
         with:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
