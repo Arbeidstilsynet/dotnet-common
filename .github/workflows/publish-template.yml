@@ -30,7 +30,7 @@ jobs:
 
       - name: Publish package if not already published
         if: steps.nuget_version_check.outputs.published == 'false'
-        uses: Arbeidstilsynet/action-dotnet-publish@371a7f739f2d1f05c36d9e98720d3462d3656bbe # v3
+        uses: Arbeidstilsynet/action-dotnet-publish@d6a7f116db746d388ef2ca8d52d8f3d66b7cac05 # v3
         with:
           working-directory: ${{ inputs.package-path }}
           nuget-username: ${{ vars.NUGET_BOT_USERNAME }}
