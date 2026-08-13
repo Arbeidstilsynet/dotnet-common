@@ -21,7 +21,10 @@
     <PackageReference Include="Altinn.App.Api" Version="8.12.7" />
     <PackageReference Include="Altinn.App.Core" Version="8.12.7" />
     <PackageReference Include="OpenTelemetry.Api" Version="1.16.0" />
-    <PackageReference Include="Altinn.ApiClients.Dialogporten.ServiceOwner" Version="1.118.10-alpha.1786357013" />
+    <PackageReference
+      Include="Altinn.ApiClients.Dialogporten.ServiceOwner"
+      Version="1.118.10-alpha.1786357013"
+    />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
