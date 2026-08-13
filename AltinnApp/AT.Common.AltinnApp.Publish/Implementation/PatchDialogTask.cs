@@ -74,7 +74,15 @@ internal sealed class PatchDialogTask<T> : IServiceTask
         //var patchOperations = _webHostEnvironment.BuildPatchOperations(dialogId, transmissionId, senderActorId, receiptUrl, instanceGuid, baseUrl);
         var patchSucceeded = await _dialogporten.PatchDialogWithFreshRevision(
             dialogId,
-            _patchOperationsProvider.GetPatchOperations(),
+            _patchOperationsProvider.GetPatchOperations(
+                _webHostEnvironment,
+                dialogId,
+                transmissionId,
+                senderActorId,
+                receiptUrl,
+                instanceGuid,
+                baseUrl
+            ),
             _logger,
             context.CancellationToken
         );
