@@ -34,7 +34,11 @@ public sealed class VirksomhetSlettetException : Exception
     /// </summary>
     public string? Slettedato { get; }
 
-    private static string CreateMessage(string? organisasjonsnummer, string? navn, string? slettedato)
+    private static string CreateMessage(
+        string? organisasjonsnummer,
+        string? navn,
+        string? slettedato
+    )
     {
         var orgnr = string.IsNullOrWhiteSpace(organisasjonsnummer)
             ? "<ukjent>"
