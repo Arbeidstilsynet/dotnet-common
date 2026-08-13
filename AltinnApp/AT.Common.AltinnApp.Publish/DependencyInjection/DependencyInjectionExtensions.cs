@@ -1,4 +1,7 @@
+using Altinn.ApiClients.Dialogporten.ServiceOwner;
+using Altinn.App.Api.Extensions;
 using Altinn.App.Core.Features;
+using Altinn.App.Core.Internal.Process.ProcessTasks.ServiceTasks;
 using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.AltinnApp.Implementation;
 using Arbeidstilsynet.Common.AltinnApp.Model;
@@ -236,5 +239,43 @@ public static class DependencyInjectionExtensions
         );
 
         return services;
+    }
+
+    /// <summary>
+    /// Registers the <see cref="PatchDialogTask{TStructuredData}"/> service task along with its
+    /// required dependencies (Dialogporten client, patch operations provider and organisasjonsnummer provider).
+    /// </summary>
+    /// <typeparam name="TStructuredData">The structured data model type.</typeparam>
+    /// <param name="services">The service collection to add registrations to.</param>
+    /// <param name="patchOperationsProvider">Provider for the patch operations to apply to the dialog.</param>
+    /// <param name="organisasjonsnummerProvider">Provider that resolves the organisasjonsnummer from the structured data.</param>
+    /// <param name="env">The host environment, used to select production or test Dialogporten endpoints.</param>
+    /// <returns>The same <see cref="IServiceCollection"/> instance so that calls can be chained.</returns>
+    public static IServiceCollection AddPatchDialogTask<TStructuredData>(
+        this IServiceCollection services,
+        IPatchOperationsProvider patchOperationsProvider,
+        IOrganisasjonsnummerProvider<TStructuredData> organisasjonsnummerProvider,
+        IHostEnvironment env
+    )
+        where TStructuredData : class
+    {
+        services.AddDialogportenClient(
+            new Altinn.ApiClients.Dialogporten.DialogportenSettings
+            {
+                BaseUri = env.IsProduction()
+                    ? "https://platform.altinn.no/dialogporten"
+                    : "https://platform.tt02.altinn.no/dialogporten",
+            },
+            auth =>
+            {
+                auth.UseMaskinportenAltinnAuthorization(
+                    "digdir:dialogporten.serviceprovider digdir:dialogporten.serviceprovider.search"
+                );
+            }
+        );
+        return services
+            .AddTransient(sp => patchOperationsProvider)
+            .AddTransient(sp => organisasjonsnummerProvider)
+            .AddTransient<IServiceTask, PatchDialogTask<TStructuredData>>();
     }
 }
