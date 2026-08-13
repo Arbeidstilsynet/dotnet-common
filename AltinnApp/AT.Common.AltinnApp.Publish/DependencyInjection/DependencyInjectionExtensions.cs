@@ -254,7 +254,10 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddPatchDialogTask<TStructuredData>(
         this IServiceCollection services,
         Func<IServiceProvider, IPatchOperationsProvider> patchOperationsProviderFactory,
-        Func<IServiceProvider, IOrganisasjonsnummerProvider<TStructuredData>> organisasjonsnummerProviderFactory,
+        Func<
+            IServiceProvider,
+            IOrganisasjonsnummerProvider<TStructuredData>
+        > organisasjonsnummerProviderFactory,
         IHostEnvironment env
     )
         where TStructuredData : class
