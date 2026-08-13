@@ -247,14 +247,14 @@ public static class DependencyInjectionExtensions
     /// </summary>
     /// <typeparam name="TStructuredData">The structured data model type.</typeparam>
     /// <param name="services">The service collection to add registrations to.</param>
-    /// <param name="patchOperationsProvider">Provider for the patch operations to apply to the dialog.</param>
-    /// <param name="organisasjonsnummerProvider">Provider that resolves the organisasjonsnummer from the structured data.</param>
+    /// <param name="patchOperationsProviderFactory">Factory that resolves the patch operations provider from the <see cref="IServiceProvider"/>.</param>
+    /// <param name="organisasjonsnummerProviderFactory">Factory that resolves the organisasjonsnummer provider from the <see cref="IServiceProvider"/>.</param>
     /// <param name="env">The host environment, used to select production or test Dialogporten endpoints.</param>
     /// <returns>The same <see cref="IServiceCollection"/> instance so that calls can be chained.</returns>
     public static IServiceCollection AddPatchDialogTask<TStructuredData>(
         this IServiceCollection services,
-        IPatchOperationsProvider patchOperationsProvider,
-        IOrganisasjonsnummerProvider<TStructuredData> organisasjonsnummerProvider,
+        Func<IServiceProvider, IPatchOperationsProvider> patchOperationsProviderFactory,
+        Func<IServiceProvider, IOrganisasjonsnummerProvider<TStructuredData>> organisasjonsnummerProviderFactory,
         IHostEnvironment env
     )
         where TStructuredData : class
@@ -274,8 +274,8 @@ public static class DependencyInjectionExtensions
             }
         );
         return services
-            .AddTransient(sp => patchOperationsProvider)
-            .AddTransient(sp => organisasjonsnummerProvider)
+            .AddTransient(patchOperationsProviderFactory)
+            .AddTransient(organisasjonsnummerProviderFactory)
             .AddTransient<IServiceTask, PatchDialogTask<TStructuredData>>();
     }
 }
