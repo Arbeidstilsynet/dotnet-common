@@ -86,7 +86,8 @@ public class EnhetsregisteretAdapterTests
             Slettedato = "2025-12-20",
         };
 
-        SetupUnderenhetResponse().Returns(new UnderenhetGetResponse { SlettetUnderEnhet = slettetUnderenhet });
+        SetupUnderenhetResponse()
+            .Returns(new UnderenhetGetResponse { SlettetUnderEnhet = slettetUnderenhet });
 
         // Act
         var act = () => _sut.GetUnderenhet("987654321");
