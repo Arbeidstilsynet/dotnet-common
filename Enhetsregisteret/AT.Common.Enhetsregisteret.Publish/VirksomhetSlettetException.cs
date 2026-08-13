@@ -11,12 +11,19 @@ public sealed class VirksomhetSlettetException : Exception
     /// <param name="organisasjonsnummer">Organisasjonsnummer for slettet virksomhet.</param>
     /// <param name="navn">Navn på virksomhet, hvis tilgjengelig.</param>
     /// <param name="slettedato">Dato virksomheten ble slettet.</param>
-    public VirksomhetSlettetException(string? organisasjonsnummer, string? navn, string? slettedato)
+    /// <param name="slettetVirksomhet">Det originale slettede objektet fra Enhetsregisteret.</param>
+    public VirksomhetSlettetException(
+        string? organisasjonsnummer,
+        string? navn,
+        string? slettedato,
+        object? slettetVirksomhet = null
+    )
         : base(CreateMessage(organisasjonsnummer, navn, slettedato))
     {
         Organisasjonsnummer = organisasjonsnummer;
         Navn = navn;
         Slettedato = slettedato;
+        SlettetVirksomhet = slettetVirksomhet;
     }
 
     /// <summary>
@@ -33,6 +40,11 @@ public sealed class VirksomhetSlettetException : Exception
     /// Dato virksomheten ble slettet.
     /// </summary>
     public string? Slettedato { get; }
+
+    /// <summary>
+    /// Det originale slettede objektet fra Enhetsregisteret, dersom kallet har tilgang til det.
+    /// </summary>
+    public object? SlettetVirksomhet { get; }
 
     private static string CreateMessage(
         string? organisasjonsnummer,

@@ -25,18 +25,14 @@ public class EnhetsregisteretAdapterTests
     public async Task GetEnhet_SlettetEnhet_ThrowsVirksomhetSlettetException()
     {
         // Arrange
-        SetupEnhetResponse()
-            .Returns(
-                new EnhetGetResponse
-                {
-                    SlettetEnhet = new SlettetEnhet
-                    {
-                        Organisasjonsnummer = "123456789",
-                        Navn = "Slettet virksomhet",
-                        Slettedato = "2026-01-15",
-                    },
-                }
-            );
+        var slettetEnhet = new SlettetEnhet
+        {
+            Organisasjonsnummer = "123456789",
+            Navn = "Slettet virksomhet",
+            Slettedato = "2026-01-15",
+        };
+
+        SetupEnhetResponse().Returns(new EnhetGetResponse { SlettetEnhet = slettetEnhet });
 
         // Act
         var act = () => _sut.GetEnhet("123456789");
@@ -46,6 +42,7 @@ public class EnhetsregisteretAdapterTests
         ex.Organisasjonsnummer.ShouldBe("123456789");
         ex.Navn.ShouldBe("Slettet virksomhet");
         ex.Slettedato.ShouldBe("2026-01-15");
+        ex.SlettetVirksomhet.ShouldBeSameAs(slettetEnhet);
         ex.Message.ShouldContain("123456789");
         ex.Message.ShouldContain("Slettet virksomhet");
         ex.Message.ShouldContain("2026-01-15");
@@ -82,18 +79,14 @@ public class EnhetsregisteretAdapterTests
     public async Task GetUnderenhet_SlettetUnderenhet_ThrowsVirksomhetSlettetException()
     {
         // Arrange
-        SetupUnderenhetResponse()
-            .Returns(
-                new UnderenhetGetResponse
-                {
-                    SlettetUnderEnhet = new SlettetUnderEnhet
-                    {
-                        Organisasjonsnummer = "987654321",
-                        Navn = "Slettet underenhet",
-                        Slettedato = "2025-12-20",
-                    },
-                }
-            );
+        var slettetUnderenhet = new SlettetUnderEnhet
+        {
+            Organisasjonsnummer = "987654321",
+            Navn = "Slettet underenhet",
+            Slettedato = "2025-12-20",
+        };
+
+        SetupUnderenhetResponse().Returns(new UnderenhetGetResponse { SlettetUnderEnhet = slettetUnderenhet });
 
         // Act
         var act = () => _sut.GetUnderenhet("987654321");
@@ -103,6 +96,7 @@ public class EnhetsregisteretAdapterTests
         ex.Organisasjonsnummer.ShouldBe("987654321");
         ex.Navn.ShouldBe("Slettet underenhet");
         ex.Slettedato.ShouldBe("2025-12-20");
+        ex.SlettetVirksomhet.ShouldBeSameAs(slettetUnderenhet);
         ex.Message.ShouldContain("987654321");
         ex.Message.ShouldContain("Slettet underenhet");
         ex.Message.ShouldContain("2025-12-20");

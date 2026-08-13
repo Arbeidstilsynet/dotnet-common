@@ -111,7 +111,8 @@ internal sealed class EnhetsregisteretAdapter : IEnhetsregisteret
         throw new VirksomhetSlettetException(
             slettetEnhet.Organisasjonsnummer,
             slettetEnhet.Navn,
-            slettetEnhet.Slettedato
+            slettetEnhet.Slettedato,
+            slettetEnhet
         );
     }
 
@@ -125,7 +126,8 @@ internal sealed class EnhetsregisteretAdapter : IEnhetsregisteret
         throw new VirksomhetSlettetException(
             slettetUnderEnhet.Organisasjonsnummer,
             slettetUnderEnhet.Navn,
-            slettetUnderEnhet.Slettedato
+            slettetUnderEnhet.Slettedato,
+            slettetUnderEnhet
         );
     }
 
