@@ -11,6 +11,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Refit;
 
+namespace Arbeidstilsynet.Common.AltinnApp.Implementation;
+
 internal sealed class PatchDialogTask<T> : IServiceTask
     where T : class
 {
