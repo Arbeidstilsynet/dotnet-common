@@ -1,3 +1,4 @@
+using Arbeidstilsynet.Common.Enhetsregisteret;
 using Arbeidstilsynet.Common.Enhetsregisteret.Models;
 using Arbeidstilsynet.Common.Enhetsregisteret.Ports;
 using Microsoft.Kiota.Abstractions;
@@ -38,6 +39,7 @@ internal sealed class EnhetsregisteretAdapter : IEnhetsregisteret
                 .Enhetsregisteret.Api.Enheter[organisasjonsnummer]
                 .GetAsync(cancellationToken: cancellationToken);
 
+            ThrowIfSlettet(response?.SlettetEnhet);
             return response?.Enhet;
         });
 
@@ -56,6 +58,7 @@ internal sealed class EnhetsregisteretAdapter : IEnhetsregisteret
                 .Enhetsregisteret.Api.Underenheter[organisasjonsnummer]
                 .GetAsync(cancellationToken: cancellationToken);
 
+            ThrowIfSlettet(response?.SlettetUnderEnhet);
             return response?.Underenhet;
         });
 
@@ -97,6 +100,34 @@ internal sealed class EnhetsregisteretAdapter : IEnhetsregisteret
     )
         where TQueryParameters : class, new() =>
         configureQuery is null ? null : config => configureQuery(config.QueryParameters);
+
+    private static void ThrowIfSlettet(SlettetEnhet? slettetEnhet)
+    {
+        if (slettetEnhet is null)
+        {
+            return;
+        }
+
+        throw new VirksomhetSlettetException(
+            slettetEnhet.Organisasjonsnummer,
+            slettetEnhet.Navn,
+            slettetEnhet.Slettedato
+        );
+    }
+
+    private static void ThrowIfSlettet(SlettetUnderEnhet? slettetUnderEnhet)
+    {
+        if (slettetUnderEnhet is null)
+        {
+            return;
+        }
+
+        throw new VirksomhetSlettetException(
+            slettetUnderEnhet.Organisasjonsnummer,
+            slettetUnderEnhet.Navn,
+            slettetUnderEnhet.Slettedato
+        );
+    }
 
     private static async Task<T?> NullOnNotFound<T>(Func<Task<T?>> fetch)
         where T : class

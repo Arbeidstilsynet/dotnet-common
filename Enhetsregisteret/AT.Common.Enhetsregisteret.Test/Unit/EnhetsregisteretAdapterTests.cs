@@ -1,4 +1,6 @@
+using Arbeidstilsynet.Common.Enhetsregisteret;
 using Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
+using Arbeidstilsynet.Common.Enhetsregisteret.Models;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using NSubstitute;
@@ -17,6 +19,36 @@ public class EnhetsregisteretAdapterTests
     public EnhetsregisteretAdapterTests()
     {
         _sut = new EnhetsregisteretAdapter(new EnhetsregisteretClient(_requestAdapter));
+    }
+
+    [Fact]
+    public async Task GetEnhet_SlettetEnhet_ThrowsVirksomhetSlettetException()
+    {
+        // Arrange
+        SetupEnhetResponse()
+            .Returns(
+                new EnhetGetResponse
+                {
+                    SlettetEnhet = new SlettetEnhet
+                    {
+                        Organisasjonsnummer = "123456789",
+                        Navn = "Slettet virksomhet",
+                        Slettedato = "2026-01-15",
+                    },
+                }
+            );
+
+        // Act
+        var act = () => _sut.GetEnhet("123456789");
+
+        // Assert
+        var ex = await act.ShouldThrowAsync<VirksomhetSlettetException>();
+        ex.Organisasjonsnummer.ShouldBe("123456789");
+        ex.Navn.ShouldBe("Slettet virksomhet");
+        ex.Slettedato.ShouldBe("2026-01-15");
+        ex.Message.ShouldContain("123456789");
+        ex.Message.ShouldContain("Slettet virksomhet");
+        ex.Message.ShouldContain("2026-01-15");
     }
 
     [Fact]
@@ -44,6 +76,36 @@ public class EnhetsregisteretAdapterTests
         // Assert
         var ex = await act.ShouldThrowAsync<ApiException>();
         ex.ResponseStatusCode.ShouldBe(500);
+    }
+
+    [Fact]
+    public async Task GetUnderenhet_SlettetUnderenhet_ThrowsVirksomhetSlettetException()
+    {
+        // Arrange
+        SetupUnderenhetResponse()
+            .Returns(
+                new UnderenhetGetResponse
+                {
+                    SlettetUnderEnhet = new SlettetUnderEnhet
+                    {
+                        Organisasjonsnummer = "987654321",
+                        Navn = "Slettet underenhet",
+                        Slettedato = "2025-12-20",
+                    },
+                }
+            );
+
+        // Act
+        var act = () => _sut.GetUnderenhet("987654321");
+
+        // Assert
+        var ex = await act.ShouldThrowAsync<VirksomhetSlettetException>();
+        ex.Organisasjonsnummer.ShouldBe("987654321");
+        ex.Navn.ShouldBe("Slettet underenhet");
+        ex.Slettedato.ShouldBe("2025-12-20");
+        ex.Message.ShouldContain("987654321");
+        ex.Message.ShouldContain("Slettet underenhet");
+        ex.Message.ShouldContain("2025-12-20");
     }
 
     [Fact]
