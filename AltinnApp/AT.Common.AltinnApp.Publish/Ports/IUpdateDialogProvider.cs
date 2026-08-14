@@ -5,9 +5,9 @@ namespace Arbeidstilsynet.Common.AltinnApp.Ports;
 /// <summary>
 /// Interface for supplying the update-specific dialog logic to the UpdateDialog task.
 /// </summary>
-/// <typeparam name="T">The structured data model type.</typeparam>
-public interface IUpdateDialogProvider<T>
-    where T : class
+/// <typeparam name="TDataModel">The skjema data model type related to the instance.</typeparam>
+public interface IUpdateDialogProvider<TDataModel>
+    where TDataModel : class
 {
     /// <summary>
     /// Decides whether an existing Altinn dialog should be reused or a new dialog should be
@@ -20,5 +20,5 @@ public interface IUpdateDialogProvider<T>
     /// reference the created dialog afterwards.
     /// </param>
     /// <returns>The resolution describing how to obtain the dialog.</returns>
-    DialogResolution Resolve(T model, Guid dialogId);
+    DialogResolution Resolve(TDataModel model, Guid dialogId);
 }

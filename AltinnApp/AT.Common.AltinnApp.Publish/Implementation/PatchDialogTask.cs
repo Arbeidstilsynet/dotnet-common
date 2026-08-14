@@ -8,21 +8,21 @@ using Microsoft.Extensions.Logging;
 
 namespace Arbeidstilsynet.Common.AltinnApp.Implementation;
 
-internal sealed class PatchDialogTask<T> : IServiceTask
-    where T : class
+internal sealed class PatchDialogTask<TDataModel> : IServiceTask
+    where TDataModel : class
 {
     private readonly IServiceOwnerApi _dialogporten;
     private readonly IWebHostEnvironment _webHostEnvironment;
-    private readonly ISubmittersOrganisasjonsnummerProvider<T> _organisasjonsnummerProvider;
+    private readonly ISubmittersOrganisasjonsnummerProvider<TDataModel> _organisasjonsnummerProvider;
     private readonly IPatchOperationsProvider _patchOperationsProvider;
-    private readonly ILogger<PatchDialogTask<T>> _logger;
+    private readonly ILogger<PatchDialogTask<TDataModel>> _logger;
 
     public PatchDialogTask(
         IServiceOwnerApi dialogporten,
         IWebHostEnvironment webHostEnvironment,
-        ISubmittersOrganisasjonsnummerProvider<T> organisasjonsnummerProvider,
+        ISubmittersOrganisasjonsnummerProvider<TDataModel> organisasjonsnummerProvider,
         IPatchOperationsProvider patchOperationsProvider,
-        ILogger<PatchDialogTask<T>> logger
+        ILogger<PatchDialogTask<TDataModel>> logger
     )
     {
         _dialogporten = dialogporten;
@@ -50,7 +50,7 @@ internal sealed class PatchDialogTask<T> : IServiceTask
         var instanceGuid = instance.GetInstanceGuid();
         var instanceOwner = instance.GetInstanceOwnerPartyId();
 
-        var skjemaModel = await context.GetSkjemaFormData<T>();
+        var skjemaModel = await context.GetSkjemaFormData<TDataModel>();
         var senderActorId =
             $"urn:altinn:organization:identifier-no:{_organisasjonsnummerProvider.GetOrganisasjonsnummerFromSubmitter(skjemaModel)}";
 

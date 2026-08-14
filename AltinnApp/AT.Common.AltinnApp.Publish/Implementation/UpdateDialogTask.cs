@@ -11,25 +11,25 @@ using Microsoft.Extensions.Logging;
 
 namespace Arbeidstilsynet.Common.AltinnApp.Implementation;
 
-internal sealed class UpdateDialogTask<T> : IServiceTask
-    where T : class
+internal sealed class UpdateDialogTask<TDataModel> : IServiceTask
+    where TDataModel : class
 {
     private readonly IServiceOwnerApi _dialogporten;
     private readonly IWebHostEnvironment _webHostEnvironment;
     private readonly IInstanceClient _instanceClient;
-    private readonly ISubmittersOrganisasjonsnummerProvider<T> _organisasjonsnummerProvider;
-    private readonly IUpdateDialogProvider<T> _updateDialogProvider;
+    private readonly ISubmittersOrganisasjonsnummerProvider<TDataModel> _organisasjonsnummerProvider;
+    private readonly IUpdateDialogProvider<TDataModel> _updateDialogProvider;
     private readonly IPatchOperationsProvider _patchOperationsProvider;
-    private readonly ILogger<UpdateDialogTask<T>> _logger;
+    private readonly ILogger<UpdateDialogTask<TDataModel>> _logger;
 
     public UpdateDialogTask(
         IServiceOwnerApi dialogporten,
         IWebHostEnvironment webHostEnvironment,
         IInstanceClient instanceClient,
-        ISubmittersOrganisasjonsnummerProvider<T> organisasjonsnummerProvider,
-        IUpdateDialogProvider<T> updateDialogProvider,
+        ISubmittersOrganisasjonsnummerProvider<TDataModel> organisasjonsnummerProvider,
+        IUpdateDialogProvider<TDataModel> updateDialogProvider,
         IPatchOperationsProvider patchOperationsProvider,
-        ILogger<UpdateDialogTask<T>> logger
+        ILogger<UpdateDialogTask<TDataModel>> logger
     )
     {
         _dialogporten = dialogporten;
@@ -41,7 +41,7 @@ internal sealed class UpdateDialogTask<T> : IServiceTask
         _logger = logger;
     }
 
-    public string Type => IPatchDialogConstants.UpdateDialogTaskName;
+    public string Type => IPatchDialogConstants.PatchDialogTaskName;
 
     public async Task<ServiceTaskResult> Execute(ServiceTaskContext context)
     {
@@ -54,7 +54,7 @@ internal sealed class UpdateDialogTask<T> : IServiceTask
         var instanceGuid = instance.GetInstanceGuid();
         var instanceOwner = instance.GetInstanceOwnerPartyId();
 
-        var skjemaModel = await context.GetSkjemaFormData<T>();
+        var skjemaModel = await context.GetSkjemaFormData<TDataModel>();
 
         var generatedDialogId = DialogTaskHelpers.CreateVersion7Guid();
         var resolution = _updateDialogProvider.Resolve(skjemaModel, generatedDialogId);
