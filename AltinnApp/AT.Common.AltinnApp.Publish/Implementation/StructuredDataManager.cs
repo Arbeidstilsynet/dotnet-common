@@ -60,7 +60,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
 
         if (!_config.StructuredDataConfiguration.KeepAppDataModelAfterMapping)
         {
-            await DeleteDatamodelElement(instance);
+            await DeleteDataModelElement(instance);
         }
     }
 
@@ -110,7 +110,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         }
     }
 
-    private async Task DeleteDatamodelElement(Instance instance)
+    private async Task DeleteDataModelElement(Instance instance)
     {
         var dataModelElement = await _applicationClient.GetRequiredDataModelElement<TDataModel>(
             instance
