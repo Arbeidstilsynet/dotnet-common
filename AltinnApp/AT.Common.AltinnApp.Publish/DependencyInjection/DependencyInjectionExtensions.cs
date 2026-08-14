@@ -256,11 +256,61 @@ public static class DependencyInjectionExtensions
         Func<IServiceProvider, IPatchOperationsProvider> patchOperationsProviderFactory,
         Func<
             IServiceProvider,
-            IOrganisasjonsnummerProvider<TStructuredData>
+            ISubmittersOrganisasjonsnummerProvider<TStructuredData>
         > organisasjonsnummerProviderFactory,
         IHostEnvironment env
     )
         where TStructuredData : class
+    {
+        services.AddDialogportenClientForEnvironment(env);
+        return services
+            .AddTransient(patchOperationsProviderFactory)
+            .AddTransient(organisasjonsnummerProviderFactory)
+            .AddTransient<IServiceTask, PatchDialogTask<TStructuredData>>();
+    }
+
+    /// <summary>
+    /// Registers the <see cref="UpdateDialogTask{TStructuredData}"/> service task along with its
+    /// required dependencies (Dialogporten client, patch operations provider, update dialog provider
+    /// and organisasjonsnummer provider).
+    /// </summary>
+    /// <remarks>
+    /// Use this task for handling updates (endringsmelding) of a melding. In contrast to
+    /// <see cref="AddPatchDialogTask{TStructuredData}"/>, the update may relate to a melding that was
+    /// not received via Altinn. In that case the <see cref="IUpdateDialogProvider{T}"/> instructs the
+    /// task to create a new dialog; otherwise the existing Altinn dialog is reused.
+    /// </remarks>
+    /// <typeparam name="TStructuredData">The structured data model type.</typeparam>
+    /// <param name="services">The service collection to add registrations to.</param>
+    /// <param name="patchOperationsProviderFactory">Factory that resolves the patch operations provider from the <see cref="IServiceProvider"/>.</param>
+    /// <param name="updateDialogProviderFactory">Factory that resolves the update dialog provider from the <see cref="IServiceProvider"/>.</param>
+    /// <param name="organisasjonsnummerProviderFactory">Factory that resolves the organisasjonsnummer provider from the <see cref="IServiceProvider"/>.</param>
+    /// <param name="env">The host environment, used to select production or test Dialogporten endpoints.</param>
+    /// <returns>The same <see cref="IServiceCollection"/> instance so that calls can be chained.</returns>
+    public static IServiceCollection AddPatchDialogTaskForUpdates<TStructuredData>(
+        this IServiceCollection services,
+        Func<IServiceProvider, IPatchOperationsProvider> patchOperationsProviderFactory,
+        Func<IServiceProvider, IUpdateDialogProvider<TStructuredData>> updateDialogProviderFactory,
+        Func<
+            IServiceProvider,
+            ISubmittersOrganisasjonsnummerProvider<TStructuredData>
+        > organisasjonsnummerProviderFactory,
+        IHostEnvironment env
+    )
+        where TStructuredData : class
+    {
+        services.AddDialogportenClientForEnvironment(env);
+        return services
+            .AddTransient(patchOperationsProviderFactory)
+            .AddTransient(updateDialogProviderFactory)
+            .AddTransient(organisasjonsnummerProviderFactory)
+            .AddTransient<IServiceTask, UpdateDialogTask<TStructuredData>>();
+    }
+
+    private static IServiceCollection AddDialogportenClientForEnvironment(
+        this IServiceCollection services,
+        IHostEnvironment env
+    )
     {
         services.AddDialogportenClient(
             new Altinn.ApiClients.Dialogporten.DialogportenSettings
@@ -276,9 +326,6 @@ public static class DependencyInjectionExtensions
                 );
             }
         );
-        return services
-            .AddTransient(patchOperationsProviderFactory)
-            .AddTransient(organisasjonsnummerProviderFactory)
-            .AddTransient<IServiceTask, PatchDialogTask<TStructuredData>>();
+        return services;
     }
 }
