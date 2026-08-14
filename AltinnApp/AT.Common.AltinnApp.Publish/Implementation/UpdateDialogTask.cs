@@ -97,15 +97,9 @@ internal sealed class UpdateDialogTask<T> : IServiceTask
             return ServiceTaskResult.FailedAbortProcessNext();
         }
 
-        var persisted = await _instanceClient.PersistDialogId(
-            instance,
-            confirmedDialogId,
-            _logger
-        );
+        var persisted = await _instanceClient.PersistDialogId(instance, confirmedDialogId, _logger);
 
-        return persisted
-            ? ServiceTaskResult.Success()
-            : ServiceTaskResult.FailedAbortProcessNext();
+        return persisted ? ServiceTaskResult.Success() : ServiceTaskResult.FailedAbortProcessNext();
     }
 
     private async Task<Guid?> ResolveDialogId(

@@ -246,26 +246,24 @@ public static class DependencyInjectionExtensions
     /// required dependencies (Dialogporten client, patch operations provider and organisasjonsnummer provider).
     /// </summary>
     /// <typeparam name="TStructuredData">The structured data model type.</typeparam>
+    /// <typeparam name="TOrgNrProvider">The organisasjonsnummer provider type.</typeparam>
+    /// <typeparam name="TPatchOperationsProvider">The patch operations provider type.</typeparam>
     /// <param name="services">The service collection to add registrations to.</param>
-    /// <param name="patchOperationsProviderFactory">Factory that resolves the patch operations provider from the <see cref="IServiceProvider"/>.</param>
-    /// <param name="organisasjonsnummerProviderFactory">Factory that resolves the organisasjonsnummer provider from the <see cref="IServiceProvider"/>.</param>
     /// <param name="env">The host environment, used to select production or test Dialogporten endpoints.</param>
     /// <returns>The same <see cref="IServiceCollection"/> instance so that calls can be chained.</returns>
-    public static IServiceCollection AddPatchDialogTask<TStructuredData>(
-        this IServiceCollection services,
-        Func<IServiceProvider, IPatchOperationsProvider> patchOperationsProviderFactory,
-        Func<
-            IServiceProvider,
-            ISubmittersOrganisasjonsnummerProvider<TStructuredData>
-        > organisasjonsnummerProviderFactory,
-        IHostEnvironment env
-    )
+    public static IServiceCollection AddPatchDialogTask<
+        TStructuredData,
+        TOrgNrProvider,
+        TPatchOperationsProvider
+    >(this IServiceCollection services, IHostEnvironment env)
         where TStructuredData : class
+        where TOrgNrProvider : class, ISubmittersOrganisasjonsnummerProvider<TStructuredData>
+        where TPatchOperationsProvider : class, IPatchOperationsProvider
     {
         services.AddDialogportenClientForEnvironment(env);
         return services
-            .AddTransient(patchOperationsProviderFactory)
-            .AddTransient(organisasjonsnummerProviderFactory)
+            .AddTransient<ISubmittersOrganisasjonsnummerProvider<TStructuredData>, TOrgNrProvider>()
+            .AddTransient<IPatchOperationsProvider, TPatchOperationsProvider>()
             .AddTransient<IServiceTask, PatchDialogTask<TStructuredData>>();
     }
 
@@ -276,34 +274,33 @@ public static class DependencyInjectionExtensions
     /// </summary>
     /// <remarks>
     /// Use this task for handling updates (endringsmelding) of a melding. In contrast to
-    /// <see cref="AddPatchDialogTask{TStructuredData}"/>, the update may relate to a melding that was
+    /// the patch dialog task, the update may relate to a melding that was
     /// not received via Altinn. In that case the <see cref="IUpdateDialogProvider{T}"/> instructs the
     /// task to create a new dialog; otherwise the existing Altinn dialog is reused.
     /// </remarks>
     /// <typeparam name="TStructuredData">The structured data model type.</typeparam>
+    /// <typeparam name="TOrgNrProvider">The organisasjonsnummer provider type.</typeparam>
+    /// <typeparam name="TPatchOperationsProvider">The patch operations provider type.</typeparam>
+    /// <typeparam name="TUpdateDialogProvider">The update dialog provider type.</typeparam>
     /// <param name="services">The service collection to add registrations to.</param>
-    /// <param name="patchOperationsProviderFactory">Factory that resolves the patch operations provider from the <see cref="IServiceProvider"/>.</param>
-    /// <param name="updateDialogProviderFactory">Factory that resolves the update dialog provider from the <see cref="IServiceProvider"/>.</param>
-    /// <param name="organisasjonsnummerProviderFactory">Factory that resolves the organisasjonsnummer provider from the <see cref="IServiceProvider"/>.</param>
     /// <param name="env">The host environment, used to select production or test Dialogporten endpoints.</param>
     /// <returns>The same <see cref="IServiceCollection"/> instance so that calls can be chained.</returns>
-    public static IServiceCollection AddPatchDialogTaskForUpdates<TStructuredData>(
-        this IServiceCollection services,
-        Func<IServiceProvider, IPatchOperationsProvider> patchOperationsProviderFactory,
-        Func<IServiceProvider, IUpdateDialogProvider<TStructuredData>> updateDialogProviderFactory,
-        Func<
-            IServiceProvider,
-            ISubmittersOrganisasjonsnummerProvider<TStructuredData>
-        > organisasjonsnummerProviderFactory,
-        IHostEnvironment env
-    )
+    public static IServiceCollection AddPatchDialogTaskForUpdates<
+        TStructuredData,
+        TOrgNrProvider,
+        TPatchOperationsProvider,
+        TUpdateDialogProvider
+    >(this IServiceCollection services, IHostEnvironment env)
         where TStructuredData : class
+        where TOrgNrProvider : class, ISubmittersOrganisasjonsnummerProvider<TStructuredData>
+        where TPatchOperationsProvider : class, IPatchOperationsProvider
+        where TUpdateDialogProvider : class, IUpdateDialogProvider<TStructuredData>
     {
         services.AddDialogportenClientForEnvironment(env);
         return services
-            .AddTransient(patchOperationsProviderFactory)
-            .AddTransient(updateDialogProviderFactory)
-            .AddTransient(organisasjonsnummerProviderFactory)
+            .AddTransient<ISubmittersOrganisasjonsnummerProvider<TStructuredData>, TOrgNrProvider>()
+            .AddTransient<IPatchOperationsProvider, TPatchOperationsProvider>()
+            .AddTransient<IUpdateDialogProvider<TStructuredData>, TUpdateDialogProvider>()
             .AddTransient<IServiceTask, UpdateDialogTask<TStructuredData>>();
     }
 

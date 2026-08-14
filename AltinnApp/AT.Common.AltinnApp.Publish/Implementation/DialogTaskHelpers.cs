@@ -75,7 +75,10 @@ internal static class DialogTaskHelpers
 
         if (
             updatedInstance.DataValues is not null
-            && updatedInstance.DataValues.TryGetValue(DialogIdDataValueKey, out var persistedDialogId)
+            && updatedInstance.DataValues.TryGetValue(
+                DialogIdDataValueKey,
+                out var persistedDialogId
+            )
             && string.Equals(
                 persistedDialogId,
                 dialogId.ToString(),
