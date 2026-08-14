@@ -3,6 +3,7 @@ using Altinn.ApiClients.Dialogporten.ServiceOwner.Features.V1;
 using Altinn.App.Core.Internal.Instances;
 using Altinn.App.Core.Internal.Process.ProcessTasks.ServiceTasks;
 using Arbeidstilsynet.Common.AltinnApp.Extensions;
+using Arbeidstilsynet.Common.AltinnApp.Model;
 using Arbeidstilsynet.Common.AltinnApp.Ports;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
