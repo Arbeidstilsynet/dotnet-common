@@ -60,7 +60,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
 
         if (!_config.StructuredDataConfiguration.KeepAppDataModelAfterMapping)
         {
-            await DeleteExistingStructuredData(instance);
+            await DeleteDatamodelElement(instance);
         }
     }
 
@@ -110,23 +110,13 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         }
     }
 
-
-    private async Task DeleteStructuredData(Instance instance)
+    private async Task DeleteDatamodelElement(Instance instance)
     {
-        var existingStructuredDataElements = instance
-            .Data.Where(d =>
-                string.Equals(
-                    d.DataType,
-                    _config.StructuredDataConfiguration.StructuredDataTypeId,
-                    StringComparison.OrdinalIgnoreCase
-                )
-            )
-            .ToList();
+        var dataModelElement = await _applicationClient.GetRequiredDataModelElement<TDataModel>(
+            instance
+        );
 
-        foreach (var element in existingStructuredDataElements)
-        {
-            await _dataClient.DeleteElement(instance, element);
-        }
+        await _dataClient.DeleteElement(instance, dataModelElement);
     }
 
     private async Task CreateStructuredData(Instance instance)
@@ -159,22 +149,20 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
 
     private async Task DeleteExistingStructuredData(Instance instance)
     {
-        var structuredDataExists = instance.Data.Any(d =>
-            string.Equals(
-                d.DataType,
-                _config.StructuredDataConfiguration.StructuredDataTypeId,
-                StringComparison.OrdinalIgnoreCase
+        var existingStructuredDataElements = instance
+            .Data.Where(d =>
+                string.Equals(
+                    d.DataType,
+                    _config.StructuredDataConfiguration.StructuredDataTypeId,
+                    StringComparison.OrdinalIgnoreCase
+                )
             )
-        );
+            .ToList();
 
-        if (!structuredDataExists)
+        foreach (var element in existingStructuredDataElements)
         {
-            return;
+            await _dataClient.DeleteElement(instance, element);
         }
-
-        var dataModelElement = await _applicationClient.GetRequiredDataModelElement<TDataModel>(instance);
-
-        await _dataClient.DeleteElement(instance, dataModelElement);
     }
 
     private async Task CreateAppSpecification(Instance instance)
