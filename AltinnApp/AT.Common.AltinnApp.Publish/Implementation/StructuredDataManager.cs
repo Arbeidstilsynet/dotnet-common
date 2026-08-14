@@ -110,7 +110,6 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         }
     }
 
-
     private async Task DeleteStructuredData(Instance instance)
     {
         var existingStructuredDataElements = instance
@@ -172,7 +171,9 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
             return;
         }
 
-        var dataModelElement = await _applicationClient.GetRequiredDataModelElement<TDataModel>(instance);
+        var dataModelElement = await _applicationClient.GetRequiredDataModelElement<TDataModel>(
+            instance
+        );
 
         await _dataClient.DeleteElement(instance, dataModelElement);
     }
