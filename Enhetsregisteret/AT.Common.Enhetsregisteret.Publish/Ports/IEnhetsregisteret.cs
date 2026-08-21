@@ -27,7 +27,8 @@ public interface IEnhetsregisteret
     /// </returns>
     /// <remarks>
     /// Kun HTTP 404 fanges og oversettes til <c>null</c>. Andre feil (f.eks. 400 for ugyldig
-    /// organisasjonsnummer eller 5xx) kastes videre som unntak.
+    /// organisasjonsnummer eller 5xx) kastes videre som unntak. Dersom responsen indikerer at
+    /// underenheten er slettet, kastes <see cref="VirksomhetSlettetException"/>.
     /// </remarks>
     Task<Underenhet?> GetUnderenhet(
         string organisasjonsnummer,
@@ -45,7 +46,8 @@ public interface IEnhetsregisteret
     /// </returns>
     /// <remarks>
     /// Kun HTTP 404 fanges og oversettes til <c>null</c>. Andre feil (f.eks. 400 for ugyldig
-    /// organisasjonsnummer eller 5xx) kastes videre som unntak.
+    /// organisasjonsnummer eller 5xx) kastes videre som unntak. Dersom responsen indikerer at
+    /// enheten er slettet, kastes <see cref="VirksomhetSlettetException"/>.
     /// </remarks>
     Task<Enhet?> GetEnhet(
         string organisasjonsnummer,

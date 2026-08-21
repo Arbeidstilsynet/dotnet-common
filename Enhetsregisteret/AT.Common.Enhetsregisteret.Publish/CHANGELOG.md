@@ -19,6 +19,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 3.1.0
+
+### Added
+
+- Added `VirksomhetSlettetException` for deleted virksomheter, including `Organisasjonsnummer`, `Navn` (if present), `Slettedato`, and the virksomhet itself.
+
+### Changed
+
+- `GetEnhet(...)` and `GetUnderenhet(...)` now throw `VirksomhetSlettetException` when Enhetsregisteret responds with a non-null `SlettetEnhet`/`SlettetUnderEnhet`.
+- Added unit tests covering deleted enhet/underenhet responses and exception payload/message content.
+
 ## 3.0.0
 
 ### Changed
