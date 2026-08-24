@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The generated apps and authentication clients could not build a URL at all, because Kiota only emits the `baseurl` path parameter when a specification declares a server and neither specification does. The token exchange sits on the critical path for every authenticated call, so this would have failed on the first request. The specifications are normalised as part of client generation.
 - The generated storage and apps clients indexed instances by a `Guid` where Altinn expects an integer party id, because both specifications contain paths that collide at the same position in the request-builder tree and Kiota silently merged them.
+- The Maskinporten token request ignored its `CancellationToken`, because the bespoke HTTP layer it used had no way to accept one. That layer is now gone entirely.
 - The correspondence multipart upload sent its form fields in camelCase where the specification declares PascalCase. Form binding is case-insensitive, so this was latent rather than broken.
 
 ### Notes

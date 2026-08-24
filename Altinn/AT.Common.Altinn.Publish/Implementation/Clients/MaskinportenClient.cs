@@ -1,3 +1,4 @@
+using System.Net.Http.Json;
 using System.Text.Json;
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
@@ -60,17 +61,25 @@ internal class MaskinportenClient : IMaskinportenClient
 
         var jwtGrant = _config.Value.GenerateJwtGrant(_httpClient.BaseAddress!);
 
-        var dict = new Dictionary<string, string>
+        var form = new Dictionary<string, string>
         {
             { "grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer" },
             { "assertion", jwtGrant },
         };
 
+        using var response = await _httpClient.PostAsync(
+            "token",
+            new FormUrlEncodedContent(form),
+            cancellationToken
+        );
+
+        response.EnsureSuccessStatusCode();
+
         var tokenResponse =
-            await _httpClient
-                .Post("token", new FormUrlEncodedContent(dict))
-                .ReceiveContent<MaskinportenTokenResponse>(_jsonSerializerOptions)
-            ?? throw new Exception("Failed to retrieve Maskinporten token");
+            await response.Content.ReadFromJsonAsync<MaskinportenTokenResponse>(
+                _jsonSerializerOptions,
+                cancellationToken
+            ) ?? throw new InvalidOperationException("Failed to retrieve Maskinporten token");
 
         UpdateCachedToken(tokenResponse);
 

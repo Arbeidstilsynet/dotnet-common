@@ -141,25 +141,28 @@ internal static class AltinnUrlResolver
         ResolvedAltinnUrls resolved
     )
     {
-        var differences = new List<string>();
-
-        foreach (var property in typeof(ResolvedAltinnUrls).GetProperties())
-        {
-            if (!Equals(property.GetValue(defaults), property.GetValue(resolved)))
-            {
-                differences.Add(property.Name);
-            }
-        }
+        var differences = typeof(ResolvedAltinnUrls)
+            .GetProperties()
+            .Where(property => !Equals(property.GetValue(defaults), property.GetValue(resolved)))
+            .Select(property => property.Name)
+            .ToList();
 
         return differences;
     }
+
+    // The Altinn localtest container serves plain HTTP on the loopback interface and offers no
+    // TLS endpoint, so this address cannot be https. It is only ever reachable from the developer's
+    // own machine, and Production rejects it outright.
+#pragma warning disable S5332 // Using http protocol is insecure. Use https instead.
+    private static readonly Uri LocalAltinnUrl = new("http://local.altinn.cloud:8000/");
+#pragma warning restore S5332
 
     private static Uri GetPlatformUrl(AltinnEnvironment target) =>
         target switch
         {
             AltinnEnvironment.Production => new Uri("https://platform.altinn.no/"),
             AltinnEnvironment.Tt02 => new Uri("https://platform.tt02.altinn.no/"),
-            AltinnEnvironment.Local => new Uri("http://local.altinn.cloud:8000/"),
+            AltinnEnvironment.Local => LocalAltinnUrl,
             _ => throw new ArgumentOutOfRangeException(nameof(target), target, null),
         };
 
@@ -168,7 +171,7 @@ internal static class AltinnUrlResolver
         {
             AltinnEnvironment.Production => new Uri($"https://{orgId}.apps.altinn.no/"),
             AltinnEnvironment.Tt02 => new Uri($"https://{orgId}.apps.tt02.altinn.no/"),
-            AltinnEnvironment.Local => new Uri("http://local.altinn.cloud:8000/"),
+            AltinnEnvironment.Local => LocalAltinnUrl,
             _ => throw new ArgumentOutOfRangeException(nameof(target), target, null),
         };
 

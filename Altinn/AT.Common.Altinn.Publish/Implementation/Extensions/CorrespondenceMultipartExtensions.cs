@@ -80,9 +80,11 @@ internal static class CorrespondenceMultipartExtensions
             body.AddNotification($"{prefix}.Notification", notification);
         }
 
-        for (var i = 0; i < (source.ExternalReferences?.Count ?? 0); i++)
+        var externalReferences = source.ExternalReferences ?? [];
+
+        for (var i = 0; i < externalReferences.Count; i++)
         {
-            var reference = source.ExternalReferences![i];
+            var reference = externalReferences[i];
             body.AddText(
                 $"{prefix}.ExternalReferences[{i}].ReferenceType",
                 reference.ReferenceType
@@ -93,9 +95,11 @@ internal static class CorrespondenceMultipartExtensions
             );
         }
 
-        for (var i = 0; i < (source.ReplyOptions?.Count ?? 0); i++)
+        var replyOptions = source.ReplyOptions ?? [];
+
+        for (var i = 0; i < replyOptions.Count; i++)
         {
-            var replyOption = source.ReplyOptions![i];
+            var replyOption = replyOptions[i];
             body.AddText($"{prefix}.ReplyOptions[{i}].LinkURL", replyOption.LinkURL);
             body.AddText($"{prefix}.ReplyOptions[{i}].LinkText", replyOption.LinkText);
         }
@@ -122,9 +126,11 @@ internal static class CorrespondenceMultipartExtensions
         body.AddText($"{prefix}.MessageSummary", content.MessageSummary);
         body.AddText($"{prefix}.MessageBody", content.MessageBody);
 
-        for (var i = 0; i < (content.Attachments?.Count ?? 0); i++)
+        var attachments = content.Attachments ?? [];
+
+        for (var i = 0; i < attachments.Count; i++)
         {
-            var attachment = content.Attachments![i];
+            var attachment = attachments[i];
             var attachmentPrefix = $"{prefix}.Attachments[{i}]";
 
             body.AddText($"{attachmentPrefix}.DataLocationType", attachment.DataLocationType);
@@ -170,9 +176,11 @@ internal static class CorrespondenceMultipartExtensions
 
     private static void AddCollection<T>(this MultipartBody body, string name, List<T>? values)
     {
-        for (var i = 0; i < (values?.Count ?? 0); i++)
+        var items = values ?? [];
+
+        for (var i = 0; i < items.Count; i++)
         {
-            body.AddText($"{name}[{i}]", values![i]);
+            body.AddText($"{name}[{i}]", items[i]);
         }
     }
 
