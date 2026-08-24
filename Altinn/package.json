@@ -7,7 +7,8 @@
     "generate:client:correspondence": "dotnet kiota generate -l CSharp -c CorrespondenceApiClient -n Arbeidstilsynet.Common.Altinn.Correspondence -d AT.Common.Altinn.Publish/openapi-correspondence-tt02.json -o AT.Common.Altinn.Publish/Generated/Correspondence --exclude-backward-compatible --clean-output",
     "generate:client:apps": "dotnet kiota generate -l CSharp -c AppsApiClient -n Arbeidstilsynet.Common.Altinn.Apps -d AT.Common.Altinn.Publish/openapi-app.json -o AT.Common.Altinn.Publish/Generated/Apps --exclude-backward-compatible --clean-output --include-path \"/*/*/instances/**\" --exclude-path \"**/data/*/validate\"",
     "generate:client:dialogporten": "dotnet kiota generate -l CSharp -c DialogportenApiClient -n Arbeidstilsynet.Common.Altinn.Dialogporten -d AT.Common.Altinn.Publish/openapi-dialogporten-tt02.json -o AT.Common.Altinn.Publish/Generated/Dialogporten --exclude-backward-compatible --clean-output --include-path \"/api/v1/serviceowner/**\"",
-    "generate:client": "npm run generate:client:storage && npm run generate:client:events && npm run generate:client:authentication && npm run generate:client:correspondence && npm run generate:client:apps && npm run generate:client:dialogporten",
-    "check:spec-drift": "node scripts/check-spec-drift.mjs"
+    "generate:client": "npm run normalize:specs && npm run generate:client:storage && npm run generate:client:events && npm run generate:client:authentication && npm run generate:client:correspondence && npm run generate:client:apps && npm run generate:client:dialogporten",
+    "check:spec-drift": "node scripts/check-spec-drift.mjs",
+    "normalize:specs": "node scripts/normalize-specs.mjs"
   }
 }
