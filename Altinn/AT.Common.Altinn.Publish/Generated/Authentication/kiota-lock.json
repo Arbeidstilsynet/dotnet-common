@@ -1,0 +1,36 @@
+{
+  "descriptionHash": "CC1DEDAEDD364DD5BCB0FFAF5253A9EB71B7CEB88FFFD5D80913AE9E2F2EBA2DDA36CC7A7D83FB19BA3AEDF75BAF117FC2067FE64BA308EF30113C4D1F2AE15A",
+  "descriptionLocation": "../../openapi-authentication.json",
+  "lockFileVersion": "1.0.0",
+  "kiotaVersion": "1.32.4",
+  "clientClassName": "AuthenticationApiClient",
+  "typeAccessModifier": "Public",
+  "clientNamespaceName": "Arbeidstilsynet.Common.Altinn.Authentication",
+  "language": "CSharp",
+  "usesBackingStore": false,
+  "excludeBackwardCompatible": true,
+  "includeAdditionalData": true,
+  "disableSSLValidation": false,
+  "serializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Text.TextSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Form.FormSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Multipart.MultipartSerializationWriterFactory"
+  ],
+  "deserializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Text.TextParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Form.FormParseNodeFactory"
+  ],
+  "structuredMimeTypes": [
+    "application/json",
+    "text/plain;q=0.9",
+    "application/x-www-form-urlencoded;q=0.2",
+    "multipart/form-data;q=0.1"
+  ],
+  "includePatterns": [
+    "/exchange/**"
+  ],
+  "excludePatterns": [],
+  "disabledValidationRules": []
+}

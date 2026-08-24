@@ -1,0 +1,36 @@
+{
+  "descriptionHash": "CF0AB1EAA332007F390592376996B06BDC5FD875E1E73298E64901CF80D6407D4E0B889F83A142A7DAB9B68062A6FF89513B3481641F30C22E1E392A79F3119E",
+  "descriptionLocation": "../../openapi-app.json",
+  "lockFileVersion": "1.0.0",
+  "kiotaVersion": "1.32.4",
+  "clientClassName": "AppsApiClient",
+  "typeAccessModifier": "Public",
+  "clientNamespaceName": "Arbeidstilsynet.Common.Altinn.Apps",
+  "language": "CSharp",
+  "usesBackingStore": false,
+  "excludeBackwardCompatible": true,
+  "includeAdditionalData": true,
+  "disableSSLValidation": false,
+  "serializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Text.TextSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Form.FormSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Multipart.MultipartSerializationWriterFactory"
+  ],
+  "deserializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Text.TextParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Form.FormParseNodeFactory"
+  ],
+  "structuredMimeTypes": [
+    "application/json",
+    "text/plain;q=0.9",
+    "application/x-www-form-urlencoded;q=0.2",
+    "multipart/form-data;q=0.1"
+  ],
+  "includePatterns": [
+    "/*/*/instances/**"
+  ],
+  "excludePatterns": [],
+  "disabledValidationRules": []
+}
