@@ -12,7 +12,7 @@ using System;
 namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Api.External.Item
 {
     /// <summary>
-    /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwner-id}\{instanceGu-id}\api\external\{externalApiId}
+    /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\api\external\{externalApiId}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class WithExternalApiItemRequestBuilder : BaseRequestBuilder
@@ -22,7 +22,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Api.E
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public WithExternalApiItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwner%2Did}/{instanceGu%2Did}/api/external/{externalApiId}{?queryParams}", pathParameters)
+        public WithExternalApiItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwnerPartyId}/{instanceGuid}/api/external/{externalApiId}{?queryParams}", pathParameters)
         {
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Api.E
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public WithExternalApiItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwner%2Did}/{instanceGu%2Did}/api/external/{externalApiId}{?queryParams}", rawUrl)
+        public WithExternalApiItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwnerPartyId}/{instanceGuid}/api/external/{externalApiId}{?queryParams}", rawUrl)
         {
         }
         /// <summary>

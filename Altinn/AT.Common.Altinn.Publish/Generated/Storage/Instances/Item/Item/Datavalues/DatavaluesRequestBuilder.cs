@@ -12,7 +12,7 @@ using System;
 namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Datavalues
 {
     /// <summary>
-    /// Builds and executes requests for operations under \instances\{instanceGu-id}\{instanceGuid}\datavalues
+    /// Builds and executes requests for operations under \instances\{instanceOwnerPartyId}\{instanceGuid}\datavalues
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class DatavaluesRequestBuilder : BaseRequestBuilder
@@ -22,7 +22,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Datavalues
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public DatavaluesRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/instances/{instanceGu%2Did}/{instanceGuid}/datavalues", pathParameters)
+        public DatavaluesRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/instances/{instanceOwnerPartyId}/{instanceGuid}/datavalues", pathParameters)
         {
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Datavalues
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public DatavaluesRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/instances/{instanceGu%2Did}/{instanceGuid}/datavalues", rawUrl)
+        public DatavaluesRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/instances/{instanceOwnerPartyId}/{instanceGuid}/datavalues", rawUrl)
         {
         }
         /// <summary>

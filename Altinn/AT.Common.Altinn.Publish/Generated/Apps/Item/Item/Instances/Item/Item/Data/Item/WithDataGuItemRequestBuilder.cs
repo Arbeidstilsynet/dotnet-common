@@ -3,7 +3,6 @@
 using Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.Item.Pdf;
 using Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.Item.Tags;
 using Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.Item.UserDefinedMetadata;
-using Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.Item.Validate;
 using Arbeidstilsynet.Common.Altinn.Apps.Models;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -16,7 +15,7 @@ using System;
 namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.Item
 {
     /// <summary>
-    /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwner-id}\{instanceGu-id}\data\{dataGuid}
+    /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\data\{dataGuid}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class WithDataGuItemRequestBuilder : BaseRequestBuilder
@@ -36,17 +35,12 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.
         {
             get => new global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.Item.UserDefinedMetadata.UserDefinedMetadataRequestBuilder(PathParameters, RequestAdapter);
         }
-        /// <summary>The validate property</summary>
-        public global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.Item.Validate.ValidateRequestBuilder Validate
-        {
-            get => new global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.Item.Validate.ValidateRequestBuilder(PathParameters, RequestAdapter);
-        }
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.Item.WithDataGuItemRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public WithDataGuItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwner%2Did}/{instanceGu%2Did}/data/{dataGuid}{?ignoredValidators*,includeRowId*,language*}", pathParameters)
+        public WithDataGuItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwnerPartyId}/{instanceGuid}/data/{dataGuid}{?ignoredValidators*,includeRowId*,language*}", pathParameters)
         {
         }
         /// <summary>
@@ -54,7 +48,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public WithDataGuItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwner%2Did}/{instanceGu%2Did}/data/{dataGuid}{?ignoredValidators*,includeRowId*,language*}", rawUrl)
+        public WithDataGuItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwnerPartyId}/{instanceGuid}/data/{dataGuid}{?ignoredValidators*,includeRowId*,language*}", rawUrl)
         {
         }
         /// <summary>

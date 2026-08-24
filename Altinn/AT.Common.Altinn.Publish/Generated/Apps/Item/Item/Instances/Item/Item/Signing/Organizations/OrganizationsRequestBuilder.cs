@@ -12,7 +12,7 @@ using System;
 namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Signing.Organizations
 {
     /// <summary>
-    /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwner-id}\{instanceGu-id}\signing\organizations
+    /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\signing\organizations
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class OrganizationsRequestBuilder : BaseRequestBuilder
@@ -22,7 +22,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Signi
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public OrganizationsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwner%2Did}/{instanceGu%2Did}/signing/organizations{?language*}", pathParameters)
+        public OrganizationsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwnerPartyId}/{instanceGuid}/signing/organizations{?language*}", pathParameters)
         {
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Signi
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public OrganizationsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwner%2Did}/{instanceGu%2Did}/signing/organizations{?language*}", rawUrl)
+        public OrganizationsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwnerPartyId}/{instanceGuid}/signing/organizations{?language*}", rawUrl)
         {
         }
         /// <summary>

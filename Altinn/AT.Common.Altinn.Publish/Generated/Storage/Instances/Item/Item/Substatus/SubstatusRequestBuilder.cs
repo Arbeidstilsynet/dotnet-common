@@ -12,7 +12,7 @@ using System;
 namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Substatus
 {
     /// <summary>
-    /// Builds and executes requests for operations under \instances\{instanceGu-id}\{instanceGuid}\substatus
+    /// Builds and executes requests for operations under \instances\{instanceOwnerPartyId}\{instanceGuid}\substatus
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class SubstatusRequestBuilder : BaseRequestBuilder
@@ -22,7 +22,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Substatus
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public SubstatusRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/instances/{instanceGu%2Did}/{instanceGuid}/substatus", pathParameters)
+        public SubstatusRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/instances/{instanceOwnerPartyId}/{instanceGuid}/substatus", pathParameters)
         {
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Substatus
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public SubstatusRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/instances/{instanceGu%2Did}/{instanceGuid}/substatus", rawUrl)
+        public SubstatusRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/instances/{instanceOwnerPartyId}/{instanceGuid}/substatus", rawUrl)
         {
         }
         /// <summary>

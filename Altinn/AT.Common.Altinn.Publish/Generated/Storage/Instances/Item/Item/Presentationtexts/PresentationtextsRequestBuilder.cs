@@ -12,7 +12,7 @@ using System;
 namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Presentationtexts
 {
     /// <summary>
-    /// Builds and executes requests for operations under \instances\{instanceGu-id}\{instanceGuid}\presentationtexts
+    /// Builds and executes requests for operations under \instances\{instanceOwnerPartyId}\{instanceGuid}\presentationtexts
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class PresentationtextsRequestBuilder : BaseRequestBuilder
@@ -22,7 +22,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Presentation
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public PresentationtextsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/instances/{instanceGu%2Did}/{instanceGuid}/presentationtexts", pathParameters)
+        public PresentationtextsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/instances/{instanceOwnerPartyId}/{instanceGuid}/presentationtexts", pathParameters)
         {
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Presentation
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public PresentationtextsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/instances/{instanceGu%2Did}/{instanceGuid}/presentationtexts", rawUrl)
+        public PresentationtextsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/instances/{instanceOwnerPartyId}/{instanceGuid}/presentationtexts", rawUrl)
         {
         }
         /// <summary>

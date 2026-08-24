@@ -12,7 +12,7 @@ using System;
 namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Validate
 {
     /// <summary>
-    /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwner-id}\{instanceGu-id}\validate
+    /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\validate
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class ValidateRequestBuilder : BaseRequestBuilder
@@ -22,7 +22,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Valid
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public ValidateRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwner%2Did}/{instanceGu%2Did}/validate{?ignoredValidators*,language*,onlyIncrementalValidators*}", pathParameters)
+        public ValidateRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwnerPartyId}/{instanceGuid}/validate{?ignoredValidators*,language*,onlyIncrementalValidators*}", pathParameters)
         {
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Valid
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public ValidateRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwner%2Did}/{instanceGu%2Did}/validate{?ignoredValidators*,language*,onlyIncrementalValidators*}", rawUrl)
+        public ValidateRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwnerPartyId}/{instanceGuid}/validate{?ignoredValidators*,language*,onlyIncrementalValidators*}", rawUrl)
         {
         }
         /// <summary>

@@ -22,15 +22,15 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances
             get => new global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Create.CreateRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>Gets an item from the Arbeidstilsynet.Common.Altinn.Apps.item.item.instances.item collection</summary>
-        /// <param name="position">Unique identifier of the item</param>
-        /// <returns>A <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.InstanceOwnerItemRequestBuilder"/></returns>
-        public global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.InstanceOwnerItemRequestBuilder this[string position]
+        /// <param name="position">unique id of the party that is the owner of the instance</param>
+        /// <returns>A <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.WithInstanceOwnerPartyItemRequestBuilder"/></returns>
+        public global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.WithInstanceOwnerPartyItemRequestBuilder this[int position]
         {
             get
             {
                 var urlTplParams = new Dictionary<string, object>(PathParameters);
-                urlTplParams.Add("instanceOwner%2Did", position);
-                return new global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.InstanceOwnerItemRequestBuilder(urlTplParams, RequestAdapter);
+                urlTplParams.Add("instanceOwnerPartyId", position);
+                return new global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.WithInstanceOwnerPartyItemRequestBuilder(urlTplParams, RequestAdapter);
             }
         }
         /// <summary>

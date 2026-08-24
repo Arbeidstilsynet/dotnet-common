@@ -1,5 +1,5 @@
 {
-  "descriptionHash": "1F1565DEC41E6BBE5DFB060A4D7C3A1E2ACDB2C2CFC504FFCF2580147F4788155FE44097B44923D04A75292554CAB8D6F15A4947E825B55377BA7830E81B802F",
+  "descriptionHash": "232EBA55867581E42EF6F8A012A6962CA7B367FC06D2C3F69C15270BECBC647544795ADF59BBC3947F76B22861E1BA5874C6FE26548E0ADB95B26D98DF5A1607",
   "descriptionLocation": "../../openapi-storage.json",
   "lockFileVersion": "1.0.0",
   "kiotaVersion": "1.32.4",
@@ -29,6 +29,8 @@
     "multipart/form-data;q=0.1"
   ],
   "includePatterns": [],
-  "excludePatterns": [],
+  "excludePatterns": [
+    "/instances/{instanceGuid}"
+  ],
   "disabledValidationRules": []
 }

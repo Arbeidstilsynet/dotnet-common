@@ -11,7 +11,7 @@ using System;
 namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Pages.Order
 {
     /// <summary>
-    /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwner-id}\{instanceGu-id}\pages\order
+    /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\pages\order
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class OrderRequestBuilder : BaseRequestBuilder
@@ -21,7 +21,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Pages
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public OrderRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwner%2Did}/{instanceGu%2Did}/pages/order{?currentPage*,dataTypeId*,layoutSetId*}", pathParameters)
+        public OrderRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwnerPartyId}/{instanceGuid}/pages/order{?currentPage*,dataTypeId*,layoutSetId*}", pathParameters)
         {
         }
         /// <summary>
@@ -29,7 +29,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Pages
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public OrderRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwner%2Did}/{instanceGu%2Did}/pages/order{?currentPage*,dataTypeId*,layoutSetId*}", rawUrl)
+        public OrderRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwnerPartyId}/{instanceGuid}/pages/order{?currentPage*,dataTypeId*,layoutSetId*}", rawUrl)
         {
         }
         /// <summary>

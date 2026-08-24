@@ -11,10 +11,10 @@ using System;
 namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item
 {
     /// <summary>
-    /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwner-id}
+    /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class InstanceOwnerItemRequestBuilder : BaseRequestBuilder
+    public partial class WithInstanceOwnerPartyItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The active property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Active.ActiveRequestBuilder Active
@@ -23,30 +23,30 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item
         }
         /// <summary>Gets an item from the Arbeidstilsynet.Common.Altinn.Apps.item.item.instances.item.item collection</summary>
         /// <param name="position">unique id to identify the instance</param>
-        /// <returns>A <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.InstanceGuItemRequestBuilder"/></returns>
-        public global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.InstanceGuItemRequestBuilder this[Guid position]
+        /// <returns>A <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.WithInstanceGuItemRequestBuilder"/></returns>
+        public global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.WithInstanceGuItemRequestBuilder this[Guid position]
         {
             get
             {
                 var urlTplParams = new Dictionary<string, object>(PathParameters);
-                urlTplParams.Add("instanceGu%2Did", position);
-                return new global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.InstanceGuItemRequestBuilder(urlTplParams, RequestAdapter);
+                urlTplParams.Add("instanceGuid", position);
+                return new global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.WithInstanceGuItemRequestBuilder(urlTplParams, RequestAdapter);
             }
         }
         /// <summary>
-        /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.InstanceOwnerItemRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.WithInstanceOwnerPartyItemRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public InstanceOwnerItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwner%2Did}", pathParameters)
+        public WithInstanceOwnerPartyItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwnerPartyId}", pathParameters)
         {
         }
         /// <summary>
-        /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.InstanceOwnerItemRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.WithInstanceOwnerPartyItemRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public InstanceOwnerItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwner%2Did}", rawUrl)
+        public WithInstanceOwnerPartyItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwnerPartyId}", rawUrl)
         {
         }
     }

@@ -1,5 +1,5 @@
 {
-  "descriptionHash": "CF0AB1EAA332007F390592376996B06BDC5FD875E1E73298E64901CF80D6407D4E0B889F83A142A7DAB9B68062A6FF89513B3481641F30C22E1E392A79F3119E",
+  "descriptionHash": "877C4734CE90BD5046617CCB2A02333C3342C64B265452F31438B3FFFA09624434FFB30EC9AC32DB2C6DC13A96B43A87666DCD1B8129860E6584B95472F5D5B6",
   "descriptionLocation": "../../openapi-app.json",
   "lockFileVersion": "1.0.0",
   "kiotaVersion": "1.32.4",
@@ -31,6 +31,8 @@
   "includePatterns": [
     "/*/*/instances/**"
   ],
-  "excludePatterns": [],
+  "excludePatterns": [
+    "**/data/*/validate"
+  ],
   "disabledValidationRules": []
 }

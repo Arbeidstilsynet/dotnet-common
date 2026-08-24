@@ -25,10 +25,10 @@ using System;
 namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item
 {
     /// <summary>
-    /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwner-id}\{instanceGu-id}
+    /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class InstanceGuItemRequestBuilder : BaseRequestBuilder
+    public partial class WithInstanceGuItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The actions property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Actions.ActionsRequestBuilder Actions
@@ -96,19 +96,19 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item
             get => new global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Validate.ValidateRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
-        /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.InstanceGuItemRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.WithInstanceGuItemRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public InstanceGuItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwner%2Did}/{instanceGu%2Did}{?hard*}", pathParameters)
+        public WithInstanceGuItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwnerPartyId}/{instanceGuid}{?hard*}", pathParameters)
         {
         }
         /// <summary>
-        /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.InstanceGuItemRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.WithInstanceGuItemRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public InstanceGuItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwner%2Did}/{instanceGu%2Did}{?hard*}", rawUrl)
+        public WithInstanceGuItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/{org}/{app}/instances/{instanceOwnerPartyId}/{instanceGuid}{?hard*}", rawUrl)
         {
         }
         /// <summary>
@@ -119,11 +119,11 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<global::Arbeidstilsynet.Common.Altinn.Apps.Models.Instance?> DeleteAsync(Action<RequestConfiguration<global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.InstanceGuItemRequestBuilder.InstanceGuItemRequestBuilderDeleteQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::Arbeidstilsynet.Common.Altinn.Apps.Models.Instance?> DeleteAsync(Action<RequestConfiguration<global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.WithInstanceGuItemRequestBuilder.WithInstanceGuItemRequestBuilderDeleteQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<global::Arbeidstilsynet.Common.Altinn.Apps.Models.Instance> DeleteAsync(Action<RequestConfiguration<global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.InstanceGuItemRequestBuilder.InstanceGuItemRequestBuilderDeleteQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::Arbeidstilsynet.Common.Altinn.Apps.Models.Instance> DeleteAsync(Action<RequestConfiguration<global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.WithInstanceGuItemRequestBuilder.WithInstanceGuItemRequestBuilderDeleteQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             var requestInfo = ToDeleteRequestInformation(requestConfiguration);
@@ -159,11 +159,11 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public RequestInformation ToDeleteRequestInformation(Action<RequestConfiguration<global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.InstanceGuItemRequestBuilder.InstanceGuItemRequestBuilderDeleteQueryParameters>>? requestConfiguration = default)
+        public RequestInformation ToDeleteRequestInformation(Action<RequestConfiguration<global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.WithInstanceGuItemRequestBuilder.WithInstanceGuItemRequestBuilderDeleteQueryParameters>>? requestConfiguration = default)
         {
 #nullable restore
 #else
-        public RequestInformation ToDeleteRequestInformation(Action<RequestConfiguration<global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.InstanceGuItemRequestBuilder.InstanceGuItemRequestBuilderDeleteQueryParameters>> requestConfiguration = default)
+        public RequestInformation ToDeleteRequestInformation(Action<RequestConfiguration<global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.WithInstanceGuItemRequestBuilder.WithInstanceGuItemRequestBuilderDeleteQueryParameters>> requestConfiguration = default)
         {
 #endif
             var requestInfo = new RequestInformation(Method.DELETE, UrlTemplate, PathParameters);
@@ -193,17 +193,17 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item
         /// <summary>
         /// Returns a request builder with the provided arbitrary URL. Using this method means any other path or query parameters are ignored.
         /// </summary>
-        /// <returns>A <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.InstanceGuItemRequestBuilder"/></returns>
+        /// <returns>A <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.WithInstanceGuItemRequestBuilder"/></returns>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
-        public global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.InstanceGuItemRequestBuilder WithUrl(string rawUrl)
+        public global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.WithInstanceGuItemRequestBuilder WithUrl(string rawUrl)
         {
-            return new global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.InstanceGuItemRequestBuilder(rawUrl, RequestAdapter);
+            return new global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.WithInstanceGuItemRequestBuilder(rawUrl, RequestAdapter);
         }
         /// <summary>
         /// Deletes an instance.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class InstanceGuItemRequestBuilderDeleteQueryParameters 
+        public partial class WithInstanceGuItemRequestBuilderDeleteQueryParameters 
         {
             /// <summary>A value indicating whether the instance should be unrecoverable.</summary>
             [QueryParameter("hard")]

@@ -11,5 +11,9 @@ public interface IMaskinportenClient
     /// Get a Maskinporten token
     /// </summary>
     /// <returns></returns>
-    Task<MaskinportenTokenResponse> GetToken();
+    /// <summary>
+    /// Gets a Maskinporten token.
+    /// </summary>
+    /// <param name="cancellationToken">Cancels the token request.</param>
+    Task<MaskinportenTokenResponse> GetToken(CancellationToken cancellationToken = default);
 }

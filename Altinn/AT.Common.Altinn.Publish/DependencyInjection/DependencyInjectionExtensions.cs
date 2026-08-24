@@ -1,13 +1,21 @@
+using Arbeidstilsynet.Common.Altinn.Apps;
+using Arbeidstilsynet.Common.Altinn.Authentication;
+using Arbeidstilsynet.Common.Altinn.Correspondence;
+using Arbeidstilsynet.Common.Altinn.Dialogporten;
+using Arbeidstilsynet.Common.Altinn.Events;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
+using Arbeidstilsynet.Common.Altinn.Implementation.Authentication;
 using Arbeidstilsynet.Common.Altinn.Implementation.Clients;
 using Arbeidstilsynet.Common.Altinn.Implementation.Configuration;
 using Arbeidstilsynet.Common.Altinn.Implementation.Token;
 using Arbeidstilsynet.Common.Altinn.Ports.Adapter;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Arbeidstilsynet.Common.Altinn.Ports.Token;
+using Arbeidstilsynet.Common.Altinn.Storage;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.Kiota.Abstractions;
 
 namespace Arbeidstilsynet.Common.Altinn.DependencyInjection;
 
@@ -124,6 +132,33 @@ public static class DependencyInjectionExtensions
         services.AddAltinnHttpClient(DialogportenApiClientKey, urls.DialogportenUrl);
         services.AddAltinnHttpClient(MaskinportenApiClientKey, urls.MaskinportenUrl);
 
+        services.AddScoped<AltinnAuthenticationProvider>();
+
+        services.AddGeneratedClient<StorageRequestAdapter, StorageApiClient>(
+            urls.StorageUrl,
+            adapter => new StorageApiClient(adapter)
+        );
+        services.AddGeneratedClient<EventsRequestAdapter, EventsApiClient>(
+            urls.EventsUrl,
+            adapter => new EventsApiClient(adapter)
+        );
+        services.AddGeneratedClient<AppsRequestAdapter, AppsApiClient>(
+            urls.AppBaseUrl,
+            adapter => new AppsApiClient(adapter)
+        );
+        services.AddGeneratedClient<CorrespondenceRequestAdapter, CorrespondenceApiClient>(
+            urls.CorrespondenceUrl,
+            adapter => new CorrespondenceApiClient(adapter)
+        );
+        services.AddGeneratedClient<DialogportenRequestAdapter, DialogportenApiClient>(
+            urls.DialogportenUrl,
+            adapter => new DialogportenApiClient(adapter)
+        );
+        services.AddGeneratedClient<AuthenticationRequestAdapter, AuthenticationApiClient>(
+            urls.AuthenticationUrl,
+            adapter => new AuthenticationApiClient(adapter)
+        );
+
         services.AddTransient<IAltinnAppsClient, AltinnAppsClient>();
         services.AddTransient<IAltinnEventsClient, AltinnEventsClient>();
         services.AddTransient<IAltinnStorageClient, AltinnStorageClient>();
@@ -133,6 +168,27 @@ public static class DependencyInjectionExtensions
         services.AddTransient<IMaskinportenClient, MaskinportenClient>();
 
         return services;
+    }
+
+    /// <summary>
+    /// Registers a Kiota request adapter together with the generated client built on top of it,
+    /// pinning the adapter's base URL to the resolved value.
+    /// </summary>
+    private static void AddGeneratedClient<TAdapter, TClient>(
+        this IServiceCollection services,
+        Uri baseUrl,
+        Func<TAdapter, TClient> createClient
+    )
+        where TAdapter : class, IRequestAdapter
+        where TClient : class
+    {
+        services.AddScoped<TAdapter>();
+        services.AddScoped(serviceProvider =>
+        {
+            var adapter = serviceProvider.GetRequiredService<TAdapter>();
+            adapter.BaseUrl = baseUrl.ToString();
+            return createClient(adapter);
+        });
     }
 
     private static void AddAltinnHttpClient(

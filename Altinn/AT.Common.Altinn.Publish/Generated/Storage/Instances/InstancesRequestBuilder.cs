@@ -19,15 +19,15 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances
     public partial class InstancesRequestBuilder : BaseRequestBuilder
     {
         /// <summary>Gets an item from the Arbeidstilsynet.Common.Altinn.Storage.instances.item collection</summary>
-        /// <param name="position">The id of the instance to retrieve.</param>
-        /// <returns>A <see cref="global::Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.InstanceGuItemRequestBuilder"/></returns>
-        public global::Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.InstanceGuItemRequestBuilder this[Guid position]
+        /// <param name="position">The party id of the instance owner.</param>
+        /// <returns>A <see cref="global::Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.WithInstanceOwnerPartyItemRequestBuilder"/></returns>
+        public global::Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.WithInstanceOwnerPartyItemRequestBuilder this[int position]
         {
             get
             {
                 var urlTplParams = new Dictionary<string, object>(PathParameters);
-                urlTplParams.Add("instanceGu%2Did", position);
-                return new global::Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.InstanceGuItemRequestBuilder(urlTplParams, RequestAdapter);
+                urlTplParams.Add("instanceOwnerPartyId", position);
+                return new global::Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.WithInstanceOwnerPartyItemRequestBuilder(urlTplParams, RequestAdapter);
             }
         }
         /// <summary>

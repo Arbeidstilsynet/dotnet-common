@@ -34,12 +34,14 @@ internal class MaskinportenClient : IMaskinportenClient
         _config = altinnAuthenticationConfigurationOptions;
     }
 
-    public async Task<MaskinportenTokenResponse> GetToken()
+    public async Task<MaskinportenTokenResponse> GetToken(
+        CancellationToken cancellationToken = default
+    )
     {
-        await _semaphore.WaitAsync();
+        await _semaphore.WaitAsync(cancellationToken);
         try
         {
-            return await GetTokenInternal();
+            return await GetTokenInternal(cancellationToken);
         }
         finally
         {
@@ -47,7 +49,9 @@ internal class MaskinportenClient : IMaskinportenClient
         }
     }
 
-    private async Task<MaskinportenTokenResponse> GetTokenInternal()
+    private async Task<MaskinportenTokenResponse> GetTokenInternal(
+        CancellationToken cancellationToken
+    )
     {
         if (TryGetCachedToken(out var cachedToken))
         {
