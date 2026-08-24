@@ -209,8 +209,8 @@ public class DependencyInjectionBaseUrlTests
                 .GetArguments()[0]!;
 
         request.Headers["Authorization"].ShouldContain("Bearer maskinporten-token");
-        request.URI.ToString()
+        request
+            .URI.ToString()
             .ShouldBe("https://platform.altinn.no/authentication/api/v1/exchange/maskinporten");
     }
 }
-

@@ -1,7 +1,6 @@
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Storage.Models;
-
 using Arbeidstilsynet.Common.Altinn.Test.Unit.TestData;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
@@ -56,7 +55,10 @@ public class AltinnAdapterExtensionTests
             },
             Org = Org,
             Process = new ProcessState { Started = ProcessStarted, Ended = ProcessEnded },
-            DataValues = new Dictionary<string, string> { { "dialog.id", DialogId } }.ToDataValues(),
+            DataValues = new Dictionary<string, string>
+            {
+                { "dialog.id", DialogId },
+            }.ToDataValues(),
         };
         //act
         var result = metadata.ToAltinnMetadata();
@@ -113,6 +115,3 @@ public class AltinnAdapterExtensionTests
         await Verifier.Verify(result, _verifySettings);
     }
 }
-
-
-

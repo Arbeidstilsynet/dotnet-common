@@ -35,10 +35,7 @@ public sealed class AltinnInstanceOwnerPartyIdMissingException(Instance instance
         instance.AppId
     );
 
-public sealed class AltinnDataElementIdMissingException(
-    Instance instance,
-    DataElement dataElement
-)
+public sealed class AltinnDataElementIdMissingException(Instance instance, DataElement dataElement)
     : AltinnInstanceSummaryException(
         $"Data element id is required for data type '{dataElement.DataType}' in instance '{instance.Id}' from app '{instance.AppId}'.",
         instance.Id,
@@ -47,4 +44,3 @@ public sealed class AltinnDataElementIdMissingException(
 {
     public string? DataType { get; } = dataElement.DataType;
 }
-

@@ -11,9 +11,10 @@ internal class AltinnEventsClient(EventsApiClient client) : IAltinnEventsClient
         CancellationToken cancellationToken = default
     )
     {
-        return await client.Subscriptions[subscriptionId].GetAsync(
-                cancellationToken: cancellationToken
-            ) ?? throw new InvalidOperationException("Failed to get subscription from Altinn");
+        return await client
+                .Subscriptions[subscriptionId]
+                .GetAsync(cancellationToken: cancellationToken)
+            ?? throw new InvalidOperationException("Failed to get subscription from Altinn");
     }
 
     public async Task<Subscription> Subscribe(
@@ -25,13 +26,10 @@ internal class AltinnEventsClient(EventsApiClient client) : IAltinnEventsClient
             ?? throw new InvalidOperationException("Failed to subscribe to Altinn");
     }
 
-    public async Task Unsubscribe(
-        int subscriptionId,
-        CancellationToken cancellationToken = default
-    )
+    public async Task Unsubscribe(int subscriptionId, CancellationToken cancellationToken = default)
     {
-        await client.Subscriptions[subscriptionId].DeleteAsync(
-            cancellationToken: cancellationToken
-        );
+        await client
+            .Subscriptions[subscriptionId]
+            .DeleteAsync(cancellationToken: cancellationToken);
     }
 }

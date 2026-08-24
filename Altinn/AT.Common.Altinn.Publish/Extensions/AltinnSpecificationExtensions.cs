@@ -1,7 +1,7 @@
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
-using Arbeidstilsynet.Common.Altinn.Storage.Models;
 using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
+using Arbeidstilsynet.Common.Altinn.Storage.Models;
 
 namespace Arbeidstilsynet.Common.Altinn.Extensions;
 
@@ -122,4 +122,3 @@ internal static class AltinnSpecificationExtensions
         return dataElement.Filename;
     }
 }
-

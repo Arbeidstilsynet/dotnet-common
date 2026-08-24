@@ -35,4 +35,3 @@ public static class InstanceExtensions
         return instanceGuid;
     }
 }
-

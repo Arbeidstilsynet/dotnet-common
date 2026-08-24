@@ -151,10 +151,7 @@ internal class AltinnAdapter(
         };
     }
 
-    private async Task<AltinnDocument> GetAltinnDocument(
-        DataElement dataElement,
-        Instance instance
-    )
+    private async Task<AltinnDocument> GetAltinnDocument(DataElement dataElement, Instance instance)
     {
         var appSpec = instance.GetSpecification();
 

@@ -222,8 +222,7 @@ public class CorrespondenceRequestExtensionsTests
                 separatorLength = 2;
             }
 
-            var value =
-                headerEnd < 0 ? string.Empty : part[(headerEnd + separatorLength)..].Trim();
+            var value = headerEnd < 0 ? string.Empty : part[(headerEnd + separatorLength)..].Trim();
 
             fields[name] = value;
         }
@@ -231,5 +230,3 @@ public class CorrespondenceRequestExtensionsTests
         return fields;
     }
 }
-
-

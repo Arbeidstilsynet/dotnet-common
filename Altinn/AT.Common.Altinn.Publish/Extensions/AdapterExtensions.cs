@@ -160,4 +160,3 @@ public static class AdapterExtensions
             );
     }
 }
-

@@ -81,8 +81,8 @@ public class ApiExceptionMappingTests
             .ThrowsAsync(ServerError());
 
         // A server error must not be reported as "no such correspondence".
-        var exception = await Should.ThrowAsync<ApiException>(
-            () => _meldingerAdapter.GetCorrespondence(Guid.NewGuid())
+        var exception = await Should.ThrowAsync<ApiException>(() =>
+            _meldingerAdapter.GetCorrespondence(Guid.NewGuid())
         );
 
         exception.ResponseStatusCode.ShouldBe((int)HttpStatusCode.InternalServerError);

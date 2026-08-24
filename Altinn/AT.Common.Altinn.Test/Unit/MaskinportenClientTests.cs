@@ -94,9 +94,7 @@ public class MaskinportenClientTests
     {
         _handler.RespondWith(NewToken(expiresIn: 120));
 
-        var tokens = await Task.WhenAll(
-            Enumerable.Range(0, 10).Select(_ => _sut.GetToken())
-        );
+        var tokens = await Task.WhenAll(Enumerable.Range(0, 10).Select(_ => _sut.GetToken()));
 
         tokens.ShouldAllBe(token => token.AccessToken == "access-token-1");
 

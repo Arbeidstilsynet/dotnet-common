@@ -269,7 +269,10 @@ public class DependencyInjectionExtensionTests
             _maskinportenConfiguration,
             new AltinnConfiguration
             {
-                Overrides = new AltinnUrlOverrides { PlatformUrl = new Uri("http://localhost:1234/") },
+                Overrides = new AltinnUrlOverrides
+                {
+                    PlatformUrl = new Uri("http://localhost:1234/"),
+                },
             }
         );
 

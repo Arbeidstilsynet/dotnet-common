@@ -10,4 +10,3 @@ public record FileMetadata
     public string? ContentType { get; init; }
     public string? Filename { get; init; }
 }
-

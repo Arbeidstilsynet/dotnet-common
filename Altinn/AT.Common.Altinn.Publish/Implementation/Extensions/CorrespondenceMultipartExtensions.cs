@@ -168,11 +168,7 @@ internal static class CorrespondenceMultipartExtensions
         );
     }
 
-    private static void AddCollection<T>(
-        this MultipartBody body,
-        string name,
-        List<T>? values
-    )
+    private static void AddCollection<T>(this MultipartBody body, string name, List<T>? values)
     {
         for (var i = 0; i < (values?.Count ?? 0); i++)
         {

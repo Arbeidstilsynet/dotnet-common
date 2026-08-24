@@ -157,7 +157,8 @@ public class AltinnStorageClientSeamTests
         // is applied by hand and would otherwise be dropped silently.
         var headers = CapturedRequest().Headers;
 
-        headers.ContainsKey(InstanceQueryParameters.InstanceOwnerIdentifierHeaderName)
+        headers
+            .ContainsKey(InstanceQueryParameters.InstanceOwnerIdentifierHeaderName)
             .ShouldBeTrue();
         headers[InstanceQueryParameters.InstanceOwnerIdentifierHeaderName]
             .ShouldContain("0192:123456789");

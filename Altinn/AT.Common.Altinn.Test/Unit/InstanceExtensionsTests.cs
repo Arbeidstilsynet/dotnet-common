@@ -21,4 +21,3 @@ public class InstanceExtensionsTests
         result.ShouldBe(guid);
     }
 }
-

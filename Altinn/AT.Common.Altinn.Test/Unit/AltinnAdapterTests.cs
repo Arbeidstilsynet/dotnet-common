@@ -5,13 +5,13 @@ using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Implementation.Configuration;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
-using Arbeidstilsynet.Common.Altinn.Storage.Models;
 using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
+using Arbeidstilsynet.Common.Altinn.Storage.Models;
 using Arbeidstilsynet.Common.Altinn.Test.Unit.TestData;
-using Microsoft.Kiota.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Kiota.Abstractions;
 using NSubstitute;
 using Shouldly;
 
@@ -45,13 +45,7 @@ public class AltinnAdapterTests
             MaskinportenUrl = new Uri("https://maskinporten.no/"),
         };
 
-        _adapter = new AltinnAdapter(
-            _storageClient,
-            _eventsClient,
-            _configuration,
-            _urls,
-            _logger
-        );
+        _adapter = new AltinnAdapter(_storageClient, _eventsClient, _configuration, _urls, _logger);
     }
 
     #region GetSummary Tests
@@ -196,9 +190,7 @@ public class AltinnAdapterTests
         await _eventsClient
             .Received(1)
             .Subscribe(
-                Arg.Is<SubscriptionRequestModel>(req =>
-                    req.SourceFilter!.Contains("dat/my-app")
-                )
+                Arg.Is<SubscriptionRequestModel>(req => req.SourceFilter!.Contains("dat/my-app"))
             );
     }
 
@@ -258,8 +250,8 @@ public class AltinnAdapterTests
             );
 
         // Act / Assert
-        await Should.ThrowAsync<ApiException>(
-            () => _adapter.UnsubscribeForCompletedProcessEvents(subscription)
+        await Should.ThrowAsync<ApiException>(() =>
+            _adapter.UnsubscribeForCompletedProcessEvents(subscription)
         );
     }
 
@@ -303,9 +295,7 @@ public class AltinnAdapterTests
         // Arrange
         var appId = "test-app";
 
-        _storageClient
-            .GetInstances(default!)
-            .ReturnsForAnyArgs(new InstanceQueryResponse());
+        _storageClient.GetInstances(default!).ReturnsForAnyArgs(new InstanceQueryResponse());
 
         // Act
         await _adapter.GetMetadataForNonCompletedInstances(appId, processIsComplete: false);
@@ -340,13 +330,7 @@ public class AltinnAdapterTests
 
         _storageClient
             .GetInstances(Arg.Any<InstanceQueryParameters>())
-            .Returns(
-                new InstanceQueryResponse
-                {
-                    Instances = instances,
-                    Count = instances.Count,
-                }
-            );
+            .Returns(new InstanceQueryResponse { Instances = instances, Count = instances.Count });
         _storageClient
             .GetInstanceData(Arg.Any<InstanceDataRequest>())
             .Returns(new MemoryStream([1, 2, 3]));
@@ -373,13 +357,7 @@ public class AltinnAdapterTests
 
         _storageClient
             .GetInstances(Arg.Any<InstanceQueryParameters>())
-            .Returns(
-                new InstanceQueryResponse
-                {
-                    Instances = instances,
-                    Count = instances.Count,
-                }
-            );
+            .Returns(new InstanceQueryResponse { Instances = instances, Count = instances.Count });
         _storageClient
             .GetInstanceData(Arg.Any<InstanceDataRequest>())
             .Returns(new MemoryStream([1, 2, 3]));
@@ -544,6 +522,3 @@ public class AltinnAdapterTests
 
     #endregion
 }
-
-
-

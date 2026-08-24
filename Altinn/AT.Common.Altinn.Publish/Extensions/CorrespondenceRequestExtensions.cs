@@ -48,4 +48,3 @@ internal static class CorrespondenceRequestExtensions
         return [.. receivers.Select(s => s.ToAltinnRessourceFormat())];
     }
 }
-

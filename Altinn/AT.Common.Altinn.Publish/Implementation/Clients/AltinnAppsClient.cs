@@ -17,7 +17,8 @@ internal class AltinnAppsClient(AppsApiClient client, IOptions<AltinnConfigurati
         CancellationToken cancellationToken = default
     )
     {
-        return await client[configuration.Value.OrgId][appId]
+        return await client[configuration.Value.OrgId]
+                [appId]
                 .Instances[instanceAddress.GetInstanceOwnerPartyId()][instanceAddress.InstanceGuid]
                 .Complete.PostAsync(cancellationToken: cancellationToken)
             ?? throw new InvalidOperationException("Failed to complete instance");

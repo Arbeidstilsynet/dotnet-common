@@ -1,6 +1,6 @@
+using Arbeidstilsynet.Common.Altinn.Events.Models;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
-using Arbeidstilsynet.Common.Altinn.Events.Models;
 using Arbeidstilsynet.Common.Altinn.Storage.Models;
 using Bogus;
 using Bogus.Extensions.UnitedStates;
@@ -179,10 +179,7 @@ internal static class AltinnTestData
         };
     }
 
-    public static Faker<Instance> GetAltinnInstanceFaker(
-        string? org = null,
-        string? appId = null
-    )
+    public static Faker<Instance> GetAltinnInstanceFaker(string? org = null, string? appId = null)
     {
         var actualOrg = org ?? "dat";
         var actualAppId = appId ?? $"{actualOrg}/{{appName}}-app";
@@ -239,6 +236,3 @@ internal static class AltinnTestData
         };
     }
 }
-
-
-

@@ -121,4 +121,3 @@ namespace Arbeidstilsynet.Common.Altinn.Model.Adapter
         public Guid? IdempotentKey { get; set; }
     }
 }
-

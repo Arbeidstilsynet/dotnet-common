@@ -1,7 +1,7 @@
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
-using Arbeidstilsynet.Common.Altinn.Storage.Models;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
+using Arbeidstilsynet.Common.Altinn.Storage.Models;
 using NSubstitute;
 using Shouldly;
 
@@ -109,4 +109,3 @@ public class AltinnStorageClientExtensionsTests
         result.ShouldBe(firstPage.Instances);
     }
 }
-

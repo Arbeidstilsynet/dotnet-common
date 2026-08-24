@@ -19,6 +19,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 4.0.0
+
+### Changed
+
+- **BREAKING**: Replaced the hand-written Altinn HTTP clients and hand-copied models with [Kiota](https://learn.microsoft.com/openapi/kiota/)-generated clients and models, generated from Altinn's OpenAPI specifications. The specifications ship with the package, and the generated clients are exposed for local adaptation under `Arbeidstilsynet.Common.Altinn.Storage`, `.Events`, `.Authentication`, `.Correspondence`, `.Dialogporten` and `.Apps`.
+- **BREAKING**: The `IAltinn*Client` and adapter ports are unchanged in shape but now exchange the generated models. `AltinnInstance` becomes `Storage.Models.Instance`, `AltinnQueryResponse<T>` becomes `Storage.Models.InstanceQueryResponse`, `AltinnSubscription` becomes `Events.Models.Subscription`, `AltinnCorrespondenceOverview` becomes `Correspondence.Models.CorrespondenceOverviewExt`, `CorrespondenceResponse` becomes `Correspondence.Models.InitializeCorrespondencesResponseExt`, and `DialogportenLookupResponse` becomes `Dialogporten.Models.V1CommonIdentifierLookup_ServiceOwnerIdentifierLookup`.
+- **BREAKING**: `AltinnConfiguration` no longer exposes `AuthenticationUrl`, `StorageUrl`, `EventUrl`, `CorrespondenceUrl`, `DialogportenUrl` or `AppBaseUrl`. It now carries an explicit `Environment` (`AltinnEnvironment.Production`, `Tt02` or `Local`) from which every base URL is derived, plus an optional `Overrides` for testing against a mock server.
+- **BREAKING**: The Altinn instance to target is no longer inferred from the host environment alone. Production always targets production and rejects overrides; Staging defaults to TT02 and logs any override as a startup warning; every other host environment (Development, Test, QA, …) must state its target explicitly and throws at registration if it does not. `AltinnEnvironment.Local` preserves the previous local-development behaviour.
+- **BREAKING**: `MaskinportenConfiguration.MaskinportenUrl` moved to `AltinnUrlOverrides.MaskinportenUrl`, so that every URL override is subject to the same rules.
+- **BREAKING**: The token provider now follows the resolved Altinn target rather than `IsDevelopment()`. A local test token can no longer be paired with TT02 URLs.
+- **BREAKING**: `IAltinnEventsClient.Unsubscribe` returns `Task` rather than `Task<HttpResponseMessage>`. `IAltinnAdapter.UnsubscribeForCompletedProcessEvents` accordingly returns `false` only when the subscription does not exist, and propagates any other failure instead of reporting `false` for every non-success status.
+- **BREAKING**: Errors surface as Kiota's `ApiException` rather than `HttpRequestException` or `AltinnHttpRequestException`. Both adapters still return `null` for a missing resource.
+- **BREAKING**: All client and adapter methods accept an optional `CancellationToken`.
+- `CorrespondenceRequest` now carries the generated correspondence models, and its multipart upload uses the field names and casing declared by the specification.
+
+### Removed
+
+- **BREAKING**: `HostEnvironmentExtensions` (`CreateDefaultAltinnConfiguration`, `GetMaskinportenUrl`, `GetAltinnPlattformUrl`, `GetAltinnAppBaseUrl`). Base URLs are resolved from `AltinnConfiguration.Environment` instead.
+- **BREAKING**: The hand-written request and response models under `Model/Api`, superseded by the generated ones.
+
+### Fixed
+
+- The generated apps and authentication clients could not build a URL at all, because Kiota only emits the `baseurl` path parameter when a specification declares a server and neither specification does. The token exchange sits on the critical path for every authenticated call, so this would have failed on the first request. The specifications are normalised as part of client generation.
+- The generated storage and apps clients indexed instances by a `Guid` where Altinn expects an integer party id, because both specifications contain paths that collide at the same position in the request-builder tree and Kiota silently merged them.
+- The correspondence multipart upload sent its form fields in camelCase where the specification declares PascalCase. Form binding is case-insensitive, so this was latent rather than broken.
+
+### Notes
+
+- Correspondence and Dialogporten publish a specification per environment. Both TT02 specifications are a strict superset of their production counterparts, so a single client is generated per API from TT02; generating one per environment would split the public model types. A production application may therefore see a `404` from an endpoint that has not yet been released to production. `npm run check:spec-drift` fails if production ever declares a path or schema that TT02 lacks.
+- The generated models are Kiota `IParsable` types, not `System.Text.Json` POCOs. Deserialising them with `JsonSerializer` silently yields empty objects.
+
 ## 3.2.4
 
 ### Changed

@@ -1,11 +1,10 @@
 using System.Text.Json;
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
-using Arbeidstilsynet.Common.Altinn.Storage.Models;
 using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
-using Shouldly;
-
+using Arbeidstilsynet.Common.Altinn.Storage.Models;
 using Arbeidstilsynet.Common.Altinn.Test.Unit.TestData;
+using Shouldly;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 
@@ -71,7 +70,9 @@ public class AltinnAppSpecificationTests
             Id = "1",
             AppId = "org/some-app-id",
             Data = [],
-            DataValues = dataValuesKind is null ? null : new Dictionary<string, string>().ToDataValues(),
+            DataValues = dataValuesKind is null
+                ? null
+                : new Dictionary<string, string>().ToDataValues(),
         };
 
         Action act = () => _ = instance.GetSpecification();
@@ -186,6 +187,3 @@ public class AltinnAppSpecificationTests
         };
     }
 }
-
-
-
