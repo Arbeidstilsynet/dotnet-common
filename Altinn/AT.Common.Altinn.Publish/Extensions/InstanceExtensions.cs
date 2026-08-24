@@ -1,4 +1,4 @@
-using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
+using Arbeidstilsynet.Common.Altinn.Storage.Models;
 
 namespace Arbeidstilsynet.Common.Altinn.Extensions;
 
@@ -13,7 +13,7 @@ public static class InstanceExtensions
     /// <param name="instance"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public static Guid GetInstanceGuid(this AltinnInstance instance)
+    public static Guid GetInstanceGuid(this Instance instance)
     {
         // Split the Id by '/' and parse the second part as a Guid
         if (instance.Id.Split("/").Length != 2)
@@ -35,3 +35,4 @@ public static class InstanceExtensions
         return instanceGuid;
     }
 }
+

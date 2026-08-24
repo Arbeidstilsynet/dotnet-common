@@ -1,6 +1,6 @@
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
-using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
+using Arbeidstilsynet.Common.Altinn.Storage.Models;
 using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 
 namespace Arbeidstilsynet.Common.Altinn.Extensions;
@@ -11,12 +11,12 @@ internal static class AltinnSpecificationExtensions
     internal const string MainPdfDataTypeId = "MainPdfDataTypeId";
 
     /// <summary>
-    /// Gets the <see cref="AltinnAppSpecification"/> for the given <see cref="AltinnInstance"/>.
+    /// Gets the <see cref="AltinnAppSpecification"/> for the given <see cref="Instance"/>.
     /// </summary>
     /// <param name="instance"></param>
-    /// <returns>A default altinn specification, overridden by <see cref="AltinnInstance.DataValues"/> from the altinn instance.</returns>
+    /// <returns>A default altinn specification, overridden by <see cref="Instance.DataValues"/> from the altinn instance.</returns>
     /// <exception cref="ArgumentException">if the appId cannot be parsed from the instance</exception>
-    public static AltinnAppSpecification GetSpecification(this AltinnInstance instance)
+    public static AltinnAppSpecification GetSpecification(this Instance instance)
     {
         var sanitizedAppId =
             instance.AppId.SanitizeAppId()
@@ -26,7 +26,7 @@ internal static class AltinnSpecificationExtensions
 
         var resolvedSpec = new AltinnAppSpecification(sanitizedAppId);
 
-        var dataValues = instance.DataValues ?? [];
+        var dataValues = instance.GetDataValues();
 
         if (
             dataValues.TryGetValue(StructuredDataTypeIdKey, out var val)
@@ -61,7 +61,9 @@ internal static class AltinnSpecificationExtensions
     {
         return new FileMetadata
         {
-            AltinnId = Guid.Parse(dataElement.Id),
+            AltinnId = Guid.Parse(
+                dataElement.Id ?? throw new ArgumentException("Data element has no id.")
+            ),
             ContentType = dataElement.ContentType,
             AltinnDataType = dataElement.DataType,
             Filename = appSpec.GetFilename(dataElement),
@@ -73,22 +75,24 @@ internal static class AltinnSpecificationExtensions
         DataElement mainData,
         DataElement? structuredData,
         IEnumerable<DataElement> attachmentData
-    ) GetDataElementsBySignificance(this AltinnInstance instance)
+    ) GetDataElementsBySignificance(this Instance instance)
     {
         var appSpec = instance.GetSpecification();
 
+        var data = instance.Data ?? [];
+
         var mainData =
-            instance.Data.FirstOrDefault(d => d.DataType == appSpec.MainPdfDataTypeId)
+            data.FirstOrDefault(d => d.DataType == appSpec.MainPdfDataTypeId)
             ?? throw new AltinnMainDataElementNotFoundException(
                 instance,
                 appSpec.MainPdfDataTypeId,
-                instance.Data.Select(d => d.DataType)
+                data.Select(d => d.DataType)
             );
 
         DataElement? structuredData = null;
         List<DataElement> attachmentData = [];
 
-        foreach (var dataElement in instance.Data.Where(d => d.Id != mainData.Id))
+        foreach (var dataElement in data.Where(d => d.Id != mainData.Id))
         {
             if (dataElement.DataType == appSpec.StructuredDataTypeId)
             {
@@ -118,3 +122,4 @@ internal static class AltinnSpecificationExtensions
         return dataElement.Filename;
     }
 }
+

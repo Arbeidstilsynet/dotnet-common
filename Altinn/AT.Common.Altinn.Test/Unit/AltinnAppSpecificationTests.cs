@@ -1,9 +1,11 @@
 using System.Text.Json;
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
-using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
+using Arbeidstilsynet.Common.Altinn.Storage.Models;
 using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 using Shouldly;
+
+using Arbeidstilsynet.Common.Altinn.Test.Unit.TestData;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 
@@ -58,13 +60,19 @@ public class AltinnAppSpecificationTests
     }
 
     [Theory]
-    [InlineData("""{"id":"1","appId":"org/some-app-id","data":[]}""")]
-    [InlineData("""{"id":"1","appId":"org/some-app-id","data":[],"dataValues":null}""")]
-    public void GetSpecification_WhenDataValuesIsMissingOrNullInJson_DoesNotThrow(string json)
+    [InlineData(null)]
+    [InlineData("empty")]
+    public void GetSpecification_WhenDataValuesIsMissingOrNull_DoesNotThrow(string? dataValuesKind)
     {
-        var instance = JsonSerializer.Deserialize<AltinnInstance>(json);
-        instance.ShouldNotBeNull();
-        instance.DataValues.ShouldNotBeNull();
+        // The generated models are Kiota IParsable types rather than System.Text.Json POCOs, so
+        // they are built directly instead of being deserialised from a JSON literal.
+        var instance = new Instance
+        {
+            Id = "1",
+            AppId = "org/some-app-id",
+            Data = [],
+            DataValues = dataValuesKind is null ? null : new Dictionary<string, string>().ToDataValues(),
+        };
 
         Action act = () => _ = instance.GetSpecification();
         act.ShouldNotThrow();
@@ -128,7 +136,7 @@ public class AltinnAppSpecificationTests
         await Verify(fileMetadata, _verifySettings).UseParameters(dataType, contentType);
     }
 
-    private static AltinnInstance CreateCompliantInstance(
+    private static Instance CreateCompliantInstance(
         AltinnAppSpecification spec,
         params DataElement[] additionalDataElements
     )
@@ -149,17 +157,17 @@ public class AltinnAppSpecificationTests
         );
     }
 
-    private static AltinnInstance CreateInstance(
+    private static Instance CreateInstance(
         Dictionary<string, string> dataValues,
         params List<DataElement> dataElements
     )
     {
-        return new AltinnInstance()
+        return new Instance()
         {
             Id = new Guid("11111111-1111-1111-1111-111111111111").ToString(),
             AppId = "some-app-id",
             Data = dataElements.ToList(),
-            DataValues = dataValues,
+            DataValues = dataValues.ToDataValues(),
         };
     }
 
@@ -178,3 +186,6 @@ public class AltinnAppSpecificationTests
         };
     }
 }
+
+
+

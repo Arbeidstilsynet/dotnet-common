@@ -1,30 +1,33 @@
-using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
-using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
-using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
+using Arbeidstilsynet.Common.Altinn.Correspondence.Models;
 using Microsoft.AspNetCore.Http;
 
 namespace Arbeidstilsynet.Common.Altinn.Ports.Clients;
 
 /// <summary>
-/// Client for interacting with Altinn Correspondence (meldinger).
+/// Client for the Altinn correspondence API.
 /// </summary>
 public interface IAltinnCorrespondenceClient
 {
     /// <summary>
-    /// Initializes a new correspondence / altinn melding.
+    /// Initialises a correspondence, optionally uploading its attachments in the same request.
     /// </summary>
-    /// <param name="request">The correspondence request details.</param>
-    /// <param name="attachments">File attachments if any, else null</param>
-    /// <returns>The created correspondence mapped to our internal model.</returns>
-    Task<CorrespondenceResponse> InitializeCorrespondence(
-        InitializeCorrespondences request,
-        List<IFormFile>? attachments
+    /// <param name="request">The correspondence to initialise.</param>
+    /// <param name="attachments">
+    /// Files to upload alongside the correspondence. When supplied, the multipart upload endpoint
+    /// is used instead of the JSON one.
+    /// </param>
+    /// <param name="cancellationToken">Cancels the request.</param>
+    Task<InitializeCorrespondencesResponseExt> InitializeCorrespondence(
+        InitializeCorrespondencesExt request,
+        List<IFormFile>? attachments = null,
+        CancellationToken cancellationToken = default
     );
 
     /// <summary>
-    /// Returns an existing correspondence, throws <see cref="AltinnHttpRequestException"/> if it fails.
+    /// Gets an overview of a correspondence.
     /// </summary>
-    /// <param name="guid">The identifier of an existing correspondence</param>
-    /// <returns></returns>
-    Task<AltinnCorrespondenceOverview> GetCorrespondence(Guid guid);
+    Task<CorrespondenceOverviewExt> GetCorrespondence(
+        Guid correspondenceId,
+        CancellationToken cancellationToken = default
+    );
 }

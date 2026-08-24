@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text.Json;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
-using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
+using Arbeidstilsynet.Common.Altinn.Storage.Models;
 
 namespace Arbeidstilsynet.Common.Altinn.Extensions;
 
@@ -12,13 +12,13 @@ namespace Arbeidstilsynet.Common.Altinn.Extensions;
 public static class AdapterExtensions
 {
     /// <summary>
-    /// Converts an Altinn <see cref="AltinnInstance"/> to <see cref="AltinnMetadata"/>.
+    /// Converts an Altinn <see cref="Instance"/> to <see cref="AltinnMetadata"/>.
     /// </summary>
-    /// <param name="altinnInstance">The Altinn instance to convert.</param>
+    /// <param name="instance">The Altinn instance to convert.</param>
     /// <returns>The corresponding <see cref="AltinnMetadata"/> object.</returns>
-    public static AltinnMetadata ToAltinnMetadata(this AltinnInstance altinnInstance)
+    public static AltinnMetadata ToAltinnMetadata(this Instance instance)
     {
-        var appIdParts = altinnInstance.AppId?.Split('/');
+        var appIdParts = instance.AppId?.Split('/');
 
         if (appIdParts is not { Length: 2 })
         {
@@ -28,7 +28,7 @@ public static class AdapterExtensions
         var org = appIdParts[0];
         var app = appIdParts[1];
 
-        var instanceIdParts = altinnInstance.Id?.Split('/');
+        var instanceIdParts = instance.Id?.Split('/');
 
         if (instanceIdParts is not { Length: 2 })
         {
@@ -36,12 +36,11 @@ public static class AdapterExtensions
                 "InstanceId must be in the format partyId/instanceGuid"
             );
         }
-        string? dialogId = null;
-        if (altinnInstance.DataValues != null)
-        {
-            altinnInstance.DataValues.TryGetValue("dialog.id", out var retrievedDialogId);
-            dialogId = retrievedDialogId;
-        }
+
+        var dataValues = instance.GetDataValues();
+
+        dataValues.TryGetValue("dialog.id", out var dialogId);
+
         var partyId = instanceIdParts[0];
         var instanceGuid = Guid.Parse(instanceIdParts[1]);
 
@@ -51,12 +50,31 @@ public static class AdapterExtensions
             Org = org,
             InstanceGuid = instanceGuid,
             InstanceOwnerPartyId = partyId,
-            OrganisationNumber = altinnInstance.InstanceOwner?.OrganisationNumber,
-            ProcessStarted = altinnInstance.Process?.Started,
-            ProcessEnded = altinnInstance.Process?.Ended,
+            OrganisationNumber = instance.InstanceOwner?.OrganisationNumber,
+            ProcessStarted = instance.Process?.Started?.DateTime,
+            ProcessEnded = instance.Process?.Ended?.DateTime,
             DialogId = dialogId,
-            DataValues = altinnInstance.DataValues ?? [],
+            DataValues = dataValues,
         };
+    }
+
+    /// <summary>
+    /// Reads the instance's data values as a string dictionary.
+    /// </summary>
+    /// <remarks>
+    /// The specification models <c>dataValues</c> as a free-form object, so Kiota emits a type
+    /// whose entries live in an untyped <c>AdditionalData</c> bag rather than a dictionary.
+    /// </remarks>
+    internal static Dictionary<string, string> GetDataValues(this Instance instance)
+    {
+        if (instance.DataValues?.AdditionalData is not { } additionalData)
+        {
+            return [];
+        }
+
+        return additionalData
+            .Where(entry => entry.Value is not null)
+            .ToDictionary(entry => entry.Key, entry => entry.Value.ToString() ?? string.Empty);
     }
 
     /// <summary>
@@ -142,3 +160,4 @@ public static class AdapterExtensions
             );
     }
 }
+

@@ -1,9 +1,7 @@
 ﻿{
-  Id: Guid_1,
+  ContentType: application/pdf,
   DataType: ref-data-as-pdf,
   Filename: some-filename,
-  ContentType: application/pdf,
-  Locked: false,
-  IsRead: true,
-  FileScanResult: Clean
+  FileScanResult: Clean,
+  Id: Guid_1
 }

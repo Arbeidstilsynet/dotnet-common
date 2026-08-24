@@ -1,6 +1,6 @@
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
-using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
+using Arbeidstilsynet.Common.Altinn.Storage.Models;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using NSubstitute;
 using Shouldly;
@@ -17,15 +17,15 @@ public class AltinnStorageClientExtensionsTests
         // Arrange
         var queryParameters = new InstanceQueryParameters { AppId = "my-app" };
 
-        var firstPage = new AltinnQueryResponse<AltinnInstance>
+        var firstPage = new InstanceQueryResponse
         {
-            Instances = [new AltinnInstance { Id = "1" }, new AltinnInstance { Id = "2" }],
+            Instances = [new Instance { Id = "1" }, new Instance { Id = "2" }],
             Next = "http://example.com?continuationToken=abc123",
         };
 
-        var secondPage = new AltinnQueryResponse<AltinnInstance>
+        var secondPage = new InstanceQueryResponse
         {
-            Instances = [new AltinnInstance { Id = "3" }],
+            Instances = [new Instance { Id = "3" }],
             Next = null,
         };
 
@@ -48,15 +48,15 @@ public class AltinnStorageClientExtensionsTests
         // Arrange
         var queryParameters = new InstanceQueryParameters { AppId = "my-app" };
 
-        var firstPage = new AltinnQueryResponse<AltinnInstance>
+        var firstPage = new InstanceQueryResponse
         {
-            Instances = [new AltinnInstance { Id = "1" }, new AltinnInstance { Id = "2" }],
+            Instances = [new Instance { Id = "1" }, new Instance { Id = "2" }],
             Next = "http://example.com?continuationToken=abc123",
         };
 
-        var secondPage = new AltinnQueryResponse<AltinnInstance>
+        var secondPage = new InstanceQueryResponse
         {
-            Instances = [new AltinnInstance { Id = "3" }],
+            Instances = [new Instance { Id = "3" }],
             Next = "http://example.com?continuationToken=abc123",
         };
 
@@ -84,15 +84,15 @@ public class AltinnStorageClientExtensionsTests
         // Arrange
         var queryParameters = new InstanceQueryParameters { AppId = "my-app" };
 
-        var firstPage = new AltinnQueryResponse<AltinnInstance>
+        var firstPage = new InstanceQueryResponse
         {
-            Instances = [new AltinnInstance { Id = "1" }, new AltinnInstance { Id = "2" }],
+            Instances = [new Instance { Id = "1" }, new Instance { Id = "2" }],
             Next = nextLink,
         };
 
-        var secondPage = new AltinnQueryResponse<AltinnInstance>
+        var secondPage = new InstanceQueryResponse
         {
-            Instances = [new AltinnInstance { Id = "3" }],
+            Instances = [new Instance { Id = "3" }],
             Next = null,
         };
 
@@ -109,3 +109,4 @@ public class AltinnStorageClientExtensionsTests
         result.ShouldBe(firstPage.Instances);
     }
 }
+

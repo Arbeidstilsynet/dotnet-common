@@ -1,4 +1,4 @@
-using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
+using Arbeidstilsynet.Common.Altinn.Storage.Models;
 
 namespace Arbeidstilsynet.Common.Altinn.Model.Adapter;
 
@@ -10,3 +10,4 @@ public record FileMetadata
     public string? ContentType { get; init; }
     public string? Filename { get; init; }
 }
+

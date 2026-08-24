@@ -1,5 +1,5 @@
 using Arbeidstilsynet.Common.Altinn.Extensions;
-using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
+using Arbeidstilsynet.Common.Altinn.Storage.Models;
 using Shouldly;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
@@ -12,7 +12,7 @@ public class InstanceExtensionsTests
         var guid = Guid.NewGuid();
 
         // Arrange
-        var instance = new AltinnInstance { Id = $"dat/{guid}" };
+        var instance = new Instance { Id = $"dat/{guid}" };
 
         // Act
         var result = instance.GetInstanceGuid();
@@ -21,3 +21,4 @@ public class InstanceExtensionsTests
         result.ShouldBe(guid);
     }
 }
+

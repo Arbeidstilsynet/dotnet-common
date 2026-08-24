@@ -1,4 +1,4 @@
-using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
+using Arbeidstilsynet.Common.Altinn.Storage.Models;
 
 namespace Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 
@@ -14,7 +14,7 @@ public abstract class AltinnInstanceSummaryException(
 }
 
 public sealed class AltinnMainDataElementNotFoundException(
-    AltinnInstance instance,
+    Instance instance,
     string expectedMainDataType,
     IEnumerable<string?> existingDataTypes
 )
@@ -28,7 +28,7 @@ public sealed class AltinnMainDataElementNotFoundException(
     public IReadOnlyCollection<string?> ExistingDataTypes { get; } = [.. existingDataTypes];
 }
 
-public sealed class AltinnInstanceOwnerPartyIdMissingException(AltinnInstance instance)
+public sealed class AltinnInstanceOwnerPartyIdMissingException(Instance instance)
     : AltinnInstanceSummaryException(
         $"Instance owner party id is required for instance '{instance.Id}' from app '{instance.AppId}'.",
         instance.Id,
@@ -36,7 +36,7 @@ public sealed class AltinnInstanceOwnerPartyIdMissingException(AltinnInstance in
     );
 
 public sealed class AltinnDataElementIdMissingException(
-    AltinnInstance instance,
+    Instance instance,
     DataElement dataElement
 )
     : AltinnInstanceSummaryException(
@@ -47,3 +47,4 @@ public sealed class AltinnDataElementIdMissingException(
 {
     public string? DataType { get; } = dataElement.DataType;
 }
+

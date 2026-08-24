@@ -1,15 +1,17 @@
+using System.Net;
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
+using Arbeidstilsynet.Common.Altinn.Events.Models;
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Configuration;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
-using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 using Arbeidstilsynet.Common.Altinn.Ports.Adapter;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
+using Arbeidstilsynet.Common.Altinn.Storage.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using DataElement = Arbeidstilsynet.Common.Altinn.Model.Api.Response.DataElement;
+using Microsoft.Kiota.Abstractions;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 
@@ -28,7 +30,7 @@ internal class AltinnAdapter(
         return await GetInstanceSummaryAsync(instance);
     }
 
-    public Task<AltinnSubscription> SubscribeForCompletedProcessEvents(
+    public Task<Subscription> SubscribeForCompletedProcessEvents(
         SubscriptionRequestDto subscriptionRequestDto
     )
     {
@@ -36,10 +38,10 @@ internal class AltinnAdapter(
         var orgId = altinnConfigurationOptions.Value.OrgId;
         var appId = subscriptionRequestDto.AltinnAppId;
 
-        var mappedRequest = new AltinnSubscriptionRequest()
+        var mappedRequest = new SubscriptionRequestModel()
         {
-            SourceFilter = new Uri(baseUrl, $"{orgId}/{appId}"),
-            EndPoint = subscriptionRequestDto.CallbackUrl,
+            SourceFilter = new Uri(baseUrl, $"{orgId}/{appId}").ToString(),
+            EndPoint = subscriptionRequestDto.CallbackUrl.ToString(),
             TypeFilter = "app.instance.process.completed",
         };
         logger.LogInformation(
@@ -51,12 +53,22 @@ internal class AltinnAdapter(
         return altinnEventsClient.Subscribe(mappedRequest);
     }
 
-    public async Task<bool> UnsubscribeForCompletedProcessEvents(
-        AltinnSubscription altinnSubscription
-    )
+    public async Task<bool> UnsubscribeForCompletedProcessEvents(Subscription altinnSubscription)
     {
-        var response = await altinnEventsClient.Unsubscribe(altinnSubscription.Id);
-        return response.StatusCode == System.Net.HttpStatusCode.OK;
+        if (altinnSubscription.Id is not { } subscriptionId)
+        {
+            return false;
+        }
+
+        try
+        {
+            await altinnEventsClient.Unsubscribe(subscriptionId);
+            return true;
+        }
+        catch (ApiException e) when (e.ResponseStatusCode == (int)HttpStatusCode.NotFound)
+        {
+            return false;
+        }
     }
 
     public async Task<IEnumerable<AltinnMetadata>> GetMetadataForNonCompletedInstances(
@@ -117,7 +129,7 @@ internal class AltinnAdapter(
         return summaries;
     }
 
-    private async Task<AltinnInstanceSummary> GetInstanceSummaryAsync(AltinnInstance instance)
+    private async Task<AltinnInstanceSummary> GetInstanceSummaryAsync(Instance instance)
     {
         var (mainData, structuredData, attachmentData) = instance.GetDataElementsBySignificance();
 
@@ -141,7 +153,7 @@ internal class AltinnAdapter(
 
     private async Task<AltinnDocument> GetAltinnDocument(
         DataElement dataElement,
-        AltinnInstance instance
+        Instance instance
     )
     {
         var appSpec = instance.GetSpecification();
@@ -157,26 +169,22 @@ internal class AltinnAdapter(
         };
     }
 
-    public async Task<AltinnSubscription?> GetAltinnSubscription(int subscriptionId)
+    public async Task<Subscription?> GetAltinnSubscription(int subscriptionId)
     {
         try
         {
             return await altinnEventsClient.GetAltinnSubscription(subscriptionId);
         }
-        catch (HttpRequestException e)
+        catch (ApiException e) when (e.ResponseStatusCode == (int)HttpStatusCode.NotFound)
         {
-            if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                return null;
-            }
-            throw;
+            return null;
         }
     }
 }
 
 file static class Extensions
 {
-    public static InstanceRequest CreateInstanceRequest(this AltinnInstance instance)
+    public static InstanceRequest CreateInstanceRequest(this Instance instance)
     {
         return new InstanceRequest
         {
@@ -188,7 +196,7 @@ file static class Extensions
     }
 
     public static InstanceDataRequest CreateInstanceDataRequest(
-        this AltinnInstance instance,
+        this Instance instance,
         DataElement dataElement
     )
     {

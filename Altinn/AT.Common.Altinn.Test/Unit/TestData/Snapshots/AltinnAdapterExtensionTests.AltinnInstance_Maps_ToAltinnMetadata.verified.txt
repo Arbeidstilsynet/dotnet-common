@@ -7,7 +7,7 @@
     dialog.id: 651375fb-4f0f-4857-9f8d-a37d82a3aeb7
   },
   OrganisationNumber: 313546071,
-  ProcessStarted: 2025-09-25 12:00 Utc,
-  ProcessEnded: 2025-09-25 13:00 Utc,
+  ProcessStarted: 2025-09-25 12:00,
+  ProcessEnded: 2025-09-25 13:00,
   DialogId: 651375fb-4f0f-4857-9f8d-a37d82a3aeb7
 }
