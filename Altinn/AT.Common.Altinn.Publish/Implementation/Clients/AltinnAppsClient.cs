@@ -1,51 +1,25 @@
-using System.Text.Json;
+using Arbeidstilsynet.Common.Altinn.Apps;
+using Arbeidstilsynet.Common.Altinn.Apps.Models;
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
-using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
-using Arbeidstilsynet.Common.Altinn.Ports.Token;
 using Microsoft.Extensions.Options;
-using static Arbeidstilsynet.Common.Altinn.DependencyInjection.DependencyInjectionExtensions;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Clients;
 
-internal class AltinnAppsClient : IAltinnAppsClient
+internal class AltinnAppsClient(AppsApiClient client, IOptions<AltinnConfiguration> configuration)
+    : IAltinnAppsClient
 {
-    private readonly IAltinnTokenProvider _altinnTokenProvider;
-    private readonly HttpClient _httpClient;
-
-    private readonly JsonSerializerOptions _jsonSerializerOptions;
-    private readonly IOptions<AltinnConfiguration> _config;
-
-    public AltinnAppsClient(
-        IHttpClientFactory httpClientFactory,
-        IAltinnTokenProvider altinnTokenProvider,
-        IOptions<AltinnConfiguration> config
-    )
-    {
-        _altinnTokenProvider = altinnTokenProvider;
-        _config = config;
-        _httpClient = httpClientFactory.CreateClient(AltinnAppsApiClientKey);
-        _jsonSerializerOptions = new System.Text.Json.JsonSerializerOptions()
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        };
-    }
-
-    public async Task<AltinnInstance> CompleteInstance(
+    public async Task<Instance> CompleteInstance(
         string appId,
-        InstanceRequest instanceAddress
+        InstanceRequest instanceAddress,
+        CancellationToken cancellationToken = default
     )
     {
-        var orgId = _config.Value.OrgId;
-
-        var instanceUri = instanceAddress.ToInstanceUri("complete");
-
-        return await _httpClient
-                .PostAsJson($"{orgId}/{appId}/{instanceUri}", new { })
-                .WithBearerToken(await _altinnTokenProvider.GetToken())
-                .ReceiveContent<AltinnInstance>(_jsonSerializerOptions)
+        return await client[configuration.Value.OrgId][appId]
+                .Instances[instanceAddress.GetInstanceOwnerPartyId()][instanceAddress.InstanceGuid]
+                .Complete.PostAsync(cancellationToken: cancellationToken)
             ?? throw new InvalidOperationException("Failed to complete instance");
     }
 }

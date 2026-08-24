@@ -1,16 +1,17 @@
-using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
+using Arbeidstilsynet.Common.Altinn.Dialogporten.Models;
 
 namespace Arbeidstilsynet.Common.Altinn.Ports.Clients;
 
 /// <summary>
-/// Client for interacting with Dialogporten.
+/// Client for the Dialogporten API.
 /// </summary>
 public interface IAltinnDialogportenClient
 {
     /// <summary>
-    /// Looks up a dialog by instance reference in service owner context.
+    /// Looks up the dialog associated with an Altinn instance reference.
     /// </summary>
-    /// <param name="instanceRef">The instance reference to look up.</param>
-    /// <returns>The dialog lookup metadata.</returns>
-    Task<DialogportenLookupResponse> LookupDialog(string instanceRef);
+    Task<V1CommonIdentifierLookup_ServiceOwnerIdentifierLookup> LookupDialog(
+        string instanceRef,
+        CancellationToken cancellationToken = default
+    );
 }

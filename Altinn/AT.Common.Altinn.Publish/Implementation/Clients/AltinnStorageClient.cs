@@ -1,83 +1,83 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
-using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
-using Arbeidstilsynet.Common.Altinn.Ports.Token;
-using static Arbeidstilsynet.Common.Altinn.DependencyInjection.DependencyInjectionExtensions;
+using Arbeidstilsynet.Common.Altinn.Storage;
+using Arbeidstilsynet.Common.Altinn.Storage.Models;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Clients;
 
-internal class AltinnStorageClient : IAltinnStorageClient
+internal class AltinnStorageClient(StorageApiClient client) : IAltinnStorageClient
 {
-    private readonly IAltinnTokenProvider _altinnTokenProvider;
-    private readonly HttpClient _httpClient;
-
-    private readonly JsonSerializerOptions _jsonSerializerOptions;
-
-    public AltinnStorageClient(
-        IHttpClientFactory httpClientFactory,
-        IAltinnTokenProvider altinnTokenProvider
+    public async Task<Instance> GetInstance(
+        InstanceRequest instanceAddress,
+        CancellationToken cancellationToken = default
     )
     {
-        _altinnTokenProvider = altinnTokenProvider;
-        _httpClient = httpClientFactory.CreateClient(AltinnStorageApiClientKey);
-        _jsonSerializerOptions = new System.Text.Json.JsonSerializerOptions()
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        };
-        _jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        return await client
+                .Instances[instanceAddress.GetInstanceOwnerPartyId()][instanceAddress.InstanceGuid]
+                .GetAsync(cancellationToken: cancellationToken)
+            ?? throw new InvalidOperationException("Failed to get instance");
     }
 
-    public async Task<Stream> GetInstanceData(InstanceDataRequest request)
-    {
-        var uri = request.InstanceRequest.ToInstanceUri($"data/{request.DataId}");
-
-        return await _httpClient
-                .Get(uri)
-                .WithBearerToken(await _altinnTokenProvider.GetToken())
-                .ReceiveStream()
-            ?? throw new Exception("Failed to get instance data");
-    }
-
-    public async Task<Stream> GetInstanceData(Uri absoluteUri)
-    {
-        var url = _httpClient.BaseAddress.MakeRelativeOrThrow(absoluteUri).ToString();
-
-        return await _httpClient
-            .Get(url)
-            .WithBearerToken(await _altinnTokenProvider.GetToken())
-            .ReceiveStream();
-    }
-
-    public async Task<AltinnInstance> GetInstance(InstanceRequest instanceAddress)
-    {
-        return await _httpClient
-                .Get(instanceAddress.ToInstanceUri())
-                .WithBearerToken(await _altinnTokenProvider.GetToken())
-                .ReceiveContent<AltinnInstance>(_jsonSerializerOptions)
-            ?? throw new Exception("Failed to get instance");
-    }
-
-    public async Task<AltinnInstance> GetInstance(AltinnCloudEvent cloudEvent)
-    {
-        return await _httpClient
-                .Get(cloudEvent.ToInstanceUri())
-                .WithBearerToken(await _altinnTokenProvider.GetToken())
-                .ReceiveContent<AltinnInstance>(_jsonSerializerOptions)
-            ?? throw new Exception("Failed to get instance");
-    }
-
-    public async Task<AltinnQueryResponse<AltinnInstance>> GetInstances(
-        InstanceQueryParameters queryParameters
+    public Task<Instance> GetInstance(
+        AltinnCloudEvent cloudEvent,
+        CancellationToken cancellationToken = default
     )
     {
-        return await _httpClient
-                .Get("instances")
-                .ApplyInstanceQueryParameters(queryParameters)
-                .WithBearerToken(await _altinnTokenProvider.GetToken())
-                .ReceiveContent<AltinnQueryResponse<AltinnInstance>>(_jsonSerializerOptions)
-            ?? throw new Exception("Failed to get instance");
+        return GetInstance(cloudEvent.ToInstanceRequest(), cancellationToken);
+    }
+
+    public async Task<Stream> GetInstanceData(
+        InstanceDataRequest request,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return await client
+                .Instances[request.InstanceRequest.GetInstanceOwnerPartyId()][
+                    request.InstanceRequest.InstanceGuid
+                ]
+                .Data[request.DataId]
+                .GetAsync(cancellationToken: cancellationToken)
+            ?? throw new InvalidOperationException("Failed to get instance data");
+    }
+
+    public async Task<Stream> GetInstanceData(
+        Uri absoluteUri,
+        CancellationToken cancellationToken = default
+    )
+    {
+        // The path parameters are irrelevant here: WithUrl replaces the whole URL. Data elements
+        // are commonly addressed by the absolute self-link returned on an instance.
+        return await client
+                .Instances[0][Guid.Empty]
+                .Data[Guid.Empty]
+                .WithUrl(absoluteUri.ToString())
+                .GetAsync(cancellationToken: cancellationToken)
+            ?? throw new InvalidOperationException("Failed to get instance data");
+    }
+
+    public async Task<InstanceQueryResponse> GetInstances(
+        InstanceQueryParameters queryParameters,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return await client.Instances.GetAsync(
+                request =>
+                {
+                    queryParameters.ApplyTo(request.QueryParameters);
+
+                    // Kiota omits header parameters from the generated query-parameter class, so
+                    // the instance owner identifier has to be applied to the request directly.
+                    if (queryParameters.InstanceOwnerIdentifier is { Length: > 0 } identifier)
+                    {
+                        request.Headers.Add(
+                            InstanceQueryParameters.InstanceOwnerIdentifierHeaderName,
+                            identifier
+                        );
+                    }
+                },
+                cancellationToken
+            ) ?? throw new InvalidOperationException("Failed to get instances");
     }
 }
