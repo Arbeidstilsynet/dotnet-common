@@ -2,6 +2,7 @@ using System.Net;
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
+using Arbeidstilsynet.Common.Altinn.Implementation.Configuration;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
@@ -19,6 +20,7 @@ public class AltinnAdapterTests
     private readonly IAltinnStorageClient _storageClient;
     private readonly IAltinnEventsClient _eventsClient;
     private readonly IOptions<AltinnConfiguration> _configuration;
+    private readonly ResolvedAltinnUrls _urls;
     private readonly ILogger<AltinnAdapter> _logger;
     private readonly AltinnAdapter _adapter;
 
@@ -28,19 +30,26 @@ public class AltinnAdapterTests
         _eventsClient = Substitute.For<IAltinnEventsClient>();
         _logger = Substitute.For<ILogger<AltinnAdapter>>();
 
-        _configuration = Options.Create(
-            new AltinnConfiguration
-            {
-                OrgId = "dat",
-                AuthenticationUrl = new Uri("https://platform.altinn.no/authentication/api/v1"),
-                StorageUrl = new Uri("https://platform.altinn.no/storage/api/v1"),
-                EventUrl = new Uri("https://platform.altinn.no/events/api/v1"),
-                CorrespondenceUrl = new Uri("https://platform.altinn.no/correspondence/api/v1"),
-                AppBaseUrl = new Uri("https://dat.apps.altinn.no"),
-            }
-        );
+        _configuration = Options.Create(new AltinnConfiguration { OrgId = "dat" });
 
-        _adapter = new AltinnAdapter(_storageClient, _eventsClient, _configuration, _logger);
+        _urls = new ResolvedAltinnUrls
+        {
+            AuthenticationUrl = new Uri("https://platform.altinn.no/authentication/api/v1"),
+            StorageUrl = new Uri("https://platform.altinn.no/storage/api/v1"),
+            EventsUrl = new Uri("https://platform.altinn.no/events/api/v1"),
+            CorrespondenceUrl = new Uri("https://platform.altinn.no"),
+            DialogportenUrl = new Uri("https://platform.altinn.no/dialogporten"),
+            AppBaseUrl = new Uri("https://dat.apps.altinn.no"),
+            MaskinportenUrl = new Uri("https://maskinporten.no/"),
+        };
+
+        _adapter = new AltinnAdapter(
+            _storageClient,
+            _eventsClient,
+            _configuration,
+            _urls,
+            _logger
+        );
     }
 
     #region GetSummary Tests

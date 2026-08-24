@@ -1,5 +1,6 @@
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Extensions;
+using Arbeidstilsynet.Common.Altinn.Implementation.Configuration;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
@@ -16,6 +17,7 @@ internal class AltinnAdapter(
     IAltinnStorageClient altinnStorageClient,
     IAltinnEventsClient altinnEventsClient,
     IOptions<AltinnConfiguration> altinnConfigurationOptions,
+    ResolvedAltinnUrls altinnUrls,
     ILogger<AltinnAdapter> logger
 ) : IAltinnAdapter
 {
@@ -30,7 +32,7 @@ internal class AltinnAdapter(
         SubscriptionRequestDto subscriptionRequestDto
     )
     {
-        var baseUrl = altinnConfigurationOptions.Value.AppBaseUrl;
+        var baseUrl = altinnUrls.AppBaseUrl;
         var orgId = altinnConfigurationOptions.Value.OrgId;
         var appId = subscriptionRequestDto.AltinnAppId;
 

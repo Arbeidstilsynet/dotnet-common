@@ -15,10 +15,583 @@
     }
   ],
   "paths": {
+    "/app": {
+      "post": {
+        "tags": [
+          "App"
+        ],
+        "summary": "Inserts a new event.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppCloudEventRequestModel"
+              },
+              "examples": {
+                "Instance created event with alternative subject": {
+                  "value": {
+                    "resource": "urn:altinn:resource:app_ttd_apps-test",
+                    "resourceinstance": "50015641/a72223a3-926b-4095-a2a6-bacc10815f2d",
+                    "source": "https://ttd.apps.altinn.no/ttd/apps-test/instances/50015641/a72223a3-926b-4095-a2a6-bacc10815f2d",
+                    "specversion": "1.0",
+                    "type": "app.instance.created",
+                    "subject": "/party/50015641",
+                    "alternativesubject": "/person/01017512345"
+                  }
+                },
+                "Instance created event without alternative subject": {
+                  "value": {
+                    "resource": "urn:altinn:resource:app_ttd_apps-test",
+                    "resourceinstance": "50067592/f3c92d96-0eb3-4532-a16f-bcafd94bde3a",
+                    "source": "https://ttd.apps.altinn.no/ttd/apps-test/instances/50067592/f3c92d96-0eb3-4532-a16f-bcafd94bde3a",
+                    "specversion": "1.0",
+                    "type": "app.instance.created",
+                    "subject": "/party/50067592"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/app/{org}/{app}": {
+      "get": {
+        "tags": [
+          "App"
+        ],
+        "summary": "Retrieves a set of events related to an application owner based on query parameters.",
+        "parameters": [
+          {
+            "name": "org",
+            "in": "path",
+            "description": "The application owner acronym",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "app",
+            "in": "path",
+            "description": "The name of the app",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "description": "Id of the latter even that should be included",
+            "schema": {
+              "type": "string"
+            },
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "The lower limit for when the cloud event was created in UTC",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2022-02-14 07:22:19Z"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "The upper limit for when the cloud event was created in UTC",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2022-06-16 13:37:00Z"
+          },
+          {
+            "name": "party",
+            "in": "query",
+            "description": "The party id representing the subjects",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 50002108
+          },
+          {
+            "name": "unit",
+            "in": "query",
+            "description": "The organisation number representing the subject",
+            "schema": {
+              "type": "string"
+            },
+            "example": "989271156"
+          },
+          {
+            "name": "person",
+            "in": "header",
+            "description": "The person number representing the subject",
+            "schema": {
+              "type": "string"
+            },
+            "example": "01014922047"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "A list of the event types to include",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "example": [
+              "app.instance.created",
+              "app.instance.process.completed"
+            ]
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The maximum number of events to include in the response",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CloudEvent"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/app/party": {
+      "get": {
+        "tags": [
+          "App"
+        ],
+        "summary": "Retrieves a set of events related to a party based on query parameters.",
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "description": "Id of the latter event that should be included",
+            "schema": {
+              "type": "string"
+            },
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "The lower limit for when the cloud event was created in UTC",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2022-02-14 07:22:19Z"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "The upper limit for when the cloud event was created in UTC",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2022-06-16 13:37:00Z"
+          },
+          {
+            "name": "party",
+            "in": "query",
+            "description": "The party id representing the subjects",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 50002108
+          },
+          {
+            "name": "unit",
+            "in": "query",
+            "description": "The organisation number representing the subject",
+            "schema": {
+              "type": "string"
+            },
+            "example": "989271156"
+          },
+          {
+            "name": "person",
+            "in": "header",
+            "description": "The person number representing the subject",
+            "schema": {
+              "type": "string"
+            },
+            "example": "01014922047"
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "A list of the sources to include",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "example": [
+              "https://ttd.apps.at22.altinn.cloud/ttd/apps-test/",
+              "https://ttd.apps.at22.altinn.cloud/digdir/bli-tjenesteeier/",
+              "https://ttd.apps.at22.altinn.cloud/ttd/apps-%/"
+            ]
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "A list of the event types to include",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "example": [
+              "app.instance.created",
+              "app.instance.process.completed"
+            ]
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The maximum number of events to include in the response",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CloudEvent"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/events": {
+      "post": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Endpoint for posting a new cloud event",
+        "requestBody": {
+          "description": "The incoming cloud event",
+          "content": {
+            "application/cloudevents+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CloudEvent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Retrieves a set of events related based on query parameters.",
+        "parameters": [
+          {
+            "name": "resource",
+            "in": "query",
+            "description": "Required resource attribute",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "urn:altinn:resource:app_ttd_apps-test"
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "description": "Retrieve events that were registered after this event Id",
+            "schema": {
+              "type": "string"
+            },
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          {
+            "name": "subject",
+            "in": "query",
+            "description": "Optional filter by subject. Only exact matches will be returned.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Altinn-AlternativeSubject",
+            "in": "header",
+            "description": "Optional filter by extension attribute alternative subject. Only exact matches will be returned.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "/person/16035001577"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Optional filter by event type.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "example": [
+              "instance.created",
+              "instance.process.completed"
+            ]
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The maximum number of events to include in the response.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/cloudevents+json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CloudEvent"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/cloudevents+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inbound": {
+      "post": {
+        "tags": [
+          "Inbound"
+        ],
+        "summary": "Post a previously registered cloudEvent to the inbound events queue\r\nand further processing by the EventsInbound Azure function",
+        "requestBody": {
+          "content": {
+            "application/cloudevents+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CloudEvent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/outbound": {
+      "post": {
+        "tags": [
+          "Outbound"
+        ],
+        "summary": "Submit event for Outbound processing",
+        "description": "Identifies matching subscriptions based on subscription filter hash.\r\nRuns authorization check before adding event to the outbound queue.",
+        "requestBody": {
+          "content": {
+            "application/cloudevents+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CloudEvent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/storage/events": {
+      "post": {
+        "tags": [
+          "Storage"
+        ],
+        "summary": "Saves a cloud event to persistent storage.",
+        "requestBody": {
+          "content": {
+            "application/cloudevents+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CloudEvent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
     "/subscriptions": {
       "post": {
-        "tags": ["Subscription"],
-        "summary": "Register a subscription for events.",
+        "tags": [
+          "Subscription"
+        ],
+        "summary": "Register an subscription for events.",
         "description": "Requires information about endpoint to post events for subscribers.",
         "requestBody": {
           "description": "The subscription details",
@@ -105,8 +678,10 @@
         }
       },
       "get": {
-        "tags": ["Subscription"],
-        "summary": "Get all subscriptions for the authorized consumer",
+        "tags": [
+          "Subscription"
+        ],
+        "summary": "Get all subscription for the authorized consumer",
         "responses": {
           "200": {
             "description": "OK",
@@ -133,7 +708,9 @@
     },
     "/subscriptions/{id}": {
       "get": {
-        "tags": ["Subscription"],
+        "tags": [
+          "Subscription"
+        ],
         "summary": "Get a specific subscription",
         "parameters": [
           {
@@ -190,7 +767,9 @@
         }
       },
       "delete": {
-        "tags": ["Subscription"],
+        "tags": [
+          "Subscription"
+        ],
         "summary": "Delete a given subscription",
         "parameters": [
           {
@@ -242,8 +821,10 @@
     },
     "/subscriptions/validate/{id}": {
       "put": {
-        "tags": ["Subscription"],
-        "summary": "Method to validate a specific subscription. Only available from validation function.",
+        "tags": [
+          "Subscription"
+        ],
+        "summary": "Method to validate a specific subscription. Only avaiable from validation function.",
         "parameters": [
           {
             "name": "id",
@@ -275,6 +856,19 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/tests/webhookreceiver": {
+      "post": {
+        "tags": [
+          "WebhookReceiver"
+        ],
+        "summary": "Accepts an http post request and responds OK.",
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -429,7 +1023,13 @@
         "additionalProperties": false
       },
       "CallingConventions": {
-        "enum": [1, 2, 3, 32, 64],
+        "enum": [
+          1,
+          2,
+          3,
+          32,
+          64
+        ],
         "type": "integer",
         "format": "int32"
       },
@@ -743,7 +1343,7 @@
           },
           "parameters": {
             "type": "array",
-            "items": {},
+            "items": { },
             "nullable": true,
             "readOnly": true
           }
@@ -812,7 +1412,11 @@
         "additionalProperties": false
       },
       "EventAttributes": {
-        "enum": [0, 512, 1024],
+        "enum": [
+          0,
+          512,
+          1024
+        ],
         "type": "integer",
         "format": "int32"
       },
@@ -881,8 +1485,25 @@
       },
       "FieldAttributes": {
         "enum": [
-          0, 1, 2, 3, 4, 5, 6, 7, 16, 32, 64, 128, 256, 512, 1024, 4096, 8192,
-          32768, 38144
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          16,
+          32,
+          64,
+          128,
+          256,
+          512,
+          1024,
+          4096,
+          8192,
+          32768,
+          38144
         ],
         "type": "integer",
         "format": "int32"
@@ -998,7 +1619,17 @@
         "additionalProperties": false
       },
       "GenericParameterAttributes": {
-        "enum": [0, 1, 2, 3, 4, 8, 16, 28, 32],
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          8,
+          16,
+          28,
+          32
+        ],
         "type": "integer",
         "format": "int32"
       },
@@ -1011,7 +1642,11 @@
         "additionalProperties": false
       },
       "LayoutKind": {
-        "enum": [0, 2, 3],
+        "enum": [
+          0,
+          2,
+          3
+        ],
         "type": "integer",
         "format": "int32"
       },
@@ -1056,14 +1691,44 @@
         "additionalProperties": false
       },
       "MemberTypes": {
-        "enum": [1, 2, 4, 8, 16, 32, 64, 128, 191],
+        "enum": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128,
+          191
+        ],
         "type": "integer",
         "format": "int32"
       },
       "MethodAttributes": {
         "enum": [
-          0, 1, 2, 3, 4, 5, 6, 7, 8, 16, 32, 64, 128, 256, 512, 1024, 2048,
-          4096, 8192, 16384, 32768, 53248
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          16,
+          32,
+          64,
+          128,
+          256,
+          512,
+          1024,
+          2048,
+          4096,
+          8192,
+          16384,
+          32768,
+          53248
         ],
         "type": "integer",
         "format": "int32"
@@ -1201,7 +1866,22 @@
         "additionalProperties": false
       },
       "MethodImplAttributes": {
-        "enum": [0, 1, 2, 3, 4, 8, 16, 32, 64, 128, 256, 512, 4096, 65535],
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128,
+          256,
+          512,
+          4096,
+          65535
+        ],
         "type": "integer",
         "format": "int32"
       },
@@ -1408,7 +2088,19 @@
         "additionalProperties": false
       },
       "ParameterAttributes": {
-        "enum": [0, 1, 2, 4, 8, 16, 4096, 8192, 16384, 32768, 61440],
+        "enum": [
+          0,
+          1,
+          2,
+          4,
+          8,
+          16,
+          4096,
+          8192,
+          16384,
+          32768,
+          61440
+        ],
         "type": "integer",
         "format": "int32"
       },
@@ -1507,10 +2199,19 @@
             "nullable": true
           }
         },
-        "additionalProperties": {}
+        "additionalProperties": { }
       },
       "PropertyAttributes": {
-        "enum": [0, 512, 1024, 4096, 8192, 16384, 32768, 62464],
+        "enum": [
+          0,
+          512,
+          1024,
+          4096,
+          8192,
+          16384,
+          32768,
+          62464
+        ],
         "type": "integer",
         "format": "int32"
       },
@@ -1606,7 +2307,11 @@
         "additionalProperties": false
       },
       "SecurityRuleSet": {
-        "enum": [0, 1, 2],
+        "enum": [
+          0,
+          1,
+          2
+        ],
         "type": "integer",
         "format": "int32"
       },
@@ -1693,16 +2398,15 @@
           "typeFilter": "app.instance.process.completed",
           "consumer": "/user/12345",
           "createdBy": "/user/12345",
-          "created": "2022-07-27T13:14:14.395226Z",
-          "validated": true
+          "created": "2022-07-27T13:14:14.395226Z"
         }
       },
-      "SubscriptionList":{
+      "SubscriptionList": {
         "type": "object",
         "properties": {
           "count": {
             "type": "integer",
-            "description": "The number of subscriptions in the list",
+            "description": "The nuber of subscriptions in the list",
             "format": "int32"
           },
           "subscriptions": {
@@ -2082,8 +2786,32 @@
       },
       "TypeAttributes": {
         "enum": [
-          0, 1, 2, 3, 4, 5, 6, 7, 8, 16, 24, 32, 128, 256, 1024, 2048, 4096,
-          8192, 16384, 65536, 131072, 196608, 262144, 264192, 1048576, 12582912
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          16,
+          24,
+          32,
+          128,
+          256,
+          1024,
+          2048,
+          4096,
+          8192,
+          16384,
+          65536,
+          131072,
+          196608,
+          262144,
+          264192,
+          1048576,
+          12582912
         ],
         "type": "integer",
         "format": "int32"
@@ -2473,7 +3201,7 @@
   },
   "security": [
     {
-      "Bearer": []
+      "Bearer": [ ]
     }
   ],
   "tags": [
