@@ -37,7 +37,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - **BREAKING**: `HostEnvironmentExtensions` (`CreateDefaultAltinnConfiguration`, `GetMaskinportenUrl`, `GetAltinnPlattformUrl`, `GetAltinnAppBaseUrl`). Base URLs are resolved from `AltinnConfiguration.Environment` instead.
-- **BREAKING**: The hand-written request and response models under `Model/Api`, superseded by the generated ones.
+- **BREAKING**: The hand-written response models under `Model/Api/Response` (`AltinnInstance`, `AltinnQueryResponse<T>`, `AltinnSubscription`, `AltinnCorrespondenceOverview`, `CorrespondenceResponse`, `DialogportenLookupResponse`) and the hand-written correspondence request DTOs, all superseded by the generated models.
+- **BREAKING**: `MappedQueryParameterAttribute` and `MappedRequestHeaderParameterAttribute`. Query parameters are now mapped explicitly rather than by reflection over attributes.
 
 ### Fixed
 
@@ -48,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Notes
 
+- `Model/Api` retains only the types that have no generated counterpart: `AltinnCloudEvent`, `InstanceRequest`, `InstanceDataRequest`, `InstanceQueryParameters`, `AltinnDateTimeQuery`, `MaskinportenTokenResponse` and `AuthenticationTokenProvider`. In particular `AltinnCloudEvent` stays hand-written because consumers bind it from an incoming webhook payload with `System.Text.Json`, which the generated `CloudEvent` does not support — it deserialises to an object with every property null rather than failing.
 - Correspondence and Dialogporten publish a specification per environment. Both TT02 specifications are a strict superset of their production counterparts, so a single client is generated per API from TT02; generating one per environment would split the public model types. A production application may therefore see a `404` from an endpoint that has not yet been released to production. `npm run check:spec-drift` fails if production ever declares a path or schema that TT02 lacks.
 - The generated models are Kiota `IParsable` types, not `System.Text.Json` POCOs. Deserialising them with `JsonSerializer` silently yields empty objects.
 
