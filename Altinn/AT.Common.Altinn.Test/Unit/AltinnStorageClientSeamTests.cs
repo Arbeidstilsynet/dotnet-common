@@ -149,28 +149,23 @@ public class AltinnStorageClientSeamTests
     [Fact]
     public async Task GetInstances_AppliesInstanceOwnerIdentifierHeader()
     {
-        await _sut.GetInstances(
-            new InstanceQueryParameters { InstanceOwnerIdentifier = "0192:123456789" }
-        );
+        await _sut.GetInstances(new InstanceQuery { InstanceOwnerIdentifier = "0192:123456789" });
 
-        // Kiota omits header parameters from the generated query-parameter class, so this header
-        // is applied by hand and would otherwise be dropped silently.
+        // Kiota omits header parameters from the generated query-parameter class, which is the
+        // reason InstanceQuery exists. Without it this header would be dropped silently.
         var headers = CapturedRequest().Headers;
 
-        headers
-            .ContainsKey(InstanceQueryParameters.InstanceOwnerIdentifierHeaderName)
-            .ShouldBeTrue();
-        headers[InstanceQueryParameters.InstanceOwnerIdentifierHeaderName]
-            .ShouldContain("0192:123456789");
+        headers.ContainsKey(InstanceQuery.InstanceOwnerIdentifierHeaderName).ShouldBeTrue();
+        headers[InstanceQuery.InstanceOwnerIdentifierHeaderName].ShouldContain("0192:123456789");
     }
 
     [Fact]
     public async Task GetInstances_WithoutInstanceOwnerIdentifier_OmitsHeader()
     {
-        await _sut.GetInstances(new InstanceQueryParameters { AppId = "dat/some-app" });
+        await _sut.GetInstances(new GeneratedInstanceQueryParameters { AppId = "dat/some-app" });
 
         CapturedRequest()
-            .Headers.ContainsKey(InstanceQueryParameters.InstanceOwnerIdentifierHeaderName)
+            .Headers.ContainsKey(InstanceQuery.InstanceOwnerIdentifierHeaderName)
             .ShouldBeFalse();
     }
 
@@ -178,16 +173,16 @@ public class AltinnStorageClientSeamTests
     public async Task GetInstances_MapsQueryParametersOntoTheWire()
     {
         await _sut.GetInstances(
-            new InstanceQueryParameters
+            new GeneratedInstanceQueryParameters
             {
                 Org = "dat",
                 AppId = "dat/some-app",
                 ProcessIsComplete = true,
                 ProcessCurrentTask = "Task_1",
                 ExcludeConfirmedBy = "dat",
-                IsArchived = false,
+                StatusIsArchived = false,
                 Size = 50,
-                SortBy = "desc:lastChanged",
+                Order = "desc:lastChanged",
                 SearchString = "needle",
                 MainVersionInclude = 3,
             }
@@ -212,20 +207,16 @@ public class AltinnStorageClientSeamTests
     public async Task GetInstances_MapsDateRangeQueriesToComparisonExpressions()
     {
         await _sut.GetInstances(
-            new InstanceQueryParameters
+            new GeneratedInstanceQueryParameters
             {
                 LastChanged =
                 [
-                    new AltinnDateTimeQuery
-                    {
-                        CompareOperator = DateTimeCompareOperator.gte,
-                        DateTime = "2024-01-01",
-                    },
-                    new AltinnDateTimeQuery
-                    {
-                        CompareOperator = DateTimeCompareOperator.lt,
-                        DateTime = "2024-02-01",
-                    },
+                    AltinnDateTimeQuery.GreaterThanOrEquals(
+                        new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)
+                    ),
+                    AltinnDateTimeQuery.LessThan(
+                        new DateTimeOffset(2024, 2, 1, 0, 0, 0, TimeSpan.Zero)
+                    ),
                 ],
             }
         );
@@ -237,48 +228,15 @@ public class AltinnStorageClientSeamTests
     }
 
     [Fact]
-    public void ApplyTo_MapsEveryGeneratedQueryParameterThatHasACounterpart()
+    public async Task GetInstances_DoesNotMutateTheCallersParameters()
     {
-        // Guards against a specification update adding a parameter that the mapping silently drops.
-        var mapped = new GeneratedInstanceQueryParameters();
+        var parameters = new GeneratedInstanceQueryParameters { AppId = "dat/some-app" };
+        var query = new InstanceQuery { Parameters = parameters };
 
-        new InstanceQueryParameters
-        {
-            Org = "org",
-            AppId = "appId",
-            ProcessCurrentTask = "task",
-            ProcessIsComplete = true,
-            ProcessEndEvent = "end",
-            ProcessEnded = [NewDateQuery()],
-            InstanceOwnerPartyId = 1,
-            LastChanged = [NewDateQuery()],
-            Created = [NewDateQuery()],
-            VisibleAfter = [NewDateQuery()],
-            DueBefore = [NewDateQuery()],
-            ExcludeConfirmedBy = "org",
-            Confirmed = true,
-            IsSoftDeleted = true,
-            IsHardDeleted = true,
-            IsArchived = true,
-            ContinuationToken = "token",
-            Size = 1,
-            MainVersionInclude = 3,
-            MainVersionExclude = 2,
-            SearchString = "search",
-            SortBy = "order",
-        }.ApplyTo(mapped);
+        await _sut.GetInstances(query.WithContinuationToken("token-from-next-page"));
 
-        var unmapped = typeof(GeneratedInstanceQueryParameters)
-            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-            .Where(property => property.GetValue(mapped) is null)
-            .Select(property => property.Name)
-            .ToList();
-
-        // DataValuesA2ArchRef and IncludeDataElements exist on the generated parameters but are
-        // deliberately not surfaced by InstanceQueryParameters.
-        unmapped.ShouldBe(["DataValuesA2ArchRef", "IncludeDataElements"], ignoreOrder: true);
+        // Paging must not write the continuation token back into the object the caller passed in.
+        parameters.ContinuationToken.ShouldBeNull();
+        CapturedUri().ShouldContain("continuationToken=token-from-next-page");
     }
-
-    private static AltinnDateTimeQuery NewDateQuery() =>
-        new() { CompareOperator = DateTimeCompareOperator.gte, DateTime = "2024-01-01" };
 }

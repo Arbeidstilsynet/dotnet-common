@@ -2,15 +2,15 @@ using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 
-internal static class InstanceQueryParametersExtensions
+internal static class InstanceQueryExtensions
 {
     /// <summary>
     /// Carries the continuation token from a paged response's "next" link over to the next request.
     /// </summary>
     public static bool TryAppendContinuationToken(
-        this InstanceQueryParameters instanceQueryParameters,
+        this InstanceQuery query,
         Uri uri,
-        out InstanceQueryParameters updatedQueryParameters
+        out InstanceQuery updatedQuery
     )
     {
         var queryParameters = uri
@@ -22,19 +22,16 @@ internal static class InstanceQueryParametersExtensions
 
         if (
             queryParameters.TryGetValue(
-                InstanceQueryParameters.ContinuationTokenParameterName,
+                InstanceQuery.ContinuationTokenParameterName,
                 out var continuationToken
             )
         )
         {
-            updatedQueryParameters = instanceQueryParameters with
-            {
-                ContinuationToken = continuationToken,
-            };
+            updatedQuery = query.WithContinuationToken(continuationToken);
             return true;
         }
 
-        updatedQueryParameters = instanceQueryParameters;
+        updatedQuery = query;
 
         return false;
     }

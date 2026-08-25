@@ -38,13 +38,13 @@ public interface IAltinnStorageClient
     Task<Stream> GetInstanceData(Uri absoluteUri, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Gets a single page of instances matching the given query parameters.
+    /// Gets a single page of instances matching the given query.
     /// </summary>
     /// <remarks>
     /// Use <c>GetAllInstances</c> to page through every result.
     /// </remarks>
     Task<InstanceQueryResponse> GetInstances(
-        InstanceQueryParameters queryParameters,
+        InstanceQuery query,
         CancellationToken cancellationToken = default
     );
 }

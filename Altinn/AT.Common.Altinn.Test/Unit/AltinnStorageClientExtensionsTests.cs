@@ -15,7 +15,7 @@ public class AltinnStorageClientExtensionsTests
     public async Task GetAllInstances_WhenCalledWithValidQueryParameters_ReturnsAllInstances()
     {
         // Arrange
-        var queryParameters = new InstanceQueryParameters { AppId = "my-app" };
+        var queryParameters = new InstanceQuery { Parameters = new() { AppId = "my-app" } };
 
         var firstPage = new InstanceQueryResponse
         {
@@ -29,9 +29,11 @@ public class AltinnStorageClientExtensionsTests
             Next = null,
         };
 
-        _client.GetInstances(queryParameters).Returns(firstPage);
         _client
-            .GetInstances(queryParameters with { ContinuationToken = "abc123" })
+            .GetInstances(Arg.Is<InstanceQuery>(q => q.Parameters.ContinuationToken == null))
+            .Returns(firstPage);
+        _client
+            .GetInstances(Arg.Is<InstanceQuery>(q => q.Parameters.ContinuationToken == "abc123"))
             .Returns(secondPage);
 
         // Act
@@ -46,7 +48,7 @@ public class AltinnStorageClientExtensionsTests
     public async Task GetAllInstances_NextLinkLoops_IgnoresIt()
     {
         // Arrange
-        var queryParameters = new InstanceQueryParameters { AppId = "my-app" };
+        var queryParameters = new InstanceQuery { Parameters = new() { AppId = "my-app" } };
 
         var firstPage = new InstanceQueryResponse
         {
@@ -60,9 +62,11 @@ public class AltinnStorageClientExtensionsTests
             Next = "http://example.com?continuationToken=abc123",
         };
 
-        _client.GetInstances(queryParameters).Returns(firstPage);
         _client
-            .GetInstances(queryParameters with { ContinuationToken = "abc123" })
+            .GetInstances(Arg.Is<InstanceQuery>(q => q.Parameters.ContinuationToken == null))
+            .Returns(firstPage);
+        _client
+            .GetInstances(Arg.Is<InstanceQuery>(q => q.Parameters.ContinuationToken == "abc123"))
             .Returns(secondPage);
 
         // Act
@@ -82,7 +86,7 @@ public class AltinnStorageClientExtensionsTests
     )
     {
         // Arrange
-        var queryParameters = new InstanceQueryParameters { AppId = "my-app" };
+        var queryParameters = new InstanceQuery { Parameters = new() { AppId = "my-app" } };
 
         var firstPage = new InstanceQueryResponse
         {
@@ -96,9 +100,11 @@ public class AltinnStorageClientExtensionsTests
             Next = null,
         };
 
-        _client.GetInstances(queryParameters).Returns(firstPage);
         _client
-            .GetInstances(queryParameters with { ContinuationToken = "abc123" })
+            .GetInstances(Arg.Is<InstanceQuery>(q => q.Parameters.ContinuationToken == null))
+            .Returns(firstPage);
+        _client
+            .GetInstances(Arg.Is<InstanceQuery>(q => q.Parameters.ContinuationToken == "abc123"))
             .Returns(secondPage);
 
         // Act

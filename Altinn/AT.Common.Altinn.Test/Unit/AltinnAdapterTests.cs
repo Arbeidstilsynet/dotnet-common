@@ -304,11 +304,11 @@ public class AltinnAdapterTests
         await _storageClient
             .Received(1)
             .GetInstances(
-                Arg.Is<InstanceQueryParameters>(p =>
-                    p.AppId == "dat/test-app"
-                    && p.Org == "dat"
-                    && p.ProcessIsComplete == false
-                    && p.ExcludeConfirmedBy == "dat"
+                Arg.Is<InstanceQuery>(p =>
+                    p.Parameters.AppId == "dat/test-app"
+                    && p.Parameters.Org == "dat"
+                    && p.Parameters.ProcessIsComplete == false
+                    && p.Parameters.ExcludeConfirmedBy == "dat"
                 )
             );
     }
@@ -329,7 +329,7 @@ public class AltinnAdapterTests
         };
 
         _storageClient
-            .GetInstances(Arg.Any<InstanceQueryParameters>())
+            .GetInstances(Arg.Any<InstanceQuery>())
             .Returns(new InstanceQueryResponse { Instances = instances, Count = instances.Count });
         _storageClient
             .GetInstanceData(Arg.Any<InstanceDataRequest>())
@@ -356,7 +356,7 @@ public class AltinnAdapterTests
         };
 
         _storageClient
-            .GetInstances(Arg.Any<InstanceQueryParameters>())
+            .GetInstances(Arg.Any<InstanceQuery>())
             .Returns(new InstanceQueryResponse { Instances = instances, Count = instances.Count });
         _storageClient
             .GetInstanceData(Arg.Any<InstanceDataRequest>())
@@ -381,7 +381,7 @@ public class AltinnAdapterTests
         var successfulInstance = AltinnTestData.CreateAltinnInstance();
 
         _storageClient
-            .GetInstances(Arg.Any<InstanceQueryParameters>())
+            .GetInstances(Arg.Any<InstanceQuery>())
             .Returns(
                 new InstanceQueryResponse
                 {

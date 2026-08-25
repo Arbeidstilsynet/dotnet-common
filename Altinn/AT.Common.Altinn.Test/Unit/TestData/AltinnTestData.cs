@@ -4,6 +4,7 @@ using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Storage.Models;
 using Bogus;
 using Bogus.Extensions.UnitedStates;
+using GeneratedInstanceQueryParameters = Arbeidstilsynet.Common.Altinn.Storage.Instances.InstancesRequestBuilder.InstancesRequestBuilderGetQueryParameters;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit.TestData;
 
@@ -161,7 +162,7 @@ internal static class AltinnTestData
         };
     }
 
-    public static InstanceQueryParameters CreateInstanceQueryParameters(
+    public static InstanceQuery CreateInstanceQueryParameters(
         string? appId = null,
         string? org = null,
         bool processIsComplete = true,
@@ -170,7 +171,7 @@ internal static class AltinnTestData
     {
         var actualOrg = org ?? "dat";
 
-        return new InstanceQueryParameters
+        return new GeneratedInstanceQueryParameters
         {
             AppId = appId ?? $"{actualOrg}/{Faker.Lorem.Word()}-app",
             Org = actualOrg,

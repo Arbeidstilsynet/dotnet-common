@@ -12,6 +12,7 @@ using Arbeidstilsynet.Common.Altinn.Storage.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Kiota.Abstractions;
+using GeneratedInstanceQueryParameters = Arbeidstilsynet.Common.Altinn.Storage.Instances.InstancesRequestBuilder.InstancesRequestBuilderGetQueryParameters;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 
@@ -79,7 +80,7 @@ internal class AltinnAdapter(
         var orgId = altinnConfigurationOptions.Value.OrgId;
 
         var instances = await altinnStorageClient.GetAllInstances(
-            new InstanceQueryParameters
+            new GeneratedInstanceQueryParameters
             {
                 AppId = $"{orgId}/{appId}",
                 Org = orgId,
@@ -98,7 +99,7 @@ internal class AltinnAdapter(
         var orgId = altinnConfigurationOptions.Value.OrgId;
 
         var instances = await altinnStorageClient.GetAllInstances(
-            new InstanceQueryParameters
+            new GeneratedInstanceQueryParameters
             {
                 AppId = $"{orgId}/{appId}",
                 Org = orgId,

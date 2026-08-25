@@ -58,21 +58,21 @@ internal class AltinnStorageClient(StorageApiClient client) : IAltinnStorageClie
     }
 
     public async Task<InstanceQueryResponse> GetInstances(
-        InstanceQueryParameters queryParameters,
+        InstanceQuery query,
         CancellationToken cancellationToken = default
     )
     {
         return await client.Instances.GetAsync(
                 request =>
                 {
-                    queryParameters.ApplyTo(request.QueryParameters);
+                    request.QueryParameters = query.Parameters;
 
                     // Kiota omits header parameters from the generated query-parameter class, so
                     // the instance owner identifier has to be applied to the request directly.
-                    if (queryParameters.InstanceOwnerIdentifier is { Length: > 0 } identifier)
+                    if (query.InstanceOwnerIdentifier is { Length: > 0 } identifier)
                     {
                         request.Headers.Add(
-                            InstanceQueryParameters.InstanceOwnerIdentifierHeaderName,
+                            InstanceQuery.InstanceOwnerIdentifierHeaderName,
                             identifier
                         );
                     }

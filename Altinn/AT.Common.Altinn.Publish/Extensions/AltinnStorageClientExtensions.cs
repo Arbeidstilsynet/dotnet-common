@@ -11,32 +11,28 @@ namespace Arbeidstilsynet.Common.Altinn.Extensions;
 public static class AltinnStorageClientExtensions
 {
     /// <summary>
-    /// Retrieves all Altinn instances matching the given query parameters, handling pagination internally.
+    /// Retrieves all Altinn instances matching the given query, handling pagination internally.
     /// </summary>
-    /// <param name="altinnStorageClient"></param>
-    /// <param name="queryParameters"></param>
-    /// <returns></returns>
+    /// <param name="altinnStorageClient">The storage client.</param>
+    /// <param name="query">The instance query.</param>
     public static async Task<IEnumerable<Instance>> GetAllInstances(
         this IAltinnStorageClient altinnStorageClient,
-        InstanceQueryParameters queryParameters
+        InstanceQuery query
     )
     {
         var visitedUris = new HashSet<string>();
 
-        var queryResponse = await altinnStorageClient.GetInstances(queryParameters);
+        var queryResponse = await altinnStorageClient.GetInstances(query);
 
         var instances = new List<Instance>(queryResponse.Instances ?? []);
 
         while (
             Uri.IsWellFormedUriString(queryResponse.Next, UriKind.Absolute)
             && visitedUris.Add(queryResponse.Next)
-            && queryParameters.TryAppendContinuationToken(
-                new Uri(queryResponse.Next),
-                out queryParameters
-            )
+            && query.TryAppendContinuationToken(new Uri(queryResponse.Next), out query)
         )
         {
-            queryResponse = await altinnStorageClient.GetInstances(queryParameters);
+            queryResponse = await altinnStorageClient.GetInstances(query);
 
             if (queryResponse?.Instances is null)
             {
