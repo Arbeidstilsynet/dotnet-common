@@ -3,6 +3,7 @@
     <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <IsAltinnApp>false</IsAltinnApp>
     <RootNamespace>Arbeidstilsynet.Common.AltinnApp</RootNamespace>
     <PackageId>Arbeidstilsynet.Common.AltinnApp</PackageId>
     <Product>Arbeidstilsynet.Common.AltinnApp</Product>
@@ -11,15 +12,22 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Description>Provides common functionality for usage in Altinn Apps</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.8.1</Version>
+    <Version>2.9.0-alpha8</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/Arbeidstilsynet/dotnet-common</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="Altinn.App.Api" Version="8.12.7">
+      <CopyToOutputDirectory>lib\$(TargetFramework)\*.xml</CopyToOutputDirectory>
+    </PackageReference>
     <PackageReference Include="Altinn.App.Core" Version="8.12.7" />
     <PackageReference Include="OpenTelemetry.Api" Version="1.16.0" />
+    <PackageReference
+      Include="Altinn.ApiClients.Dialogporten.ServiceOwner"
+      Version="1.118.10-alpha.1786357013"
+    />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />

@@ -58,29 +58,9 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
     {
         // Right after submission
 
-        var dataModelElement = await _applicationClient.GetRequiredDataModelElement<TDataModel>(
-            instance
-        );
-
-        var structuredDataExists = instance.Data.Any(d =>
-            string.Equals(
-                d.DataType,
-                _config.StructuredDataConfiguration.StructuredDataTypeId,
-                StringComparison.OrdinalIgnoreCase
-            )
-        );
-
-        if (!structuredDataExists)
-        {
-            throw new InvalidOperationException(
-                $"No structured data element of type '{_config.StructuredDataConfiguration.StructuredDataTypeId}' was found on the instance by process end. "
-                    + "This may indicate a misconfiguration or that structured data mapping did not run for this task."
-            );
-        }
-
         if (!_config.StructuredDataConfiguration.KeepAppDataModelAfterMapping)
         {
-            await _dataClient.DeleteElement(instance, dataModelElement);
+            await DeleteDataModelElement(instance);
         }
     }
 
@@ -128,6 +108,15 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
 
             throw new InvalidOperationException(errorMessageBuilder.ToString(), e);
         }
+    }
+
+    private async Task DeleteDataModelElement(Instance instance)
+    {
+        var dataModelElement = await _applicationClient.GetRequiredDataModelElement<TDataModel>(
+            instance
+        );
+
+        await _dataClient.DeleteElement(instance, dataModelElement);
     }
 
     private async Task CreateStructuredData(Instance instance)
