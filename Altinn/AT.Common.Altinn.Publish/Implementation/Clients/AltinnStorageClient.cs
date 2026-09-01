@@ -1,4 +1,5 @@
 using Arbeidstilsynet.Common.Altinn.Extensions;
+using Arbeidstilsynet.Common.Altinn.Implementation.Configuration;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
@@ -7,15 +8,24 @@ using Arbeidstilsynet.Common.Altinn.Storage.Models;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Clients;
 
-internal class AltinnStorageClient(StorageApiClient client) : IAltinnStorageClient
+internal class AltinnStorageClient(StorageApiClient client, ResolvedAltinnUrls urls)
+    : IAltinnStorageClient
 {
     public async Task<Instance> GetInstance(
-        InstanceRequest instanceAddress,
+        Guid instanceGuid,
         CancellationToken cancellationToken = default
     )
     {
+        // The storage specification declares both /instances/{instanceGuid} and the older
+        // /instances/{instanceOwnerPartyId}/{instanceGuid}, and marks the latter as kept only for
+        // backwards compatibility. The two collide at the same position in Kiota's request-builder
+        // tree, so only one can be generated, and it has to be the older form because the whole
+        // data-element subtree hangs off it. The preferred endpoint is therefore addressed by URL.
+        var instanceUrl = $"{urls.StorageUrl.ToString().TrimEnd('/')}/instances/{instanceGuid}";
+
         return await client
-                .Instances[instanceAddress.GetInstanceOwnerPartyId()][instanceAddress.InstanceGuid]
+                .Instances[0][Guid.Empty]
+                .WithUrl(instanceUrl)
                 .GetAsync(cancellationToken: cancellationToken)
             ?? throw new InvalidOperationException("Failed to get instance");
     }
@@ -25,7 +35,7 @@ internal class AltinnStorageClient(StorageApiClient client) : IAltinnStorageClie
         CancellationToken cancellationToken = default
     )
     {
-        return GetInstance(cloudEvent.ToInstanceRequest(), cancellationToken);
+        return GetInstance(cloudEvent.ToInstanceGuid(), cancellationToken);
     }
 
     public async Task<Stream> GetInstanceData(

@@ -1,5 +1,6 @@
 using System.Reflection;
 using Arbeidstilsynet.Common.Altinn.Implementation.Clients;
+using Arbeidstilsynet.Common.Altinn.Implementation.Configuration;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Storage;
@@ -51,7 +52,21 @@ public class AltinnStorageClientSeamTests
             )
             .Returns(new MemoryStream());
 
-        _sut = new AltinnStorageClient(new StorageApiClient(_requestAdapter));
+        _sut = new AltinnStorageClient(
+            new StorageApiClient(_requestAdapter),
+            new ResolvedAltinnUrls
+            {
+                AuthenticationUrl = new Uri(
+                    "https://platform.tt02.altinn.no/authentication/api/v1"
+                ),
+                StorageUrl = new Uri(BaseUrl),
+                EventsUrl = new Uri("https://platform.tt02.altinn.no/events/api/v1"),
+                CorrespondenceUrl = new Uri("https://platform.tt02.altinn.no"),
+                DialogportenUrl = new Uri("https://platform.tt02.altinn.no/dialogporten"),
+                AppBaseUrl = new Uri("https://dat.apps.tt02.altinn.no/"),
+                MaskinportenUrl = new Uri("https://test.maskinporten.no/"),
+            }
+        );
     }
 
     private RequestInformation CapturedRequest()
@@ -68,19 +83,19 @@ public class AltinnStorageClientSeamTests
     private string CapturedUri() => CapturedRequest().URI.ToString();
 
     [Fact]
-    public async Task GetInstance_AddressesInstanceByPartyIdAndGuid()
+    public async Task GetInstance_UsesTheGuidOnlyEndpoint()
     {
         var instanceGuid = Guid.Parse("11111111-2222-3333-4444-555555555555");
 
-        await _sut.GetInstance(
-            new InstanceRequest { InstanceOwnerPartyId = "51644866", InstanceGuid = instanceGuid }
-        );
+        await _sut.GetInstance(instanceGuid);
 
-        CapturedUri().ShouldBe($"{BaseUrl}/instances/51644866/{instanceGuid}");
+        // Altinn prefers this over the older form that also takes an instance owner party id, so
+        // the party id must not appear in the path.
+        CapturedUri().ShouldBe($"{BaseUrl}/instances/{instanceGuid}");
     }
 
     [Fact]
-    public async Task GetInstance_FromCloudEvent_AddressesInstanceByPartyIdAndGuid()
+    public async Task GetInstance_FromCloudEvent_UsesTheGuidOnlyEndpoint()
     {
         var instanceGuid = Guid.Parse("11111111-2222-3333-4444-555555555555");
 
@@ -93,7 +108,9 @@ public class AltinnStorageClientSeamTests
             }
         );
 
-        CapturedUri().ShouldBe($"{BaseUrl}/instances/51644866/{instanceGuid}");
+        // The party id is present in the event source but is deliberately not used to address the
+        // instance.
+        CapturedUri().ShouldBe($"{BaseUrl}/instances/{instanceGuid}");
     }
 
     [Fact]
@@ -130,19 +147,24 @@ public class AltinnStorageClientSeamTests
     }
 
     [Fact]
-    public async Task GetInstance_WithNonNumericPartyId_Throws()
+    public async Task GetInstanceData_WithNonNumericPartyId_Throws()
     {
         var act = () =>
-            _sut.GetInstance(
-                new InstanceRequest
+            _sut.GetInstanceData(
+                new InstanceDataRequest
                 {
-                    InstanceOwnerPartyId = "not-a-number",
-                    InstanceGuid = Guid.NewGuid(),
+                    InstanceRequest = new InstanceRequest
+                    {
+                        InstanceOwnerPartyId = "not-a-number",
+                        InstanceGuid = Guid.NewGuid(),
+                    },
+                    DataId = Guid.NewGuid(),
                 }
             );
 
-        // The generated client indexes instances by an integer, so this has to fail loudly rather
-        // than silently address the wrong resource.
+        // Data elements are only addressable through the older two-segment path, whose generated
+        // builder indexes by an integer party id, so this has to fail loudly rather than silently
+        // address the wrong resource.
         await Should.ThrowAsync<ArgumentException>(act);
     }
 

@@ -23,10 +23,10 @@ internal static class InstanceAddressExtensions
     }
 
     /// <summary>
-    /// Extracts the instance address from the source URL of an Altinn cloud event, which has the
-    /// form <c>.../instances/{instanceOwnerPartyId}/{instanceGuid}</c>.
+    /// Extracts the instance guid from the source URL of an Altinn cloud event, which has the form
+    /// <c>.../instances/{instanceOwnerPartyId}/{instanceGuid}</c>.
     /// </summary>
-    public static InstanceRequest ToInstanceRequest(this AltinnCloudEvent cloudEvent)
+    public static Guid ToInstanceGuid(this AltinnCloudEvent cloudEvent)
     {
         try
         {
@@ -39,13 +39,7 @@ internal static class InstanceAddressExtensions
                 path = path[..queryIndex];
             }
 
-            var segments = path.Split('/');
-
-            return new InstanceRequest
-            {
-                InstanceOwnerPartyId = segments[1],
-                InstanceGuid = Guid.Parse(segments[2]),
-            };
+            return Guid.Parse(path.Split('/')[2]);
         }
         catch (Exception e)
         {

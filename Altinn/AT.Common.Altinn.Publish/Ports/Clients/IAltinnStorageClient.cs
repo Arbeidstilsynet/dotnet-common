@@ -9,12 +9,13 @@ namespace Arbeidstilsynet.Common.Altinn.Ports.Clients;
 public interface IAltinnStorageClient
 {
     /// <summary>
-    /// Gets an instance by its address.
+    /// Gets an instance by its guid.
     /// </summary>
-    Task<Instance> GetInstance(
-        InstanceRequest instanceAddress,
-        CancellationToken cancellationToken = default
-    );
+    /// <remarks>
+    /// Uses the storage API's guid-only endpoint, which Altinn prefers over the older form that
+    /// also requires the instance owner party id.
+    /// </remarks>
+    Task<Instance> GetInstance(Guid instanceGuid, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets the instance referenced by the source URL of an Altinn cloud event.
