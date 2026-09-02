@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Files
     /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\filescanresult
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class FilescanresultRequestBuilder : BaseRequestBuilder
+    internal partial class FilescanresultRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Filescanresult.FilescanresultRequestBuilder"/> and sets the default values.

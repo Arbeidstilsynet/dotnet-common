@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Api.E
     /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\api\external\{externalApiId}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class WithExternalApiItemRequestBuilder : BaseRequestBuilder
+    internal partial class WithExternalApiItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Api.External.Item.WithExternalApiItemRequestBuilder"/> and sets the default values.
@@ -88,7 +88,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Api.E
         /// Get the data for a specific implementation of an external api, identified by externalApiId
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class WithExternalApiItemRequestBuilderGetQueryParameters 
+        internal partial class WithExternalApiItemRequestBuilderGetQueryParameters 
         {
             /// <summary>The query parameters to pass to the external api endpoint</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

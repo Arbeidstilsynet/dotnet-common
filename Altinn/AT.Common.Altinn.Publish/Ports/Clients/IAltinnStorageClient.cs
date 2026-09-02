@@ -1,5 +1,5 @@
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
-using Arbeidstilsynet.Common.Altinn.Storage.Models;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 
 namespace Arbeidstilsynet.Common.Altinn.Ports.Clients;
 
@@ -15,12 +15,15 @@ public interface IAltinnStorageClient
     /// Uses the storage API's guid-only endpoint, which Altinn prefers over the older form that
     /// also requires the instance owner party id.
     /// </remarks>
-    Task<Instance> GetInstance(Guid instanceGuid, CancellationToken cancellationToken = default);
+    Task<AltinnInstance> GetInstance(
+        Guid instanceGuid,
+        CancellationToken cancellationToken = default
+    );
 
     /// <summary>
     /// Gets the instance referenced by the source URL of an Altinn cloud event.
     /// </summary>
-    Task<Instance> GetInstance(
+    Task<AltinnInstance> GetInstance(
         AltinnCloudEvent cloudEvent,
         CancellationToken cancellationToken = default
     );
@@ -44,8 +47,8 @@ public interface IAltinnStorageClient
     /// <remarks>
     /// Use <c>GetAllInstances</c> to page through every result.
     /// </remarks>
-    Task<InstanceQueryResponse> GetInstances(
-        InstanceQuery query,
+    Task<AltinnQueryResponse<AltinnInstance>> GetInstances(
+        InstanceQueryParameters query,
         CancellationToken cancellationToken = default
     );
 }

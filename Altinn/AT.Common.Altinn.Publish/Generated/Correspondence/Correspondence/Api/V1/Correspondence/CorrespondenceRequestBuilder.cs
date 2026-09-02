@@ -17,7 +17,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Correspondence.Api.V1.Cor
     /// Builds and executes requests for operations under \correspondence\api\v1\correspondence
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class CorrespondenceRequestBuilder : BaseRequestBuilder
+    internal partial class CorrespondenceRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The upload property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Correspondence.Correspondence.Api.V1.Correspondence.Upload.UploadRequestBuilder Upload
@@ -160,7 +160,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Correspondence.Api.V1.Cor
         /// One of the scopes: - altinn:correspondence.read - altinn:correspondence.write Meant for Receivers, but also available for Senders to track Correspondences
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class CorrespondenceRequestBuilderGetQueryParameters 
+        internal partial class CorrespondenceRequestBuilderGetQueryParameters 
         {
             [QueryParameter("altinn2CorrespondenceId")]
             public int? Altinn2CorrespondenceId { get; set; }

@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Models
     /// An entity representing a Correspondence Status Event
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class CorrespondenceStatusEventExt : IParsable
+    internal partial class CorrespondenceStatusEventExt : IParsable
     {
         /// <summary>Represents the important statuses for an Correspondence</summary>
         public global::Arbeidstilsynet.Common.Altinn.Correspondence.Models.CorrespondenceStatusExt? Status { get; set; }

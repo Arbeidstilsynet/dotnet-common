@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Models
     /// Query response object
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class InstanceQueryResponse : IParsable
+    internal partial class InstanceQueryResponse : IParsable
     {
         /// <summary>The number of items in this response.</summary>
         public long? Count { get; set; }

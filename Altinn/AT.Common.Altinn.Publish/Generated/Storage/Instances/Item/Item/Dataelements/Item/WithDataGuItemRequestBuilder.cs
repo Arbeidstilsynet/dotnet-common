@@ -16,7 +16,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Dataelements
     /// Builds and executes requests for operations under \instances\{instanceOwnerPartyId}\{instanceGuid}\dataelements\{dataGuid}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class WithDataGuItemRequestBuilder : BaseRequestBuilder
+    internal partial class WithDataGuItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The filescanstatus property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Dataelements.Item.Filescanstatus.FilescanstatusRequestBuilder Filescanstatus

@@ -9,7 +9,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class V1ServiceOwnerEndUserContextCommandsBulkSetSystemLabels_BulkSetSystemLabel : IParsable
+    internal partial class V1ServiceOwnerEndUserContextCommandsBulkSetSystemLabels_BulkSetSystemLabel : IParsable
     #pragma warning restore CS1591
     {
         /// <summary>List of system labels to add to the target dialogs. If multiple instances of &apos;bin&apos;, &apos;archive&apos;, or &apos;default&apos; are provided, the last one will be used.</summary>

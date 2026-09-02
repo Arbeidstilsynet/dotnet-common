@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
     /// Represents information to identify the owner of an instance.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class InstanceOwnerResponse : IParsable
+    internal partial class InstanceOwnerResponse : IParsable
     {
         /// <summary>The organisation number of the party. Null if the party is not an organisation.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

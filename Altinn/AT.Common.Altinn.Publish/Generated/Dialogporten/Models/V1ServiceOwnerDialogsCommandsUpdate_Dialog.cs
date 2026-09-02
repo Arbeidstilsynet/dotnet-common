@@ -9,7 +9,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class V1ServiceOwnerDialogsCommandsUpdate_Dialog : IParsable
+    internal partial class V1ServiceOwnerDialogsCommandsUpdate_Dialog : IParsable
     #pragma warning restore CS1591
     {
         /// <summary>An immutable list of activities associated with the dialog. When updating via PUT, any activities added herewill be appended to the existing list of activities.</summary>

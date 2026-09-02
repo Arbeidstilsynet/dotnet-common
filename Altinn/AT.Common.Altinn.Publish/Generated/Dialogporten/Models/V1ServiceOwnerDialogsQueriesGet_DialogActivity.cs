@@ -9,7 +9,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class V1ServiceOwnerDialogsQueriesGet_DialogActivity : IParsable
+    internal partial class V1ServiceOwnerDialogsQueriesGet_DialogActivity : IParsable
     #pragma warning restore CS1591
     {
         /// <summary>The date and time when the activity was created.</summary>

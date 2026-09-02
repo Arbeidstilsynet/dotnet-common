@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Events.Item
     /// Builds and executes requests for operations under \instances\{instanceOwnerPartyId}\{instanceGuid}\events\{eventGuid}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class WithEventGuItemRequestBuilder : BaseRequestBuilder
+    internal partial class WithEventGuItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Events.Item.WithEventGuItemRequestBuilder"/> and sets the default values.

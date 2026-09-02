@@ -14,7 +14,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances
     /// Builds and executes requests for operations under \{org}\{app}\instances
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class InstancesRequestBuilder : BaseRequestBuilder
+    internal partial class InstancesRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The create property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Create.CreateRequestBuilder Create

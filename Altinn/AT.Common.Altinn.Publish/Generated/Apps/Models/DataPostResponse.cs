@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
     /// Response object for POST to /org/app/instances/{instanceOwnerPartyId:int}/{instanceGuid:guid}/data/{dataType}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class DataPostResponse : IParsable
+    internal partial class DataPostResponse : IParsable
     {
         /// <summary>The instance property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

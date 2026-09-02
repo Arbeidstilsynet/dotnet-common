@@ -16,7 +16,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialogs
     /// Builds and executes requests for operations under \api\v1\serviceowner\dialogs\endusercontext
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class EndusercontextRequestBuilder : BaseRequestBuilder
+    internal partial class EndusercontextRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The systemlabels property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialogs.Endusercontext.Systemlabels.SystemlabelsRequestBuilder Systemlabels
@@ -89,7 +89,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialogs
         /// Performs a search for dialog end user context labels, returning a paginated list of dialog ids and end user context revisions.* Party is required.* System labels are matched with OR semantics.* See \&quot;continuationToken\&quot; in the response for how to get the next page of results.* hasNextPage will be set to true if there are more items to get.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class EndusercontextRequestBuilderGetQueryParameters 
+        internal partial class EndusercontextRequestBuilderGetQueryParameters 
         {
             /// <summary>Only return context for dialogs with contentUpdatedAt greater than or equal to the supplied date-time.</summary>
             [QueryParameter("contentUpdatedAfter")]

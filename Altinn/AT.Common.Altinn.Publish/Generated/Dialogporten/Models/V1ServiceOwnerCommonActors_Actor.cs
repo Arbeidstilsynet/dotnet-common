@@ -9,7 +9,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class V1ServiceOwnerCommonActors_Actor : IParsable
+    internal partial class V1ServiceOwnerCommonActors_Actor : IParsable
     #pragma warning restore CS1591
     {
         /// <summary>The identifier (national identity number or organization number) of the actor.</summary>

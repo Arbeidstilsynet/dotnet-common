@@ -1,18 +1,16 @@
 using System.Net;
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
-using Arbeidstilsynet.Common.Altinn.Events.Models;
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Configuration;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 using Arbeidstilsynet.Common.Altinn.Ports.Adapter;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
-using Arbeidstilsynet.Common.Altinn.Storage.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Kiota.Abstractions;
-using GeneratedInstanceQueryParameters = Arbeidstilsynet.Common.Altinn.Storage.Instances.InstancesRequestBuilder.InstancesRequestBuilderGetQueryParameters;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 
@@ -31,7 +29,7 @@ internal class AltinnAdapter(
         return await GetInstanceSummaryAsync(instance);
     }
 
-    public Task<Subscription> SubscribeForCompletedProcessEvents(
+    public Task<AltinnSubscription> SubscribeForCompletedProcessEvents(
         SubscriptionRequestDto subscriptionRequestDto
     )
     {
@@ -39,10 +37,10 @@ internal class AltinnAdapter(
         var orgId = altinnConfigurationOptions.Value.OrgId;
         var appId = subscriptionRequestDto.AltinnAppId;
 
-        var mappedRequest = new SubscriptionRequestModel()
+        var mappedRequest = new AltinnSubscriptionRequest()
         {
-            SourceFilter = new Uri(baseUrl, $"{orgId}/{appId}").ToString(),
-            EndPoint = subscriptionRequestDto.CallbackUrl.ToString(),
+            SourceFilter = new Uri(baseUrl, $"{orgId}/{appId}"),
+            EndPoint = subscriptionRequestDto.CallbackUrl,
             TypeFilter = "app.instance.process.completed",
         };
         logger.LogInformation(
@@ -54,12 +52,11 @@ internal class AltinnAdapter(
         return altinnEventsClient.Subscribe(mappedRequest);
     }
 
-    public async Task<bool> UnsubscribeForCompletedProcessEvents(Subscription altinnSubscription)
+    public async Task<bool> UnsubscribeForCompletedProcessEvents(
+        AltinnSubscription altinnSubscription
+    )
     {
-        if (altinnSubscription.Id is not { } subscriptionId)
-        {
-            return false;
-        }
+        var subscriptionId = altinnSubscription.Id;
 
         try
         {
@@ -80,7 +77,7 @@ internal class AltinnAdapter(
         var orgId = altinnConfigurationOptions.Value.OrgId;
 
         var instances = await altinnStorageClient.GetAllInstances(
-            new GeneratedInstanceQueryParameters
+            new InstanceQueryParameters
             {
                 AppId = $"{orgId}/{appId}",
                 Org = orgId,
@@ -99,7 +96,7 @@ internal class AltinnAdapter(
         var orgId = altinnConfigurationOptions.Value.OrgId;
 
         var instances = await altinnStorageClient.GetAllInstances(
-            new GeneratedInstanceQueryParameters
+            new InstanceQueryParameters
             {
                 AppId = $"{orgId}/{appId}",
                 Org = orgId,
@@ -130,7 +127,7 @@ internal class AltinnAdapter(
         return summaries;
     }
 
-    private async Task<AltinnInstanceSummary> GetInstanceSummaryAsync(Instance instance)
+    private async Task<AltinnInstanceSummary> GetInstanceSummaryAsync(AltinnInstance instance)
     {
         var (mainData, structuredData, attachmentData) = instance.GetDataElementsBySignificance();
 
@@ -152,7 +149,10 @@ internal class AltinnAdapter(
         };
     }
 
-    private async Task<AltinnDocument> GetAltinnDocument(DataElement dataElement, Instance instance)
+    private async Task<AltinnDocument> GetAltinnDocument(
+        DataElement dataElement,
+        AltinnInstance instance
+    )
     {
         var appSpec = instance.GetSpecification();
 
@@ -167,7 +167,7 @@ internal class AltinnAdapter(
         };
     }
 
-    public async Task<Subscription?> GetAltinnSubscription(int subscriptionId)
+    public async Task<AltinnSubscription?> GetAltinnSubscription(int subscriptionId)
     {
         try
         {
@@ -182,7 +182,7 @@ internal class AltinnAdapter(
 
 file static class Extensions
 {
-    public static InstanceRequest CreateInstanceRequest(this Instance instance)
+    public static InstanceRequest CreateInstanceRequest(this AltinnInstance instance)
     {
         return new InstanceRequest
         {
@@ -194,7 +194,7 @@ file static class Extensions
     }
 
     public static InstanceDataRequest CreateInstanceDataRequest(
-        this Instance instance,
+        this AltinnInstance instance,
         DataElement dataElement
     )
     {

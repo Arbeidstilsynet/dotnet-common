@@ -9,7 +9,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class InstanceEvent : IParsable
+    internal partial class InstanceEvent : IParsable
     #pragma warning restore CS1591
     {
         /// <summary>The additionalInfo property</summary>

@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
     /// Represents the details of an authorized organization.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class AuthorizedOrganizationDetails : IParsable
+    internal partial class AuthorizedOrganizationDetails : IParsable
     {
         /// <summary>The name of the organization.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

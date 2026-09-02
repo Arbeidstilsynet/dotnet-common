@@ -17,7 +17,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps
     /// The main entry point of the SDK, exposes the configuration and the fluent API.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class AppsApiClient : BaseRequestBuilder
+    internal partial class AppsApiClient : BaseRequestBuilder
     {
         /// <summary>Gets an item from the Arbeidstilsynet.Common.Altinn.Apps.item collection</summary>
         /// <param name="position">unique identifier of the organisation responsible for the app</param>

@@ -16,7 +16,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.
     /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\data\{dataGuid}\tags
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class TagsRequestBuilder : BaseRequestBuilder
+    internal partial class TagsRequestBuilder : BaseRequestBuilder
     {
         /// <summary>Gets an item from the Arbeidstilsynet.Common.Altinn.Apps.item.item.instances.item.item.data.item.tags.item collection</summary>
         /// <param name="position">The name of the tag to be removed.</param>
@@ -187,7 +187,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.
         /// Sets a set of tags on a data element.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class TagsRequestBuilderPutQueryParameters 
+        internal partial class TagsRequestBuilderPutQueryParameters 
         {
             /// <summary>comma separated string of validators to ignore. If missing we don&apos;t run validation.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

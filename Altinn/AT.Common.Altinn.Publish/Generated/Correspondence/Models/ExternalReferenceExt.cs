@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Models
     /// Represents a reference to another item in the Altinn ecosystem
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class ExternalReferenceExt : IParsable
+    internal partial class ExternalReferenceExt : IParsable
     {
         /// <summary>Defines what kind of reference</summary>
         public global::Arbeidstilsynet.Common.Altinn.Correspondence.Models.ReferenceTypeExt? ReferenceType { get; set; }

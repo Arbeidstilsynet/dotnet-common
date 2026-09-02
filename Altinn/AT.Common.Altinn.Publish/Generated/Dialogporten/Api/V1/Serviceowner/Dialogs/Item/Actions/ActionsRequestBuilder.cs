@@ -16,7 +16,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialogs
     /// Builds and executes requests for operations under \api\v1\serviceowner\dialogs\{dialogId}\actions
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class ActionsRequestBuilder : BaseRequestBuilder
+    internal partial class ActionsRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The freeze property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialogs.Item.Actions.Freeze.FreezeRequestBuilder Freeze

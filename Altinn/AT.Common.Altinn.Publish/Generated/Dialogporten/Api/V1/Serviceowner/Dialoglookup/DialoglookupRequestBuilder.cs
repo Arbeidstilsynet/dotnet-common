@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialogl
     /// Builds and executes requests for operations under \api\v1\serviceowner\dialoglookup
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class DialoglookupRequestBuilder : BaseRequestBuilder
+    internal partial class DialoglookupRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialoglookup.DialoglookupRequestBuilder"/> and sets the default values.
@@ -90,7 +90,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialogl
         /// Resolves dialog metadata for a supported instance reference in service owner context.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class DialoglookupRequestBuilderGetQueryParameters 
+        internal partial class DialoglookupRequestBuilderGetQueryParameters 
         {
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable

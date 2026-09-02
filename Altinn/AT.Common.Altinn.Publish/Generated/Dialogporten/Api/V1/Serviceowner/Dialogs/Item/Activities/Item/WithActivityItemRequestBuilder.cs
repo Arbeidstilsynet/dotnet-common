@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialogs
     /// Builds and executes requests for operations under \api\v1\serviceowner\dialogs\{dialogId}\activities\{activityId}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class WithActivityItemRequestBuilder : BaseRequestBuilder
+    internal partial class WithActivityItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialogs.Item.Activities.Item.WithActivityItemRequestBuilder"/> and sets the default values.

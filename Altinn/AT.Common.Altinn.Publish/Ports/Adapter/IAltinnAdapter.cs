@@ -1,6 +1,6 @@
-using Arbeidstilsynet.Common.Altinn.Events.Models;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 
 namespace Arbeidstilsynet.Common.Altinn.Ports.Adapter;
 
@@ -21,14 +21,14 @@ public interface IAltinnAdapter
     /// </summary>
     /// <param name="subscriptionId">The subscription id.</param>
     /// <returns>The existing subscription, null if not found.</returns>
-    public Task<Subscription?> GetAltinnSubscription(int subscriptionId);
+    public Task<AltinnSubscription?> GetAltinnSubscription(int subscriptionId);
 
     /// <summary>
     /// Subscribes for completed process events in Altinn.
     /// </summary>
     /// <param name="subscriptionRequestDto">The subscription request details.</param>
     /// <returns>The created subscription.</returns>
-    public Task<Subscription> SubscribeForCompletedProcessEvents(
+    public Task<AltinnSubscription?> SubscribeForCompletedProcessEvents(
         SubscriptionRequestDto subscriptionRequestDto
     );
 
@@ -37,7 +37,7 @@ public interface IAltinnAdapter
     /// </summary>
     /// <param name="altinnSubscription">The altinn subscription details.</param>
     /// <returns>True if it could be successfully unsubscribed, false if the ID did not exist</returns>
-    public Task<bool> UnsubscribeForCompletedProcessEvents(Subscription altinnSubscription);
+    public Task<bool> UnsubscribeForCompletedProcessEvents(AltinnSubscription altinnSubscription);
 
     /// <summary>
     /// Gets all non-completed Altinn instances for a given app.

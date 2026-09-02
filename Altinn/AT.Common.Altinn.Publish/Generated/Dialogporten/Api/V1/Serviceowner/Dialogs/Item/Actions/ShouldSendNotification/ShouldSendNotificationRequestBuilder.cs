@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialogs
     /// Builds and executes requests for operations under \api\v1\serviceowner\dialogs\{dialogId}\actions\should-send-notification
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class ShouldSendNotificationRequestBuilder : BaseRequestBuilder
+    internal partial class ShouldSendNotificationRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialogs.Item.Actions.ShouldSendNotification.ShouldSendNotificationRequestBuilder"/> and sets the default values.
@@ -83,7 +83,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialogs
         /// Used by Altinn Notification only. Takes a dialogId and returns a boolean value based on conditions used to determine if a notification is to be sent.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class ShouldSendNotificationRequestBuilderGetQueryParameters 
+        internal partial class ShouldSendNotificationRequestBuilderGetQueryParameters 
         {
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable

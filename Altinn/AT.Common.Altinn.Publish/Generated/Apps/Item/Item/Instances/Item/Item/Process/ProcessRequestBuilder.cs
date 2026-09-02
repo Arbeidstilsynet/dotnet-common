@@ -19,7 +19,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Proce
     /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\process
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class ProcessRequestBuilder : BaseRequestBuilder
+    internal partial class ProcessRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The completeProcess property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Process.CompleteProcess.CompleteProcessRequestBuilder CompleteProcess

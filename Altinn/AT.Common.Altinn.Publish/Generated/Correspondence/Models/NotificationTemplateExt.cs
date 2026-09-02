@@ -5,7 +5,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Models
 {
     /// <summary>Enum describing available notification templates.</summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public enum NotificationTemplateExt
+    internal enum NotificationTemplateExt
     {
         [EnumMember(Value = "CustomMessage")]
         #pragma warning disable CS1591

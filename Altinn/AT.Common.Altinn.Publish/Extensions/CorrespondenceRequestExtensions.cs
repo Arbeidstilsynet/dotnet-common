@@ -1,4 +1,3 @@
-using Arbeidstilsynet.Common.Altinn.Correspondence.Models;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Microsoft.AspNetCore.Http;
@@ -11,11 +10,11 @@ internal static class CorrespondenceRequestExtensions
     /// Maps the flat <see cref="CorrespondenceRequest"/> to the nested JSON structure
     /// expected by the Altinn Correspondence API (InitializeCorrespondencesExt).
     /// </summary>
-    public static InitializeCorrespondencesExt ToApiRequest(this CorrespondenceRequest request)
+    public static InitializeCorrespondences ToApiRequest(this CorrespondenceRequest request)
     {
-        return new InitializeCorrespondencesExt
+        return new InitializeCorrespondences
         {
-            Correspondence = new BaseCorrespondenceExt
+            Correspondence = new BaseCorrespondence
             {
                 ResourceId = $"urn:altinn:resource:{request.ResourceIdentifier}",
                 SendersReference = request.SendersReference,
@@ -24,13 +23,7 @@ internal static class CorrespondenceRequestExtensions
                 RequestedPublishTime = request.RequestedPublishTime,
                 DueDateTime = request.DueDateTime,
                 ExternalReferences = request.ExternalReferences,
-                PropertyList = new BaseCorrespondenceExt_propertyList
-                {
-                    AdditionalData = request.PropertyList.ToDictionary(
-                        entry => entry.Key,
-                        entry => (object)entry.Value
-                    ),
-                },
+                PropertyList = request.PropertyList,
                 ReplyOptions = request.ReplyOptions,
                 Notification = request.Notification,
                 IgnoreReservation = request.IgnoreReservation,
@@ -47,4 +40,9 @@ internal static class CorrespondenceRequestExtensions
     {
         return [.. receivers.Select(s => s.ToAltinnRessourceFormat())];
     }
+
+    /// <summary>
+    /// Converts a <see cref="CorrespondenceRequest"/> and its attachments into a
+    /// <see cref="MultipartFormDataContent"/> that conforms to the Altinn Correspondence
+    /// upload endpoint's [FromForm] binding contract.
 }

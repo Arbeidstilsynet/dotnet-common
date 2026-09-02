@@ -4,7 +4,6 @@ using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Storage.Models;
 using Bogus;
 using Bogus.Extensions.UnitedStates;
-using GeneratedInstanceQueryParameters = Arbeidstilsynet.Common.Altinn.Storage.Instances.InstancesRequestBuilder.InstancesRequestBuilderGetQueryParameters;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit.TestData;
 
@@ -162,7 +161,7 @@ internal static class AltinnTestData
         };
     }
 
-    public static InstanceQuery CreateInstanceQueryParameters(
+    public static InstanceQueryParameters CreateInstanceQueryParameters(
         string? appId = null,
         string? org = null,
         bool processIsComplete = true,
@@ -237,3 +236,4 @@ internal static class AltinnTestData
         };
     }
 }
+

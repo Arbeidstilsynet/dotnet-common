@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Models
     /// An entity representing a a list of Correspondences
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class CorrespondencesExt : IParsable
+    internal partial class CorrespondencesExt : IParsable
     {
         /// <summary>Correspondence ids</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

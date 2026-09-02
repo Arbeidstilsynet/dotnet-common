@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Models
     /// Represents an overview of a shared attachment that can be used by multiple correspondences
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class AttachmentOverviewExt : IParsable
+    internal partial class AttachmentOverviewExt : IParsable
     {
         /// <summary>Unique Id for this attachment</summary>
         public Guid? AttachmentId { get; set; }

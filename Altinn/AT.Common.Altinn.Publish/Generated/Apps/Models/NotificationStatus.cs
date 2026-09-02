@@ -5,7 +5,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
 {
     /// <summary>Represents the state of a notification.</summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public enum NotificationStatus
+    internal enum NotificationStatus
     {
         [EnumMember(Value = "NotSent")]
         #pragma warning disable CS1591

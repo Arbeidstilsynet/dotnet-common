@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Optio
     /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\options\{optionsId}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class WithOptionsItemRequestBuilder : BaseRequestBuilder
+    internal partial class WithOptionsItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Options.Item.WithOptionsItemRequestBuilder"/> and sets the default values.
@@ -88,7 +88,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Optio
         /// Exposes options related to the app and logged in user
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class WithOptionsItemRequestBuilderGetQueryParameters 
+        internal partial class WithOptionsItemRequestBuilderGetQueryParameters 
         {
             /// <summary>The language selected by the user.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

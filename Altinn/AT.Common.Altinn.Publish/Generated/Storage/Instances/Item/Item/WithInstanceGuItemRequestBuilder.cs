@@ -25,7 +25,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item
     /// Builds and executes requests for operations under \instances\{instanceOwnerPartyId}\{instanceGuid}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class WithInstanceGuItemRequestBuilder : BaseRequestBuilder
+    internal partial class WithInstanceGuItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The complete property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Complete.CompleteRequestBuilder Complete
@@ -194,7 +194,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item
         /// Delete an instance.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class WithInstanceGuItemRequestBuilderDeleteQueryParameters 
+        internal partial class WithInstanceGuItemRequestBuilderDeleteQueryParameters 
         {
             /// <summary>if true hard delete will take place. if false, the instance gets its status.softDelete attribute set to current date and time.</summary>
             [QueryParameter("hard")]

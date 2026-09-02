@@ -9,7 +9,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class PayerPrivatePerson : IParsable
+    internal partial class PayerPrivatePerson : IParsable
     #pragma warning restore CS1591
     {
         /// <summary>The email property</summary>

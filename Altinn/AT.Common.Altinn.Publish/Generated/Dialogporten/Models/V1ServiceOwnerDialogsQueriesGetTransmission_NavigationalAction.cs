@@ -9,7 +9,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class V1ServiceOwnerDialogsQueriesGetTransmission_NavigationalAction : IParsable
+    internal partial class V1ServiceOwnerDialogsQueriesGetTransmission_NavigationalAction : IParsable
     #pragma warning restore CS1591
     {
         /// <summary>The UTC timestamp when the navigational action expires and is no longer available.</summary>

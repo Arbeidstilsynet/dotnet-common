@@ -18,7 +18,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.
     /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\data\{dataGuid}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class WithDataGuItemRequestBuilder : BaseRequestBuilder
+    internal partial class WithDataGuItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The pdf property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.Item.Pdf.PdfRequestBuilder Pdf
@@ -225,7 +225,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.
         /// Delete a data element.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class WithDataGuItemRequestBuilderDeleteQueryParameters 
+        internal partial class WithDataGuItemRequestBuilderDeleteQueryParameters 
         {
             /// <summary>comma separated string of validators to ignore</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -252,7 +252,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.
         /// Gets a data element from storage and applies business logic if necessary.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class WithDataGuItemRequestBuilderGetQueryParameters 
+        internal partial class WithDataGuItemRequestBuilderGetQueryParameters 
         {
             /// <summary>Whether to initialize or remove AltinnRowId fields in the model</summary>
             [QueryParameter("includeRowId")]
@@ -272,7 +272,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.
         /// Updates an existing form data element with a patch of changes.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class WithDataGuItemRequestBuilderPatchQueryParameters 
+        internal partial class WithDataGuItemRequestBuilderPatchQueryParameters 
         {
             /// <summary>The language selected by the user.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -289,7 +289,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.
         /// Updates an existing data element with new content.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class WithDataGuItemRequestBuilderPutQueryParameters 
+        internal partial class WithDataGuItemRequestBuilderPutQueryParameters 
         {
             /// <summary>The language selected by the user.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

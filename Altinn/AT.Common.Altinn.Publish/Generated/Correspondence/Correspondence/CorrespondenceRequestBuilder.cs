@@ -13,7 +13,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Correspondence
     /// Builds and executes requests for operations under \correspondence
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class CorrespondenceRequestBuilder : BaseRequestBuilder
+    internal partial class CorrespondenceRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The api property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Correspondence.Correspondence.Api.ApiRequestBuilder Api

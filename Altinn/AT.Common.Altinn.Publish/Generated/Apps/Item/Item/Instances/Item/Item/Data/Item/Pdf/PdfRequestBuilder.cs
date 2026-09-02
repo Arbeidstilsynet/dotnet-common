@@ -13,7 +13,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.
     /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\data\{dataGuid}\pdf
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class PdfRequestBuilder : BaseRequestBuilder
+    internal partial class PdfRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The format property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.Item.Pdf.Format.FormatRequestBuilder Format

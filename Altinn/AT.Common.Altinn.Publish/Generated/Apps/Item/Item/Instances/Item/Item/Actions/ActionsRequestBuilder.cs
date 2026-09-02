@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Actio
     /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\actions
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class ActionsRequestBuilder : BaseRequestBuilder
+    internal partial class ActionsRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Actions.ActionsRequestBuilder"/> and sets the default values.
@@ -101,7 +101,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Actio
         /// Perform a task action on an instance
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class ActionsRequestBuilderPostQueryParameters 
+        internal partial class ActionsRequestBuilderPostQueryParameters 
         {
             /// <summary>The currently used language by the user (or null if not available)</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

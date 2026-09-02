@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
     /// Contains information about a signee and the current signing status.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class SigneeState : IParsable
+    internal partial class SigneeState : IParsable
     {
         /// <summary>Whether delegation of signing rights has been successful.</summary>
         public bool? DelegationSuccessful { get; set; }

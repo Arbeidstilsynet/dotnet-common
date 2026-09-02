@@ -17,7 +17,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data
     /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\data
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class DataRequestBuilder : BaseRequestBuilder
+    internal partial class DataRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The type property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.TypeNamespace.TypeRequestBuilder Type
@@ -157,7 +157,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data
         /// Updates an existing form data element with patches to multiple data elements.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class DataRequestBuilderPatchQueryParameters 
+        internal partial class DataRequestBuilderPatchQueryParameters 
         {
             /// <summary>The language selected by the user.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -174,7 +174,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data
         /// Creates and instantiates a data element of a given element-type. Clients can upload the data element in the request content.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class DataRequestBuilderPostQueryParameters 
+        internal partial class DataRequestBuilderPostQueryParameters 
         {
             /// <summary>identifies the data element type to create</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

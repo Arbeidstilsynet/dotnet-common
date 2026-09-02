@@ -16,7 +16,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Events
     /// Builds and executes requests for operations under \instances\{instanceOwnerPartyId}\{instanceGuid}\events
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class EventsRequestBuilder : BaseRequestBuilder
+    internal partial class EventsRequestBuilder : BaseRequestBuilder
     {
         /// <summary>Gets an item from the Arbeidstilsynet.Common.Altinn.Storage.instances.item.item.events.item collection</summary>
         /// <param name="position">The unique id of the specific event to retrieve.</param>
@@ -148,7 +148,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Events
         /// Retrieves all instance events related to given instance id, listed event types, and given time frame from instanceEvent collection.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class EventsRequestBuilderGetQueryParameters 
+        internal partial class EventsRequestBuilderGetQueryParameters 
         {
             /// <summary>Array of event types to filter the events by.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

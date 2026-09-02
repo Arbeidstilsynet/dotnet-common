@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Events.Models
     /// Class that describes the events subscription request model
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class SubscriptionRequestModel : IParsable
+    internal partial class SubscriptionRequestModel : IParsable
     {
         /// <summary>Filter on alternative subject</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

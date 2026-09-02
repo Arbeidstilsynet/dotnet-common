@@ -9,7 +9,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class V1CommonContent_ContentValue : IParsable
+    internal partial class V1CommonContent_ContentValue : IParsable
     #pragma warning restore CS1591
     {
         /// <summary>True if the authenticated user is authorized for this content. If not, the endpoints willbe replaced with a fixed placeholder. Can be null if not applicable.            </summary>

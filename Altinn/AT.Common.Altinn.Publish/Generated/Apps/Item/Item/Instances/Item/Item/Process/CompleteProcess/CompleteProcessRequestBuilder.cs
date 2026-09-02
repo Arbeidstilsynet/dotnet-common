@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Proce
     /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\process\completeProcess
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class CompleteProcessRequestBuilder : BaseRequestBuilder
+    internal partial class CompleteProcessRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Process.CompleteProcess.CompleteProcessRequestBuilder"/> and sets the default values.
@@ -90,7 +90,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Proce
         /// Attemts to end the process by running next until an end event is reached.Notice that process must have been started.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class CompleteProcessRequestBuilderPutQueryParameters 
+        internal partial class CompleteProcessRequestBuilderPutQueryParameters 
         {
             /// <summary>The currently used language by the user (or null if not available)</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

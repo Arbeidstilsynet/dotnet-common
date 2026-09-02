@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Correspondence.Api.V1.Att
     /// Builds and executes requests for operations under \correspondence\api\v1\attachment\{attachmentId}\download
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class DownloadRequestBuilder : BaseRequestBuilder
+    internal partial class DownloadRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Correspondence.Correspondence.Api.V1.Attachment.Item.Download.DownloadRequestBuilder"/> and sets the default values.

@@ -1,17 +1,18 @@
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Configuration;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
+using Arbeidstilsynet.Common.Altinn.Implementation.Mapping;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Arbeidstilsynet.Common.Altinn.Storage;
-using Arbeidstilsynet.Common.Altinn.Storage.Models;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Clients;
 
 internal class AltinnStorageClient(StorageApiClient client, ResolvedAltinnUrls urls)
     : IAltinnStorageClient
 {
-    public async Task<Instance> GetInstance(
+    public async Task<AltinnInstance> GetInstance(
         Guid instanceGuid,
         CancellationToken cancellationToken = default
     )
@@ -23,14 +24,16 @@ internal class AltinnStorageClient(StorageApiClient client, ResolvedAltinnUrls u
         // data-element subtree hangs off it. The preferred endpoint is therefore addressed by URL.
         var instanceUrl = $"{urls.StorageUrl.ToString().TrimEnd('/')}/instances/{instanceGuid}";
 
-        return await client
-                .Instances[0][Guid.Empty]
-                .WithUrl(instanceUrl)
-                .GetAsync(cancellationToken: cancellationToken)
+        var instance = await client
+            .Instances[0][Guid.Empty]
+            .WithUrl(instanceUrl)
+            .GetAsync(cancellationToken: cancellationToken);
+
+        return instance?.ToAltinnInstance()
             ?? throw new InvalidOperationException("Failed to get instance");
     }
 
-    public Task<Instance> GetInstance(
+    public Task<AltinnInstance> GetInstance(
         AltinnCloudEvent cloudEvent,
         CancellationToken cancellationToken = default
     )
@@ -67,27 +70,30 @@ internal class AltinnStorageClient(StorageApiClient client, ResolvedAltinnUrls u
             ?? throw new InvalidOperationException("Failed to get instance data");
     }
 
-    public async Task<InstanceQueryResponse> GetInstances(
-        InstanceQuery query,
+    public async Task<AltinnQueryResponse<AltinnInstance>> GetInstances(
+        InstanceQueryParameters queryParameters,
         CancellationToken cancellationToken = default
     )
     {
-        return await client.Instances.GetAsync(
-                request =>
-                {
-                    request.QueryParameters = query.Parameters;
+        var response = await client.Instances.GetAsync(
+            request =>
+            {
+                queryParameters.ApplyTo(request.QueryParameters);
 
-                    // Kiota omits header parameters from the generated query-parameter class, so
-                    // the instance owner identifier has to be applied to the request directly.
-                    if (query.InstanceOwnerIdentifier is { Length: > 0 } identifier)
-                    {
-                        request.Headers.Add(
-                            InstanceQuery.InstanceOwnerIdentifierHeaderName,
-                            identifier
-                        );
-                    }
-                },
-                cancellationToken
-            ) ?? throw new InvalidOperationException("Failed to get instances");
+                // Kiota omits header parameters from the generated query-parameter class, so
+                // the instance owner identifier has to be applied to the request directly.
+                if (queryParameters.InstanceOwnerIdentifier is { Length: > 0 } identifier)
+                {
+                    request.Headers.Add(
+                        InstanceQueryParameters.InstanceOwnerIdentifierHeaderName,
+                        identifier
+                    );
+                }
+            },
+            cancellationToken
+        );
+
+        return response?.ToAltinnQueryResponse()
+            ?? throw new InvalidOperationException("Failed to get instances");
     }
 }

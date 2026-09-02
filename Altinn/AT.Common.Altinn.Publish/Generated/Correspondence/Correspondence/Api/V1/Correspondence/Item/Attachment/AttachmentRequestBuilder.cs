@@ -13,7 +13,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Correspondence.Api.V1.Cor
     /// Builds and executes requests for operations under \correspondence\api\v1\correspondence\{correspondenceId}\attachment
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class AttachmentRequestBuilder : BaseRequestBuilder
+    internal partial class AttachmentRequestBuilder : BaseRequestBuilder
     {
         /// <summary>Gets an item from the Arbeidstilsynet.Common.Altinn.Correspondence.correspondence.api.v1.correspondence.item.attachment.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>

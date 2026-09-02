@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
     /// Light weight model representing an instance and it&apos;s file scan result status.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class InstanceFileScanResult : IParsable
+    internal partial class InstanceFileScanResult : IParsable
     {
         /// <summary>File scan result for individual data elements.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

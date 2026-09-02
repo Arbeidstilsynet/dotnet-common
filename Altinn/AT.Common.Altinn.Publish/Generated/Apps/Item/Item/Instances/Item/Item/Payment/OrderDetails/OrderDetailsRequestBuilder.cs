@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Payme
     /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\payment\order-details
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class OrderDetailsRequestBuilder : BaseRequestBuilder
+    internal partial class OrderDetailsRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Payment.OrderDetails.OrderDetailsRequestBuilder"/> and sets the default values.
@@ -88,7 +88,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Payme
         /// Run order details calculations and return the result. Does not require the current task to be a payment task.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class OrderDetailsRequestBuilderGetQueryParameters 
+        internal partial class OrderDetailsRequestBuilderGetQueryParameters 
         {
             /// <summary>The currently used language by the user (or null if not available)</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

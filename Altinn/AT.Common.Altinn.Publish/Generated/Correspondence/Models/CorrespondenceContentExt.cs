@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Models
     /// Represents the content of a reportee element of the type correspondence.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class CorrespondenceContentExt : IParsable
+    internal partial class CorrespondenceContentExt : IParsable
     {
         /// <summary>Gets or sets a list of attachments.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

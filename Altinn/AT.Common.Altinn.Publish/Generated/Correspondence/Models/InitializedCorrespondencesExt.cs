@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Models
     /// Represents a correspondence that has been initialized
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class InitializedCorrespondencesExt : IParsable
+    internal partial class InitializedCorrespondencesExt : IParsable
     {
         /// <summary>The ID of the correspondence</summary>
         public Guid? CorrespondenceId { get; set; }

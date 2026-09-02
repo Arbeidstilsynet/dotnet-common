@@ -21,7 +21,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialogs
     /// Builds and executes requests for operations under \api\v1\serviceowner\dialogs\{dialogId}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class WithDialogItemRequestBuilder : BaseRequestBuilder
+    internal partial class WithDialogItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The actions property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialogs.Item.Actions.ActionsRequestBuilder Actions
@@ -277,7 +277,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialogs
         /// Gets a single dialog aggregate.Note that this operation may return deleted dialogs (see the field `DeletedAt`).
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class WithDialogItemRequestBuilderGetQueryParameters 
+        internal partial class WithDialogItemRequestBuilderGetQueryParameters 
         {
             /// <summary>Filter by end user id</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

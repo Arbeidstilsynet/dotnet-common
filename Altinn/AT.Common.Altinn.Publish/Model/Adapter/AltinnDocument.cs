@@ -1,4 +1,4 @@
-using Arbeidstilsynet.Common.Altinn.Storage.Models;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 
 namespace Arbeidstilsynet.Common.Altinn.Model.Adapter;
 

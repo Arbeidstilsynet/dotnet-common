@@ -16,7 +16,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Data
     /// Builds and executes requests for operations under \instances\{instanceOwnerPartyId}\{instanceGuid}\data
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class DataRequestBuilder : BaseRequestBuilder
+    internal partial class DataRequestBuilder : BaseRequestBuilder
     {
         /// <summary>Gets an item from the Arbeidstilsynet.Common.Altinn.Storage.instances.item.item.data.item collection</summary>
         /// <param name="position">The id of the data element to delete.</param>
@@ -101,7 +101,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Data
         /// Create and save the data element. The StreamContent.Headers.ContentDisposition.FileName property shall be used to set the filename on client side
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class DataRequestBuilderPostQueryParameters 
+        internal partial class DataRequestBuilderPostQueryParameters 
         {
             /// <summary>The data type identifier for the data being uploaded.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

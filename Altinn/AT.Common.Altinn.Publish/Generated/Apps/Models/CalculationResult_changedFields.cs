@@ -9,7 +9,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class CalculationResult_changedFields : IAdditionalDataHolder, IParsable
+    internal partial class CalculationResult_changedFields : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>

@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialogs
     /// Builds and executes requests for operations under \api\v1\serviceowner\dialogs\endusercontext\systemlabels\actions\bulkset
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class BulksetRequestBuilder : BaseRequestBuilder
+    internal partial class BulksetRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialogs.Endusercontext.Systemlabels.Actions.Bulkset.BulksetRequestBuilder"/> and sets the default values.
@@ -98,7 +98,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialogs
         /// Sets the system labels for a list of dialogs, optionally including a end user context revision for each dialog.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class BulksetRequestBuilderPostQueryParameters 
+        internal partial class BulksetRequestBuilderPostQueryParameters 
         {
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable

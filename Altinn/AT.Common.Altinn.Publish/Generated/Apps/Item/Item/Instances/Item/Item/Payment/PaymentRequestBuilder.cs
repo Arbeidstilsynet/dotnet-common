@@ -16,7 +16,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Payme
     /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\payment
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class PaymentRequestBuilder : BaseRequestBuilder
+    internal partial class PaymentRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The orderDetails property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Payment.OrderDetails.OrderDetailsRequestBuilder OrderDetails
@@ -94,7 +94,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Payme
         /// Get updated payment information for the instance. Will contact the payment processor to check the status of the payment. Current task must be a payment task. See payment related documentation.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class PaymentRequestBuilderGetQueryParameters 
+        internal partial class PaymentRequestBuilderGetQueryParameters 
         {
             /// <summary>The currently used language by the user (or null if not available)</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

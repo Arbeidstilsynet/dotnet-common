@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Models
     /// Represents a ReplyOption with information provided by the sender.A reply option is a way for recipients to respond to a correspondence in addition to the normal Read and Confirm operations
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class CorrespondenceReplyOptionExt : IParsable
+    internal partial class CorrespondenceReplyOptionExt : IParsable
     {
         /// <summary>Gets or sets the url text.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

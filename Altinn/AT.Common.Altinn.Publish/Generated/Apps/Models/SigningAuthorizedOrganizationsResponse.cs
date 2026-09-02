@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
     /// Represents the response from the API when fetching organizations the user is authorized to sign on behalf of.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class SigningAuthorizedOrganizationsResponse : IParsable
+    internal partial class SigningAuthorizedOrganizationsResponse : IParsable
     {
         /// <summary>The list of authorized organizations.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

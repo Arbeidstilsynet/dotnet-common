@@ -17,7 +17,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence
     /// The main entry point of the SDK, exposes the configuration and the fluent API.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class CorrespondenceApiClient : BaseRequestBuilder
+    internal partial class CorrespondenceApiClient : BaseRequestBuilder
     {
         /// <summary>The correspondence property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Correspondence.Correspondence.CorrespondenceRequestBuilder Correspondence

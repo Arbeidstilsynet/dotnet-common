@@ -16,7 +16,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Dataelements
     /// Builds and executes requests for operations under \instances\{instanceOwnerPartyId}\{instanceGuid}\dataelements
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class DataelementsRequestBuilder : BaseRequestBuilder
+    internal partial class DataelementsRequestBuilder : BaseRequestBuilder
     {
         /// <summary>Gets an item from the Arbeidstilsynet.Common.Altinn.Storage.instances.item.item.dataelements.item collection</summary>
         /// <param name="position">The id of the data element to update.</param>

@@ -1,5 +1,5 @@
-using Arbeidstilsynet.Common.Altinn.Apps.Models;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 
 namespace Arbeidstilsynet.Common.Altinn.Ports.Clients;
 
@@ -11,7 +11,7 @@ public interface IAltinnAppsClient
     /// <summary>
     /// Marks an instance as complete on behalf of the configured organisation.
     /// </summary>
-    Task<Instance> CompleteInstance(
+    Task<AltinnInstance> CompleteInstance(
         string appId,
         InstanceRequest instanceAddress,
         CancellationToken cancellationToken = default

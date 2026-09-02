@@ -1,0 +1,131 @@
+namespace Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+
+public record InstanceQueryParameters
+{
+    internal const string ContinuationTokenParameterName = "continuationToken";
+
+    /// <summary>
+    /// The header Altinn expects the instance owner identifier in.
+    /// </summary>
+    /// <remarks>
+    /// Kiota omits header parameters from the generated query-parameter class, so this is applied
+    /// to the request directly.
+    /// </remarks>
+    internal const string InstanceOwnerIdentifierHeaderName = "X-Ai-InstanceOwnerIdentifier";
+
+    /// <summary>
+    /// The organization identifier.
+    /// </summary>
+    public string? Org { get; set; }
+
+    /// <summary>
+    /// The application identifier.
+    /// </summary>
+    public string? AppId { get; set; }
+
+    /// <summary>
+    /// The current task identifier.
+    /// </summary>
+    public string? ProcessCurrentTask { get; set; }
+
+    /// <summary>
+    /// A value indicating whether the process is completed.
+    /// </summary>
+    public bool? ProcessIsComplete { get; set; }
+
+    /// <summary>
+    /// The process end state.
+    /// </summary>
+    public string ProcessEndEvent { get; set; }
+
+    /// <summary>
+    /// The process ended value.
+    /// </summary>
+    public AltinnDateTimeQuery[] ProcessEnded { get; set; }
+
+    /// <summary>
+    /// The instance owner party identifier.
+    /// </summary>
+    public int? InstanceOwnerPartyId { get; set; }
+
+    /// <summary>
+    /// The last changed date.
+    /// </summary>
+    public AltinnDateTimeQuery[] LastChanged { get; set; }
+
+    /// <summary>
+    /// The creation date.
+    /// </summary>
+    public AltinnDateTimeQuery[] Created { get; set; }
+
+    /// <summary>
+    /// The visible after date time.
+    /// </summary>
+    public AltinnDateTimeQuery[] VisibleAfter { get; set; }
+
+    /// <summary>
+    /// The due before date time.
+    /// </summary>
+    public AltinnDateTimeQuery[] DueBefore { get; set; }
+
+    /// <summary>
+    /// A string that will hide instances already confirmed by stakeholder.
+    /// </summary>
+    public string ExcludeConfirmedBy { get; set; }
+
+    /// <summary>
+    /// Confirmed = false is a compact version of ExcludeConfirmedBy indicating
+    /// ExcludeConfirmedBy for the org that invokes the request
+    /// </summary>
+    public bool? Confirmed { get; set; }
+
+    /// <summary>
+    /// A value indicating whether the instance is soft deleted.
+    /// </summary>
+    public bool? IsSoftDeleted { get; set; }
+
+    /// <summary>
+    /// A value indicating whether the instance is hard deleted.
+    /// </summary>
+    public bool? IsHardDeleted { get; set; }
+
+    /// <summary>
+    /// A value indicating whether the instance is archived.
+    /// </summary>
+    public bool? IsArchived { get; set; }
+
+    /// <summary>
+    /// The continuation token.
+    /// </summary>
+    public string ContinuationToken { get; set; }
+
+    /// <summary>
+    /// The page size.
+    /// </summary>
+    public int? Size { get; set; }
+
+    /// <summary>
+    /// The instance owner identifier.
+    /// </summary>
+    public string InstanceOwnerIdentifier { get; set; }
+
+    /// <summary>
+    /// The Altinn version to include. E.g. "mainVersionInclude=3" will filter the response to only get the Altinn 3 instances.
+    /// </summary>
+    public int? MainVersionInclude { get; set; }
+
+    /// <summary>
+    /// The Altinn version to exclude. E.g. "mainVersionExclude=3" will filter the response to exclude Altinn 3 instances.
+    /// </summary>
+    public int? MainVersionExclude { get; set; }
+
+    /// <summary>
+    /// Gets or sets the search string.
+    /// </summary>
+    public string SearchString { get; set; }
+
+    /// <summary>
+    /// Gets or sets the value by which the result will be sorted.
+    /// </summary>
+    public string SortBy { get; set; }
+}

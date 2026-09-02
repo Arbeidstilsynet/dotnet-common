@@ -17,7 +17,7 @@ namespace Arbeidstilsynet.Common.Altinn.Events.Subscriptions
     /// Builds and executes requests for operations under \subscriptions
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class SubscriptionsRequestBuilder : BaseRequestBuilder
+    internal partial class SubscriptionsRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The validate property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Events.Subscriptions.Validate.ValidateRequestBuilder Validate

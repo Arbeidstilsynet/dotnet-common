@@ -9,7 +9,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class PaymentReceiver : IParsable
+    internal partial class PaymentReceiver : IParsable
     #pragma warning restore CS1591
     {
         /// <summary>The bankAccountNumber property</summary>

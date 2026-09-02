@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
     /// Represents the response from the set tags API endpoint providing a list of tags and current validation issues.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class SetTagsResponse : IParsable
+    internal partial class SetTagsResponse : IParsable
     {
         /// <summary>A list of tags represented as string values.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

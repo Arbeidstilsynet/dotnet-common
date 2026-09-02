@@ -13,7 +13,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item
     /// Builds and executes requests for operations under \instances\{instanceOwnerPartyId}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class WithInstanceOwnerPartyItemRequestBuilder : BaseRequestBuilder
+    internal partial class WithInstanceOwnerPartyItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>Gets an item from the Arbeidstilsynet.Common.Altinn.Storage.instances.item.item collection</summary>
         /// <param name="position">The id of the instance to retrieve.</param>

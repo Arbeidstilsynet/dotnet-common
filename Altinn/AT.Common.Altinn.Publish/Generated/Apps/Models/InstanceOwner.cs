@@ -9,7 +9,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class InstanceOwner : IParsable
+    internal partial class InstanceOwner : IParsable
     #pragma warning restore CS1591
     {
         /// <summary>The organisationNumber property</summary>

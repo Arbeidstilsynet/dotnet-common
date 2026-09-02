@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
     /// Specialized model for instansiation of instances
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class InstansiationInstance : IParsable
+    internal partial class InstansiationInstance : IParsable
     {
         /// <summary>Gets or sets the due date to submit the instance to application owner.</summary>
         public DateTimeOffset? DueBefore { get; set; }

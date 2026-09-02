@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Events.Subscriptions.Item
     /// Builds and executes requests for operations under \subscriptions\{id}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class SubscriptionsItemRequestBuilder : BaseRequestBuilder
+    internal partial class SubscriptionsItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Events.Subscriptions.Item.SubscriptionsItemRequestBuilder"/> and sets the default values.

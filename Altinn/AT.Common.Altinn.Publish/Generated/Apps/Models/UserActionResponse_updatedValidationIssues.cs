@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
     /// Gets a dictionary of updated validation issues. The first key is the data model id, the second key is the validator idValidators that are not listed in the dictionary are assumed to have not been executed
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class UserActionResponse_updatedValidationIssues : IAdditionalDataHolder, IParsable
+    internal partial class UserActionResponse_updatedValidationIssues : IAdditionalDataHolder, IParsable
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }

@@ -1,4 +1,5 @@
-using Arbeidstilsynet.Common.Altinn.Events.Models;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 
 namespace Arbeidstilsynet.Common.Altinn.Ports.Clients;
 
@@ -10,8 +11,8 @@ public interface IAltinnEventsClient
     /// <summary>
     /// Creates an event subscription.
     /// </summary>
-    Task<Subscription> Subscribe(
-        SubscriptionRequestModel request,
+    Task<AltinnSubscription?> Subscribe(
+        AltinnSubscriptionRequest request,
         CancellationToken cancellationToken = default
     );
 
@@ -23,7 +24,7 @@ public interface IAltinnEventsClient
     /// <summary>
     /// Gets an event subscription by its id.
     /// </summary>
-    Task<Subscription> GetAltinnSubscription(
+    Task<AltinnSubscription?> GetAltinnSubscription(
         int subscriptionId,
         CancellationToken cancellationToken = default
     );

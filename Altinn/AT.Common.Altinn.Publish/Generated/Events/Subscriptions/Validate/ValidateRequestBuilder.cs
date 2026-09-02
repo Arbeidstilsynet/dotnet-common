@@ -13,7 +13,7 @@ namespace Arbeidstilsynet.Common.Altinn.Events.Subscriptions.Validate
     /// Builds and executes requests for operations under \subscriptions\validate
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class ValidateRequestBuilder : BaseRequestBuilder
+    internal partial class ValidateRequestBuilder : BaseRequestBuilder
     {
         /// <summary>Gets an item from the Arbeidstilsynet.Common.Altinn.Events.subscriptions.validate.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>

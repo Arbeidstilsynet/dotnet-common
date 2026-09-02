@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text.Json;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
-using Arbeidstilsynet.Common.Altinn.Storage.Models;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 
 namespace Arbeidstilsynet.Common.Altinn.Extensions;
 
@@ -12,11 +12,11 @@ namespace Arbeidstilsynet.Common.Altinn.Extensions;
 public static class AdapterExtensions
 {
     /// <summary>
-    /// Converts an Altinn <see cref="Instance"/> to <see cref="AltinnMetadata"/>.
+    /// Converts an Altinn <see cref="AltinnInstance"/> to <see cref="AltinnMetadata"/>.
     /// </summary>
     /// <param name="instance">The Altinn instance to convert.</param>
     /// <returns>The corresponding <see cref="AltinnMetadata"/> object.</returns>
-    public static AltinnMetadata ToAltinnMetadata(this Instance instance)
+    public static AltinnMetadata ToAltinnMetadata(this AltinnInstance instance)
     {
         var appIdParts = instance.AppId?.Split('/');
 
@@ -51,8 +51,8 @@ public static class AdapterExtensions
             InstanceGuid = instanceGuid,
             InstanceOwnerPartyId = partyId,
             OrganisationNumber = instance.InstanceOwner?.OrganisationNumber,
-            ProcessStarted = instance.Process?.Started?.DateTime,
-            ProcessEnded = instance.Process?.Ended?.DateTime,
+            ProcessStarted = instance.Process?.Started,
+            ProcessEnded = instance.Process?.Ended,
             DialogId = dialogId,
             DataValues = dataValues,
         };
@@ -61,21 +61,8 @@ public static class AdapterExtensions
     /// <summary>
     /// Reads the instance's data values as a string dictionary.
     /// </summary>
-    /// <remarks>
-    /// The specification models <c>dataValues</c> as a free-form object, so Kiota emits a type
-    /// whose entries live in an untyped <c>AdditionalData</c> bag rather than a dictionary.
-    /// </remarks>
-    internal static Dictionary<string, string> GetDataValues(this Instance instance)
-    {
-        if (instance.DataValues?.AdditionalData is not { } additionalData)
-        {
-            return [];
-        }
-
-        return additionalData
-            .Where(entry => entry.Value is not null)
-            .ToDictionary(entry => entry.Key, entry => entry.Value.ToString() ?? string.Empty);
-    }
+    internal static Dictionary<string, string> GetDataValues(this AltinnInstance instance) =>
+        instance.DataValues ?? [];
 
     /// <summary>
     /// Converts <see cref="AltinnMetadata"/> to an <see cref="InstanceRequest"/>.
@@ -94,7 +81,7 @@ public static class AdapterExtensions
     /// <summary>
     /// Converts an <see cref="AltinnInstanceSummary"/> to a metadata dictionary with an Altinn reference.
     /// </summary>
-    /// <param name="altinnInstanceSummary">The Altinn instance summary to convert.</param>
+    /// <param name="altinnInstanceSummary">The Altinn AltinnInstance summary to convert.</param>
     /// <returns>A dictionary containing metadata and the Altinn reference.</returns>
     public static Dictionary<string, string> ToMetadataDictionary(
         this AltinnInstanceSummary altinnInstanceSummary

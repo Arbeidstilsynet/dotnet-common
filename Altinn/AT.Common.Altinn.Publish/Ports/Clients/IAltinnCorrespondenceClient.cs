@@ -1,4 +1,5 @@
-using Arbeidstilsynet.Common.Altinn.Correspondence.Models;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Microsoft.AspNetCore.Http;
 
 namespace Arbeidstilsynet.Common.Altinn.Ports.Clients;
@@ -17,8 +18,8 @@ public interface IAltinnCorrespondenceClient
     /// is used instead of the JSON one.
     /// </param>
     /// <param name="cancellationToken">Cancels the request.</param>
-    Task<InitializeCorrespondencesResponseExt> InitializeCorrespondence(
-        InitializeCorrespondencesExt request,
+    Task<CorrespondenceResponse> InitializeCorrespondence(
+        InitializeCorrespondences request,
         List<IFormFile>? attachments = null,
         CancellationToken cancellationToken = default
     );
@@ -26,7 +27,7 @@ public interface IAltinnCorrespondenceClient
     /// <summary>
     /// Gets an overview of a correspondence.
     /// </summary>
-    Task<CorrespondenceOverviewExt> GetCorrespondence(
+    Task<AltinnCorrespondenceOverview> GetCorrespondence(
         Guid correspondenceId,
         CancellationToken cancellationToken = default
     );

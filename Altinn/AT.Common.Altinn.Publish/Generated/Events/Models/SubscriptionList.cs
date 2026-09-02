@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Events.Models
     /// An object containing a list of subscriptions and metadata
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class SubscriptionList : IParsable
+    internal partial class SubscriptionList : IParsable
     {
         /// <summary>The nuber of subscriptions in the list</summary>
         public int? Count { get; set; }

@@ -14,7 +14,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner
     /// Builds and executes requests for operations under \api\v1\serviceowner
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class ServiceownerRequestBuilder : BaseRequestBuilder
+    internal partial class ServiceownerRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The dialoglookup property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialoglookup.DialoglookupRequestBuilder Dialoglookup

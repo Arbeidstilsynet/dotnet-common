@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Readstatus
     /// Builds and executes requests for operations under \instances\{instanceOwnerPartyId}\{instanceGuid}\readstatus
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class ReadstatusRequestBuilder : BaseRequestBuilder
+    internal partial class ReadstatusRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Readstatus.ReadstatusRequestBuilder"/> and sets the default values.
@@ -88,7 +88,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Readstatus
         /// Update instance read status.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class ReadstatusRequestBuilderPutQueryParameters 
+        internal partial class ReadstatusRequestBuilderPutQueryParameters 
         {
             /// <summary>The updated read status.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

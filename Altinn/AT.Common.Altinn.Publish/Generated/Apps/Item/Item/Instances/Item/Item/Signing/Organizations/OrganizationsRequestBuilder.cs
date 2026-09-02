@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Signi
     /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\signing\organizations
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class OrganizationsRequestBuilder : BaseRequestBuilder
+    internal partial class OrganizationsRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Signing.Organizations.OrganizationsRequestBuilder"/> and sets the default values.
@@ -90,7 +90,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Signi
         /// Get the organizations that the user can sign on behalf of, if any. Determined by the user having a key role at the organization.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class OrganizationsRequestBuilderGetQueryParameters 
+        internal partial class OrganizationsRequestBuilderGetQueryParameters 
         {
             /// <summary>The currently used language by the user (or null if not available)</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

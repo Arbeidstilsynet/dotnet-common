@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Correspondence.Api.V1.Cor
     /// Builds and executes requests for operations under \correspondence\api\v1\correspondence\upload
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class UploadRequestBuilder : BaseRequestBuilder
+    internal partial class UploadRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Correspondence.Correspondence.Api.V1.Correspondence.Upload.UploadRequestBuilder"/> and sets the default values.

@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
     /// Represents the response from a data patch operation on the Altinn.App.Api.Controllers.DataController.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class DataPatchResponseMultiple : IParsable
+    internal partial class DataPatchResponseMultiple : IParsable
     {
         /// <summary>The instance property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

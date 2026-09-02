@@ -16,7 +16,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialogs
     /// Builds and executes requests for operations under \api\v1\serviceowner\dialogs\{dialogId}\seenlog
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class SeenlogRequestBuilder : BaseRequestBuilder
+    internal partial class SeenlogRequestBuilder : BaseRequestBuilder
     {
         /// <summary>Gets an item from the Arbeidstilsynet.Common.Altinn.Dialogporten.api.v1.serviceowner.dialogs.item.seenlog.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>

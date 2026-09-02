@@ -28,7 +28,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item
     /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class WithInstanceGuItemRequestBuilder : BaseRequestBuilder
+    internal partial class WithInstanceGuItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The actions property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Actions.ActionsRequestBuilder Actions
@@ -203,7 +203,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item
         /// Deletes an instance.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class WithInstanceGuItemRequestBuilderDeleteQueryParameters 
+        internal partial class WithInstanceGuItemRequestBuilderDeleteQueryParameters 
         {
             /// <summary>A value indicating whether the instance should be unrecoverable.</summary>
             [QueryParameter("hard")]

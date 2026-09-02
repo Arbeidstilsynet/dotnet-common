@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
     /// File scan result for an individual data element.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class DataElementFileScanResult : IParsable
+    internal partial class DataElementFileScanResult : IParsable
     {
         /// <summary>The fileScanResult property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Apps.Models.FileScanResult? FileScanResult { get; set; }

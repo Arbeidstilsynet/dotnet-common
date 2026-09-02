@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.
     /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\data\type\{dataType}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class WithDataTypeItemRequestBuilder : BaseRequestBuilder
+    internal partial class WithDataTypeItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.TypeNamespace.Item.WithDataTypeItemRequestBuilder"/> and sets the default values.
@@ -92,7 +92,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Data.
         /// Creates and instantiates a data element of a given element-type. Clients can upload the data element in the request content.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class WithDataTypeItemRequestBuilderPostQueryParameters 
+        internal partial class WithDataTypeItemRequestBuilderPostQueryParameters 
         {
             /// <summary>comma separated string of validators to ignore</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

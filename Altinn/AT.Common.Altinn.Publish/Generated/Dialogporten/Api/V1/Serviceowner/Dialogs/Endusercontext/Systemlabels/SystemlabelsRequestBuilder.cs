@@ -13,7 +13,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialogs
     /// Builds and executes requests for operations under \api\v1\serviceowner\dialogs\endusercontext\systemlabels
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class SystemlabelsRequestBuilder : BaseRequestBuilder
+    internal partial class SystemlabelsRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The actions property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Dialogporten.Api.V1.Serviceowner.Dialogs.Endusercontext.Systemlabels.Actions.ActionsRequestBuilder Actions

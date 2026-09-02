@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Process.Inst
     /// Builds and executes requests for operations under \instances\{instanceOwnerPartyId}\{instanceGuid}\process\instanceandevents
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class InstanceandeventsRequestBuilder : BaseRequestBuilder
+    internal partial class InstanceandeventsRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Process.Instanceandevents.InstanceandeventsRequestBuilder"/> and sets the default values.

@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Correspondence.Api.V1.Cor
     /// Builds and executes requests for operations under \correspondence\api\v1\correspondence\{correspondenceId}\purge
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class PurgeRequestBuilder : BaseRequestBuilder
+    internal partial class PurgeRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Correspondence.Correspondence.Api.V1.Correspondence.Item.Purge.PurgeRequestBuilder"/> and sets the default values.

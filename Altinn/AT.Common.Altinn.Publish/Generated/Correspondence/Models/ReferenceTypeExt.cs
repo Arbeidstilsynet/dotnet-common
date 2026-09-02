@@ -5,7 +5,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Models
 {
     /// <summary>Defines what kind of reference</summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public enum ReferenceTypeExt
+    internal enum ReferenceTypeExt
     {
         [EnumMember(Value = "Generic")]
         #pragma warning disable CS1591

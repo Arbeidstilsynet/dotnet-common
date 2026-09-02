@@ -13,7 +13,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Datal
     /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\datalists
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class DatalistsRequestBuilder : BaseRequestBuilder
+    internal partial class DatalistsRequestBuilder : BaseRequestBuilder
     {
         /// <summary>Gets an item from the Arbeidstilsynet.Common.Altinn.Apps.item.item.instances.item.item.datalists.item collection</summary>
         /// <param name="position">The datalistId</param>

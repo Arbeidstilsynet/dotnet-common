@@ -9,7 +9,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class V1ServiceOwnerDialogsQueriesGet_DialogApiActionEndpoint : IParsable
+    internal partial class V1ServiceOwnerDialogsQueriesGet_DialogApiActionEndpoint : IParsable
     #pragma warning restore CS1591
     {
         /// <summary>Boolean indicating if the endpoint is deprecated. Integrators should migrate to endpoints with a higher version.</summary>

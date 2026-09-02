@@ -5,7 +5,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Models
 {
     /// <summary>Represents the important statuses for an attachment</summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public enum AttachmentStatusExt
+    internal enum AttachmentStatusExt
     {
         [EnumMember(Value = "Initialized")]
         #pragma warning disable CS1591

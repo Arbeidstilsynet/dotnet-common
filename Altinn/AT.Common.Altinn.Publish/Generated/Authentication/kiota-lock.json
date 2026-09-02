@@ -4,7 +4,7 @@
   "lockFileVersion": "1.0.0",
   "kiotaVersion": "1.32.4",
   "clientClassName": "AuthenticationApiClient",
-  "typeAccessModifier": "Public",
+  "typeAccessModifier": "Internal",
   "clientNamespaceName": "Arbeidstilsynet.Common.Altinn.Authentication",
   "language": "CSharp",
   "usesBackingStore": false,

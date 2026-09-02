@@ -18,7 +18,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Correspondence.Api.V1.Att
     /// Builds and executes requests for operations under \correspondence\api\v1\attachment\{attachmentId}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class WithAttachmentItemRequestBuilder : BaseRequestBuilder
+    internal partial class WithAttachmentItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The details property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Correspondence.Correspondence.Api.V1.Attachment.Item.Details.DetailsRequestBuilder Details

@@ -9,7 +9,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class Substatus : IParsable
+    internal partial class Substatus : IParsable
     #pragma warning restore CS1591
     {
         /// <summary>The description property</summary>

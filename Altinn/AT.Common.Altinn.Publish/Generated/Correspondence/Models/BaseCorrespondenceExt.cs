@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Models
     /// Represents a request object for the operation, InitializeCorrespondence, that can create a correspondence in Altinn.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class BaseCorrespondenceExt : IParsable
+    internal partial class BaseCorrespondenceExt : IParsable
     {
         /// <summary>Specifies whether the correspondence can be forwarded by the recipient</summary>
         public bool? AllowForwarding { get; set; }

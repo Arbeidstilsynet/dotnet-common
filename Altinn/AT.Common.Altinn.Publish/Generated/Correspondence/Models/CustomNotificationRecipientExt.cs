@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Models
     /// Represents a custom notification recipient with override options
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class CustomNotificationRecipientExt : IParsable
+    internal partial class CustomNotificationRecipientExt : IParsable
     {
         /// <summary>Only the first recipient will be used as custom recipient.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

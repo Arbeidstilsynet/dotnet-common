@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Sign
     /// Builds and executes requests for operations under \instances\{instanceOwnerPartyId}\{instanceGuid}\sign
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class SignRequestBuilder : BaseRequestBuilder
+    internal partial class SignRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Sign.SignRequestBuilder"/> and sets the default values.

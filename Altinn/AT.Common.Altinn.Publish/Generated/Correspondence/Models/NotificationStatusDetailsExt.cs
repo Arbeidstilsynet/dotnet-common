@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Models
     /// A class representing a summary of status overviews of all notification channels
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class NotificationStatusDetailsExt : IParsable
+    internal partial class NotificationStatusDetailsExt : IParsable
     {
         /// <summary>An abstract class representing a status overview of a notification channels</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

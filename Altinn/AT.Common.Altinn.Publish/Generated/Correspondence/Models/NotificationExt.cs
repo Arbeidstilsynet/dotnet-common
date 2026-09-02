@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Models
     /// Represents a notification connected to a specific correspondence
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class NotificationExt : IParsable
+    internal partial class NotificationExt : IParsable
     {
         /// <summary>The date and time of when the notification order was created</summary>
         public DateTimeOffset? Created { get; set; }

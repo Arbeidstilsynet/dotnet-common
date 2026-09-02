@@ -17,7 +17,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Signi
     /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\signing
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class SigningRequestBuilder : BaseRequestBuilder
+    internal partial class SigningRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The dataElements property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Signing.DataElements.DataElementsRequestBuilder DataElements
@@ -100,7 +100,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Signi
         /// Get updated signing state for the current signing task.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class SigningRequestBuilderGetQueryParameters 
+        internal partial class SigningRequestBuilderGetQueryParameters 
         {
             /// <summary>The currently used language by the user (or null if not available)</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

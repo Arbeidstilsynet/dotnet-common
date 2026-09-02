@@ -1,4 +1,4 @@
-using Arbeidstilsynet.Common.Altinn.Storage.Models;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 
 namespace Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 
@@ -14,12 +14,12 @@ public abstract class AltinnInstanceSummaryException(
 }
 
 public sealed class AltinnMainDataElementNotFoundException(
-    Instance instance,
+    AltinnInstance instance,
     string expectedMainDataType,
     IEnumerable<string?> existingDataTypes
 )
     : AltinnInstanceSummaryException(
-        $"Main document with data type '{expectedMainDataType}' was not found in instance '{instance.Id}' from app '{instance.AppId}'. Existing data types: [{string.Join(", ", existingDataTypes)}]",
+        $"Main document with data type '{expectedMainDataType}' was not found in AltinnInstance '{instance.Id}' from app '{instance.AppId}'. Existing data types: [{string.Join(", ", existingDataTypes)}]",
         instance.Id,
         instance.AppId
     )
@@ -28,16 +28,19 @@ public sealed class AltinnMainDataElementNotFoundException(
     public IReadOnlyCollection<string?> ExistingDataTypes { get; } = [.. existingDataTypes];
 }
 
-public sealed class AltinnInstanceOwnerPartyIdMissingException(Instance instance)
+public sealed class AltinnInstanceOwnerPartyIdMissingException(AltinnInstance instance)
     : AltinnInstanceSummaryException(
-        $"Instance owner party id is required for instance '{instance.Id}' from app '{instance.AppId}'.",
+        $"AltinnInstance owner party id is required for AltinnInstance '{instance.Id}' from app '{instance.AppId}'.",
         instance.Id,
         instance.AppId
     );
 
-public sealed class AltinnDataElementIdMissingException(Instance instance, DataElement dataElement)
+public sealed class AltinnDataElementIdMissingException(
+    AltinnInstance instance,
+    DataElement dataElement
+)
     : AltinnInstanceSummaryException(
-        $"Data element id is required for data type '{dataElement.DataType}' in instance '{instance.Id}' from app '{instance.AppId}'.",
+        $"Data element id is required for data type '{dataElement.DataType}' in AltinnInstance '{instance.Id}' from app '{instance.AppId}'.",
         instance.Id,
         instance.AppId
     )

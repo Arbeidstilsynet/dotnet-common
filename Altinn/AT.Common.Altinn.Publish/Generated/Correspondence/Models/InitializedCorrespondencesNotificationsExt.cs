@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Models
     /// Information about a notification that were created for the correspondence
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class InitializedCorrespondencesNotificationsExt : IParsable
+    internal partial class InitializedCorrespondencesNotificationsExt : IParsable
     {
         /// <summary>Boolean indicating if the notification is a reminder</summary>
         public bool? IsReminder { get; set; }

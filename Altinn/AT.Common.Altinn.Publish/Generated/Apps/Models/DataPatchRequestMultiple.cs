@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
     /// Represents the request to patch data on the Altinn.App.Api.Controllers.DataController in theversion that supports multiple data models in the same request.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class DataPatchRequestMultiple : IParsable
+    internal partial class DataPatchRequestMultiple : IParsable
     {
         /// <summary>List of validators to ignore during the patch operation.Issues from these validators will not be run during the save operation, but the validator will run on process/next</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

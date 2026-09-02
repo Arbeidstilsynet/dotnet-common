@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Models
     /// Represents a container object for attachments used when initiating a shared attachment
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class InitializeAttachmentExt : IParsable
+    internal partial class InitializeAttachmentExt : IParsable
     {
         /// <summary>MD5 checksum for file data.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

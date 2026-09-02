@@ -5,7 +5,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public enum DialogEndUserContextsEntities_SystemLabel
+    internal enum DialogEndUserContextsEntities_SystemLabel
     #pragma warning restore CS1591
     {
         [EnumMember(Value = "Default")]

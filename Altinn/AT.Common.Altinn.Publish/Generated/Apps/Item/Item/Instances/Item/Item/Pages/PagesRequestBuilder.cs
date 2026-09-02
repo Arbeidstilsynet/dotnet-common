@@ -13,7 +13,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Pages
     /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\{instanceGuid}\pages
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class PagesRequestBuilder : BaseRequestBuilder
+    internal partial class PagesRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The order property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Item.Pages.Order.OrderRequestBuilder Order

@@ -17,7 +17,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten
     /// The main entry point of the SDK, exposes the configuration and the fluent API.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class DialogportenApiClient : BaseRequestBuilder
+    internal partial class DialogportenApiClient : BaseRequestBuilder
     {
         /// <summary>The api property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Dialogporten.Api.ApiRequestBuilder Api

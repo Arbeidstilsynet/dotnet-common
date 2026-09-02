@@ -5,7 +5,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Models
 {
     /// <summary>Defines the location of the attachment data during the Initialize Correspondence Operation</summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public enum InitializeAttachmentDataLocationTypeExt
+    internal enum InitializeAttachmentDataLocationTypeExt
     {
         [EnumMember(Value = "NewCorrespondenceAttachment")]
         #pragma warning disable CS1591

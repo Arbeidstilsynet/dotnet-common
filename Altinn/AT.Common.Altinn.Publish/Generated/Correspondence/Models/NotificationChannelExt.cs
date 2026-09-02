@@ -5,7 +5,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Models
 {
     /// <summary>Enum describing available notification channels.</summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public enum NotificationChannelExt
+    internal enum NotificationChannelExt
     {
         [EnumMember(Value = "Email")]
         #pragma warning disable CS1591

@@ -13,7 +13,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Correspondence.Api.V1.Cor
     /// Builds and executes requests for operations under \correspondence\api\v1\correspondence\{correspondenceId}\attachments
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class AttachmentsRequestBuilder : BaseRequestBuilder
+    internal partial class AttachmentsRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The downloadall property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Correspondence.Correspondence.Api.V1.Correspondence.Item.Attachments.Downloadall.DownloadallRequestBuilder Downloadall

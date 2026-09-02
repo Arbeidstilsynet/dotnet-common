@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Create
     /// Builds and executes requests for operations under \{org}\{app}\instances\create
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class CreateRequestBuilder : BaseRequestBuilder
+    internal partial class CreateRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Create.CreateRequestBuilder"/> and sets the default values.
@@ -93,7 +93,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Create
         /// Simplified Instanciation with support for fieldprefill
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class CreateRequestBuilderPostQueryParameters 
+        internal partial class CreateRequestBuilderPostQueryParameters 
         {
             /// <summary>The currently active user language</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

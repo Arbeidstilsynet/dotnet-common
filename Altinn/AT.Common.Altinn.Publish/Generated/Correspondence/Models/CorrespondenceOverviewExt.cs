@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Models
     /// An object representing an overview of a correspondence with enough details to drive the business process
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class CorrespondenceOverviewExt : IParsable
+    internal partial class CorrespondenceOverviewExt : IParsable
     {
         /// <summary>Specifies whether the correspondence can be forwarded by the recipient</summary>
         public bool? AllowForwarding { get; set; }

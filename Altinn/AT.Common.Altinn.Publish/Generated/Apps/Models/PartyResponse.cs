@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
     /// Class representing a party
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class PartyResponse : IParsable
+    internal partial class PartyResponse : IParsable
     {
         /// <summary>The IsDeleted</summary>
         public bool? IsDeleted { get; set; }

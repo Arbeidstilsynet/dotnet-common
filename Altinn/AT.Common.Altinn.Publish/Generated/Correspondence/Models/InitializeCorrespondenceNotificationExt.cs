@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Models
     /// Used to specify a single notification connected to a specific Correspondence during the Initialize Correspondence operation
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class InitializeCorrespondenceNotificationExt : IParsable
+    internal partial class InitializeCorrespondenceNotificationExt : IParsable
     {
         /// <summary>Only the first list of recipients will be used. If not set, the notification will be sent to the recipient of the Correspondence</summary>
         [Obsolete("")]

@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
     /// Item class for the list of patches with Id
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class PatchListItem : IParsable
+    internal partial class PatchListItem : IParsable
     {
         /// <summary>The guid for the data element this patch applies to</summary>
         public Guid? DataElementId { get; set; }

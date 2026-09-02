@@ -13,7 +13,7 @@ namespace Arbeidstilsynet.Common.Altinn.Authentication.Exchange
     /// Builds and executes requests for operations under \exchange
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class ExchangeRequestBuilder : BaseRequestBuilder
+    internal partial class ExchangeRequestBuilder : BaseRequestBuilder
     {
         /// <summary>Gets an item from the Arbeidstilsynet.Common.Altinn.Authentication.exchange.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>

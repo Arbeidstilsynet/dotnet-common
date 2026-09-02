@@ -1,15 +1,15 @@
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
-using Arbeidstilsynet.Common.Altinn.Storage.Models;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 
 namespace Arbeidstilsynet.Common.Altinn.Model.Adapter;
 
 /// <summary>
-/// A summary of an Altinn instance. An Altinn instance represents a submitted form in Altinn.
+/// A summary of an Altinn AltinnInstance. An Altinn AltinnInstance represents a submitted form in Altinn.
 /// </summary>
 public record AltinnInstanceSummary
 {
     /// <summary>
-    /// Metadata about the instance.
+    /// Metadata about the AltinnInstance.
     /// </summary>
     public required AltinnMetadata Metadata { get; init; }
 
@@ -19,7 +19,7 @@ public record AltinnInstanceSummary
     public required AltinnDocument SkjemaAsPdf { get; init; }
 
     /// <summary>
-    /// The structured data of the instance. This is identified by <see cref="AltinnAppSpecification.StructuredDataTypeId"/>
+    /// The structured data of the AltinnInstance. This is identified by <see cref="AltinnAppSpecification.StructuredDataTypeId"/>
     /// </summary>
     public AltinnDocument? StructuredData { get; init; }
 

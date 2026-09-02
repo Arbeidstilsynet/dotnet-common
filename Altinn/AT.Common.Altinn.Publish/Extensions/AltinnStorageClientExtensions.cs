@@ -1,7 +1,7 @@
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
-using Arbeidstilsynet.Common.Altinn.Storage.Models;
 
 namespace Arbeidstilsynet.Common.Altinn.Extensions;
 
@@ -14,17 +14,17 @@ public static class AltinnStorageClientExtensions
     /// Retrieves all Altinn instances matching the given query, handling pagination internally.
     /// </summary>
     /// <param name="altinnStorageClient">The storage client.</param>
-    /// <param name="query">The instance query.</param>
-    public static async Task<IEnumerable<Instance>> GetAllInstances(
+    /// <param name="query">The AltinnInstance query.</param>
+    public static async Task<IEnumerable<AltinnInstance>> GetAllInstances(
         this IAltinnStorageClient altinnStorageClient,
-        InstanceQuery query
+        InstanceQueryParameters query
     )
     {
         var visitedUris = new HashSet<string>();
 
         var queryResponse = await altinnStorageClient.GetInstances(query);
 
-        var instances = new List<Instance>(queryResponse.Instances ?? []);
+        var instances = new List<AltinnInstance>(queryResponse.Instances ?? []);
 
         while (
             Uri.IsWellFormedUriString(queryResponse.Next, UriKind.Absolute)

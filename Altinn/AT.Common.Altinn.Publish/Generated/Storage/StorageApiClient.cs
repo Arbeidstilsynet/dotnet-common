@@ -17,7 +17,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage
     /// The main entry point of the SDK, exposes the configuration and the fluent API.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class StorageApiClient : BaseRequestBuilder
+    internal partial class StorageApiClient : BaseRequestBuilder
     {
         /// <summary>The instances property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Storage.Instances.InstancesRequestBuilder Instances

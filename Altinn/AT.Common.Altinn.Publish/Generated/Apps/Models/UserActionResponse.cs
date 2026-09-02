@@ -12,7 +12,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
     /// Response object from action endpoint
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class UserActionResponse : ApiException, IParsable
+    internal partial class UserActionResponse : ApiException, IParsable
     {
         /// <summary>Actions the client should perform after action has been performed backend</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

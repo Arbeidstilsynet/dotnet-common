@@ -9,7 +9,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class Reference : IParsable
+    internal partial class Reference : IParsable
     #pragma warning restore CS1591
     {
         /// <summary>The relation property</summary>

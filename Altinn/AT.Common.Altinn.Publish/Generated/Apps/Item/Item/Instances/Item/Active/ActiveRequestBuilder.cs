@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Active
     /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}\active
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class ActiveRequestBuilder : BaseRequestBuilder
+    internal partial class ActiveRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Active.ActiveRequestBuilder"/> and sets the default values.

@@ -16,7 +16,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances
     /// Builds and executes requests for operations under \instances
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class InstancesRequestBuilder : BaseRequestBuilder
+    internal partial class InstancesRequestBuilder : BaseRequestBuilder
     {
         /// <summary>Gets an item from the Arbeidstilsynet.Common.Altinn.Storage.instances.item collection</summary>
         /// <param name="position">The party id of the instance owner.</param>
@@ -150,7 +150,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances
         /// Retrieves all instances that match the specified query parameters. Parameters can be combined. Invalid or unknown parameter values will result in a 400 Bad Request response.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class InstancesRequestBuilderGetQueryParameters 
+        internal partial class InstancesRequestBuilderGetQueryParameters 
         {
             /// <summary>The application identifier.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -327,7 +327,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances
         /// Inserts new instance into the instance collection.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class InstancesRequestBuilderPostQueryParameters 
+        internal partial class InstancesRequestBuilderPostQueryParameters 
         {
             /// <summary>the application id</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

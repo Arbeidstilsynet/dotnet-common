@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Datavalues
     /// Builds and executes requests for operations under \instances\{instanceOwnerPartyId}\{instanceGuid}\datavalues
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class DatavaluesRequestBuilder : BaseRequestBuilder
+    internal partial class DatavaluesRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Datavalues.DatavaluesRequestBuilder"/> and sets the default values.

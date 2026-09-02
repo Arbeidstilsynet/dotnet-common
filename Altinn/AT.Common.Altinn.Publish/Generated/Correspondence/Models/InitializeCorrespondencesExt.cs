@@ -9,7 +9,7 @@ namespace Arbeidstilsynet.Common.Altinn.Correspondence.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class InitializeCorrespondencesExt : IParsable
+    internal partial class InitializeCorrespondencesExt : IParsable
     #pragma warning restore CS1591
     {
         /// <summary>Represents a request object for the operation, InitializeCorrespondence, that can create a correspondence in Altinn.</summary>

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using Arbeidstilsynet.Common.Altinn.Correspondence.Models;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 
 namespace Arbeidstilsynet.Common.Altinn.Model.Adapter
 {
@@ -39,7 +39,7 @@ namespace Arbeidstilsynet.Common.Altinn.Model.Adapter
         /// The correspondence content. Contains information about the Correspondence body, subject etc.
         /// </summary>
         [JsonPropertyName("content")]
-        public required InitializeCorrespondenceContentExt Content { get; set; }
+        public required InitializeCorrespondenceContent Content { get; set; }
 
         /// <summary>
         /// When the correspondence should become visible to the recipient.
@@ -58,7 +58,7 @@ namespace Arbeidstilsynet.Common.Altinn.Model.Adapter
         /// Examples include Altinn App instances, Altinn Broker File Transfers
         /// </summary>
         [JsonPropertyName("externalReferences")]
-        public List<ExternalReferenceExt>? ExternalReferences { get; set; }
+        public List<ExternalReference>? ExternalReferences { get; set; }
 
         /// <summary>
         /// User-defined properties related to the Correspondence
@@ -71,14 +71,14 @@ namespace Arbeidstilsynet.Common.Altinn.Model.Adapter
         /// Options for how the recipient can reply to the Correspondence
         /// </summary>
         [JsonPropertyName("replyOptions")]
-        public List<CorrespondenceReplyOptionExt>? ReplyOptions { get; set; } =
-            new List<CorrespondenceReplyOptionExt>();
+        public List<CorrespondenceReplyOption>? ReplyOptions { get; set; } =
+            new List<CorrespondenceReplyOption>();
 
         /// <summary>
         /// Notifications related to the Correspondence.
         /// </summary>
         [JsonPropertyName("notification")]
-        public InitializeCorrespondenceNotificationExt? Notification { get; set; }
+        public InitializeCorrespondenceNotification? Notification { get; set; }
 
         /// <summary>
         /// Specifies whether the correspondence can override reservation against digital communication in KRR.
@@ -112,7 +112,7 @@ namespace Arbeidstilsynet.Common.Altinn.Model.Adapter
         /// Existing attachments that should be added to the correspondence
         /// </summary>
         [JsonPropertyName("existingAttachments")]
-        public List<Guid?>? ExistingAttachments { get; set; }
+        public List<Guid>? ExistingAttachments { get; set; }
 
         /// <summary>
         /// Optional idempotency key to prevent duplicate correspondence creation

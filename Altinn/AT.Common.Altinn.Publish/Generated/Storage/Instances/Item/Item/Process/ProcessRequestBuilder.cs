@@ -17,7 +17,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Process
     /// Builds and executes requests for operations under \instances\{instanceOwnerPartyId}\{instanceGuid}\process
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class ProcessRequestBuilder : BaseRequestBuilder
+    internal partial class ProcessRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The history property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Process.History.HistoryRequestBuilder History

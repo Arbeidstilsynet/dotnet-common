@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Data.Item
     /// Builds and executes requests for operations under \instances\{instanceOwnerPartyId}\{instanceGuid}\data\{dataGuid}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class WithDataGuItemRequestBuilder : BaseRequestBuilder
+    internal partial class WithDataGuItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Data.Item.WithDataGuItemRequestBuilder"/> and sets the default values.
@@ -182,7 +182,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Data.Item
         /// Deletes a specific data element.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class WithDataGuItemRequestBuilderDeleteQueryParameters 
+        internal partial class WithDataGuItemRequestBuilderDeleteQueryParameters 
         {
             /// <summary>A boolean to indicate if the delete should be immediate or delayed following Altinn&apos;s business logic</summary>
             [QueryParameter("delay")]
@@ -192,7 +192,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Data.Item
         /// Replaces an existing data element with the attached file. The StreamContent.Headers.ContentDisposition.FileName property shall be used to set the filename on client side
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class WithDataGuItemRequestBuilderPutQueryParameters 
+        internal partial class WithDataGuItemRequestBuilderPutQueryParameters 
         {
             /// <summary>An optional id of the task the data element was generated from</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

@@ -12,7 +12,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
     /// Extension of ProblemDetails to include Validation issues from the file upload.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class DataPostErrorResponse : ApiException, IAdditionalDataHolder, IParsable
+    internal partial class DataPostErrorResponse : ApiException, IAdditionalDataHolder, IParsable
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }

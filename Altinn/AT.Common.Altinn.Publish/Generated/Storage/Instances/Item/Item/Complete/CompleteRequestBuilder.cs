@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Complete
     /// Builds and executes requests for operations under \instances\{instanceOwnerPartyId}\{instanceGuid}\complete
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class CompleteRequestBuilder : BaseRequestBuilder
+    internal partial class CompleteRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Complete.CompleteRequestBuilder"/> and sets the default values.

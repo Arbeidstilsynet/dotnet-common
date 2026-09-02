@@ -9,7 +9,7 @@ namespace Arbeidstilsynet.Common.Altinn.Dialogporten.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class V1ServiceOwnerDialogsQueriesGet_DialogServiceOwnerContext : IParsable
+    internal partial class V1ServiceOwnerDialogsQueriesGet_DialogServiceOwnerContext : IParsable
     #pragma warning restore CS1591
     {
         /// <summary>The unique identifier for the service owner context revision in UUIDv4 format.</summary>

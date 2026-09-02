@@ -1,4 +1,4 @@
-using Arbeidstilsynet.Common.Altinn.Correspondence.Models;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Kiota.Abstractions;
 
@@ -26,7 +26,7 @@ internal static class CorrespondenceMultipartExtensions
     private const string DefaultAttachmentContentType = "application/octet-stream";
 
     public static MultipartBody ToMultipartBody(
-        this InitializeCorrespondencesExt request,
+        this InitializeCorrespondences request,
         IRequestAdapter requestAdapter,
         List<IFormFile>? attachments
     )
@@ -55,7 +55,7 @@ internal static class CorrespondenceMultipartExtensions
         return body;
     }
 
-    private static void AddCorrespondence(this MultipartBody body, BaseCorrespondenceExt source)
+    private static void AddCorrespondence(this MultipartBody body, BaseCorrespondence source)
     {
         const string prefix = "Correspondence";
 
@@ -68,7 +68,6 @@ internal static class CorrespondenceMultipartExtensions
         body.AddText($"{prefix}.IgnoreReservation", source.IgnoreReservation);
         body.AddText($"{prefix}.IsConfirmationNeeded", source.IsConfirmationNeeded);
         body.AddText($"{prefix}.IsConfidential", source.IsConfidential);
-        body.AddText($"{prefix}.AllowForwarding", source.AllowForwarding);
 
         if (source.Content is { } content)
         {
@@ -104,7 +103,7 @@ internal static class CorrespondenceMultipartExtensions
             body.AddText($"{prefix}.ReplyOptions[{i}].LinkText", replyOption.LinkText);
         }
 
-        var propertyList = source.PropertyList?.AdditionalData;
+        var propertyList = source.PropertyList;
 
         if (propertyList is not null)
         {
@@ -118,7 +117,7 @@ internal static class CorrespondenceMultipartExtensions
     private static void AddContent(
         this MultipartBody body,
         string prefix,
-        InitializeCorrespondenceContentExt content
+        InitializeCorrespondenceContent content
     )
     {
         body.AddText($"{prefix}.Language", content.Language);
@@ -146,7 +145,7 @@ internal static class CorrespondenceMultipartExtensions
     private static void AddNotification(
         this MultipartBody body,
         string prefix,
-        InitializeCorrespondenceNotificationExt notification
+        InitializeCorrespondenceNotification notification
     )
     {
         body.AddText($"{prefix}.NotificationTemplate", notification.NotificationTemplate);

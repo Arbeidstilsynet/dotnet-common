@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
     /// Represents the response from an API endpoint providing a list of key-value properties.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class InstanceResponse : IParsable
+    internal partial class InstanceResponse : IParsable
     {
         /// <summary>The id of the application this is an instance of, e.g. {org}/{app22}.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

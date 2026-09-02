@@ -15,7 +15,7 @@ namespace Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Substatus
     /// Builds and executes requests for operations under \instances\{instanceOwnerPartyId}\{instanceGuid}\substatus
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class SubstatusRequestBuilder : BaseRequestBuilder
+    internal partial class SubstatusRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
         /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Altinn.Storage.Instances.Item.Item.Substatus.SubstatusRequestBuilder"/> and sets the default values.

@@ -14,7 +14,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item
     /// Builds and executes requests for operations under \{org}\{app}\instances\{instanceOwnerPartyId}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class WithInstanceOwnerPartyItemRequestBuilder : BaseRequestBuilder
+    internal partial class WithInstanceOwnerPartyItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The active property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Apps.Item.Item.Instances.Item.Active.ActiveRequestBuilder Active

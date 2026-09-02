@@ -13,7 +13,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Item
     /// Builds and executes requests for operations under \{org}
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class WithOrgItemRequestBuilder : BaseRequestBuilder
+    internal partial class WithOrgItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>Gets an item from the Arbeidstilsynet.Common.Altinn.Apps.item.item collection</summary>
         /// <param name="position">application identifier which is unique within an organisation</param>

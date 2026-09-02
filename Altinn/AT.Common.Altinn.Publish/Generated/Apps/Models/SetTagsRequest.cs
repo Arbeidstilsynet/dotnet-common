@@ -11,7 +11,7 @@ namespace Arbeidstilsynet.Common.Altinn.Apps.Models
     /// Represents the request body for setting a set of tags on a data element.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class SetTagsRequest : IParsable
+    internal partial class SetTagsRequest : IParsable
     {
         /// <summary>A list of tags to set on the data element represented as string values.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

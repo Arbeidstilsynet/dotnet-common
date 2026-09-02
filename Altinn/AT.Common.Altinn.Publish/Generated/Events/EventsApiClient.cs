@@ -17,7 +17,7 @@ namespace Arbeidstilsynet.Common.Altinn.Events
     /// The main entry point of the SDK, exposes the configuration and the fluent API.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class EventsApiClient : BaseRequestBuilder
+    internal partial class EventsApiClient : BaseRequestBuilder
     {
         /// <summary>The subscriptions property</summary>
         public global::Arbeidstilsynet.Common.Altinn.Events.Subscriptions.SubscriptionsRequestBuilder Subscriptions
