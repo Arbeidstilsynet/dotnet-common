@@ -1,8 +1,8 @@
 using System.Text.Json;
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
-using Arbeidstilsynet.Common.Altinn.Storage.Models;
 using Arbeidstilsynet.Common.Altinn.Test.Unit.TestData;
 using Shouldly;
 
@@ -63,16 +63,14 @@ public class AltinnAppSpecificationTests
     [InlineData("empty")]
     public void GetSpecification_WhenDataValuesIsMissingOrNull_DoesNotThrow(string? dataValuesKind)
     {
-        // The generated models are Kiota IParsable types rather than System.Text.Json POCOs, so
-        // they are built directly instead of being deserialised from a JSON literal.
-        var instance = new Instance
+        // AltinnInstance.DataValues coerces null to an empty dictionary, so both cases must be safe
+        // for GetSpecification to read.
+        var instance = new AltinnInstance
         {
             Id = "1",
             AppId = "org/some-app-id",
             Data = [],
-            DataValues = dataValuesKind is null
-                ? null
-                : new Dictionary<string, string>().ToDataValues(),
+            DataValues = dataValuesKind is null ? null! : [],
         };
 
         Action act = () => _ = instance.GetSpecification();
@@ -137,7 +135,7 @@ public class AltinnAppSpecificationTests
         await Verify(fileMetadata, _verifySettings).UseParameters(dataType, contentType);
     }
 
-    private static Instance CreateCompliantInstance(
+    private static AltinnInstance CreateCompliantInstance(
         AltinnAppSpecification spec,
         params DataElement[] additionalDataElements
     )
@@ -158,17 +156,17 @@ public class AltinnAppSpecificationTests
         );
     }
 
-    private static Instance CreateInstance(
+    private static AltinnInstance CreateInstance(
         Dictionary<string, string> dataValues,
         params List<DataElement> dataElements
     )
     {
-        return new Instance()
+        return new AltinnInstance()
         {
             Id = new Guid("11111111-1111-1111-1111-111111111111").ToString(),
             AppId = "some-app-id",
             Data = dataElements.ToList(),
-            DataValues = dataValues.ToDataValues(),
+            DataValues = dataValues,
         };
     }
 

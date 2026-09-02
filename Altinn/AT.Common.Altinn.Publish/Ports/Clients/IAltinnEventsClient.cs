@@ -11,7 +11,7 @@ public interface IAltinnEventsClient
     /// <summary>
     /// Creates an event subscription.
     /// </summary>
-    Task<AltinnSubscription?> Subscribe(
+    Task<AltinnSubscription> Subscribe(
         AltinnSubscriptionRequest request,
         CancellationToken cancellationToken = default
     );

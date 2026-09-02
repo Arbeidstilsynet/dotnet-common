@@ -1,10 +1,10 @@
 namespace Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 
-public class AltinnDateTimeQuery
+public record AltinnDateTimeQuery
 {
-    public DateTimeCompareOperator CompareOperator { get; set; }
+    public DateTimeCompareOperator CompareOperator { get; init; }
 
-    public string DateTime { get; set; }
+    public required string DateTime { get; init; }
 
     public override string ToString()
     {

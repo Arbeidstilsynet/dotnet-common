@@ -1,15 +1,14 @@
 ﻿{
   Correspondence: {
+    ResourceId: urn:altinn:resource:dat-meldinger-correspondence,
+    SendersReference: REF-001,
     Content: {
       Language: nb,
-      MessageBody: Test Body,
-      MessageTitle: Test Title
+      MessageTitle: Test Title,
+      MessageBody: Test Body
     },
-    IsConfidential: false,
     IsConfirmationNeeded: false,
-    PropertyList: {},
-    ResourceId: urn:altinn:resource:dat-meldinger-correspondence,
-    SendersReference: REF-001
+    IsConfidential: false
   },
   Recipients: [
     urn:altinn:organization:identifier-no:123456789

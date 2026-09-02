@@ -1,7 +1,7 @@
-using Arbeidstilsynet.Common.Altinn.Correspondence.Models;
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Bundle;
 using Microsoft.Kiota.Serialization.Multipart;
@@ -21,7 +21,7 @@ public class CorrespondenceRequestExtensionsTests
         new()
         {
             SendersReference = "REF-001",
-            Content = new InitializeCorrespondenceContentExt
+            Content = new InitializeCorrespondenceContent
             {
                 MessageTitle = "Test Title",
                 MessageBody = "Test Body",
@@ -35,7 +35,7 @@ public class CorrespondenceRequestExtensionsTests
             ResourceIdentifier = "dat-tilsyn-correspondence",
             SendersReference = "REF-002",
             MessageSender = "Arbeidstilsynet",
-            Content = new InitializeCorrespondenceContentExt
+            Content = new InitializeCorrespondenceContent
             {
                 Language = "nb",
                 MessageTitle = "Full Test Title",
@@ -43,10 +43,10 @@ public class CorrespondenceRequestExtensionsTests
                 MessageBody = "Full test body with details",
                 Attachments =
                 [
-                    new InitializeCorrespondenceAttachmentExt
+                    new InitializeCorrespondenceAttachment
                     {
                         DataLocationType =
-                            InitializeAttachmentDataLocationTypeExt.NewCorrespondenceAttachment,
+                            InitializeAttachmentDataLocationType.NewCorrespondenceAttachment,
                         SendersReference = "ATT-REF-001",
                         FileName = "report.pdf",
                         DisplayName = "Inspection Report",
@@ -60,9 +60,9 @@ public class CorrespondenceRequestExtensionsTests
             DueDateTime = DateTimeOffset.UtcNow.AddDays(30),
             ExternalReferences =
             [
-                new ExternalReferenceExt
+                new ExternalReference
                 {
-                    ReferenceType = ReferenceTypeExt.AltinnAppInstance,
+                    ReferenceType = ReferenceType.AltinnAppInstance,
                     ReferenceValue = "instance-ref-123",
                 },
             ],
@@ -73,16 +73,16 @@ public class CorrespondenceRequestExtensionsTests
             },
             ReplyOptions =
             [
-                new CorrespondenceReplyOptionExt
+                new CorrespondenceReplyOption
                 {
                     LinkURL = "https://example.com/reply",
                     LinkText = "Reply here",
                 },
             ],
-            Notification = new InitializeCorrespondenceNotificationExt
+            Notification = new InitializeCorrespondenceNotification
             {
-                NotificationTemplate = NotificationTemplateExt.CustomMessage,
-                NotificationChannel = NotificationChannelExt.EmailPreferred,
+                NotificationTemplate = NotificationTemplate.CustomMessage,
+                NotificationChannel = NotificationChannel.EmailPreferred,
                 EmailContentType = EmailContentType.Html,
                 EmailSubject = "You have a new correspondence",
                 EmailBody = "<p>Please check your inbox</p>",
@@ -92,12 +92,12 @@ public class CorrespondenceRequestExtensionsTests
                 ReminderEmailBody = "<p>Reminder: please read</p>",
                 ReminderEmailContentType = EmailContentType.Html,
                 ReminderSmsBody = "Reminder: check your inbox",
-                ReminderNotificationChannel = NotificationChannelExt.EmailAndSms,
+                ReminderNotificationChannel = NotificationChannel.EmailAndSms,
                 SendersReference = "NOTIF-REF-001",
                 OverrideRegisteredContactInformation = true,
                 CustomRecipients =
                 [
-                    new NotificationRecipientExt
+                    new NotificationRecipient
                     {
                         EmailAddress = "test@example.com",
                         MobileNumber = "+4799887766",
@@ -179,9 +179,7 @@ public class CorrespondenceRequestExtensionsTests
     /// Serialises the request as the generated client would and returns the resulting form fields,
     /// so the snapshot covers the exact names and values that reach the wire.
     /// </summary>
-    private static Dictionary<string, string> ExtractFormFields(
-        InitializeCorrespondencesExt request
-    )
+    private static Dictionary<string, string> ExtractFormFields(InitializeCorrespondences request)
     {
         var adapter = new DefaultRequestAdapter(new AnonymousAuthenticationProvider());
 

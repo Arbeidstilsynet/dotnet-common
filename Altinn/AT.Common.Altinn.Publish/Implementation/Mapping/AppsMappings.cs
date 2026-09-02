@@ -19,8 +19,6 @@ internal static class AppsMappings
             Id = source.Id,
             AppId = source.AppId,
             Org = source.Org,
-            DueBefore = source.DueBefore?.DateTime,
-            VisibleAfter = source.VisibleAfter?.DateTime,
             InstanceOwner = source.InstanceOwner is { } owner
                 ? new InstanceOwner
                 {
@@ -29,7 +27,7 @@ internal static class AppsMappings
                     OrganisationNumber = owner.OrganisationNumber,
                     Username = owner.Username,
                 }
-                : null!,
+                : null,
             Process = source.Process is { } process
                 ? new ProcessState
                 {
@@ -38,10 +36,9 @@ internal static class AppsMappings
                     Ended = process.Ended?.DateTime,
                     EndEvent = process.EndEvent,
                 }
-                : null!,
-            Data = [],
+                : null,
+            Data = null,
             DataValues = [],
-            PresentationTexts = [],
         };
     }
 }

@@ -56,7 +56,10 @@ internal class AltinnAdapter(
         AltinnSubscription altinnSubscription
     )
     {
-        var subscriptionId = altinnSubscription.Id;
+        if (altinnSubscription.Id is not { } subscriptionId)
+        {
+            return false;
+        }
 
         try
         {

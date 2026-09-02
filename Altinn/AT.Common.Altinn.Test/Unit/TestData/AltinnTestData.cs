@@ -1,7 +1,6 @@
-using Arbeidstilsynet.Common.Altinn.Events.Models;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
-using Arbeidstilsynet.Common.Altinn.Storage.Models;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Bogus;
 using Bogus.Extensions.UnitedStates;
 
@@ -11,7 +10,7 @@ internal static class AltinnTestData
 {
     private static readonly Faker Faker = new();
 
-    public static Instance CreateAltinnInstance(
+    public static AltinnInstance CreateAltinnInstance(
         Guid? id = null,
         string? appId = null,
         string? org = null,
@@ -31,7 +30,7 @@ internal static class AltinnTestData
         var processStart = processStarted ?? Faker.Date.Recent(30);
         var processEnd = processEnded ?? Faker.Date.Between(processStart, DateTime.UtcNow);
 
-        return new Instance
+        return new AltinnInstance
         {
             Id = $"{actualPartyId}/{instanceGuid}",
             AppId = actualAppId,
@@ -43,14 +42,7 @@ internal static class AltinnTestData
             },
             Process = new ProcessState { Started = processStart, Ended = processEnd },
             Data = dataElements ?? CreateDefaultDataElements(),
-            DataValues = dataValues.ToDataValues(),
-            SelfLinks = new ResourceLinks
-            {
-                Apps =
-                    $"https://{actualOrg}.apps.altinn.no/{actualAppId}/instances/{actualPartyId}/{instanceGuid}",
-                Platform =
-                    $"https://platform.altinn.no/storage/api/v1/instances/{actualPartyId}/{instanceGuid}",
-            },
+            DataValues = dataValues ?? [],
         };
     }
 
@@ -98,7 +90,6 @@ internal static class AltinnTestData
             Filename = filename ?? $"{dataType}.{GetExtensionFromContentType(contentType)}",
             FileScanResult = fileScanResult,
             Size = Faker.Random.Long(1024, 10485760), // 1KB to 10MB
-            Locked = Faker.Random.Bool(0.1f), // 10% chance of being locked
             IsRead = Faker.Random.Bool(0.8f), // 80% chance of being read
         };
     }
@@ -124,7 +115,7 @@ internal static class AltinnTestData
         };
     }
 
-    public static Subscription CreateAltinnSubscription(
+    public static AltinnSubscription CreateAltinnSubscription(
         int id = 0,
         Uri? endPoint = null,
         Uri? sourceFilter = null,
@@ -134,15 +125,12 @@ internal static class AltinnTestData
     {
         var subscriptionId = id > 0 ? id : Faker.Random.Number(1, 10000);
 
-        return new Subscription
+        return new AltinnSubscription
         {
             Id = subscriptionId,
-            EndPoint = (
-                endPoint ?? new Uri($"https://{Faker.Internet.DomainName()}/callback")
-            ).ToString(),
-            SourceFilter = (
-                sourceFilter ?? new Uri($"https://dat.apps.altinn.no/dat/{Faker.Lorem.Word()}-app")
-            ).ToString(),
+            EndPoint = endPoint ?? new Uri($"https://{Faker.Internet.DomainName()}/callback"),
+            SourceFilter =
+                sourceFilter ?? new Uri($"https://dat.apps.altinn.no/dat/{Faker.Lorem.Word()}-app"),
             TypeFilter = typeFilter ?? "app.instance.process.completed",
             Consumer = consumer ?? $"/org/{Faker.Company.CompanyName().ToLower()}",
         };
@@ -170,57 +158,13 @@ internal static class AltinnTestData
     {
         var actualOrg = org ?? "dat";
 
-        return new GeneratedInstanceQueryParameters
+        return new InstanceQueryParameters
         {
             AppId = appId ?? $"{actualOrg}/{Faker.Lorem.Word()}-app",
             Org = actualOrg,
             ProcessIsComplete = processIsComplete,
             ExcludeConfirmedBy = excludeConfirmedBy ?? actualOrg,
         };
-    }
-
-    public static Faker<Instance> GetAltinnInstanceFaker(string? org = null, string? appId = null)
-    {
-        var actualOrg = org ?? "dat";
-        var actualAppId = appId ?? $"{actualOrg}/{{appName}}-app";
-
-        return new Faker<Instance>()
-            .RuleFor(x => x.Id, f => $"{f.Random.Number(10000, 99999)}/{f.Random.Guid()}")
-            .RuleFor(x => x.AppId, f => actualAppId.Replace("{appName}", f.Lorem.Word()))
-            .RuleFor(x => x.Org, actualOrg)
-            .RuleFor(
-                x => x.InstanceOwner,
-                f => new InstanceOwner
-                {
-                    PartyId = f.Random.Number(10000, 99999).ToString(),
-                    OrganisationNumber = f.Company.Ein(),
-                }
-            )
-            .RuleFor(
-                x => x.Process,
-                f =>
-                {
-                    var start = f.Date.Recent(30);
-                    return new ProcessState
-                    {
-                        Started = start,
-                        Ended = f.Date.Between(start, DateTime.UtcNow),
-                    };
-                }
-            )
-            .RuleFor(x => x.Data, f => CreateDefaultDataElements())
-            .RuleFor(x => x.DataValues, f => new Dictionary<string, string>().ToDataValues())
-            .RuleFor(
-                x => x.SelfLinks,
-                (f, instance) =>
-                    new ResourceLinks
-                    {
-                        Apps =
-                            $"https://{actualOrg}.apps.altinn.no/{instance.AppId}/instances/{instance.Id}",
-                        Platform =
-                            $"https://platform.altinn.no/storage/api/v1/instances/{instance.Id}",
-                    }
-            );
     }
 
     private static string GetExtensionFromContentType(string contentType)
@@ -236,4 +180,3 @@ internal static class AltinnTestData
         };
     }
 }
-

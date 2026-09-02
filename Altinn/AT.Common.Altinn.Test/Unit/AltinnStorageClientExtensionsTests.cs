@@ -1,7 +1,7 @@
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
-using Arbeidstilsynet.Common.Altinn.Storage.Models;
 using NSubstitute;
 using Shouldly;
 
@@ -15,25 +15,25 @@ public class AltinnStorageClientExtensionsTests
     public async Task GetAllInstances_WhenCalledWithValidQueryParameters_ReturnsAllInstances()
     {
         // Arrange
-        var queryParameters = new InstanceQuery { Parameters = new() { AppId = "my-app" } };
+        var queryParameters = new InstanceQueryParameters { AppId = "my-app" };
 
-        var firstPage = new InstanceQueryResponse
+        var firstPage = new AltinnQueryResponse<AltinnInstance>
         {
-            Instances = [new Instance { Id = "1" }, new Instance { Id = "2" }],
+            Instances = [new AltinnInstance { Id = "1" }, new AltinnInstance { Id = "2" }],
             Next = "http://example.com?continuationToken=abc123",
         };
 
-        var secondPage = new InstanceQueryResponse
+        var secondPage = new AltinnQueryResponse<AltinnInstance>
         {
-            Instances = [new Instance { Id = "3" }],
+            Instances = [new AltinnInstance { Id = "3" }],
             Next = null,
         };
 
         _client
-            .GetInstances(Arg.Is<InstanceQuery>(q => q.Parameters.ContinuationToken == null))
+            .GetInstances(Arg.Is<InstanceQueryParameters>(q => q!.ContinuationToken == null))
             .Returns(firstPage);
         _client
-            .GetInstances(Arg.Is<InstanceQuery>(q => q.Parameters.ContinuationToken == "abc123"))
+            .GetInstances(Arg.Is<InstanceQueryParameters>(q => q!.ContinuationToken == "abc123"))
             .Returns(secondPage);
 
         // Act
@@ -48,25 +48,25 @@ public class AltinnStorageClientExtensionsTests
     public async Task GetAllInstances_NextLinkLoops_IgnoresIt()
     {
         // Arrange
-        var queryParameters = new InstanceQuery { Parameters = new() { AppId = "my-app" } };
+        var queryParameters = new InstanceQueryParameters { AppId = "my-app" };
 
-        var firstPage = new InstanceQueryResponse
+        var firstPage = new AltinnQueryResponse<AltinnInstance>
         {
-            Instances = [new Instance { Id = "1" }, new Instance { Id = "2" }],
+            Instances = [new AltinnInstance { Id = "1" }, new AltinnInstance { Id = "2" }],
             Next = "http://example.com?continuationToken=abc123",
         };
 
-        var secondPage = new InstanceQueryResponse
+        var secondPage = new AltinnQueryResponse<AltinnInstance>
         {
-            Instances = [new Instance { Id = "3" }],
+            Instances = [new AltinnInstance { Id = "3" }],
             Next = "http://example.com?continuationToken=abc123",
         };
 
         _client
-            .GetInstances(Arg.Is<InstanceQuery>(q => q.Parameters.ContinuationToken == null))
+            .GetInstances(Arg.Is<InstanceQueryParameters>(q => q!.ContinuationToken == null))
             .Returns(firstPage);
         _client
-            .GetInstances(Arg.Is<InstanceQuery>(q => q.Parameters.ContinuationToken == "abc123"))
+            .GetInstances(Arg.Is<InstanceQueryParameters>(q => q!.ContinuationToken == "abc123"))
             .Returns(secondPage);
 
         // Act
@@ -86,25 +86,25 @@ public class AltinnStorageClientExtensionsTests
     )
     {
         // Arrange
-        var queryParameters = new InstanceQuery { Parameters = new() { AppId = "my-app" } };
+        var queryParameters = new InstanceQueryParameters { AppId = "my-app" };
 
-        var firstPage = new InstanceQueryResponse
+        var firstPage = new AltinnQueryResponse<AltinnInstance>
         {
-            Instances = [new Instance { Id = "1" }, new Instance { Id = "2" }],
+            Instances = [new AltinnInstance { Id = "1" }, new AltinnInstance { Id = "2" }],
             Next = nextLink,
         };
 
-        var secondPage = new InstanceQueryResponse
+        var secondPage = new AltinnQueryResponse<AltinnInstance>
         {
-            Instances = [new Instance { Id = "3" }],
+            Instances = [new AltinnInstance { Id = "3" }],
             Next = null,
         };
 
         _client
-            .GetInstances(Arg.Is<InstanceQuery>(q => q.Parameters.ContinuationToken == null))
+            .GetInstances(Arg.Is<InstanceQueryParameters>(q => q!.ContinuationToken == null))
             .Returns(firstPage);
         _client
-            .GetInstances(Arg.Is<InstanceQuery>(q => q.Parameters.ContinuationToken == "abc123"))
+            .GetInstances(Arg.Is<InstanceQueryParameters>(q => q!.ContinuationToken == "abc123"))
             .Returns(secondPage);
 
         // Act

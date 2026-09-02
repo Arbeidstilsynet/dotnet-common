@@ -14,15 +14,6 @@ namespace AT.Common.Altinn.Test.ArchUnit
         internal static string ModelNamespace = CreateNamespaceRegex("Model");
         internal static string PortsNamespace = CreateNamespaceRegex("Ports");
 
-        // The Kiota-generated clients are exposed for consumers to adapt locally, in the same way
-        // as the GeoNorge package exposes its generated clients.
-        internal static string StorageNamespace = CreateNamespaceRegex("Storage");
-        internal static string EventsNamespace = CreateNamespaceRegex("Events");
-        internal static string AuthenticationNamespace = CreateNamespaceRegex("Authentication");
-        internal static string CorrespondenceNamespace = CreateNamespaceRegex("Correspondence");
-        internal static string DialogportenNamespace = CreateNamespaceRegex("Dialogporten");
-        internal static string AppsNamespace = CreateNamespaceRegex("Apps");
-
         private static string CreateNamespaceRegex(string namespaceSection)
         {
             return $@"^({NameSpacePrefix}\.{namespaceSection}|{NameSpacePrefix}\.{namespaceSection}\..*|{NameSpacePrefix}\..*\.{namespaceSection}|{NameSpacePrefix}\..*\.{namespaceSection}\..*)$";
@@ -70,6 +61,8 @@ namespace AT.Common.Altinn.Test.ArchUnit
             .AreNot(PublicInterfaces)
             .As("interface implementations");
 
+        // The Kiota-generated types are internal, so their namespaces are deliberately absent here:
+        // only these four may contain public types.
         internal static readonly IObjectProvider<IType> ExportableTypes = Types()
             .That()
             .ResideInNamespaceMatching(Constants.ExtensionsNamespace)
@@ -79,18 +72,6 @@ namespace AT.Common.Altinn.Test.ArchUnit
             .ResideInNamespaceMatching(Constants.ModelNamespace)
             .Or()
             .ResideInNamespaceMatching(Constants.PortsNamespace)
-            .Or()
-            .ResideInNamespaceMatching(Constants.StorageNamespace)
-            .Or()
-            .ResideInNamespaceMatching(Constants.EventsNamespace)
-            .Or()
-            .ResideInNamespaceMatching(Constants.AuthenticationNamespace)
-            .Or()
-            .ResideInNamespaceMatching(Constants.CorrespondenceNamespace)
-            .Or()
-            .ResideInNamespaceMatching(Constants.DialogportenNamespace)
-            .Or()
-            .ResideInNamespaceMatching(Constants.AppsNamespace)
             .As("inside exportable namespaces");
 
         internal static readonly IObjectProvider<IType> TypesInInternalNamespaces = Types()

@@ -1,7 +1,6 @@
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
-using Arbeidstilsynet.Common.Altinn.Storage.Models;
-using Arbeidstilsynet.Common.Altinn.Test.Unit.TestData;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 
@@ -44,26 +43,27 @@ public class AltinnAdapterExtensionTests
     public async Task AltinnInstance_Maps_ToAltinnMetadata()
     {
         //arrange
-        var metadata = new Instance()
+        var metadata = new AltinnInstance()
         {
             AppId = $"{Org}/{App}",
             Id = $"{InstanceOwnerPartyId}/{InstanceGuid}",
-            InstanceOwner = new InstanceOwner
+            InstanceOwner = new Model.Api.Response.InstanceOwner()
             {
                 OrganisationNumber = OrganisationNumber,
                 PartyId = InstanceOwnerPartyId,
             },
             Org = Org,
-            Process = new ProcessState { Started = ProcessStarted, Ended = ProcessEnded },
-            DataValues = new Dictionary<string, string>
+            Process = new Model.Api.Response.ProcessState()
             {
-                { "dialog.id", DialogId },
-            }.ToDataValues(),
+                Started = ProcessStarted,
+                Ended = ProcessEnded,
+            },
+            DataValues = new Dictionary<string, string> { { "dialog.id", DialogId } },
         };
         //act
         var result = metadata.ToAltinnMetadata();
         //assert
-        await Verifier.Verify(result, _verifySettings);
+        await Verify(result, _verifySettings);
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public class AltinnAdapterExtensionTests
         //act
         var result = metadata.ToInstanceAddress();
         //assert
-        await Verifier.Verify(result, _verifySettings);
+        await Verify(result, _verifySettings);
     }
 
     [Fact]

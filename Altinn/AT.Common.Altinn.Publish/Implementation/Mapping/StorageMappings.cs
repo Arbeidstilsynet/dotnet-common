@@ -3,6 +3,7 @@ using GeneratedDataElement = Arbeidstilsynet.Common.Altinn.Storage.Models.DataEl
 using GeneratedFileScanResult = Arbeidstilsynet.Common.Altinn.Storage.Models.FileScanResult;
 using GeneratedInstance = Arbeidstilsynet.Common.Altinn.Storage.Models.Instance;
 using GeneratedInstanceQueryResponse = Arbeidstilsynet.Common.Altinn.Storage.Models.InstanceQueryResponse;
+using GeneratedKeyValueEntry = Arbeidstilsynet.Common.Altinn.Storage.Models.KeyValueEntry;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Mapping;
 
@@ -24,8 +25,6 @@ internal static class StorageMappings
             Id = source.Id,
             AppId = source.AppId,
             Org = source.Org,
-            DueBefore = source.DueBefore?.DateTime,
-            VisibleAfter = source.VisibleAfter?.DateTime,
             InstanceOwner = source.InstanceOwner is { } owner
                 ? new InstanceOwner
                 {
@@ -34,7 +33,7 @@ internal static class StorageMappings
                     OrganisationNumber = owner.OrganisationNumber,
                     Username = owner.Username,
                 }
-                : null!,
+                : null,
             Process = source.Process is { } process
                 ? new ProcessState
                 {
@@ -43,10 +42,19 @@ internal static class StorageMappings
                     Ended = process.Ended?.DateTime,
                     EndEvent = process.EndEvent,
                 }
-                : null!,
-            Data = [.. (source.Data ?? []).Select(ToDataElement)],
+                : null,
+            CompleteConfirmations = source.CompleteConfirmations is { } confirmations
+                ?
+                [
+                    .. confirmations.Select(confirmation => new CompleteConfirmation
+                    {
+                        StakeholderId = confirmation.StakeholderId,
+                        ConfirmedOn = confirmation.ConfirmedOn?.DateTime,
+                    }),
+                ]
+                : null,
+            Data = source.Data is { } data ? [.. data.Select(ToDataElement)] : null,
             DataValues = ToStringDictionary(source.DataValues?.AdditionalData),
-            PresentationTexts = ToStringDictionary(source.PresentationTexts?.AdditionalData),
         };
     }
 
@@ -56,7 +64,7 @@ internal static class StorageMappings
     {
         return new AltinnQueryResponse<AltinnInstance>
         {
-            Count = source.Count ?? 0,
+            Count = source.Count,
             Self = source.Self,
             Next = source.Next,
             Instances = [.. (source.Instances ?? []).Select(ToAltinnInstance)],
@@ -72,20 +80,38 @@ internal static class StorageMappings
             DataType = source.DataType,
             Filename = source.Filename,
             ContentType = source.ContentType,
-            BlobStoragePath = source.BlobStoragePath,
-            Size = source.Size ?? 0,
+            Size = source.Size,
             ContentHash = source.ContentHash,
-            Locked = source.Locked ?? false,
-            IsRead = source.IsRead ?? true,
+            IsRead = source.IsRead,
             Tags = source.Tags ?? [],
+            UserDefinedMetadata = ToStringDictionary(source.UserDefinedMetadata),
+            Metadata = ToStringDictionary(source.Metadata),
             FileScanResult = source.FileScanResult switch
             {
                 GeneratedFileScanResult.Clean => FileScanResult.Clean,
                 GeneratedFileScanResult.Infected => FileScanResult.Infected,
                 GeneratedFileScanResult.Pending => FileScanResult.Pending,
-                _ => FileScanResult.NotApplicable,
+                GeneratedFileScanResult.NotApplicable => FileScanResult.NotApplicable,
+                _ => null,
             },
         };
+    }
+
+    /// <summary>
+    /// Flattens the generated key/value list into a dictionary.
+    /// </summary>
+    private static Dictionary<string, string> ToStringDictionary(
+        List<GeneratedKeyValueEntry>? entries
+    )
+    {
+        if (entries is null)
+        {
+            return [];
+        }
+
+        return entries
+            .Where(entry => entry.Key is not null)
+            .ToDictionary(entry => entry.Key!, entry => entry.Value ?? string.Empty);
     }
 
     /// <summary>

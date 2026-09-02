@@ -9,49 +9,49 @@ namespace Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 /// <summary>
 /// Contains information about the created correspondences and their attachments.
 /// </summary>
-public class CorrespondenceResponse
+public record CorrespondenceResponse
 {
     /// <summary>
     /// The initialized correspondences
     /// </summary>
     [JsonPropertyName("correspondences")]
-    public List<InitializedCorrespondences>? Correspondences { get; set; }
+    public List<InitializedCorrespondences>? Correspondences { get; init; }
 
     /// <summary>
     /// The IDs of the attachments that is included in the correspondences
     /// </summary>
     [JsonPropertyName("attachmentIds")]
-    public List<Guid>? AttachmentIds { get; set; }
+    public List<Guid>? AttachmentIds { get; init; }
 }
 
 /// <summary>
 /// Represents a correspondence that has been initialized
 /// </summary>
-public class InitializedCorrespondences
+public record InitializedCorrespondences
 {
     /// <summary>
     /// The ID of the correspondence
     /// </summary>
     [JsonPropertyName("correspondenceId")]
-    public Guid CorrespondenceId { get; set; }
+    public Guid CorrespondenceId { get; init; }
 
     /// <summary>
     /// The current status of the correspondence
     /// </summary>
     [JsonPropertyName("status")]
-    public CorrespondenceStatus Status { get; set; }
+    public CorrespondenceStatus Status { get; init; }
 
     /// <summary>
     /// The recipient of the correspondence
     /// </summary>
     [JsonPropertyName("recipient")]
-    public required string Recipient { get; set; }
+    public required string Recipient { get; init; }
 
     /// <summary>
     /// Information about the notifications that were created for the correspondence
     /// </summary>
     [JsonPropertyName("notifications")]
-    public List<InitializedCorrespondencesNotifications>? Notifications { get; set; }
+    public List<InitializedCorrespondencesNotifications>? Notifications { get; init; }
 }
 
 /// <summary>
@@ -128,25 +128,25 @@ public enum CorrespondenceStatus
 /// <summary>
 /// Information about a notification that were created for the correspondence
 /// </summary>
-public class InitializedCorrespondencesNotifications
+public record InitializedCorrespondencesNotifications
 {
     /// <summary>
     /// The order ID of the notification
     /// </summary>
     [JsonPropertyName("orderId")]
-    public Guid? OrderId { get; set; }
+    public Guid? OrderId { get; init; }
 
     /// <summary>
     /// Boolean indicating if the notification is a reminder
     /// </summary>
     [JsonPropertyName("isReminder")]
-    public bool? IsReminder { get; set; }
+    public bool? IsReminder { get; init; }
 
     /// <summary>
     /// The status of the notification
     /// </summary>
     [JsonPropertyName("status")]
-    public InitializedNotificationStatus Status { get; set; }
+    public InitializedNotificationStatus Status { get; init; }
 }
 
 public enum InitializedNotificationStatus

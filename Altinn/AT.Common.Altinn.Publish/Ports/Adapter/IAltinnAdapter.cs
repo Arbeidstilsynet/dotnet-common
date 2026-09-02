@@ -28,7 +28,7 @@ public interface IAltinnAdapter
     /// </summary>
     /// <param name="subscriptionRequestDto">The subscription request details.</param>
     /// <returns>The created subscription.</returns>
-    public Task<AltinnSubscription?> SubscribeForCompletedProcessEvents(
+    public Task<AltinnSubscription> SubscribeForCompletedProcessEvents(
         SubscriptionRequestDto subscriptionRequestDto
     );
 

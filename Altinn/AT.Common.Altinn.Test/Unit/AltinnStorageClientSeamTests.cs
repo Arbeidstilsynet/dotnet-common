@@ -9,7 +9,6 @@ using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using NSubstitute;
 using Shouldly;
-using GeneratedInstanceQueryParameters = Arbeidstilsynet.Common.Altinn.Storage.Instances.InstancesRequestBuilder.InstancesRequestBuilderGetQueryParameters;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 
@@ -171,23 +170,29 @@ public class AltinnStorageClientSeamTests
     [Fact]
     public async Task GetInstances_AppliesInstanceOwnerIdentifierHeader()
     {
-        await _sut.GetInstances(new InstanceQuery { InstanceOwnerIdentifier = "0192:123456789" });
+        await _sut.GetInstances(
+            new InstanceQueryParameters { InstanceOwnerIdentifier = "0192:123456789" }
+        );
 
         // Kiota omits header parameters from the generated query-parameter class, which is the
-        // reason InstanceQuery exists. Without it this header would be dropped silently.
+        // reason InstanceQueryParameters carries it separately. Without that this header would be
+        // dropped silently.
         var headers = CapturedRequest().Headers;
 
-        headers.ContainsKey(InstanceQuery.InstanceOwnerIdentifierHeaderName).ShouldBeTrue();
-        headers[InstanceQuery.InstanceOwnerIdentifierHeaderName].ShouldContain("0192:123456789");
+        headers
+            .ContainsKey(InstanceQueryParameters.InstanceOwnerIdentifierHeaderName)
+            .ShouldBeTrue();
+        headers[InstanceQueryParameters.InstanceOwnerIdentifierHeaderName]
+            .ShouldContain("0192:123456789");
     }
 
     [Fact]
     public async Task GetInstances_WithoutInstanceOwnerIdentifier_OmitsHeader()
     {
-        await _sut.GetInstances(new GeneratedInstanceQueryParameters { AppId = "dat/some-app" });
+        await _sut.GetInstances(new InstanceQueryParameters { AppId = "dat/some-app" });
 
         CapturedRequest()
-            .Headers.ContainsKey(InstanceQuery.InstanceOwnerIdentifierHeaderName)
+            .Headers.ContainsKey(InstanceQueryParameters.InstanceOwnerIdentifierHeaderName)
             .ShouldBeFalse();
     }
 
@@ -195,16 +200,16 @@ public class AltinnStorageClientSeamTests
     public async Task GetInstances_MapsQueryParametersOntoTheWire()
     {
         await _sut.GetInstances(
-            new GeneratedInstanceQueryParameters
+            new InstanceQueryParameters
             {
                 Org = "dat",
                 AppId = "dat/some-app",
                 ProcessIsComplete = true,
                 ProcessCurrentTask = "Task_1",
                 ExcludeConfirmedBy = "dat",
-                StatusIsArchived = false,
+                IsArchived = false,
                 Size = 50,
-                Order = "desc:lastChanged",
+                SortBy = "desc:lastChanged",
                 SearchString = "needle",
                 MainVersionInclude = 3,
             }
@@ -213,7 +218,8 @@ public class AltinnStorageClientSeamTests
         var uri = CapturedUri();
 
         // The dotted parameters are the easy ones to get wrong: the generated property names drop
-        // the dots, so only the serialised URI proves the wire name survived.
+        // the dots, so only the serialised URI proves the wire name survived. IsArchived and SortBy
+        // are also renamed on the way through (StatusIsArchived and Order).
         uri.ShouldContain("org=dat");
         uri.ShouldContain("process.isComplete=true");
         uri.ShouldContain("process.currentTask=Task_1");
@@ -229,16 +235,20 @@ public class AltinnStorageClientSeamTests
     public async Task GetInstances_MapsDateRangeQueriesToComparisonExpressions()
     {
         await _sut.GetInstances(
-            new GeneratedInstanceQueryParameters
+            new InstanceQueryParameters
             {
                 LastChanged =
                 [
-                    AltinnDateTimeQuery.GreaterThanOrEquals(
-                        new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)
-                    ),
-                    AltinnDateTimeQuery.LessThan(
-                        new DateTimeOffset(2024, 2, 1, 0, 0, 0, TimeSpan.Zero)
-                    ),
+                    new AltinnDateTimeQuery
+                    {
+                        CompareOperator = DateTimeCompareOperator.gte,
+                        DateTime = "2024-01-01",
+                    },
+                    new AltinnDateTimeQuery
+                    {
+                        CompareOperator = DateTimeCompareOperator.lt,
+                        DateTime = "2024-02-01",
+                    },
                 ],
             }
         );
@@ -252,10 +262,16 @@ public class AltinnStorageClientSeamTests
     [Fact]
     public async Task GetInstances_DoesNotMutateTheCallersParameters()
     {
-        var parameters = new GeneratedInstanceQueryParameters { AppId = "dat/some-app" };
-        var query = new InstanceQuery { Parameters = parameters };
+        var parameters = new InstanceQueryParameters { AppId = "dat/some-app" };
 
-        await _sut.GetInstances(query.WithContinuationToken("token-from-next-page"));
+        parameters
+            .TryAppendContinuationToken(
+                new Uri("https://example.com?continuationToken=token-from-next-page"),
+                out var nextPageParameters
+            )
+            .ShouldBeTrue();
+
+        await _sut.GetInstances(nextPageParameters);
 
         // Paging must not write the continuation token back into the object the caller passed in.
         parameters.ContinuationToken.ShouldBeNull();

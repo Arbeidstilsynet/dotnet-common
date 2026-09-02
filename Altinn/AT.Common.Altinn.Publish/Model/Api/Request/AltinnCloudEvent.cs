@@ -34,38 +34,38 @@ namespace Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 /// generated model omits.
 /// </para>
 /// </remarks>
-public class AltinnCloudEvent
+public record AltinnCloudEvent
 {
     /// <summary>
     /// Gets or sets the id of the event.
     /// </summary>
     [JsonPropertyName("id")]
 #nullable disable
-    public string Id { get; set; }
+    public string Id { get; init; }
 
     /// <summary>
     /// Gets or sets the source of the event.
     /// </summary>
     [JsonPropertyName("source")]
-    public Uri Source { get; set; }
+    public Uri Source { get; init; }
 
     /// <summary>
     /// Gets or sets the specification version of the event.
     /// </summary>
     [JsonPropertyName("specversion")]
-    public string SpecVersion { get; set; }
+    public string SpecVersion { get; init; }
 
     /// <summary>
     /// Gets or sets the type of the event.
     /// </summary>
     [JsonPropertyName("type")]
-    public string Type { get; set; }
+    public string Type { get; init; }
 
     /// <summary>
     /// Gets or sets the subject of the event.
     /// </summary>
     [JsonPropertyName("subject")]
-    public string Subject { get; set; }
+    public string Subject { get; init; }
 
 #nullable restore
 
@@ -73,34 +73,34 @@ public class AltinnCloudEvent
     /// Gets or sets the time of the event.
     /// </summary>
     [JsonPropertyName("time")]
-    public DateTime Time { get; set; }
+    public DateTime Time { get; init; }
 
     /// <summary>
     /// Gets or sets the alternative subject of the event.
     /// </summary>
     [JsonPropertyName("alternativesubject")]
 #nullable disable
-    public string AlternativeSubject { get; set; }
+    public string AlternativeSubject { get; init; }
 
     /// <summary>
     /// Gets or sets the cloudEvent data content. The event payload.
     /// The payload depends on the type and the dataschema.
     /// </summary>
     [JsonPropertyName("data")]
-    public object Data { get; set; }
+    public object Data { get; init; }
 
     /// <summary>
     /// Gets or sets the cloudEvent dataschema attribute.
     /// A link to the schema that the data attribute adheres to.
     /// </summary>
     [JsonPropertyName("dataschema")]
-    public Uri DataSchema { get; set; }
+    public Uri DataSchema { get; init; }
 
     /// <summary>
     /// Gets or sets the cloudEvent datacontenttype attribute.
     /// Content type of the data attribute value.
     /// </summary>
     [JsonPropertyName("contenttype")]
-    public ContentType DataContentType { get; set; }
+    public ContentType DataContentType { get; init; }
 #nullable restore
 }

@@ -1,10 +1,9 @@
 using System.Net;
-using Arbeidstilsynet.Common.Altinn.Correspondence.Models;
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
-using Arbeidstilsynet.Common.Altinn.Events.Models;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Implementation.Configuration;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -91,7 +90,14 @@ public class ApiExceptionMappingTests
     [Fact]
     public async Task GetCorrespondence_ReturnsOverview_WhenFound()
     {
-        var overview = new CorrespondenceOverviewExt();
+        var overview = new AltinnCorrespondenceOverview
+        {
+            CorrespondenceId = Guid.NewGuid(),
+            ResourceId = "dat-tilsyn-correspondence",
+            SendersReference = "REF-001",
+            Recipient = "0192:123456789",
+            Created = DateTimeOffset.UtcNow,
+        };
 
         _correspondenceClient
             .GetCorrespondence(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
@@ -127,7 +133,9 @@ public class ApiExceptionMappingTests
     [Fact]
     public async Task UnsubscribeForCompletedProcessEvents_ReturnsFalse_WhenSubscriptionHasNoId()
     {
-        var result = await _altinnAdapter.UnsubscribeForCompletedProcessEvents(new Subscription());
+        var result = await _altinnAdapter.UnsubscribeForCompletedProcessEvents(
+            new AltinnSubscription()
+        );
 
         result.ShouldBeFalse();
         await _eventsClient

@@ -10,7 +10,7 @@ namespace Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 /// <summary>
 /// Represents a request object for the operation, InitializeCorrespondence, that can create a correspondence in Altinn.
 /// </summary>
-public class BaseCorrespondence
+public record BaseCorrespondence
 {
     /// <summary>
     /// The Resource Id associated with the correspondence service.
@@ -18,7 +18,7 @@ public class BaseCorrespondence
     [JsonPropertyName("resourceId")]
     [StringLength(255, MinimumLength = 1)]
     [Required]
-    public required string ResourceId { get; set; }
+    public required string ResourceId { get; init; }
 
     /// <summary>
     /// The Sending organization of the correspondence.
@@ -30,7 +30,7 @@ public class BaseCorrespondence
     [Obsolete(
         "Sender is deprecated and will be removed in a future version. The sender is now automatically determined from the Resource Registry based on the resourceId."
     )]
-    public string? Sender { get; set; }
+    public string? Sender { get; init; }
 
     /// <summary>
     /// A reference used by senders and receivers to identify a specific Correspondence using external identification methods.
@@ -38,58 +38,59 @@ public class BaseCorrespondence
     [JsonPropertyName("sendersReference")]
     [StringLength(4096, MinimumLength = 1)]
     [Required]
-    public required string SendersReference { get; set; }
+    public required string SendersReference { get; init; }
 
     /// <summary>
     /// An alternative name for the sender of the correspondence. The name will be displayed instead of the organization name.
     ///  </summary>
     [JsonPropertyName("messageSender")]
     [StringLength(255, MinimumLength = 0)]
-    public string? MessageSender { get; set; }
+    public string? MessageSender { get; init; }
 
     /// <summary>
     /// The correspondence content. Contains information about the Correspondence body, subject etc.
     /// </summary>
     [JsonPropertyName("content")]
-    public InitializeCorrespondenceContent? Content { get; set; }
+    public InitializeCorrespondenceContent? Content { get; init; }
 
     /// <summary>
     /// When the correspondence should become visible to the recipient.
     /// </summary>
     [JsonPropertyName("requestedPublishTime")]
-    public DateTimeOffset? RequestedPublishTime { get; set; }
+    public DateTimeOffset? RequestedPublishTime { get; init; }
 
     /// <summary>
     /// When the recipient must reply to the correspondence
     /// </summary>
     [JsonPropertyName("dueDateTime")]
-    public DateTimeOffset? DueDateTime { get; set; }
+    public DateTimeOffset? DueDateTime { get; init; }
 
     /// <summary>
     /// A list of references Senders can use to tell the recipient that the correspondence is related to the referenced item(s)
     /// Examples include Altinn App instances, Altinn Broker File Transfers
     /// </summary>
     [JsonPropertyName("externalReferences")]
-    public List<ExternalReference>? ExternalReferences { get; set; }
+    public List<ExternalReference>? ExternalReferences { get; init; }
 
     /// <summary>
     /// User-defined properties related to the Correspondence
     /// </summary>
     [JsonPropertyName("propertyList")]
-    public Dictionary<string, string> PropertyList { get; set; } = new Dictionary<string, string>();
+    public Dictionary<string, string> PropertyList { get; init; } =
+        new Dictionary<string, string>();
 
     /// <summary>
     /// Options for how the recipient can reply to the Correspondence
     /// </summary>
     [JsonPropertyName("replyOptions")]
-    public List<CorrespondenceReplyOption>? ReplyOptions { get; set; } =
+    public List<CorrespondenceReplyOption>? ReplyOptions { get; init; } =
         new List<CorrespondenceReplyOption>();
 
     /// <summary>
     /// Notifications related to the Correspondence.
     /// </summary>
     [JsonPropertyName("notification")]
-    public InitializeCorrespondenceNotification? Notification { get; set; }
+    public InitializeCorrespondenceNotification? Notification { get; init; }
 
     /// <summary>
     /// Specifies whether the correspondence can override reservation against digital communication in KRR.
@@ -97,48 +98,48 @@ public class BaseCorrespondence
     /// It has no effect for organization recipients or email/sms recipients through custom recipients.
     /// </summary>
     [JsonPropertyName("ignoreReservation")]
-    public bool? IgnoreReservation { get; set; }
+    public bool? IgnoreReservation { get; init; }
 
     /// <summary>
     /// Specifies whether reading the correspondence needs to be confirmed by the recipient
     /// </summary>
     [JsonPropertyName("isConfirmationNeeded")]
-    public bool IsConfirmationNeeded { get; set; }
+    public bool IsConfirmationNeeded { get; init; }
 
     /// <summary>
     /// Specifies whether the correspondence is confidential
     /// </summary>
     [JsonPropertyName("isConfidential")]
-    public bool IsConfidential { get; set; }
+    public bool IsConfidential { get; init; }
 }
 
-public class BaseAttachment
+public record BaseAttachment
 {
     /// <summary>
     /// The name of the attachment file.
     /// </summary>
     [JsonPropertyName("fileName")]
     [StringLength(255, MinimumLength = 0)]
-    public string? FileName { get; set; }
+    public string? FileName { get; init; }
 
     /// <summary>
     /// A logical name for the file, which will be shown in Altinn Inbox.
     /// </summary>
     [JsonPropertyName("displayName")]
     [StringLength(255, MinimumLength = 0)]
-    public string? DisplayName { get; set; }
+    public string? DisplayName { get; init; }
 
     /// <summary>
     /// A value indicating whether the attachment is encrypted or not.
     /// </summary>
     [JsonPropertyName("isEncrypted")]
-    public bool IsEncrypted { get; set; }
+    public bool IsEncrypted { get; init; }
 
     /// <summary>
     /// MD5 checksum for file data.
     /// </summary>
     [JsonPropertyName("checksum")]
-    public string? Checksum { get; set; } = string.Empty;
+    public string? Checksum { get; init; } = string.Empty;
 
     /// <summary>
     /// A reference value given to the attachment by the creator.
@@ -146,133 +147,137 @@ public class BaseAttachment
     [JsonPropertyName("sendersReference")]
     [StringLength(4096, MinimumLength = 1)]
     [Required]
-    public required string SendersReference { get; set; }
+    public required string SendersReference { get; init; }
 
     /// <summary>
     /// Relative expiration time (days) for the attachment.
     /// </summary>
     [JsonPropertyName("expirationInDays")]
-    public int? ExpirationInDays { get; set; }
+    public int? ExpirationInDays { get; init; }
 }
 
 /// <summary>
 /// Represents a ReplyOption with information provided by the sender.
 /// A reply option is a way for recipients to respond to a correspondence in addition to the normal Read and Confirm operations
 /// </summary>
-public class CorrespondenceReplyOption
+public record CorrespondenceReplyOption
 {
     /// <summary>
     /// Gets or sets the URL to be used as a reply/response to a correspondence.
     /// </summary>
     [JsonPropertyName("linkURL")]
-    public required string LinkURL { get; set; }
+    public required string LinkURL { get; init; }
 
     /// <summary>
     /// Gets or sets the url text.
     /// </summary>
     [JsonPropertyName("linkText")]
-    public string? LinkText { get; set; }
+    public string? LinkText { get; init; }
 }
 
 /// <summary>
 /// Represents a custom notification recipient with override options
 /// </summary>
-public class CustomNotificationRecipient
+public record CustomNotificationRecipient
 {
     /// <summary>
     /// This is not used, but is required by the API.
     /// </summary>
     [JsonPropertyName("recipientToOverride")]
-    public required string RecipientToOverride { get; set; }
+    public required string RecipientToOverride { get; init; }
 
     /// <summary>
     /// Only the first recipient will be used as custom recipient.
     /// </summary>
     [JsonPropertyName("recipients")]
-    public required List<NotificationRecipient> Recipients { get; set; }
+    public required List<NotificationRecipient> Recipients { get; init; }
 }
 
 /// <summary>
 /// Represents a reference to another item in the Altinn ecosystem
 /// </summary>
-public class ExternalReference
+public record ExternalReference
 {
     /// <summary>
     /// The Reference Value
     /// </summary>
     [JsonPropertyName("referenceValue")]
-    public required string ReferenceValue { get; set; }
+    public required string ReferenceValue { get; init; }
 
     /// <summary>
     /// The Type of reference
     /// </summary>
     [JsonPropertyName("referenceType")]
-    public required ReferenceType ReferenceType { get; set; }
+    public required ReferenceType ReferenceType { get; init; }
 }
 
 /// <summary>
 /// Represents an attachment to a specific correspondence as part of Initialize Correspondence Operation
 /// </summary>
-public class InitializeCorrespondenceAttachment : BaseAttachment
+public record InitializeCorrespondenceAttachment : BaseAttachment
 {
     /// <summary>
     /// A unique id for the correspondence attachment.
     /// </summary>
     [JsonPropertyName("id")]
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
 
     /// <summary>
     /// Specifies the location type of the attachment data
     /// </summary>
     [JsonPropertyName("dataLocationType")]
     [Required]
-    public InitializeAttachmentDataLocationType DataLocationType { get; set; }
+    public InitializeAttachmentDataLocationType DataLocationType { get; init; }
 }
 
 /// <summary>
 /// Represents the content of a Correspondence.
 /// </summary>
-public class InitializeCorrespondenceContent
+public record InitializeCorrespondenceContent
 {
     /// <summary>
     /// Gets or sets the language of the correspondence, specified according to ISO 639-1
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>nb</c>, matching the default declared for this field in the correspondence
+    /// specification. Leaving it unset would otherwise omit the field from the request entirely.
+    /// </remarks>
     [JsonPropertyName("language")]
-    public string? Language { get; set; }
+    public string? Language { get; init; } = "nb";
 
     /// <summary>
     /// Gets or sets the correspondence message title. Subject.
     /// </summary>
     [JsonPropertyName("messageTitle")]
-    public required string MessageTitle { get; set; }
+    public required string MessageTitle { get; init; }
 
     /// <summary>
     /// Gets or sets a summary text of the correspondence.
     /// </summary>
     [JsonPropertyName("messageSummary")]
-    public string? MessageSummary { get; set; }
+    public string? MessageSummary { get; init; }
 
     /// <summary>
     /// Gets or sets the main body of the correspondence.
     /// </summary>
     [JsonPropertyName("messageBody")]
-    public required string MessageBody { get; set; }
+    public required string MessageBody { get; init; }
 
     /// <summary>
     /// Gets or sets metadata of the attachments added in the Attachments field. Uses the InitializeCorrespondenceAttachmentExt model.
     /// </summary>
     [JsonPropertyName("attachments")]
-    public List<InitializeCorrespondenceAttachment> Attachments { get; set; } =
+    public List<InitializeCorrespondenceAttachment> Attachments { get; init; } =
         new List<InitializeCorrespondenceAttachment>();
 }
 
-public class InitializeCorrespondences
+public record InitializeCorrespondences
 {
     /// <summary>
     /// The correspondence object that should be created
     /// </summary>
     [JsonPropertyName("correspondence")]
-    public required BaseCorrespondence Correspondence { get; set; }
+    public required BaseCorrespondence Correspondence { get; init; }
 
     /// <summary>
     /// List of recipients for the correspondence: organization (urn:altinn:organization:identifier-no:ORGNR), national identity number (urn:altinn:person:identifier-no:SSN),
@@ -280,31 +285,31 @@ public class InitializeCorrespondences
     /// </summary>
     [JsonPropertyName("recipients")]
     [Required]
-    public required List<string> Recipients { get; set; }
+    public required List<string> Recipients { get; init; }
 
     /// <summary>
     /// Existing attachments that should be added to the correspondence
     /// </summary>
     [JsonPropertyName("existingAttachments")]
-    public List<Guid> ExistingAttachments { get; set; } = new List<Guid>();
+    public List<Guid> ExistingAttachments { get; init; } = new List<Guid>();
 
     /// <summary>
     /// Optional idempotency key to prevent duplicate correspondence creation
     /// </summary>
     [JsonPropertyName("idempotentKey")]
-    public Guid? IdempotentKey { get; set; }
+    public Guid? IdempotentKey { get; init; }
 }
 
 /// <summary>
 /// Used to specify a single notification connected to a specific Correspondence during the Initialize Correspondence operation
 /// </summary>
-public class InitializeCorrespondenceNotification
+public record InitializeCorrespondenceNotification
 {
     /// <summary>
     /// Which of the notification templates to use for this notification
     /// </summary>
     [JsonPropertyName("notificationTemplate")]
-    public NotificationTemplate? NotificationTemplate { get; set; }
+    public NotificationTemplate? NotificationTemplate { get; init; }
 
     /// <summary>
     /// The emails subject for the main notification.
@@ -312,7 +317,7 @@ public class InitializeCorrespondenceNotification
     /// </summary>
     [JsonPropertyName("emailSubject")]
     [StringLength(512, MinimumLength = 0)]
-    public string? EmailSubject { get; set; }
+    public string? EmailSubject { get; init; }
 
     /// <summary>
     /// The email body for the main notification.
@@ -320,13 +325,13 @@ public class InitializeCorrespondenceNotification
     /// </summary>
     [JsonPropertyName("emailBody")]
     [StringLength(10000, MinimumLength = 0)]
-    public string? EmailBody { get; set; }
+    public string? EmailBody { get; init; }
 
     /// <summary>
     /// The content type of the email body (HTML or Plain text)
     /// </summary>
     [JsonPropertyName("emailContentType")]
-    public EmailContentType EmailContentType { get; set; } = EmailContentType.Plain;
+    public EmailContentType EmailContentType { get; init; } = EmailContentType.Plain;
 
     /// <summary>
     /// The sms body for the main notification.
@@ -335,13 +340,13 @@ public class InitializeCorrespondenceNotification
     /// </summary>
     [JsonPropertyName("smsBody")]
     [StringLength(2144, MinimumLength = 0)]
-    public string? SmsBody { get; set; }
+    public string? SmsBody { get; init; }
 
     /// <summary>
     /// Should a reminder be sent if the notification is not confirmed or opened
     /// </summary>
     [JsonPropertyName("sendReminder")]
-    public bool SendReminder { get; set; }
+    public bool SendReminder { get; init; }
 
     /// <summary>
     /// The email subject to use for the reminder notification
@@ -349,7 +354,7 @@ public class InitializeCorrespondenceNotification
     /// </summary>
     [JsonPropertyName("reminderEmailSubject")]
     [StringLength(512, MinimumLength = 0)]
-    public string? ReminderEmailSubject { get; set; }
+    public string? ReminderEmailSubject { get; init; }
 
     /// <summary>
     /// The email body to use for the reminder notification.
@@ -357,13 +362,13 @@ public class InitializeCorrespondenceNotification
     /// </summary>
     [JsonPropertyName("reminderEmailBody")]
     [StringLength(10000, MinimumLength = 0)]
-    public string? ReminderEmailBody { get; set; }
+    public string? ReminderEmailBody { get; init; }
 
     /// <summary>
     /// The content type of the reminder email body (HTML or Plain text)
     /// </summary>
     [JsonPropertyName("reminderEmailContentType")]
-    public EmailContentType? ReminderEmailContentType { get; set; }
+    public EmailContentType? ReminderEmailContentType { get; init; }
 
     /// <summary>
     /// The sms body to use for the reminder notification.
@@ -372,32 +377,32 @@ public class InitializeCorrespondenceNotification
     /// </summary>
     [JsonPropertyName("reminderSmsBody")]
     [StringLength(2144, MinimumLength = 0)]
-    public string? ReminderSmsBody { get; set; }
+    public string? ReminderSmsBody { get; init; }
 
     /// <summary>
     /// Specifies the notification channel to use for the main notification
     /// </summary>
     [JsonPropertyName("notificationChannel")]
-    public NotificationChannel NotificationChannel { get; set; }
+    public NotificationChannel NotificationChannel { get; init; }
 
     /// <summary>
     ///  Specifies the notification channel to use for the reminder notification
     /// </summary>
     [JsonPropertyName("reminderNotificationChannel")]
-    public NotificationChannel? ReminderNotificationChannel { get; set; }
+    public NotificationChannel? ReminderNotificationChannel { get; init; }
 
     /// <summary>
     /// Senders Reference for this notification
     /// </summary>
     [JsonPropertyName("sendersReference")]
-    public string? SendersReference { get; set; }
+    public string? SendersReference { get; init; }
 
     /// <summary>
     /// A list of additional recipients for the notification. These are processed in addition to the Correspondence recipient;
     /// if not set, only the Correspondence recipient receives the notification.
     /// </summary>
     [JsonPropertyName("customRecipients")]
-    public List<NotificationRecipient>? CustomRecipients { get; set; }
+    public List<NotificationRecipient>? CustomRecipients { get; init; }
 
     /// <summary>
     /// When set to true, only CustomRecipients will be used for notifications, overriding the default correspondence recipient.
@@ -405,7 +410,7 @@ public class InitializeCorrespondenceNotification
     /// Default value is false (use default contact info + custom recipients).
     /// </summary>
     [JsonPropertyName("overrideRegisteredContactInformation")]
-    public bool OverrideRegisteredContactInformation { get; set; } = false;
+    public bool OverrideRegisteredContactInformation { get; init; } = false;
 }
 
 /// <summary>
@@ -414,37 +419,37 @@ public class InitializeCorrespondenceNotification
 /// <remarks>
 /// External representation to be used in the API.
 /// </remarks>
-public class NotificationRecipient
+public record NotificationRecipient
 {
     /// <summary>
     /// the email address of the recipient
     /// </summary>
     [JsonPropertyName("emailAddress")]
-    public string? EmailAddress { get; set; }
+    public string? EmailAddress { get; init; }
 
     /// <summary>
     /// the mobileNumber of the recipient
     /// </summary>
     [JsonPropertyName("mobileNumber")]
-    public string? MobileNumber { get; set; }
+    public string? MobileNumber { get; init; }
 
     /// <summary>
     /// the organization number of the recipient
     /// </summary>
     [JsonPropertyName("organizationNumber")]
-    public string? OrganizationNumber { get; set; }
+    public string? OrganizationNumber { get; init; }
 
     /// <summary>
     /// The SSN of the recipient
     /// </summary>
     [JsonPropertyName("nationalIdentityNumber")]
-    public string? NationalIdentityNumber { get; set; }
+    public string? NationalIdentityNumber { get; init; }
 
     /// <summary>
     /// Boolean indicating if the recipient is reserved
     /// </summary>
     [JsonPropertyName("isReserved")]
-    public bool? IsReserved { get; set; }
+    public bool? IsReserved { get; init; }
 }
 
 public enum EmailContentType
