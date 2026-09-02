@@ -92,6 +92,37 @@ Two things to know about the generated models:
   with `JsonSerializer` silently produces empty objects.
 - Errors surface as Kiota's `ApiException`, which carries `ResponseStatusCode`.
 
+### Returning generated models from your own API
+
+Returning a generated model straight from a controller — `return Ok(instance)` — does **not**
+reproduce Altinn's JSON. ASP.NET Core serialises with `System.Text.Json`, which knows nothing about
+Kiota's serialisation, and the output differs in three ways:
+
+| | `System.Text.Json` | Altinn's actual format |
+| --- | --- | --- |
+| Enums | `"fileScanResult": 2` | `"fileScanResult": "Clean"` |
+| Free-form maps | `"dataValues": { "additionalData": { … } }` | `"dataValues": { … }` |
+| Unset properties | every one emitted as `null` | omitted |
+
+The first and third are configurable — add a `JsonStringEnumConverter` and set
+`DefaultIgnoreCondition = WhenWritingNull`. **The second is not.** Kiota models a free-form
+`additionalProperties` map as a nested type holding an `AdditionalData` dictionary, so an extra
+`additionalData` level appears in the output. This affects `Instance.DataValues`,
+`Instance.PresentationTexts` and `CorrespondenceOverviewExt.PropertyList`, among others.
+
+If you forward these models, either map them to your own DTOs first, or serialise with Kiota:
+
+```csharp
+ApiClientBuilder.RegisterDefaultSerializer<JsonSerializationWriterFactory>();
+
+var json = await KiotaJsonSerializer.SerializeAsStringAsync(instance);
+
+return Content(json, "application/json");
+```
+
+Mapping to your own DTOs is usually the better choice: it also stops a regenerated client from
+silently changing your API's contract.
+
 ## 🔄 Regenerating the clients
 
 The OpenAPI specifications live alongside the source. They are inputs to generation only and are
