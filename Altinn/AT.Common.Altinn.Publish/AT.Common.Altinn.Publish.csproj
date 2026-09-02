@@ -26,15 +26,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
-    <None Include="openapi-storage.json" Pack="true" PackagePath="\" />
-    <None Include="openapi-events.json" Pack="true" PackagePath="\" />
-    <None Include="openapi-authentication.json" Pack="true" PackagePath="\" />
-    <None Include="openapi-app.json" Pack="true" PackagePath="\" />
-    <None Include="openapi-correspondence-tt02.json" Pack="true" PackagePath="\" />
-    <None Include="openapi-correspondence-prod.json" Pack="true" PackagePath="\" />
-    <None Include="openapi-dialogporten-tt02.json" Pack="true" PackagePath="\" />
-    <None Include="openapi-dialogporten-prod.json" Pack="true" PackagePath="\" />
   </ItemGroup>
+  <!--
+    The OpenAPI specifications are deliberately not packed. Nothing reads them at runtime; they are
+    inputs to client generation only, which runs from the repository. Shipping all eight added
+    roughly a third to the package size while duplicating files that are already versioned in the
+    repository alongside the code generated from them.
+  -->
   <Target
     Name="InjectPackageReleaseNotesFromFile"
     BeforeTargets="GenerateNuspec"

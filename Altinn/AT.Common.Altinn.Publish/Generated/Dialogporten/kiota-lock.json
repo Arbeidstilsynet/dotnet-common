@@ -1,5 +1,5 @@
 {
-  "descriptionHash": "3D65C3932A08D4CBD8E322C01F82FB696C4F6751A6D70C72350ABA908EE15BB64CB3D3D85B0F954E3E2539E963FBA1F0BE8195143D92B4E1F95DDE7E71F1CA2C",
+  "descriptionHash": "152809C43ABED55FD4A8E0C1FD78FBD8F4E0CE491054CB095D5859633AB7126030F7C10832993C43229B7968CB998D74DFA188F04C7CB78EDAA60F1AE76EE554",
   "descriptionLocation": "../../openapi-dialogporten-tt02.json",
   "lockFileVersion": "1.0.0",
   "kiotaVersion": "1.32.4",
@@ -29,7 +29,8 @@
     "multipart/form-data;q=0.1"
   ],
   "includePatterns": [
-    "/api/v1/serviceowner/**"
+    "/api/v1/serviceowner/dialoglookup",
+    "/api/v1/serviceowner/dialogs/**"
   ],
   "excludePatterns": [],
   "disabledValidationRules": []

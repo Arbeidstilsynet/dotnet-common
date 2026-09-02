@@ -81,6 +81,11 @@ registered so you can reach endpoints the high-level clients do not wrap:
 public class MyService(IAltinnStorageClient storageClient, StorageApiClient generatedClient);
 ```
 
+Generation is scoped to the functional area each client serves — instances for storage and apps,
+subscriptions for events, and dialogs for Dialogporten — so endpoints outside those areas are not
+generated. To reach one, widen the relevant `--include-path` filter in `package.json` and
+regenerate.
+
 Two things to know about the generated models:
 
 - They are Kiota `IParsable` types, not `System.Text.Json` POCOs. Deserialising them
@@ -89,7 +94,8 @@ Two things to know about the generated models:
 
 ## 🔄 Regenerating the clients
 
-The OpenAPI specifications live alongside the source and ship with the package.
+The OpenAPI specifications live alongside the source. They are inputs to generation only and are
+not shipped inside the package.
 After refreshing one from Altinn, regenerate with:
 
 ```bash

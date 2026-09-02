@@ -1,5 +1,5 @@
 {
-  "descriptionHash": "5515EB3AFB58832163A95D3D2EDB485F22D305C89D0A7D3B1889E008783C5438588842F9D5F9A864A87AFF2B5ED61759562ABEEF8C47BDAC3EAC828F3718A2CF",
+  "descriptionHash": "C7676622036090013A187F99947700DF7DAD6D0F508FC2B25B2A0A09A00E03DCF5FA871850FA5FB05A888F524CBEC396CACF7BA2A25764A9B3DA71F397BA283E",
   "descriptionLocation": "../../openapi-events.json",
   "lockFileVersion": "1.0.0",
   "kiotaVersion": "1.32.4",
@@ -28,7 +28,10 @@
     "application/x-www-form-urlencoded;q=0.2",
     "multipart/form-data;q=0.1"
   ],
-  "includePatterns": [],
+  "includePatterns": [
+    "/subscriptions",
+    "/subscriptions/**"
+  ],
   "excludePatterns": [],
   "disabledValidationRules": []
 }
