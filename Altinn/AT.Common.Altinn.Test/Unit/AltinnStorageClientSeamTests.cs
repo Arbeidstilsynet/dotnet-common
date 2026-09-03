@@ -1,10 +1,12 @@
 using System.Reflection;
+using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Implementation.Clients;
 using Arbeidstilsynet.Common.Altinn.Implementation.Configuration;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Storage;
 using Arbeidstilsynet.Common.Altinn.Storage.Models;
+using Microsoft.Extensions.Options;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using NSubstitute;
@@ -53,19 +55,21 @@ public class AltinnStorageClientSeamTests
 
         _sut = new AltinnStorageClient(
             new StorageApiClient(_requestAdapter),
-            new ResolvedAltinnUrls
-            {
-                AuthenticationUrl = new Uri(
-                    "https://platform.tt02.altinn.no/authentication/api/v1"
-                ),
-                StorageUrl = new Uri(BaseUrl),
-                EventsUrl = new Uri("https://platform.tt02.altinn.no/events/api/v1"),
-                CorrespondenceUrl = new Uri("https://platform.tt02.altinn.no"),
-                DialogportenUrl = new Uri("https://platform.tt02.altinn.no/dialogporten"),
-                AppBaseUrl = new Uri("https://dat.apps.tt02.altinn.no/"),
-                MaskinportenUrl = new Uri("https://test.maskinporten.no/"),
-            }
+            OptionsMonitorFor(
+                AltinnClients.Storage,
+                new AltinnClientOptions { BaseUrl = new Uri(BaseUrl) }
+            )
         );
+    }
+
+    private static IOptionsMonitor<AltinnClientOptions> OptionsMonitorFor(
+        string clientName,
+        AltinnClientOptions options
+    )
+    {
+        var monitor = Substitute.For<IOptionsMonitor<AltinnClientOptions>>();
+        monitor.Get(clientName).Returns(options);
+        return monitor;
     }
 
     private RequestInformation CapturedRequest()

@@ -18,6 +18,8 @@ namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 /// </summary>
 public class MaskinportenClientTests
 {
+    private static readonly string[] Scopes = ["altinn:serviceowner"];
+
     private readonly StubHandler _handler = new();
     private readonly MaskinportenClient _sut;
 
@@ -49,7 +51,7 @@ public class MaskinportenClientTests
     {
         _handler.RespondWith(NewToken(expiresIn: 120));
 
-        var token = await _sut.GetToken();
+        var token = await _sut.GetToken(Scopes);
 
         token.AccessToken.ShouldBe("access-token-1");
 
@@ -66,8 +68,8 @@ public class MaskinportenClientTests
     {
         _handler.RespondWith(NewToken(expiresIn: 120));
 
-        var first = await _sut.GetToken();
-        var second = await _sut.GetToken();
+        var first = await _sut.GetToken(Scopes);
+        var second = await _sut.GetToken(Scopes);
 
         second.AccessToken.ShouldBe(first.AccessToken);
         _handler.Requests.Count.ShouldBe(1);
@@ -79,10 +81,10 @@ public class MaskinportenClientTests
         // The client treats a token as expired 60 seconds early, so a 60 second lifetime is never
         // served from the cache.
         _handler.RespondWith(NewToken(expiresIn: 60, accessToken: "access-token-1"));
-        var first = await _sut.GetToken();
+        var first = await _sut.GetToken(Scopes);
 
         _handler.RespondWith(NewToken(expiresIn: 60, accessToken: "access-token-2"));
-        var second = await _sut.GetToken();
+        var second = await _sut.GetToken(Scopes);
 
         first.AccessToken.ShouldBe("access-token-1");
         second.AccessToken.ShouldBe("access-token-2");
@@ -94,7 +96,7 @@ public class MaskinportenClientTests
     {
         _handler.RespondWith(NewToken(expiresIn: 120));
 
-        var tokens = await Task.WhenAll(Enumerable.Range(0, 10).Select(_ => _sut.GetToken()));
+        var tokens = await Task.WhenAll(Enumerable.Range(0, 10).Select(_ => _sut.GetToken(Scopes)));
 
         tokens.ShouldAllBe(token => token.AccessToken == "access-token-1");
 
@@ -103,11 +105,39 @@ public class MaskinportenClientTests
     }
 
     [Fact]
+    public async Task GetToken_RequestsASeparateTokenPerScopeSet()
+    {
+        // Scopes are baked into the grant, so a token issued for one API must not be handed to a
+        // client registered for different scopes.
+        _handler.RespondWith(NewToken(expiresIn: 120, accessToken: "storage-token"));
+        var storage = await _sut.GetToken(["altinn:serviceowner/instances.read"]);
+
+        _handler.RespondWith(NewToken(expiresIn: 120, accessToken: "events-token"));
+        var events = await _sut.GetToken(["altinn:events.subscribe"]);
+
+        storage.AccessToken.ShouldBe("storage-token");
+        events.AccessToken.ShouldBe("events-token");
+        _handler.Requests.Count.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task GetToken_ReusesTheCachedTokenWhenTheSameScopesAreRequestedInAnotherOrder()
+    {
+        _handler.RespondWith(NewToken(expiresIn: 120));
+
+        var first = await _sut.GetToken(["b:scope", "a:scope"]);
+        var second = await _sut.GetToken(["a:scope", "b:scope"]);
+
+        second.AccessToken.ShouldBe(first.AccessToken);
+        _handler.Requests.Count.ShouldBe(1);
+    }
+
+    [Fact]
     public async Task GetToken_Throws_WhenMaskinportenRejectsTheRequest()
     {
         _handler.RespondWith(HttpStatusCode.BadRequest, """{"error":"invalid_grant"}""");
 
-        await Should.ThrowAsync<Exception>(() => _sut.GetToken());
+        await Should.ThrowAsync<Exception>(() => _sut.GetToken(Scopes));
     }
 
     private static string NewToken(int expiresIn, string accessToken = "access-token-1") =>

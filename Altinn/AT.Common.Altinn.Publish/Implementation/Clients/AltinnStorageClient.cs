@@ -1,17 +1,22 @@
+using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Extensions;
-using Arbeidstilsynet.Common.Altinn.Implementation.Configuration;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Mapping;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Arbeidstilsynet.Common.Altinn.Storage;
+using Microsoft.Extensions.Options;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Clients;
 
-internal class AltinnStorageClient(StorageApiClient client, ResolvedAltinnUrls urls)
-    : IAltinnStorageClient
+internal class AltinnStorageClient(
+    StorageApiClient client,
+    IOptionsMonitor<AltinnClientOptions> options
+) : IAltinnStorageClient
 {
+    private readonly Uri _storageUrl = options.Get(AltinnClients.Storage).BaseUrl!;
+
     public async Task<AltinnInstance> GetInstance(
         Guid instanceGuid,
         CancellationToken cancellationToken = default
@@ -22,7 +27,7 @@ internal class AltinnStorageClient(StorageApiClient client, ResolvedAltinnUrls u
         // backwards compatibility. The two collide at the same position in Kiota's request-builder
         // tree, so only one can be generated, and it has to be the older form because the whole
         // data-element subtree hangs off it. The preferred endpoint is therefore addressed by URL.
-        var instanceUrl = $"{urls.StorageUrl.ToString().TrimEnd('/')}/instances/{instanceGuid}";
+        var instanceUrl = $"{_storageUrl.ToString().TrimEnd('/')}/instances/{instanceGuid}";
 
         var instance = await client
             .Instances[0][Guid.Empty]

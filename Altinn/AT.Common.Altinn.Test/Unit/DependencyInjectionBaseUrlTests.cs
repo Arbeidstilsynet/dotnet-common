@@ -167,7 +167,9 @@ public class DependencyInjectionBaseUrlTests
     public async Task AuthenticationProvider_AttachesTheAltinnTokenAsBearer()
     {
         var tokenProvider = Substitute.For<IAltinnTokenProvider>();
-        tokenProvider.GetToken(Arg.Any<CancellationToken>()).Returns("altinn-token");
+        tokenProvider
+            .GetToken(Arg.Any<IReadOnlyList<string>>(), Arg.Any<CancellationToken>())
+            .Returns("altinn-token");
 
         var request = new RequestInformation
         {
@@ -175,7 +177,10 @@ public class DependencyInjectionBaseUrlTests
             URI = new Uri("https://platform.altinn.no/storage/api/v1/instances"),
         };
 
-        await new AltinnAuthenticationProvider(tokenProvider).AuthenticateRequestAsync(request);
+        await new AltinnAuthenticationProvider(
+            tokenProvider,
+            ["altinn:serviceowner"]
+        ).AuthenticateRequestAsync(request);
 
         request.Headers["Authorization"].ShouldContain("Bearer altinn-token");
     }

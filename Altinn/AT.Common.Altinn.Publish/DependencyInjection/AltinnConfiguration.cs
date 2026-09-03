@@ -149,9 +149,14 @@ public record MaskinportenConfiguration
     public required string IntegrationId { get; init; }
 
     /// <summary>
-    /// The scopes to request during authentication.
+    /// The default scopes to request, used by any client that does not specify its own via
+    /// <see cref="AltinnClientOptions.Scopes"/>.
     /// </summary>
-    [Required]
+    /// <remarks>
+    /// Optional: leave it unset if every client states the scopes it needs. Registration fails if a
+    /// client ends up with neither its own scopes nor this fallback, unless the target is
+    /// <see cref="AltinnEnvironment.Local"/>, which uses test tokens rather than Maskinporten.
+    /// </remarks>
     [ConfigurationKeyName("Scopes")]
-    public required string[] Scopes { get; init; }
+    public string[]? Scopes { get; init; }
 }

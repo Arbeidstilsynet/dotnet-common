@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
@@ -13,8 +14,7 @@ internal class MaskinportenClient : IMaskinportenClient
 {
     private const int TokenGrace = 60; // seconds
 
-    private DateTime _tokenExpirationTime = DateTime.MinValue;
-    private MaskinportenTokenResponse? _currentToken;
+    private readonly ConcurrentDictionary<string, CachedToken> _tokens = new();
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
     private readonly HttpClient _httpClient;
@@ -36,13 +36,23 @@ internal class MaskinportenClient : IMaskinportenClient
     }
 
     public async Task<MaskinportenTokenResponse> GetToken(
+        IReadOnlyList<string> scopes,
         CancellationToken cancellationToken = default
     )
     {
+        // Scopes are baked into the grant, so a token is only reusable by callers asking for the
+        // same set. Order is normalised so equivalent sets share a cache entry.
+        var cacheKey = string.Join(' ', scopes.OrderBy(scope => scope, StringComparer.Ordinal));
+
+        if (TryGetCachedToken(cacheKey, out var alreadyCached))
+        {
+            return alreadyCached!;
+        }
+
         await _semaphore.WaitAsync(cancellationToken);
         try
         {
-            return await GetTokenInternal(cancellationToken);
+            return await GetTokenInternal(cacheKey, scopes, cancellationToken);
         }
         finally
         {
@@ -51,15 +61,17 @@ internal class MaskinportenClient : IMaskinportenClient
     }
 
     private async Task<MaskinportenTokenResponse> GetTokenInternal(
+        string cacheKey,
+        IReadOnlyList<string> scopes,
         CancellationToken cancellationToken
     )
     {
-        if (TryGetCachedToken(out var cachedToken))
+        if (TryGetCachedToken(cacheKey, out var cachedToken))
         {
             return cachedToken!;
         }
 
-        var jwtGrant = _config.Value.GenerateJwtGrant(_httpClient.BaseAddress!);
+        var jwtGrant = _config.Value.GenerateJwtGrant(_httpClient.BaseAddress!, scopes);
 
         var form = new Dictionary<string, string>
         {
@@ -81,35 +93,39 @@ internal class MaskinportenClient : IMaskinportenClient
                 cancellationToken
             ) ?? throw new InvalidOperationException("Failed to retrieve Maskinporten token");
 
-        UpdateCachedToken(tokenResponse);
+        _tokens[cacheKey] = new CachedToken(
+            tokenResponse,
+            DateTime.Now.AddSeconds(tokenResponse.ExpiresIn - TokenGrace)
+        );
 
         return tokenResponse;
     }
 
-    private bool TryGetCachedToken(out MaskinportenTokenResponse? token)
+    private bool TryGetCachedToken(string cacheKey, out MaskinportenTokenResponse? token)
     {
-        if (_currentToken is null || DateTime.Now >= _tokenExpirationTime)
+        if (_tokens.TryGetValue(cacheKey, out var cached) && DateTime.Now < cached.ExpiresAt)
         {
-            token = null;
-            return false;
+            token = cached.Token;
+            return true;
         }
 
-        token = _currentToken;
-        return true;
+        token = null;
+        return false;
     }
 
-    private void UpdateCachedToken(MaskinportenTokenResponse tokenResponse)
-    {
-        _currentToken = tokenResponse;
-        _tokenExpirationTime = DateTime.Now.AddSeconds(tokenResponse.ExpiresIn - TokenGrace);
-    }
+    private sealed record CachedToken(MaskinportenTokenResponse Token, DateTime ExpiresAt);
 }
 
 file static class Extensions
 {
-    public static string GenerateJwtGrant(this MaskinportenConfiguration config, Uri baseAddress)
+    public static string GenerateJwtGrant(
+        this MaskinportenConfiguration config,
+        Uri baseAddress,
+        IReadOnlyList<string> scopes
+    )
     {
         var audience = baseAddress.ToString();
+        var requestedScopes = scopes.ToArray();
 
         if (config.KeyId is not null)
         {
@@ -118,7 +134,7 @@ file static class Extensions
                 config.PrivateKey,
                 config.KeyId,
                 config.IntegrationId,
-                config.Scopes
+                requestedScopes
             );
         }
 
@@ -130,7 +146,7 @@ file static class Extensions
                     "Either KeyId or CertificateChain must be configured."
                 ),
             config.IntegrationId,
-            config.Scopes
+            requestedScopes
         );
     }
 }

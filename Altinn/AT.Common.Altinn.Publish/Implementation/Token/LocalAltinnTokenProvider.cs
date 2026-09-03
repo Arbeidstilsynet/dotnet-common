@@ -20,11 +20,14 @@ internal class LocalAltinnTokenProvider(
 {
     private readonly HttpClient _httpClient = httpClientFactory.CreateClient();
 
-    public async Task<string> GetToken(CancellationToken cancellationToken = default)
+    public async Task<string> GetToken(
+        IReadOnlyList<string> scopes,
+        CancellationToken cancellationToken = default
+    )
     {
         var tokenUrl = new Uri(
             urls.AppBaseUrl,
-            $"Home/GetTestOrgToken?org={configuration.Value.OrgId}&authenticationLevel=2&orgNumber=&scopes="
+            $"Home/GetTestOrgToken?org={configuration.Value.OrgId}&authenticationLevel=2&orgNumber=&scopes={Uri.EscapeDataString(string.Join(' ', scopes))}"
         );
 
         return await _httpClient.GetStringAsync(tokenUrl, cancellationToken);

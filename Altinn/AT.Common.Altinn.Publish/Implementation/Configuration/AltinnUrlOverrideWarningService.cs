@@ -12,18 +12,19 @@ namespace Arbeidstilsynet.Common.Altinn.Implementation.Configuration;
 /// </remarks>
 internal class AltinnUrlOverrideWarningService(
     AltinnResolution resolution,
+    AltinnOverrideRegistry overrides,
     ILogger<AltinnUrlOverrideWarningService> logger
 ) : IHostedService
 {
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        if (resolution.EffectiveOverrides.Count > 0)
+        if (overrides.Overrides.Count > 0)
         {
             logger.LogWarning(
                 "Altinn is targeting {Target} with overridden base URL(s): {Overrides}. "
                     + "This is expected when testing against a mock server, but should not be the case otherwise.",
                 resolution.Target,
-                string.Join(", ", resolution.EffectiveOverrides)
+                string.Join(", ", overrides.Overrides)
             );
         }
 

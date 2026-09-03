@@ -8,9 +8,12 @@ internal class AltinnTokenProvider(
     IAltinnAuthenticationClient altinnAuthenticationClient
 ) : IAltinnTokenProvider
 {
-    public async Task<string> GetToken(CancellationToken cancellationToken = default)
+    public async Task<string> GetToken(
+        IReadOnlyList<string> scopes,
+        CancellationToken cancellationToken = default
+    )
     {
-        var maskinportenToken = await maskinportenClient.GetToken(cancellationToken);
+        var maskinportenToken = await maskinportenClient.GetToken(scopes, cancellationToken);
 
         // get altinn token
         return await altinnAuthenticationClient.ExchangeToken(
