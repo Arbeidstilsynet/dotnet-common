@@ -1,29 +1,26 @@
-using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
+using Arbeidstilsynet.Common.Altinn.Authentication;
 using Arbeidstilsynet.Common.Altinn.Model.Api;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
-using static Arbeidstilsynet.Common.Altinn.DependencyInjection.DependencyInjectionExtensions;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Clients;
 
-internal class AltinnAuthenticationClient : IAltinnAuthenticationClient
+internal class AltinnAuthenticationClient(AuthenticationApiClient client)
+    : IAltinnAuthenticationClient
 {
-    private readonly HttpClient _httpClient;
-
-    public AltinnAuthenticationClient(IHttpClientFactory httpClientFactory)
-    {
-        _httpClient = httpClientFactory.CreateClient(AltinnAuthenticationApiClientKey);
-    }
-
     public async Task<string> ExchangeToken(
         string tokenProviderToken,
-        AuthenticationTokenProvider tokenProvider = AuthenticationTokenProvider.Maskinporten
+        AuthenticationTokenProvider tokenProvider = AuthenticationTokenProvider.Maskinporten,
+        CancellationToken cancellationToken = default
     )
     {
-        return await _httpClient
-                .Get($"exchange/{tokenProvider.ToString().ToLower()}")
-                .WithBearerToken(tokenProviderToken)
-                .WithAcceptHeader("text/plain", 1.0)
-                .ReceiveString()
-            ?? throw new Exception("Failed to exchange token with Altinn");
+        // This client is what mints Altinn tokens, so its request adapter authenticates
+        // anonymously and the external provider's token is supplied per request instead.
+        return await client
+                .Exchange[tokenProvider.ToString().ToLowerInvariant()]
+                .GetAsync(
+                    request => request.Headers.Add("Authorization", $"Bearer {tokenProviderToken}"),
+                    cancellationToken
+                )
+            ?? throw new InvalidOperationException("Failed to exchange token with Altinn");
     }
 }

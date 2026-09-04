@@ -1,0 +1,39 @@
+{
+  "descriptionHash": "54BF863B1DFD8164B55DF9AC8E54FE20A6FAECDB3E32A9936BA108C5462342EA958C6F6A023E7ACB2B76BC170BDADA06A142260FB39090C42DEF6C5AFEEDE4D1",
+  "descriptionLocation": "../../openapi-storage.json",
+  "lockFileVersion": "1.0.0",
+  "kiotaVersion": "1.32.4",
+  "clientClassName": "StorageApiClient",
+  "typeAccessModifier": "Internal",
+  "clientNamespaceName": "Arbeidstilsynet.Common.Altinn.Storage",
+  "language": "CSharp",
+  "usesBackingStore": false,
+  "excludeBackwardCompatible": true,
+  "includeAdditionalData": true,
+  "disableSSLValidation": false,
+  "serializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Text.TextSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Form.FormSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Multipart.MultipartSerializationWriterFactory"
+  ],
+  "deserializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Text.TextParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Form.FormParseNodeFactory"
+  ],
+  "structuredMimeTypes": [
+    "application/json",
+    "text/plain;q=0.9",
+    "application/x-www-form-urlencoded;q=0.2",
+    "multipart/form-data;q=0.1"
+  ],
+  "includePatterns": [
+    "/instances",
+    "/instances/**"
+  ],
+  "excludePatterns": [
+    "/instances/{instanceGuid}"
+  ],
+  "disabledValidationRules": []
+}

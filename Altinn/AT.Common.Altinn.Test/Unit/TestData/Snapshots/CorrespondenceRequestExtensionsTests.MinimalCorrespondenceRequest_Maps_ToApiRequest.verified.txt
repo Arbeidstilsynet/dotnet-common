@@ -3,6 +3,7 @@
     ResourceId: urn:altinn:resource:dat-meldinger-correspondence,
     SendersReference: REF-001,
     Content: {
+      Language: nb,
       MessageTitle: Test Title,
       MessageBody: Test Body
     },

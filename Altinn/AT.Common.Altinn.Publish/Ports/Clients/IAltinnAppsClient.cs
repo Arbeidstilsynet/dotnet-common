@@ -4,15 +4,16 @@ using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 namespace Arbeidstilsynet.Common.Altinn.Ports.Clients;
 
 /// <summary>
-/// Client for interacting directly with the altinn app instance (mutuable actions).
+/// Client for the Altinn apps API.
 /// </summary>
 public interface IAltinnAppsClient
 {
     /// <summary>
-    /// Completes an instance (marks as complete in Altinn).
+    /// Marks an instance as complete on behalf of the configured organisation.
     /// </summary>
-    /// <param name="appId">Altinn app id.</param>
-    /// <param name="instanceAddress">The instance address request.</param>
-    /// <returns>The completed instance mapped to our own model.</returns>
-    Task<AltinnInstance> CompleteInstance(string appId, InstanceRequest instanceAddress);
+    Task<AltinnInstance> CompleteInstance(
+        string appId,
+        InstanceRequest instanceAddress,
+        CancellationToken cancellationToken = default
+    );
 }

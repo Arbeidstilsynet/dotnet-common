@@ -1,0 +1,37 @@
+{
+  "descriptionHash": "152809C43ABED55FD4A8E0C1FD78FBD8F4E0CE491054CB095D5859633AB7126030F7C10832993C43229B7968CB998D74DFA188F04C7CB78EDAA60F1AE76EE554",
+  "descriptionLocation": "../../openapi-dialogporten-tt02.json",
+  "lockFileVersion": "1.0.0",
+  "kiotaVersion": "1.32.4",
+  "clientClassName": "DialogportenApiClient",
+  "typeAccessModifier": "Internal",
+  "clientNamespaceName": "Arbeidstilsynet.Common.Altinn.Dialogporten",
+  "language": "CSharp",
+  "usesBackingStore": false,
+  "excludeBackwardCompatible": true,
+  "includeAdditionalData": true,
+  "disableSSLValidation": false,
+  "serializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Text.TextSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Form.FormSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Multipart.MultipartSerializationWriterFactory"
+  ],
+  "deserializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Text.TextParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Form.FormParseNodeFactory"
+  ],
+  "structuredMimeTypes": [
+    "application/json",
+    "text/plain;q=0.9",
+    "application/x-www-form-urlencoded;q=0.2",
+    "multipart/form-data;q=0.1"
+  ],
+  "includePatterns": [
+    "/api/v1/serviceowner/dialoglookup",
+    "/api/v1/serviceowner/dialogs/**"
+  ],
+  "excludePatterns": [],
+  "disabledValidationRules": []
+}

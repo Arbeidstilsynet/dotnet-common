@@ -4,28 +4,28 @@ using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 namespace Arbeidstilsynet.Common.Altinn.Ports.Clients;
 
 /// <summary>
-/// Client for subscribing to Altinn events.
+/// Client for the Altinn events API.
 /// </summary>
 public interface IAltinnEventsClient
 {
     /// <summary>
-    /// Subscribes to Altinn events using the specified subscription request.
+    /// Creates an event subscription.
     /// </summary>
-    /// <param name="request">The subscription request details.</param>
-    /// <returns>The created subscription mapped to our internal model.</returns>
-    Task<AltinnSubscription> Subscribe(AltinnSubscriptionRequest request);
+    Task<AltinnSubscription> Subscribe(
+        AltinnSubscriptionRequest request,
+        CancellationToken cancellationToken = default
+    );
 
     /// <summary>
-    /// Unsubscribes an existing subscription.
+    /// Deletes an event subscription.
     /// </summary>
-    /// <param name="subscriptionId">The subscription id.</param>
-    /// <returns>The http response message which includes a status code to check if it was successful.</returns>
-    Task<HttpResponseMessage> Unsubscribe(int subscriptionId);
+    Task Unsubscribe(int subscriptionId, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Gets an existing Altinn subscription by its subscription id.
+    /// Gets an event subscription by its id.
     /// </summary>
-    /// <param name="subscriptionId">The subscription id.</param>
-    /// <returns>The subscription mapped to our internal model.</returns>
-    Task<AltinnSubscription> GetAltinnSubscription(int subscriptionId);
+    Task<AltinnSubscription?> GetAltinnSubscription(
+        int subscriptionId,
+        CancellationToken cancellationToken = default
+    );
 }

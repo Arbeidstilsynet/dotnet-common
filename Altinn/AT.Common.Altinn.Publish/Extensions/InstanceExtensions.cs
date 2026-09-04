@@ -3,31 +3,31 @@ using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 namespace Arbeidstilsynet.Common.Altinn.Extensions;
 
 /// <summary>
-/// Methods to extract commonly used information from an <see cref="Instance"/>
+/// Methods to extract commonly used information from an <see cref="AltinnInstance"/>
 /// </summary>
 public static class InstanceExtensions
 {
     /// <summary>
-    /// Extracts the instance Guid from the instance Id
+    /// Extracts the AltinnInstance Guid from the AltinnInstance Id
     /// </summary>
-    /// <param name="instance"></param>
+    /// <param name="AltinnInstance"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public static Guid GetInstanceGuid(this AltinnInstance instance)
+    public static Guid GetInstanceGuid(this AltinnInstance AltinnInstance)
     {
         // Split the Id by '/' and parse the second part as a Guid
-        if (instance.Id.Split("/").Length != 2)
+        if (AltinnInstance.Id.Split("/").Length != 2)
         {
             throw new InvalidOperationException(
-                "Instance ID must be in the format partyId/instanceGuid"
+                "AltinnInstance ID must be in the format partyId/instanceGuid"
             );
         }
 
         // Ensure the second part is a valid Guid
-        if (!Guid.TryParse(instance.Id.Split("/")[1], out var instanceGuid))
+        if (!Guid.TryParse(AltinnInstance.Id.Split("/")[1], out var instanceGuid))
         {
             throw new InvalidOperationException(
-                "Instance ID must contain a valid Guid in the second part"
+                "AltinnInstance ID must contain a valid Guid in the second part"
             );
         }
 

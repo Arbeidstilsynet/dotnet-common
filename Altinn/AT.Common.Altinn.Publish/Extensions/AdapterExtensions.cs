@@ -14,11 +14,11 @@ public static class AdapterExtensions
     /// <summary>
     /// Converts an Altinn <see cref="AltinnInstance"/> to <see cref="AltinnMetadata"/>.
     /// </summary>
-    /// <param name="altinnInstance">The Altinn instance to convert.</param>
+    /// <param name="instance">The Altinn instance to convert.</param>
     /// <returns>The corresponding <see cref="AltinnMetadata"/> object.</returns>
-    public static AltinnMetadata ToAltinnMetadata(this AltinnInstance altinnInstance)
+    public static AltinnMetadata ToAltinnMetadata(this AltinnInstance instance)
     {
-        var appIdParts = altinnInstance.AppId?.Split('/');
+        var appIdParts = instance.AppId?.Split('/');
 
         if (appIdParts is not { Length: 2 })
         {
@@ -28,7 +28,7 @@ public static class AdapterExtensions
         var org = appIdParts[0];
         var app = appIdParts[1];
 
-        var instanceIdParts = altinnInstance.Id?.Split('/');
+        var instanceIdParts = instance.Id?.Split('/');
 
         if (instanceIdParts is not { Length: 2 })
         {
@@ -36,12 +36,11 @@ public static class AdapterExtensions
                 "InstanceId must be in the format partyId/instanceGuid"
             );
         }
-        string? dialogId = null;
-        if (altinnInstance.DataValues != null)
-        {
-            altinnInstance.DataValues.TryGetValue("dialog.id", out var retrievedDialogId);
-            dialogId = retrievedDialogId;
-        }
+
+        var dataValues = instance.GetDataValues();
+
+        dataValues.TryGetValue("dialog.id", out var dialogId);
+
         var partyId = instanceIdParts[0];
         var instanceGuid = Guid.Parse(instanceIdParts[1]);
 
@@ -51,13 +50,19 @@ public static class AdapterExtensions
             Org = org,
             InstanceGuid = instanceGuid,
             InstanceOwnerPartyId = partyId,
-            OrganisationNumber = altinnInstance.InstanceOwner?.OrganisationNumber,
-            ProcessStarted = altinnInstance.Process?.Started,
-            ProcessEnded = altinnInstance.Process?.Ended,
+            OrganisationNumber = instance.InstanceOwner?.OrganisationNumber,
+            ProcessStarted = instance.Process?.Started,
+            ProcessEnded = instance.Process?.Ended,
             DialogId = dialogId,
-            DataValues = altinnInstance.DataValues ?? [],
+            DataValues = dataValues,
         };
     }
+
+    /// <summary>
+    /// Reads the instance's data values as a string dictionary.
+    /// </summary>
+    internal static Dictionary<string, string> GetDataValues(this AltinnInstance instance) =>
+        instance.DataValues ?? [];
 
     /// <summary>
     /// Converts <see cref="AltinnMetadata"/> to an <see cref="InstanceRequest"/>.
@@ -76,7 +81,7 @@ public static class AdapterExtensions
     /// <summary>
     /// Converts an <see cref="AltinnInstanceSummary"/> to a metadata dictionary with an Altinn reference.
     /// </summary>
-    /// <param name="altinnInstanceSummary">The Altinn instance summary to convert.</param>
+    /// <param name="altinnInstanceSummary">The Altinn AltinnInstance summary to convert.</param>
     /// <returns>A dictionary containing metadata and the Altinn reference.</returns>
     public static Dictionary<string, string> ToMetadataDictionary(
         this AltinnInstanceSummary altinnInstanceSummary

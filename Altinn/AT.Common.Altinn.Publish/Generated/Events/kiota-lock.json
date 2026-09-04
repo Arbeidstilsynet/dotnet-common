@@ -1,0 +1,37 @@
+{
+  "descriptionHash": "C7676622036090013A187F99947700DF7DAD6D0F508FC2B25B2A0A09A00E03DCF5FA871850FA5FB05A888F524CBEC396CACF7BA2A25764A9B3DA71F397BA283E",
+  "descriptionLocation": "../../openapi-events.json",
+  "lockFileVersion": "1.0.0",
+  "kiotaVersion": "1.32.4",
+  "clientClassName": "EventsApiClient",
+  "typeAccessModifier": "Internal",
+  "clientNamespaceName": "Arbeidstilsynet.Common.Altinn.Events",
+  "language": "CSharp",
+  "usesBackingStore": false,
+  "excludeBackwardCompatible": true,
+  "includeAdditionalData": true,
+  "disableSSLValidation": false,
+  "serializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Text.TextSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Form.FormSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Multipart.MultipartSerializationWriterFactory"
+  ],
+  "deserializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Text.TextParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Form.FormParseNodeFactory"
+  ],
+  "structuredMimeTypes": [
+    "application/json",
+    "text/plain;q=0.9",
+    "application/x-www-form-urlencoded;q=0.2",
+    "multipart/form-data;q=0.1"
+  ],
+  "includePatterns": [
+    "/subscriptions",
+    "/subscriptions/**"
+  ],
+  "excludePatterns": [],
+  "disabledValidationRules": []
+}

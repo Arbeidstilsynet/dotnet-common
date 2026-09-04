@@ -1,6 +1,10 @@
 using Arbeidstilsynet.Common.Altinn.Extensions;
+using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+using Microsoft.Kiota.Abstractions.Authentication;
+using Microsoft.Kiota.Bundle;
+using Microsoft.Kiota.Serialization.Multipart;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 
@@ -137,23 +141,21 @@ public class CorrespondenceRequestExtensionsTests
     }
 
     [Fact]
-    public async Task MinimalCorrespondenceRequest_Maps_ToMultipartFormData()
+    public async Task MinimalCorrespondenceRequest_Maps_ToMultipartBody()
     {
         var request = CreateMinimalCorrespondenceRequest().ToApiRequest();
 
-        var result = request.ToMultipartFormData(attachments: null);
-        var formFields = await ExtractFormFields(result);
+        var formFields = ExtractFormFields(request);
 
         await Verifier.Verify(formFields, _verifySettings);
     }
 
     [Fact]
-    public async Task FullCorrespondenceRequest_Maps_ToMultipartFormData()
+    public async Task FullCorrespondenceRequest_Maps_ToMultipartBody()
     {
         var request = CreateFullCorrespondenceRequest().ToApiRequest();
 
-        var result = request.ToMultipartFormData(attachments: null);
-        var formFields = await ExtractFormFields(result);
+        var formFields = ExtractFormFields(request);
 
         await Verifier.Verify(formFields, _verifySettings);
     }
@@ -173,17 +175,56 @@ public class CorrespondenceRequestExtensionsTests
         await Verifier.Verify(result, _verifySettings);
     }
 
-    private static async Task<Dictionary<string, string>> ExtractFormFields(
-        MultipartFormDataContent formData
-    )
+    /// <summary>
+    /// Serialises the request as the generated client would and returns the resulting form fields,
+    /// so the snapshot covers the exact names and values that reach the wire.
+    /// </summary>
+    private static Dictionary<string, string> ExtractFormFields(InitializeCorrespondences request)
     {
+        var adapter = new DefaultRequestAdapter(new AnonymousAuthenticationProvider());
+
+        var body = request.ToMultipartBody(adapter, attachments: null);
+
+        var writer = new MultipartSerializationWriterFactory().GetSerializationWriter(
+            "multipart/form-data"
+        );
+        writer.WriteObjectValue(string.Empty, body);
+
+        using var stream = writer.GetSerializedContent();
+        using var reader = new StreamReader(stream);
+
         var fields = new Dictionary<string, string>();
-        foreach (var content in formData)
+
+        foreach (
+            var part in reader
+                .ReadToEnd()
+                .Split($"--{body.Boundary}", StringSplitOptions.RemoveEmptyEntries)
+        )
         {
-            var name = content.Headers.ContentDisposition?.Name?.Trim('"') ?? "unknown";
-            var value = await content.ReadAsStringAsync();
+            var nameStart = part.IndexOf("name=\"", StringComparison.Ordinal);
+
+            if (nameStart < 0)
+            {
+                continue;
+            }
+
+            nameStart += "name=\"".Length;
+            var name = part[nameStart..part.IndexOf('"', nameStart)];
+
+            var headerEnd = part.IndexOf("\r\n\r\n", StringComparison.Ordinal);
+            var separatorLength = 4;
+
+            if (headerEnd < 0)
+            {
+                headerEnd = part.IndexOf("\n\n", StringComparison.Ordinal);
+                separatorLength = 2;
+            }
+
+            var value = headerEnd < 0 ? string.Empty : part[(headerEnd + separatorLength)..].Trim();
+
             fields[name] = value;
         }
+
         return fields;
     }
 }
