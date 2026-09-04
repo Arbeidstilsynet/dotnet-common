@@ -40,9 +40,4 @@ internal static class CorrespondenceRequestExtensions
     {
         return [.. receivers.Select(s => s.ToAltinnRessourceFormat())];
     }
-
-    /// <summary>
-    /// Converts a <see cref="CorrespondenceRequest"/> and its attachments into a
-    /// <see cref="MultipartFormDataContent"/> that conforms to the Altinn Correspondence
-    /// upload endpoint's [FromForm] binding contract.
 }

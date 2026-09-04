@@ -1,5 +1,8 @@
 namespace Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 
+/// <summary>
+/// Defines filters and paging options for an Altinn instance query.
+/// </summary>
 public record InstanceQueryParameters
 {
     internal const string ContinuationTokenParameterName = "continuationToken";

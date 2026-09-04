@@ -13,7 +13,8 @@ public interface IAltinnMeldingerAdapter
     /// <summary>
     /// Gets a summary of an Altinn correspondence.
     /// </summary>
-    /// <returns>The summary of the Altinn correspondence, null if we do not find any. If any other exception occurs, a <see cref="AltinnHttpRequestException"/> is thrown.</returns>
+    /// <param name="correspondenceId">The correspondence identifier.</param>
+    /// <returns>The correspondence summary, or <see langword="null"/> when it is not found.</returns>
     public Task<AltinnCorrespondenceOverview?> GetCorrespondence(Guid correspondenceId);
 
     /// <summary>

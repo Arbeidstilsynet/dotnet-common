@@ -113,6 +113,9 @@ public record BaseCorrespondence
     public bool IsConfidential { get; init; }
 }
 
+/// <summary>
+/// Contains common properties for a correspondence attachment.
+/// </summary>
 public record BaseAttachment
 {
     /// <summary>
@@ -271,6 +274,9 @@ public record InitializeCorrespondenceContent
         new List<InitializeCorrespondenceAttachment>();
 }
 
+/// <summary>
+/// Represents a request to initialize one or more correspondences.
+/// </summary>
 public record InitializeCorrespondences
 {
     /// <summary>
@@ -452,10 +458,19 @@ public record NotificationRecipient
     public bool? IsReserved { get; init; }
 }
 
+/// <summary>
+/// Defines the supported email body formats.
+/// </summary>
 public enum EmailContentType
 {
+    /// <summary>
+    /// Plain text.
+    /// </summary>
     Plain = 0,
 
+    /// <summary>
+    /// HTML.
+    /// </summary>
     Html = 1,
 }
 

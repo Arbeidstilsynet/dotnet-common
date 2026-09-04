@@ -134,9 +134,19 @@ public record CorrespondenceAttachment : InitializeCorrespondenceAttachment
     public DateTimeOffset? ExpirationTime { get; init; }
 }
 
+/// <summary>
+/// Contains summary information about a correspondence notification.
+/// </summary>
 public record CorrespondenceNotificationOverview
 {
+    /// <summary>
+    /// Gets the notification order identifier.
+    /// </summary>
     public Guid? NotificationOrderId { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether the notification is a reminder.
+    /// </summary>
     public bool IsReminder { get; init; }
 }
 

@@ -149,6 +149,9 @@ public record InitializedCorrespondencesNotifications
     public InitializedNotificationStatus Status { get; init; }
 }
 
+/// <summary>
+/// Defines the possible outcomes of initializing a notification.
+/// </summary>
 public enum InitializedNotificationStatus
 {
     /// <summary>

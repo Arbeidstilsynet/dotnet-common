@@ -2,6 +2,9 @@ using System.Text.Json.Serialization;
 
 namespace Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 
+/// <summary>
+/// Represents a request to create an Altinn event subscription.
+/// </summary>
 public record AltinnSubscriptionRequest
 {
     /// <summary>
