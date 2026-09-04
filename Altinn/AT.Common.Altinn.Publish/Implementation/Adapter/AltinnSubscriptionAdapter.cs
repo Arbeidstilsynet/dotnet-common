@@ -14,13 +14,13 @@ using Microsoft.Kiota.Abstractions;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 
-internal class AltinnAdapter(
+internal class AltinnSubscriptionAdapter(
     IAltinnStorageClient altinnStorageClient,
     IAltinnEventsClient altinnEventsClient,
     IOptions<AltinnConfiguration> altinnConfigurationOptions,
     ResolvedAltinnUrls altinnUrls,
-    ILogger<AltinnAdapter> logger
-) : IAltinnAdapter
+    ILogger<AltinnSubscriptionAdapter> logger
+) : IAltinnSubscriptionAdapter
 {
     public async Task<AltinnInstanceSummary> GetSummary(AltinnCloudEvent cloudEvent)
     {

@@ -4,7 +4,7 @@ using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 
-public class AltinnAdapterExtensionTests
+public class AltinnSubscriptionAdapterExtensionTests
 {
     private readonly VerifySettings _verifySettings = new();
 
@@ -32,7 +32,7 @@ public class AltinnAdapterExtensionTests
         DataValues = new Dictionary<string, string> { { "dialog.id", DialogId } },
     };
 
-    public AltinnAdapterExtensionTests()
+    public AltinnSubscriptionAdapterExtensionTests()
     {
         _verifySettings.DontScrubDateTimes();
         _verifySettings.DontScrubGuids();

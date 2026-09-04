@@ -42,7 +42,7 @@ public static class DependencyInjectionExtensions
     /// services
     ///     .AddAltinn(builder.Environment, appSettings.MaskinportenConfiguration)
     ///     .AddStorage(o => o.Scopes = ["altinn:serviceowner/instances.read"])
-    ///     .AddAltinnAdapter();
+    ///     .AddSubscriptionAdapter();
     /// </code>
     /// </remarks>
     /// <param name="services"></param>
@@ -257,7 +257,7 @@ public static class DependencyInjectionExtensions
     }
 
     /// <summary>
-    /// Adds <see cref="IAltinnAdapter"/>, which provides convenience operations over instances and
+    /// Adds <see cref="IAltinnSubscriptionAdapter"/>, which provides convenience operations over instances and
     /// event subscriptions.
     /// </summary>
     /// <remarks>
@@ -265,11 +265,32 @@ public static class DependencyInjectionExtensions
     /// Configure them by calling <see cref="AddStorage"/> and <see cref="AddEvents"/> as well --
     /// order does not matter.
     /// </remarks>
-    public static IAltinnBuilder AddAltinnAdapter(this IAltinnBuilder builder)
+    public static IAltinnBuilder AddSubscriptionAdapter(this IAltinnBuilder builder)
     {
         builder.AddStorage().AddEvents();
 
-        builder.AsAltinnBuilder().Services.TryAddScoped<IAltinnAdapter, AltinnAdapter>();
+        builder
+            .AsAltinnBuilder()
+            .Services.TryAddScoped<IAltinnSubscriptionAdapter, AltinnSubscriptionAdapter>();
+
+        return builder;
+    }
+
+    /// <summary>
+    /// Adds <see cref="IAltinnStorageAdapter"/>, which provides convenience operations for reading
+    /// instances and their data elements.
+    /// </summary>
+    /// <remarks>
+    /// This depends on the storage API, so it is added if it has not been already. Configure it by
+    /// calling <see cref="AddStorage"/> as well -- order does not matter.
+    /// </remarks>
+    public static IAltinnBuilder AddStorageAdapter(this IAltinnBuilder builder)
+    {
+        builder.AddStorage();
+
+        builder
+            .AsAltinnBuilder()
+            .Services.TryAddScoped<IAltinnStorageAdapter, AltinnStorageAdapter>();
 
         return builder;
     }
@@ -327,7 +348,8 @@ public static class DependencyInjectionExtensions
         services
             .AddAltinn(hostEnvironment, maskinportenConfiguration, altinnConfiguration)
             .AddAllClients()
-            .AddAltinnAdapter()
+            .AddSubscriptionAdapter()
+            .AddStorageAdapter()
             .AddMeldingerAdapter();
 
         return services;

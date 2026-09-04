@@ -41,11 +41,11 @@ public class ReadmeExamplesTests
             .AddAltinn(Environment(Environments.Staging), Credentials)
             .AddStorage(o => o.Scopes = ["altinn:serviceowner/instances.read"])
             .AddEvents(o => o.Scopes = ["altinn:events.subscribe"])
-            .AddAltinnAdapter();
+            .AddSubscriptionAdapter();
 
         var provider = services.BuildServiceProvider();
 
-        provider.GetService<IAltinnAdapter>().ShouldNotBeNull();
+        provider.GetService<IAltinnSubscriptionAdapter>().ShouldNotBeNull();
         provider.GetService<IAltinnStorageClient>().ShouldNotBeNull();
         provider.GetService<IAltinnEventsClient>().ShouldNotBeNull();
     }
@@ -62,7 +62,8 @@ public class ReadmeExamplesTests
             .AddApps()
             .AddCorrespondence()
             .AddDialogporten()
-            .AddAltinnAdapter()
+            .AddSubscriptionAdapter()
+            .AddStorageAdapter()
             .AddMeldingerAdapter()
             .AddAllClients();
 
@@ -73,7 +74,8 @@ public class ReadmeExamplesTests
         provider.GetService<IAltinnAppsClient>().ShouldNotBeNull();
         provider.GetService<IAltinnCorrespondenceClient>().ShouldNotBeNull();
         provider.GetService<IAltinnDialogportenClient>().ShouldNotBeNull();
-        provider.GetService<IAltinnAdapter>().ShouldNotBeNull();
+        provider.GetService<IAltinnSubscriptionAdapter>().ShouldNotBeNull();
+        provider.GetService<IAltinnStorageAdapter>().ShouldNotBeNull();
         provider.GetService<IAltinnMeldingerAdapter>().ShouldNotBeNull();
     }
 
@@ -84,10 +86,10 @@ public class ReadmeExamplesTests
 
         services
             .AddAltinn(Environment(Environments.Staging), Credentials)
-            .AddAltinnAdapter()
+            .AddSubscriptionAdapter()
             .AddStorage(o => o.Scopes = ["altinn:serviceowner/instances.read"]);
 
-        services.BuildServiceProvider().GetService<IAltinnAdapter>().ShouldNotBeNull();
+        services.BuildServiceProvider().GetService<IAltinnSubscriptionAdapter>().ShouldNotBeNull();
     }
 
     [Fact]
@@ -98,7 +100,10 @@ public class ReadmeExamplesTests
         services.AddAltinnAdapter(Environment(Environments.Staging), Credentials);
         services.AddAltinnApiClients(Environment(Environments.Staging), Credentials);
 
-        services.BuildServiceProvider().GetService<IAltinnAdapter>().ShouldNotBeNull();
+        var provider = services.BuildServiceProvider();
+
+        provider.GetService<IAltinnSubscriptionAdapter>().ShouldNotBeNull();
+        provider.GetService<IAltinnStorageAdapter>().ShouldNotBeNull();
     }
 
     [Fact]

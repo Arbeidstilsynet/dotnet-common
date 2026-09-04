@@ -7,7 +7,7 @@ namespace Arbeidstilsynet.Common.Altinn.Ports.Adapter;
 /// <summary>
 /// Adapter interface for interacting with Altinn instances and event subscriptions.
 /// </summary>
-public interface IAltinnAdapter
+public interface IAltinnSubscriptionAdapter
 {
     /// <summary>
     /// Gets a summary of an Altinn instance from a CloudEvent.

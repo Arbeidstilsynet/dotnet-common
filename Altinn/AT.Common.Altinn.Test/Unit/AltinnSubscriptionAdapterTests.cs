@@ -16,20 +16,20 @@ using Shouldly;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 
-public class AltinnAdapterTests
+public class AltinnSubscriptionAdapterTests
 {
     private readonly IAltinnStorageClient _storageClient;
     private readonly IAltinnEventsClient _eventsClient;
     private readonly IOptions<AltinnConfiguration> _configuration;
     private readonly ResolvedAltinnUrls _urls;
-    private readonly ILogger<AltinnAdapter> _logger;
-    private readonly AltinnAdapter _adapter;
+    private readonly ILogger<AltinnSubscriptionAdapter> _logger;
+    private readonly AltinnSubscriptionAdapter _subscriptionAdapter;
 
-    public AltinnAdapterTests()
+    public AltinnSubscriptionAdapterTests()
     {
         _storageClient = Substitute.For<IAltinnStorageClient>();
         _eventsClient = Substitute.For<IAltinnEventsClient>();
-        _logger = Substitute.For<ILogger<AltinnAdapter>>();
+        _logger = Substitute.For<ILogger<AltinnSubscriptionAdapter>>();
 
         _configuration = Options.Create(new AltinnConfiguration { OrgId = "dat" });
 
@@ -44,7 +44,13 @@ public class AltinnAdapterTests
             MaskinportenUrl = new Uri("https://maskinporten.no/"),
         };
 
-        _adapter = new AltinnAdapter(_storageClient, _eventsClient, _configuration, _urls, _logger);
+        _subscriptionAdapter = new AltinnSubscriptionAdapter(
+            _storageClient,
+            _eventsClient,
+            _configuration,
+            _urls,
+            _logger
+        );
     }
 
     #region GetSummary Tests
@@ -64,7 +70,7 @@ public class AltinnAdapterTests
             .Returns(new MemoryStream([1, 2, 3]));
 
         // Act
-        var summary = await _adapter.GetSummary(cloudEvent);
+        var summary = await _subscriptionAdapter.GetSummary(cloudEvent);
 
         // Assert
         summary.ShouldNotBeNull();
@@ -96,7 +102,7 @@ public class AltinnAdapterTests
             .Returns(callInfo => new MemoryStream([1, 2, 3]));
 
         // Act
-        var summary = await _adapter.GetSummary(cloudEvent);
+        var summary = await _subscriptionAdapter.GetSummary(cloudEvent);
 
         // Assert
         summary.ShouldNotBeNull();
@@ -130,7 +136,7 @@ public class AltinnAdapterTests
             .Returns(new MemoryStream([1, 2, 3]));
 
         // Act
-        var summary = await _adapter.GetSummary(cloudEvent);
+        var summary = await _subscriptionAdapter.GetSummary(cloudEvent);
 
         // Assert
         summary.Metadata.InstanceGuid.ShouldBe(instanceGuid);
@@ -156,7 +162,9 @@ public class AltinnAdapterTests
         _eventsClient.Subscribe(Arg.Any<AltinnSubscriptionRequest>()).Returns(expectedSubscription);
 
         // Act
-        var result = await _adapter.SubscribeForCompletedProcessEvents(subscriptionRequest);
+        var result = await _subscriptionAdapter.SubscribeForCompletedProcessEvents(
+            subscriptionRequest
+        );
 
         // Assert
         result.ShouldBe(expectedSubscription);
@@ -183,7 +191,7 @@ public class AltinnAdapterTests
         _eventsClient.Subscribe(Arg.Any<AltinnSubscriptionRequest>()).Returns(expectedSubscription);
 
         // Act
-        await _adapter.SubscribeForCompletedProcessEvents(subscriptionRequest);
+        await _subscriptionAdapter.SubscribeForCompletedProcessEvents(subscriptionRequest);
 
         // Assert
         await _eventsClient
@@ -208,7 +216,7 @@ public class AltinnAdapterTests
         _eventsClient.Unsubscribe(123).Returns(Task.CompletedTask);
 
         // Act
-        var result = await _adapter.UnsubscribeForCompletedProcessEvents(subscription);
+        var result = await _subscriptionAdapter.UnsubscribeForCompletedProcessEvents(subscription);
 
         // Assert
         result.ShouldBeTrue();
@@ -230,7 +238,7 @@ public class AltinnAdapterTests
             );
 
         // Act
-        var result = await _adapter.UnsubscribeForCompletedProcessEvents(subscription);
+        var result = await _subscriptionAdapter.UnsubscribeForCompletedProcessEvents(subscription);
 
         // Assert
         result.ShouldBeFalse();
@@ -252,7 +260,7 @@ public class AltinnAdapterTests
 
         // Act / Assert
         await Should.ThrowAsync<ApiException>(() =>
-            _adapter.UnsubscribeForCompletedProcessEvents(subscription)
+            _subscriptionAdapter.UnsubscribeForCompletedProcessEvents(subscription)
         );
     }
 
@@ -280,7 +288,7 @@ public class AltinnAdapterTests
         _storageClient.GetInstances(default!).ReturnsForAnyArgs(response);
 
         // Act
-        var result = await _adapter.GetMetadataForNonCompletedInstances(appId);
+        var result = await _subscriptionAdapter.GetMetadataForNonCompletedInstances(appId);
 
         // Assert
         var metadataList = result.ToList();
@@ -301,7 +309,10 @@ public class AltinnAdapterTests
             .ReturnsForAnyArgs(new AltinnQueryResponse<AltinnInstance>());
 
         // Act
-        await _adapter.GetMetadataForNonCompletedInstances(appId, processIsComplete: false);
+        await _subscriptionAdapter.GetMetadataForNonCompletedInstances(
+            appId,
+            processIsComplete: false
+        );
 
         // Assert
         await _storageClient
@@ -345,7 +356,7 @@ public class AltinnAdapterTests
             .Returns(new MemoryStream([1, 2, 3]));
 
         // Act
-        var result = await _adapter.GetNonCompletedInstances(appId);
+        var result = await _subscriptionAdapter.GetNonCompletedInstances(appId);
 
         // Assert
         var summaries = result.ToList();
@@ -378,7 +389,7 @@ public class AltinnAdapterTests
             .Returns(new MemoryStream([1, 2, 3]));
 
         // Act
-        await _adapter.GetNonCompletedInstances(appId);
+        await _subscriptionAdapter.GetNonCompletedInstances(appId);
 
         // Assert
         // 2 instances, each with 1 main PDF = 2 calls
@@ -409,7 +420,7 @@ public class AltinnAdapterTests
             .Returns(new MemoryStream([1, 2, 3]));
 
         // Act
-        var result = await _adapter.GetNonCompletedInstances(appId);
+        var result = await _subscriptionAdapter.GetNonCompletedInstances(appId);
 
         // Assert
         var summaries = result.ToList();
@@ -440,7 +451,7 @@ public class AltinnAdapterTests
         _eventsClient.GetAltinnSubscription(subscriptionId).Returns(expectedSubscription);
 
         // Act
-        var result = await _adapter.GetAltinnSubscription(subscriptionId);
+        var result = await _subscriptionAdapter.GetAltinnSubscription(subscriptionId);
 
         // Assert
         result.ShouldNotBeNull();
@@ -460,7 +471,7 @@ public class AltinnAdapterTests
             );
 
         // Act
-        var result = await _adapter.GetAltinnSubscription(subscriptionId);
+        var result = await _subscriptionAdapter.GetAltinnSubscription(subscriptionId);
 
         // Assert
         result.ShouldBeNull();
@@ -484,7 +495,7 @@ public class AltinnAdapterTests
 
         // Act & Assert
         await Should.ThrowAsync<HttpRequestException>(async () =>
-            await _adapter.GetAltinnSubscription(subscriptionId)
+            await _subscriptionAdapter.GetAltinnSubscription(subscriptionId)
         );
     }
 
@@ -508,7 +519,7 @@ public class AltinnAdapterTests
 
         // Act & Assert
         var exception = await Should.ThrowAsync<AltinnMainDataElementNotFoundException>(async () =>
-            await _adapter.GetSummary(cloudEvent)
+            await _subscriptionAdapter.GetSummary(cloudEvent)
         );
 
         exception.InstanceId.ShouldBe(instance.Id);
@@ -533,7 +544,7 @@ public class AltinnAdapterTests
 
         // Act & Assert
         var exception = await Should.ThrowAsync<AltinnDataElementIdMissingException>(async () =>
-            await _adapter.GetSummary(cloudEvent)
+            await _subscriptionAdapter.GetSummary(cloudEvent)
         );
 
         exception.InstanceId.ShouldBe(instance.Id);

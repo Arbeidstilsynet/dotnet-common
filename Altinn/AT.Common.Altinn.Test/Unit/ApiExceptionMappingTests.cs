@@ -30,13 +30,13 @@ public class ApiExceptionMappingTests
     private readonly IAltinnStorageClient _storageClient = Substitute.For<IAltinnStorageClient>();
 
     private readonly AltinnMeldingerAdapter _meldingerAdapter;
-    private readonly AltinnAdapter _altinnAdapter;
+    private readonly AltinnSubscriptionAdapter _altinnSubscriptionAdapter;
 
     public ApiExceptionMappingTests()
     {
         _meldingerAdapter = new AltinnMeldingerAdapter(_correspondenceClient);
 
-        _altinnAdapter = new AltinnAdapter(
+        _altinnSubscriptionAdapter = new AltinnSubscriptionAdapter(
             _storageClient,
             _eventsClient,
             Options.Create(new AltinnConfiguration()),
@@ -50,7 +50,7 @@ public class ApiExceptionMappingTests
                 AppBaseUrl = new Uri("https://dat.apps.altinn.no/"),
                 MaskinportenUrl = new Uri("https://maskinporten.no/"),
             },
-            Substitute.For<ILogger<AltinnAdapter>>()
+            Substitute.For<ILogger<AltinnSubscriptionAdapter>>()
         );
     }
 
@@ -115,7 +115,7 @@ public class ApiExceptionMappingTests
             .GetAltinnSubscription(123, Arg.Any<CancellationToken>())
             .ThrowsAsync(NotFound());
 
-        var result = await _altinnAdapter.GetAltinnSubscription(123);
+        var result = await _altinnSubscriptionAdapter.GetAltinnSubscription(123);
 
         result.ShouldBeNull();
     }
@@ -127,13 +127,15 @@ public class ApiExceptionMappingTests
             .GetAltinnSubscription(123, Arg.Any<CancellationToken>())
             .ThrowsAsync(ServerError());
 
-        await Should.ThrowAsync<ApiException>(() => _altinnAdapter.GetAltinnSubscription(123));
+        await Should.ThrowAsync<ApiException>(() =>
+            _altinnSubscriptionAdapter.GetAltinnSubscription(123)
+        );
     }
 
     [Fact]
     public async Task UnsubscribeForCompletedProcessEvents_ReturnsFalse_WhenSubscriptionHasNoId()
     {
-        var result = await _altinnAdapter.UnsubscribeForCompletedProcessEvents(
+        var result = await _altinnSubscriptionAdapter.UnsubscribeForCompletedProcessEvents(
             new AltinnSubscription()
         );
 

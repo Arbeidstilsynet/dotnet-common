@@ -32,7 +32,7 @@ services
     .AddAltinn(builder.Environment, appSettings.MaskinportenConfiguration)
     .AddStorage(o => o.Scopes = ["altinn:serviceowner/instances.read"])
     .AddEvents(o => o.Scopes = ["altinn:events.subscribe"])
-    .AddAltinnAdapter();
+    .AddSubscriptionAdapter();
 ```
 
 `AddAltinn` registers the shared plumbing — configuration, URL resolution and the token
@@ -45,7 +45,8 @@ pipeline — but nothing that talks to an Altinn API. Each `Add*` call opts into
 | `AddApps()` | `IAltinnAppsClient` |
 | `AddCorrespondence()` | `IAltinnCorrespondenceClient` |
 | `AddDialogporten()` | `IAltinnDialogportenClient` |
-| `AddAltinnAdapter()` | `IAltinnAdapter`, plus storage and events |
+| `AddSubscriptionAdapter()` | `IAltinnSubscriptionAdapter`, plus storage and events |
+| `AddStorageAdapter()` | `IAltinnStorageAdapter`, plus storage |
 | `AddMeldingerAdapter()` | `IAltinnMeldingerAdapter`, plus correspondence |
 | `AddAllClients()` | every API client |
 
@@ -55,7 +56,7 @@ an adapter can pull in a client and you can still configure it afterwards:
 ```csharp
 services
     .AddAltinn(builder.Environment, appSettings.MaskinportenConfiguration)
-    .AddAltinnAdapter()
+    .AddSubscriptionAdapter()
     .AddStorage(o => o.Scopes = ["altinn:serviceowner/instances.read"]);
 ```
 

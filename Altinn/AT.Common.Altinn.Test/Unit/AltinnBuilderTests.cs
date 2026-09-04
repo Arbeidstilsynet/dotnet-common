@@ -66,7 +66,7 @@ public class AltinnBuilderTests
         var provider = services.BuildServiceProvider();
 
         provider.GetService<IAltinnStorageClient>().ShouldBeNull();
-        provider.GetService<IAltinnAdapter>().ShouldBeNull();
+        provider.GetService<IAltinnSubscriptionAdapter>().ShouldBeNull();
 
         // The token pipeline is shared plumbing, so it is always available.
         provider.GetService<IAltinnTokenProvider>().ShouldNotBeNull();
@@ -74,14 +74,14 @@ public class AltinnBuilderTests
     }
 
     [Fact]
-    public void AddAltinnAdapter_PullsInTheClientsItDependsOn()
+    public void AddSubscriptionAdapter_PullsInTheClientsItDependsOn()
     {
         var services = new ServiceCollection();
-        Builder(services).AddAltinnAdapter();
+        Builder(services).AddSubscriptionAdapter();
 
         var provider = services.BuildServiceProvider();
 
-        provider.GetService<IAltinnAdapter>().ShouldNotBeNull();
+        provider.GetService<IAltinnSubscriptionAdapter>().ShouldNotBeNull();
         provider.GetService<IAltinnStorageClient>().ShouldNotBeNull();
         provider.GetService<IAltinnEventsClient>().ShouldNotBeNull();
 
@@ -100,6 +100,32 @@ public class AltinnBuilderTests
         provider.GetService<IAltinnMeldingerAdapter>().ShouldNotBeNull();
         provider.GetService<IAltinnCorrespondenceClient>().ShouldNotBeNull();
         provider.GetService<IAltinnStorageClient>().ShouldBeNull();
+    }
+
+    [Fact]
+    public void AddStorageAdapter_PullsInOnlyStorage()
+    {
+        var services = new ServiceCollection();
+        Builder(services).AddStorageAdapter();
+
+        var provider = services.BuildServiceProvider();
+
+        provider.GetService<IAltinnStorageAdapter>().ShouldNotBeNull();
+        provider.GetService<IAltinnStorageClient>().ShouldNotBeNull();
+        provider.GetService<IAltinnEventsClient>().ShouldBeNull();
+        provider.GetService<IAltinnCorrespondenceClient>().ShouldBeNull();
+    }
+
+    [Fact]
+    public void AddingStorageAdapterAndStorageClient_RegistersEachOnce()
+    {
+        var services = new ServiceCollection();
+        Builder(services).AddStorageAdapter().AddStorage().AddStorageAdapter();
+
+        var provider = services.BuildServiceProvider();
+
+        provider.GetServices<IAltinnStorageAdapter>().Count().ShouldBe(1);
+        provider.GetServices<IAltinnStorageClient>().Count().ShouldBe(1);
     }
 
     [Fact]
@@ -133,11 +159,11 @@ public class AltinnBuilderTests
     [Fact]
     public void ConfiguringAClientAfterAnAdapterAddedIt_StillApplies()
     {
-        // AddAltinnAdapter registers storage implicitly. Configuring it afterwards must not be
+        // AddSubscriptionAdapter registers storage implicitly. Configuring it afterwards must not be
         // silently ignored, or the scopes an application asked for would be quietly dropped.
         var services = new ServiceCollection();
         Builder(services)
-            .AddAltinnAdapter()
+            .AddSubscriptionAdapter()
             .AddStorage(o => o.Scopes = ["altinn:serviceowner/instances.read"]);
 
         var provider = services.BuildServiceProvider();
@@ -150,7 +176,7 @@ public class AltinnBuilderTests
     public void AddingTheSameClientTwice_RegistersItOnce()
     {
         var services = new ServiceCollection();
-        Builder(services).AddStorage().AddStorage().AddAltinnAdapter();
+        Builder(services).AddStorage().AddStorage().AddSubscriptionAdapter();
 
         var provider = services.BuildServiceProvider();
 
@@ -403,7 +429,7 @@ public class AltinnBuilderTests
     public void ClientRegisteredByAnAdapter_IsStillValidated()
     {
         // The adapter adds storage and events implicitly, so both must be reported.
-        var provider = ProviderWithoutFallbackScopes(altinn => altinn.AddAltinnAdapter());
+        var provider = ProviderWithoutFallbackScopes(altinn => altinn.AddSubscriptionAdapter());
 
         var message = StartupValidationFailure(provider);
 
@@ -416,7 +442,7 @@ public class AltinnBuilderTests
     {
         var provider = ProviderWithoutFallbackScopes(altinn =>
             altinn
-                .AddAltinnAdapter()
+                .AddSubscriptionAdapter()
                 .AddStorage(o => o.Scopes = ["altinn:serviceowner/instances.read"])
                 .AddEvents(o => o.Scopes = ["altinn:events.subscribe"])
         );
