@@ -10,15 +10,15 @@
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="NSubstitute" Version="6.0.0" />
+    <PackageReference Include="NSubstitute" Version="6.2.0" />
     <PackageReference Include="Shouldly" Version="4.3.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
     <PackageReference Include="xunit.v3.mtp-v2" Version="3.2.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.8.0" />
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.11.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AT.Common.GeoNorge.Publish\AT.Common.GeoNorge.Publish.csproj" />
