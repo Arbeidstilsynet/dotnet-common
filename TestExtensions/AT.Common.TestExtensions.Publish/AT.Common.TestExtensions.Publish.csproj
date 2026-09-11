@@ -16,9 +16,9 @@
     <PackageProjectUrl>https://github.com/Arbeidstilsynet/dotnet-common</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="WireMock.Net" Version="2.11.0" />
-    <PackageReference Include="Verify" Version="31.20.0" />
-    <PackageReference Include="Verify.XunitV3" Version="31.20.0" />
+    <PackageReference Include="WireMock.Net" Version="2.15.0" />
+    <PackageReference Include="Verify" Version="31.28.0" />
+    <PackageReference Include="Verify.XunitV3" Version="31.28.0" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
