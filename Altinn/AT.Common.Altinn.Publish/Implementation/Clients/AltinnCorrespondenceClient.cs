@@ -42,6 +42,17 @@ internal class AltinnCorrespondenceClient : IAltinnCorrespondenceClient
             ?? throw new InvalidOperationException("Failed to retrieve correspondence");
     }
 
+    public async Task<CorrespondenceLookupResponse> GetCorrespondenceByIdempotentKey(
+        Guid idempotentKey
+    )
+    {
+        return await _httpClient
+                .Get($"correspondence?idempotentKey={idempotentKey}")
+                .WithBearerToken(await _altinnTokenProvider.GetToken())
+                .ReceiveContent<CorrespondenceLookupResponse>(_jsonSerializerOptions)
+            ?? throw new InvalidOperationException("Failed to retrieve correspondence");
+    }
+
     public async Task<CorrespondenceResponse> InitializeCorrespondence(
         InitializeCorrespondences request,
         List<IFormFile>? attachments

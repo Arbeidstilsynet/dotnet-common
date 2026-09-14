@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 3.3.0
+
+### Added
+
+- feat: enhance altinn meldinger adapter with lookup by idempotent key method
+
 ## 3.2.4
 
 ### Changed

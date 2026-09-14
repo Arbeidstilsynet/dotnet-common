@@ -25,6 +25,18 @@ public class CorrespondenceResponse
 }
 
 /// <summary>
+/// Contains information about a correspondence list request.
+/// </summary>
+public class CorrespondenceLookupResponse
+{
+    /// <summary>
+    /// The initialized correspondences
+    /// </summary>
+    [JsonPropertyName("ids")]
+    public List<Guid>? Ids { get; set; }
+}
+
+/// <summary>
 /// Represents a correspondence that has been initialized
 /// </summary>
 public class InitializedCorrespondences
