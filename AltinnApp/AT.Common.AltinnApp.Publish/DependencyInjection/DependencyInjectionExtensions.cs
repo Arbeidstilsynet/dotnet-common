@@ -1,4 +1,7 @@
+using Altinn.ApiClients.Dialogporten.ServiceOwner;
+using Altinn.App.Api.Extensions;
 using Altinn.App.Core.Features;
+using Altinn.App.Core.Internal.Process.ProcessTasks.ServiceTasks;
 using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.AltinnApp.Implementation;
 using Arbeidstilsynet.Common.AltinnApp.Model;
@@ -235,6 +238,91 @@ public static class DependencyInjectionExtensions
             sp.GetRequiredService<StructuredDataManager<TDataModel, TStructuredData>>()
         );
 
+        return services;
+    }
+
+    /// <summary>
+    /// Registers the <see cref="PatchDialogTask{TDataModel}"/> service task along with its
+    /// required dependencies (Dialogporten client, patch operations provider and organisasjonsnummer provider).
+    /// </summary>
+    /// <typeparam name="TDataModel">The skjema data model type related to the instance.</typeparam>
+    /// <typeparam name="TOrgNrProvider">The organisasjonsnummer provider type.</typeparam>
+    /// <typeparam name="TPatchOperationsProvider">The patch operations provider type.</typeparam>
+    /// <param name="services">The service collection to add registrations to.</param>
+    /// <param name="env">The host environment, used to select production or test Dialogporten endpoints.</param>
+    /// <returns>The same <see cref="IServiceCollection"/> instance so that calls can be chained.</returns>
+    public static IServiceCollection AddPatchDialogTask<
+        TDataModel,
+        TOrgNrProvider,
+        TPatchOperationsProvider
+    >(this IServiceCollection services, IHostEnvironment env)
+        where TDataModel : class
+        where TOrgNrProvider : class, ISubmittersOrganisasjonsnummerProvider<TDataModel>
+        where TPatchOperationsProvider : class, IPatchOperationsProvider
+    {
+        services.AddDialogportenClientForEnvironment(env);
+        return services
+            .AddTransient<ISubmittersOrganisasjonsnummerProvider<TDataModel>, TOrgNrProvider>()
+            .AddTransient<IPatchOperationsProvider, TPatchOperationsProvider>()
+            .AddTransient<IServiceTask, PatchDialogTask<TDataModel>>();
+    }
+
+    /// <summary>
+    /// Registers the <see cref="UpdateDialogTask{TDataModel}"/> service task along with its
+    /// required dependencies (Dialogporten client, patch operations provider, update dialog provider
+    /// and organisasjonsnummer provider).
+    /// </summary>
+    /// <remarks>
+    /// Use this task for handling updates (endringsmelding) of a melding. In contrast to
+    /// the patch dialog task, the update may relate to a melding that was
+    /// not received via Altinn. In that case the <see cref="IUpdateDialogProvider{T}"/> instructs the
+    /// task to create a new dialog; otherwise the existing Altinn dialog is reused.
+    /// </remarks>
+    /// <typeparam name="TDataModel">The skjema data model type related to the instance.</typeparam>
+    /// <typeparam name="TOrgNrProvider">The organisasjonsnummer provider type.</typeparam>
+    /// <typeparam name="TPatchOperationsProvider">The patch operations provider type.</typeparam>
+    /// <typeparam name="TUpdateDialogProvider">The update dialog provider type.</typeparam>
+    /// <param name="services">The service collection to add registrations to.</param>
+    /// <param name="env">The host environment, used to select production or test Dialogporten endpoints.</param>
+    /// <returns>The same <see cref="IServiceCollection"/> instance so that calls can be chained.</returns>
+    public static IServiceCollection AddPatchDialogTaskForUpdates<
+        TDataModel,
+        TOrgNrProvider,
+        TPatchOperationsProvider,
+        TUpdateDialogProvider
+    >(this IServiceCollection services, IHostEnvironment env)
+        where TDataModel : class
+        where TOrgNrProvider : class, ISubmittersOrganisasjonsnummerProvider<TDataModel>
+        where TPatchOperationsProvider : class, IPatchOperationsProvider
+        where TUpdateDialogProvider : class, IUpdateDialogProvider<TDataModel>
+    {
+        services.AddDialogportenClientForEnvironment(env);
+        return services
+            .AddTransient<ISubmittersOrganisasjonsnummerProvider<TDataModel>, TOrgNrProvider>()
+            .AddTransient<IPatchOperationsProvider, TPatchOperationsProvider>()
+            .AddTransient<IUpdateDialogProvider<TDataModel>, TUpdateDialogProvider>()
+            .AddTransient<IServiceTask, UpdateDialogTask<TDataModel>>();
+    }
+
+    private static IServiceCollection AddDialogportenClientForEnvironment(
+        this IServiceCollection services,
+        IHostEnvironment env
+    )
+    {
+        services.AddDialogportenClient(
+            new Altinn.ApiClients.Dialogporten.DialogportenSettings
+            {
+                BaseUri = env.IsProduction()
+                    ? "https://platform.altinn.no/dialogporten"
+                    : "https://platform.tt02.altinn.no/dialogporten",
+            },
+            auth =>
+            {
+                auth.UseMaskinportenAltinnAuthorization(
+                    "digdir:dialogporten.serviceprovider digdir:dialogporten.serviceprovider.search"
+                );
+            }
+        );
         return services;
     }
 }
