@@ -31,7 +31,7 @@ public interface IAltinnCorrespondenceClient
     /// <summary>
     /// Returns an existing correspondence, throws <see cref="AltinnHttpRequestException"/> if it fails.
     /// </summary>
-    /// <param name="idempotentKey">The idempotent key we where using when initializing the correspondence</param>
+    /// <param name="idempotentKey">The idempotent key we were using when initializing the correspondence</param>
     /// <returns></returns>
     Task<CorrespondenceLookupResponse> GetCorrespondenceByIdempotentKey(Guid idempotentKey);
 }
