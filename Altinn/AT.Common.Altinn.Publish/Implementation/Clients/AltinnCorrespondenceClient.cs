@@ -42,13 +42,30 @@ internal class AltinnCorrespondenceClient : IAltinnCorrespondenceClient
             ?? throw new InvalidOperationException("Failed to retrieve correspondence");
     }
 
-    public async Task<CorrespondenceLookupResponse> GetCorrespondenceByIdempotentKey(
-        Guid idempotentKey
+    public async Task<CorrespondenceLookupResponse> GetCorrespondences(
+        string? resourceId = null,
+        DateTimeOffset? from = null,
+        DateTimeOffset? to = null,
+        CorrespondenceStatus? status = null,
+        CorrespondencesRoleType? role = null,
+        string? onBehalfOf = null,
+        string? sendersReference = null,
+        Guid? idempotentKey = null,
+        int? altinn2CorrespondenceId = null
     )
     {
         return await _httpClient
-                .Get($"correspondence?idempotentKey={idempotentKey}")
+                .Get("correspondence")
                 .WithBearerToken(await _altinnTokenProvider.GetToken())
+                .WithQueryParameter("resourceId", resourceId)
+                .WithQueryParameter("from", from?.ToString("O"))
+                .WithQueryParameter("to", to?.ToString("O"))
+                .WithQueryParameter("status", status?.ToString())
+                .WithQueryParameter("role", role?.ToString())
+                .WithQueryParameter("onBehalfOf", onBehalfOf)
+                .WithQueryParameter("sendersReference", sendersReference)
+                .WithQueryParameter("idempotentKey", idempotentKey?.ToString())
+                .WithQueryParameter("altinn2CorrespondenceId", altinn2CorrespondenceId?.ToString())
                 .ReceiveContent<CorrespondenceLookupResponse>(_jsonSerializerOptions)
             ?? throw new InvalidOperationException("Failed to retrieve correspondence");
     }

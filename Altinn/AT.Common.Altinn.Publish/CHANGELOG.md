@@ -19,6 +19,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 3.4.0
+
+### Added
+
+- feat: add `GetCorrespondences` to `IAltinnCorrespondenceClient` supporting all Altinn correspondence lookup query parameters (resourceId, from, to, status, role, onBehalfOf, sendersReference, idempotentKey, altinn2CorrespondenceId).
+- feat: add `GetCorrespondenceByIdempotentKey` to `IAltinnMeldingerAdapter`, looking up correspondences by idempotent key using role `Sender` and resource `dat-meldinger-correspondence`.
+
+### Changed
+
+- feat!: replace `IAltinnCorrespondenceClient.GetCorrespondenceByIdempotentKey` with the more general `GetCorrespondences`. The idempotent-key lookup convenience now lives on `IAltinnMeldingerAdapter`.
+
 ## 3.3.0
 
 ### Added

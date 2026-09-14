@@ -25,6 +25,19 @@ public class AltinnCorrespondenceClientTests : TestBed<AltinnApiTestFixture>
     }
 
     [Fact]
+    public async Task GetCorrespondences_WhenCalledWithQueryParameters_ReturnsExampleResponse()
+    {
+        //act
+        var result = await _sut.GetCorrespondences(
+            resourceId: "dat-meldinger-correspondence",
+            role: CorrespondencesRoleType.Sender,
+            idempotentKey: Guid.NewGuid()
+        );
+        //assert
+        result.ShouldNotBeNull();
+    }
+
+    [Fact]
     public async Task InitializeCorrespondence_WhenCalledWithoutAttachments_ReturnsExampleResponse()
     {
         //arrange
