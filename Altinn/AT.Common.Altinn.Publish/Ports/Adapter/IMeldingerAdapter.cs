@@ -17,6 +17,14 @@ public interface IAltinnMeldingerAdapter
     public Task<AltinnCorrespondenceOverview?> GetCorrespondence(Guid correspondenceId);
 
     /// <summary>
+    /// Looks up correspondences by the idempotent key that was used when initializing them.
+    /// Uses role <c>Sender</c> and resource <c>dat-meldinger-correspondence</c>.
+    /// </summary>
+    /// <param name="idempotentKey">The idempotent key used when initializing the correspondence.</param>
+    /// <returns>The ids of the matching correspondences.</returns>
+    public Task<CorrespondenceLookupResponse> GetCorrespondenceByIdempotentKey(Guid idempotentKey);
+
+    /// <summary>
     /// Gets a summary of an Altinn correspondence.
     /// </summary>
     /// <param name="request">A request object with all possible options to create the correspondence.</param>

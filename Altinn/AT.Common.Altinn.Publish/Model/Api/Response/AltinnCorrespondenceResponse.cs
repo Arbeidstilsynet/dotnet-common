@@ -135,6 +135,11 @@ public enum CorrespondenceStatus
     /// Attachments have been downloaded by recipient
     /// </summary>
     AttachmentsDownloaded = 12,
+
+    /// <summary>
+    /// Correspondence has been forwarded by recipient.
+    /// </summary>
+    Forwarded = 13,
 }
 
 /// <summary>
