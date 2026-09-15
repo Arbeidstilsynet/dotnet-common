@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added <!-- for new features. -->
 
+- Added `HealthCheckTimeout` (default 800 ms) to `SaksarkivConfiguration` to bound how long the
+  Saksarkiv health check waits for the upstream ping.
+
 ### Changed <!--  for changes in existing functionality. -->
 
 ### Deprecated <!--  for soon-to-be removed features. -->
@@ -17,7 +20,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed <!-- for any bug fixes. -->
 
+- The Saksarkiv health check is now time-bounded: a slow or unreachable Saksarkiv resolves to
+  `Degraded` (HTTP 200) within `HealthCheckTimeout` instead of blocking on the 15 s HTTP attempt
+  timeout. This prevents consuming applications' readiness probes (for example NAIS
+  `/healthz/ready`) from timing out and pulling the whole pod out of rotation when Saksarkiv is
+  down.
+
 ### Security <!-- in case of vulnerabilities. -->
+
+## 1.1.0
+
+### Added
+
+- Added `HealthCheckTimeout` (default 800 ms) to `SaksarkivConfiguration`.
+
+### Fixed
+
+- Time-bounded the Saksarkiv health check so a slow/unreachable Saksarkiv reports `Degraded`
+  (HTTP 200) quickly instead of blocking consumers' readiness probes.
 
 ## 1.0.3
 
