@@ -25,9 +25,8 @@ internal class SaksarkivHealthCheck(
                 description: $"Saksarkiv is healthy. Response: {response}"
             );
         }
-        catch (OperationCanceledException ex) when (
-            !cancellationToken.IsCancellationRequested && timeoutCts.IsCancellationRequested
-        )
+        catch (OperationCanceledException ex)
+            when (!cancellationToken.IsCancellationRequested && timeoutCts.IsCancellationRequested)
         {
             // The health check timed out waiting for Saksarkiv. Report Degraded (HTTP 200) so the
             // consumer's readiness probe is not taken down by a slow/unreachable dependency.
