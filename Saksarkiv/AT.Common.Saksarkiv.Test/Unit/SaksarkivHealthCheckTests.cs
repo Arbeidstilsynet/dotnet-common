@@ -25,7 +25,10 @@ public class SaksarkivHealthCheckTests
         pinger.PongAsync(Arg.Any<CancellationToken>()).Returns("pong");
         var sut = new SaksarkivHealthCheck(pinger, Config());
 
-        var result = await sut.CheckHealthAsync(new HealthCheckContext());
+        var result = await sut.CheckHealthAsync(
+            new HealthCheckContext(),
+            TestContext.Current.CancellationToken
+        );
 
         result.Status.ShouldBe(HealthStatus.Healthy);
         result.Description.ShouldNotBeNull().ShouldContain("pong");
@@ -40,7 +43,10 @@ public class SaksarkivHealthCheckTests
             .ThrowsAsync(new InvalidOperationException("boom"));
         var sut = new SaksarkivHealthCheck(pinger, Config());
 
-        var result = await sut.CheckHealthAsync(new HealthCheckContext());
+        var result = await sut.CheckHealthAsync(
+            new HealthCheckContext(),
+            TestContext.Current.CancellationToken
+        );
 
         result.Status.ShouldBe(HealthStatus.Degraded);
         result.Exception.ShouldBeOfType<InvalidOperationException>();
@@ -63,7 +69,10 @@ public class SaksarkivHealthCheckTests
         var sut = new SaksarkivHealthCheck(pinger, Config(timeout));
 
         var stopwatch = Stopwatch.StartNew();
-        var result = await sut.CheckHealthAsync(new HealthCheckContext());
+        var result = await sut.CheckHealthAsync(
+            new HealthCheckContext(),
+            TestContext.Current.CancellationToken
+        );
         stopwatch.Stop();
 
         result.Status.ShouldBe(HealthStatus.Degraded);
