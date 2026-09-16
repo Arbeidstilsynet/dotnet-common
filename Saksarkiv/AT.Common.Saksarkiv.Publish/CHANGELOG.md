@@ -9,9 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added <!-- for new features. -->
 
-- Added `HealthCheckTimeout` (default 800 ms) to `SaksarkivConfiguration` to bound how long the
-  Saksarkiv health check waits for the upstream ping.
-
 ### Changed <!--  for changes in existing functionality. -->
 
 ### Deprecated <!--  for soon-to-be removed features. -->
@@ -21,6 +18,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed <!-- for any bug fixes. -->
 
 ### Security <!-- in case of vulnerabilities. -->
+
+## 2.0.0
+
+### Added
+
+- Added a generated client for the new Saksarkiv **API v3** (`SaksarkivClientV3`, namespace
+  `Arbeidstilsynet.Common.Saksarkiv.V3`), generated with Kiota from `openApiV3.json`.
+- Added `AddSaksarkivClientV2(...)` to register the legacy v2 client (`SaksarkivClient`) on demand.
+
+### Changed
+
+- **Breaking:** `AddSaksarkivClient(...)` now registers the **v3** client (`SaksarkivClientV3`) as
+  the default instead of the v2 client. Consumers that still need v2 must call
+  `AddSaksarkivClientV2(...)` and resolve `SaksarkivClient`.
+- The `Saksarkiv` health check now probes the v3 endpoint `GET /api/v3/metadata/tilgangskoder`
+  (v3 has no dedicated health endpoint) instead of the v2 `/apiv2/health/pong`.
+
 
 ## 1.1.0
 

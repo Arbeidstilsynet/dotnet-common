@@ -10,7 +10,7 @@
     <Company>Arbeidstilsynet</Company>
     <Description>Generated Saksarkiv client and dependency injection helpers.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.1.0</Version>
+    <Version>2.0.0-alpha</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/Arbeidstilsynet/dotnet-common</PackageProjectUrl>
@@ -31,6 +31,7 @@
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
     <None Include="openApi.json" Pack="true" PackagePath="\" />
+    <None Include="openApiV3.json" Pack="true" PackagePath="\" />
   </ItemGroup>
   <Target
     Name="InjectPackageReleaseNotesFromFile"
