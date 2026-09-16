@@ -26,6 +26,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added a generated client for the new Saksarkiv **API v3** (`SaksarkivClientV3`, namespace
   `Arbeidstilsynet.Common.Saksarkiv.V3`), generated with Kiota from `openApiV3.json`.
 - Added `AddSaksarkivClientV2(...)` to register the legacy v2 client (`SaksarkivClient`) on demand.
+- Added a typed `SaksarkivClientV3.OpprettSakAsync(...)` extension (with a `SaksarkivFile` upload
+  type) that wraps the multipart plumbing for creating a case, since the v3 spec models the create
+  payload as an (untyped) query parameter.
 
 ### Changed
 

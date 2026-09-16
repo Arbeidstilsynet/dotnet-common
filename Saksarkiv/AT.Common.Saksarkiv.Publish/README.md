@@ -137,3 +137,61 @@ builder.Services.AddScoped<IArchiveClient, SaksarkivArchiveClient>();
 The rest of your application then depends on `IArchiveClient`, not on `SaksarkivClientV3` directly.
 
 `AddSaksarkivClient(...)` also registers a health check named `Saksarkiv`.
+
+## Creating a case (opprett sak)
+
+The v3 spec models the create-case payload as a query parameter, so the generated
+`Api.V3.Saker.PostAsync(...)` takes an untyped `MultipartBody`. The package ships a typed
+`OpprettSakAsync(...)` extension that wraps this: it serializes the generated `OpprettSakRequest`
+model into the JSON `payload` part and attaches any files.
+
+```csharp
+using Arbeidstilsynet.Common.Saksarkiv.V3;
+using Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3;
+
+public sealed class ArchiveService(SaksarkivClientV3 client)
+{
+    public async Task<string?> CreateCase(CancellationToken ct)
+    {
+        var request = new OpprettSakRequest
+        {
+            Tittel = "Min sak",
+            Saksbehandler = "user@arbeidstilsynet.no",
+            AnsvarligEnhetKode = "ABC",
+            EksternId = Guid.NewGuid().ToString(), // client-generated, required
+            Sakstype = "...",
+            Arkivkode = "...",
+            Tilgangskode = "...",
+            Journalposter =
+            [
+                new OpprettSakRequestJournalpost
+                {
+                    EksternId = Guid.NewGuid().ToString(),
+                    JournalpostType = Journalposttype.Inngaaende,
+                    Tittel = "Brev",
+                    HoveddokumentFilnavn = "hoved.pdf",
+                    PersonInfo = new OpprettSakRequestPersonInfo { Navn = "Ola Nordmann" },
+                },
+            ],
+        };
+
+        await using var pdf = File.OpenRead("hoved.pdf");
+        var files = new[]
+        {
+            new SaksarkivFile
+            {
+                FileName = "hoved.pdf", // must match HoveddokumentFilnavn/VedleggFilnavn
+                Content = pdf,
+                ContentType = "application/pdf",
+            },
+        };
+
+        // Asynchronous (202): returns a queued message you can track via Api.V3.Meldinger[id].
+        var status = await client.OpprettSakAsync(request, files, cancellationToken: ct);
+        return status?.MeldingId;
+    }
+}
+```
+
+File names in `SaksarkivFile.FileName` must match those referenced by `HoveddokumentFilnavn` /
+`VedleggFilnavn` and be unique within the request.
