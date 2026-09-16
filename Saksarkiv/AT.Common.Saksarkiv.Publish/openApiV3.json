@@ -1097,17 +1097,9 @@
         "tags": [
           "Saker"
         ],
-        "summary": "Opprett en ny sak (asynkron) (roller: ReadWrite)",
+        "summary": "Opprett en ny sak (asynkron)",
         "description": "For å avslutte saken umiddelbart etter opprettelse, sett query-parameteren avslutt til true.",
         "parameters": [
-          {
-            "name": "payload",
-            "in": "query",
-            "description": "Forespørsel om å opprette en ny sak i saksarkivet.",
-            "schema": {
-              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettSakRequest"
-            }
-          },
           {
             "name": "avslutt",
             "in": "query",
@@ -1121,8 +1113,14 @@
           "content": {
             "multipart/form-data": {
               "schema": {
+                "required": [
+                  "payload"
+                ],
                 "type": "object",
                 "properties": {
+                  "payload": {
+                    "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettSakRequest"
+                  },
                   "filer": {
                     "type": "array",
                     "items": {
@@ -1135,6 +1133,9 @@
               "encoding": {
                 "filer": {
                   "style": "form"
+                },
+                "payload": {
+                  "contentType": "application/json"
                 }
               }
             }
@@ -1280,22 +1281,20 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "payload",
-            "in": "query",
-            "description": "Forespørsel om å opprette en ny journalpost på eksisterende sak i saksarkivet.",
-            "schema": {
-              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettJournalpostRequest"
-            }
           }
         ],
         "requestBody": {
           "content": {
             "multipart/form-data": {
               "schema": {
+                "required": [
+                  "payload"
+                ],
                 "type": "object",
                 "properties": {
+                  "payload": {
+                    "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettJournalpostRequest"
+                  },
                   "filer": {
                     "type": "array",
                     "items": {
@@ -1308,6 +1307,9 @@
               "encoding": {
                 "filer": {
                   "style": "form"
+                },
+                "payload": {
+                  "contentType": "application/json"
                 }
               }
             }

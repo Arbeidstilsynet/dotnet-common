@@ -36,7 +36,7 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Saker
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public SakerRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/v3/saker{?avslutt*,payload*}", pathParameters)
+        public SakerRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/v3/saker{?avslutt*}", pathParameters)
         {
         }
         /// <summary>
@@ -44,7 +44,7 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Saker
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public SakerRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/v3/saker{?avslutt*,payload*}", rawUrl)
+        public SakerRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/v3/saker{?avslutt*}", rawUrl)
         {
         }
         /// <summary>
@@ -117,16 +117,6 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Saker
         {
             [QueryParameter("avslutt")]
             public bool? Avslutt { get; set; }
-            /// <summary>Forespørsel om å opprette en ny sak i saksarkivet.</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-            [QueryParameter("payload")]
-            public string? Payload { get; set; }
-#nullable restore
-#else
-            [QueryParameter("payload")]
-            public string Payload { get; set; }
-#endif
         }
     }
 }
