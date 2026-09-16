@@ -65,12 +65,7 @@ public static class SaksarkivClientV3Extensions
         {
             foreach (var file in files)
             {
-                body.AddOrReplacePart(
-                    file.FileName,
-                    file.ContentType,
-                    file.Content,
-                    file.FileName
-                );
+                body.AddOrReplacePart(file.FileName, file.ContentType, file.Content, file.FileName);
             }
         }
 
