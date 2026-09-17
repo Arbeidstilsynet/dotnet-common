@@ -75,13 +75,21 @@ public class OpprettSakRequestSerializationTests
                 Content = new MemoryStream("hello"u8.ToArray()),
                 ContentType = "application/pdf",
             },
+            new SaksarkivFile
+            {
+                FileName = "vedlegg.txt",
+                Content = new MemoryStream("world"u8.ToArray()),
+                ContentType = "text/plain",
+            },
         };
 
         var content = SerializeMultipart(request, files);
 
-        content.ShouldContain("name=\"hoved.pdf\"");
-        content.ShouldContain("filename=\"hoved.pdf\"");
+        content.ShouldContain("name=\"filer\"; filename=\"hoved.pdf\"");
+        content.ShouldContain("name=\"filer\"; filename=\"vedlegg.txt\"");
         content.ShouldContain("Content-Type: application/pdf");
+        content.ShouldContain("Content-Type: text/plain");
         content.ShouldContain("hello");
+        content.ShouldContain("world");
     }
 }

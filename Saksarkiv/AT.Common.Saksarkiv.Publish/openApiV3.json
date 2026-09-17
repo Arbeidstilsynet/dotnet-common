@@ -43,7 +43,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -53,7 +53,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -63,7 +63,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -73,7 +73,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -114,7 +114,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -124,7 +124,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -134,7 +134,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -144,7 +144,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -175,7 +175,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -185,7 +185,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -195,7 +195,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -205,7 +205,120 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health/ping": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Sjekk om API-et svarer",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health/authPing": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Sjekk autentisering og basic tilgang",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -283,7 +396,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -293,7 +406,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -303,7 +416,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -313,7 +426,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -354,7 +467,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -364,7 +477,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -374,7 +487,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -384,7 +497,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -424,7 +537,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -434,7 +547,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -444,7 +557,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -454,7 +567,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -488,7 +601,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -498,7 +611,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -508,7 +621,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -518,7 +631,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -542,7 +655,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -552,7 +665,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -562,7 +675,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -572,7 +685,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -604,7 +717,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -614,7 +727,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -624,7 +737,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -634,7 +747,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -679,7 +792,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -689,7 +802,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -699,7 +812,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -709,7 +822,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -743,7 +856,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -753,7 +866,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -763,7 +876,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -773,7 +886,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -814,11 +927,11 @@
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Ugyldig forespørsel",
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ValidationProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -828,7 +941,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -838,7 +951,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -848,7 +961,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -897,7 +1010,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -907,7 +1020,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -917,7 +1030,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -927,7 +1040,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -985,7 +1098,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -995,7 +1108,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -1005,7 +1118,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -1015,7 +1128,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -1054,7 +1167,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -1064,7 +1177,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -1074,7 +1187,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -1084,7 +1197,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -1097,7 +1210,7 @@
         "tags": [
           "Saker"
         ],
-        "summary": "Opprett en ny sak (asynkron)",
+        "summary": "Opprett en ny sak (asynkron) (roller: ReadWrite)",
         "description": "For å avslutte saken umiddelbart etter opprettelse, sett query-parameteren avslutt til true.",
         "parameters": [
           {
@@ -1157,7 +1270,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -1167,7 +1280,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -1177,7 +1290,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -1187,7 +1300,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -1228,7 +1341,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -1238,7 +1351,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -1248,7 +1361,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -1258,7 +1371,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -1331,7 +1444,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -1341,7 +1454,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -1351,7 +1464,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -1361,7 +1474,7 @@
             "content": {
               "application/problem+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AT.eArkiv.Framework.ArkivProblemDetails"
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
                 }
               }
             }
@@ -2058,7 +2171,7 @@
         },
         "additionalProperties": false
       },
-      "AT.eArkiv.Framework.ArkivProblemDetails": {
+      "Domain.V3.ArkivProblemDetails": {
         "type": "object",
         "properties": {
           "type": {
@@ -2080,6 +2193,16 @@
           },
           "instance": {
             "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             "nullable": true
           },
           "traceId": {
@@ -2133,7 +2256,7 @@
             "nullable": true
           },
           "feil": {
-            "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+            "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
           },
           "fullfort": {
             "type": "string",
@@ -2224,70 +2347,6 @@
           }
         },
         "additionalProperties": false
-      },
-      "Microsoft.AspNetCore.Mvc.ProblemDetails": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": { }
-      },
-      "Microsoft.AspNetCore.Mvc.ValidationProblemDetails": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          },
-          "errors": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": { }
       }
     },
     "securitySchemes": {
@@ -2318,6 +2377,10 @@
     {
       "name": "Filer",
       "description": "Intern: Brukes for mellomlagring av filer som skal sendes til eArkiv. Ikke for bruk av eksterne klienter."
+    },
+    {
+      "name": "Health",
+      "description": "Helse- og tilgjengelighetssjekk"
     },
     {
       "name": "Meldinger"

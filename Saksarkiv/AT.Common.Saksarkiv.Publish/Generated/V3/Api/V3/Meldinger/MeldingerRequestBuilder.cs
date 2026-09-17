@@ -2,8 +2,8 @@
 #pragma warning disable CS0618
 using Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Meldinger.Item;
 using Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Meldinger.RequeueAll;
-using Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Framework;
 using Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.Queue;
+using Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Abstractions;
@@ -59,10 +59,10 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Meldinger
         /// <returns>A <see cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.Queue.PaginatedMeldingStatus"/></returns>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-        /// <exception cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Framework.ArkivProblemDetails">When receiving a 400 status code</exception>
-        /// <exception cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Framework.ArkivProblemDetails">When receiving a 404 status code</exception>
-        /// <exception cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Framework.ArkivProblemDetails">When receiving a 409 status code</exception>
-        /// <exception cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Framework.ArkivProblemDetails">When receiving a 500 status code</exception>
+        /// <exception cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.ArkivProblemDetails">When receiving a 400 status code</exception>
+        /// <exception cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.ArkivProblemDetails">When receiving a 404 status code</exception>
+        /// <exception cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.ArkivProblemDetails">When receiving a 409 status code</exception>
+        /// <exception cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.ArkivProblemDetails">When receiving a 500 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public async Task<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.Queue.PaginatedMeldingStatus?> GetAsync(Action<RequestConfiguration<global::Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Meldinger.MeldingerRequestBuilder.MeldingerRequestBuilderGetQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
@@ -75,10 +75,10 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Meldinger
             var requestInfo = ToGetRequestInformation(requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
-                { "400", global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Framework.ArkivProblemDetails.CreateFromDiscriminatorValue },
-                { "404", global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Framework.ArkivProblemDetails.CreateFromDiscriminatorValue },
-                { "409", global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Framework.ArkivProblemDetails.CreateFromDiscriminatorValue },
-                { "500", global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Framework.ArkivProblemDetails.CreateFromDiscriminatorValue },
+                { "400", global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.ArkivProblemDetails.CreateFromDiscriminatorValue },
+                { "404", global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.ArkivProblemDetails.CreateFromDiscriminatorValue },
+                { "409", global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.ArkivProblemDetails.CreateFromDiscriminatorValue },
+                { "500", global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.ArkivProblemDetails.CreateFromDiscriminatorValue },
             };
             return await RequestAdapter.SendAsync<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.Queue.PaginatedMeldingStatus>(requestInfo, global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.Queue.PaginatedMeldingStatus.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }

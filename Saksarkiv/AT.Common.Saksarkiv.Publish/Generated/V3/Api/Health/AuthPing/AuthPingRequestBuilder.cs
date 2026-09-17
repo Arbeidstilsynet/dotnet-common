@@ -9,34 +9,34 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
-namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Dokumenter.Item
+namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.Health.AuthPing
 {
     /// <summary>
-    /// Builds and executes requests for operations under \api\v3\dokumenter\{dokumentId}
+    /// Builds and executes requests for operations under \api\health\authPing
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class WithDokumentItemRequestBuilder : BaseRequestBuilder
+    public partial class AuthPingRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
-        /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Dokumenter.Item.WithDokumentItemRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Api.Health.AuthPing.AuthPingRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public WithDokumentItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/v3/dokumenter/{dokumentId}", pathParameters)
+        public AuthPingRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/health/authPing", pathParameters)
         {
         }
         /// <summary>
-        /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Dokumenter.Item.WithDokumentItemRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Api.Health.AuthPing.AuthPingRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public WithDokumentItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/v3/dokumenter/{dokumentId}", rawUrl)
+        public AuthPingRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/health/authPing", rawUrl)
         {
         }
         /// <summary>
-        /// (roller: Read,ReadWrite)
+        /// Sjekk autentisering og basic tilgang
         /// </summary>
-        /// <returns>A <see cref="Stream"/></returns>
+        /// <returns>A <see cref="string"/></returns>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
         /// <exception cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.ArkivProblemDetails">When receiving a 400 status code</exception>
@@ -45,11 +45,11 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Dokumenter.Item
         /// <exception cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.ArkivProblemDetails">When receiving a 500 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<Stream?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<string?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<Stream> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<string> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             var requestInfo = ToGetRequestInformation(requestConfiguration);
@@ -60,10 +60,10 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Dokumenter.Item
                 { "409", global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.ArkivProblemDetails.CreateFromDiscriminatorValue },
                 { "500", global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.ArkivProblemDetails.CreateFromDiscriminatorValue },
             };
-            return await RequestAdapter.SendPrimitiveAsync<Stream>(requestInfo, errorMapping, cancellationToken).ConfigureAwait(false);
+            return await RequestAdapter.SendPrimitiveAsync<string>(requestInfo, errorMapping, cancellationToken).ConfigureAwait(false);
         }
         /// <summary>
-        /// (roller: Read,ReadWrite)
+        /// Sjekk autentisering og basic tilgang
         /// </summary>
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
@@ -78,17 +78,17 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Dokumenter.Item
 #endif
             var requestInfo = new RequestInformation(Method.GET, UrlTemplate, PathParameters);
             requestInfo.Configure(requestConfiguration);
-            requestInfo.Headers.TryAdd("Accept", "application/octet-stream, application/problem+json");
+            requestInfo.Headers.TryAdd("Accept", "text/plain;q=0.9");
             return requestInfo;
         }
         /// <summary>
         /// Returns a request builder with the provided arbitrary URL. Using this method means any other path or query parameters are ignored.
         /// </summary>
-        /// <returns>A <see cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Dokumenter.Item.WithDokumentItemRequestBuilder"/></returns>
+        /// <returns>A <see cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Api.Health.AuthPing.AuthPingRequestBuilder"/></returns>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
-        public global::Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Dokumenter.Item.WithDokumentItemRequestBuilder WithUrl(string rawUrl)
+        public global::Arbeidstilsynet.Common.Saksarkiv.V3.Api.Health.AuthPing.AuthPingRequestBuilder WithUrl(string rawUrl)
         {
-            return new global::Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Dokumenter.Item.WithDokumentItemRequestBuilder(rawUrl, RequestAdapter);
+            return new global::Arbeidstilsynet.Common.Saksarkiv.V3.Api.Health.AuthPing.AuthPingRequestBuilder(rawUrl, RequestAdapter);
         }
     }
 }
