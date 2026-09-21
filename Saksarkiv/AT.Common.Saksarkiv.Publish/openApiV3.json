@@ -1,0 +1,2397 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Saksarkivtjenesten v3",
+    "description": "### Asynkront REST API for arkiveringsoperasjoner\n- Operasjoner som oppretter eller muterer returnerer 202 Accepted med en meldings-ID for statussporing\n- Overvåk status for kømeldinger via `/meldinger/{meldingId}`-endepunktet\n- Bruk `eksternId` for å entydig identifisere Saker og Journalposter. Disse genereres av klienten, og er påkrevd av API'et. Kan være nyttig å prefikse med navn på fagsystem\n- Feilede meldinger flyttes til Dead Letter Queue og kan legges tilbake i kø etter inspeksjon\n- API'et garanterer at meldinger som muterer samme ressurs, behandles i rekkefølgen de kom inn, det medfører at:\n    - Om en melding som behandler ressurs X feiler, vil alle påfølgende meldinger som muterer ressurs X også feile\n    - For å løse opp i en blokkert sekvens, må vi enten; A) Fikse problemet/buggen, og legge meldingen tilbake i kø, eller B) Slette meldingen fra Dead Letter Queue. Da vil neste melding i sekvensen bli prosessert\n    - Det er kun administratorer som kan administrere meldinger på køen (gjenprøv, slett, list, etc.)\n\n#### Autentisering Bearer-token med rollebasert tilgang:\n- Den autentiserte brukeren må ha tilgang via arkivets (Elements) eget system for tilgangskontroll i tillegg til Saksarkivtjenesten\n- For å kunne benytte en systembruker til kommunikasjon med Saksarkivtjenesten, må en Azure Administrator legge inn arkivbrukernavnet som et sikkerhetsattributt i den brukte EntraId Enterprise App\n##### Roller\n- `ReadWrite` - Opprett/oppdater-operasjoner\n- `Read` - Leseoperasjoner\n- `Queue.Manage` - Køadministrasjon\n\n#### Arkiveringsattributter\n\nFor spørsmål om hvilke verdier som skal benyttes for arkivspesifikke attributter (tilgangskode, sakstype, arkivkode, etc.), kontakt avdeling for Dokumentforvaltning",
+    "contact": {
+      "name": "Team Plattform",
+      "url": "https://arbeidstilsynet-group.slack.com/archives/C09TZT2R6FM"
+    },
+    "version": "v3"
+  },
+  "paths": {
+    "/api/v3/dokumenter/{dokumentId}": {
+      "get": {
+        "tags": [
+          "Dokumenter"
+        ],
+        "summary": "(roller: Read,ReadWrite)",
+        "parameters": [
+          {
+            "name": "dokumentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/filer/{filId}": {
+      "get": {
+        "tags": [
+          "Filer"
+        ],
+        "summary": "(roller: FileCache.Write)",
+        "parameters": [
+          {
+            "name": "filId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Filer"
+        ],
+        "summary": "(roller: FileCache.Write)",
+        "parameters": [
+          {
+            "name": "filId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health/ping": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Sjekk om API-et svarer",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health/authPing": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Sjekk autentisering og basic tilgang",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/meldinger": {
+      "get": {
+        "tags": [
+          "Meldinger"
+        ],
+        "summary": "List meldingsstatuser med cursor-paginering og filtrering (roller: Queue.Manage)",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Domain.V3.Queue.MeldingStatusType"
+            }
+          },
+          {
+            "name": "operasjon",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Domain.V3.Queue.MeldingOperasjon"
+            }
+          },
+          {
+            "name": "opprettetFra",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "opprettetTil",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.Queue.PaginatedMeldingStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/meldinger/{meldingId}": {
+      "get": {
+        "tags": [
+          "Meldinger"
+        ],
+        "summary": "Hent status for en melding",
+        "description": "Henter en melding. Returnerer 403 om autorisert bruker ikke var den som skapte meldingen.",
+        "parameters": [
+          {
+            "name": "meldingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.Queue.MeldingStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Meldinger"
+        ],
+        "summary": "Slett en melding fra køen. Status bevares. (roller: Queue.Manage)",
+        "description": "Meldingen slettes og regnes som behandlet, forutsatt at den er neste i sekvensen for ressursen. reason er obligatorisk, og meldingen kan ikke gjenprøves etter sletting.",
+        "parameters": [
+          {
+            "name": "meldingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "reason",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/meldinger/{meldingId}/requeue": {
+      "patch": {
+        "tags": [
+          "Meldinger"
+        ],
+        "summary": "Flytt melding fra DLQ tilbake til ordinær kø. (roller: Queue.Manage)",
+        "description": "Meldingen får nullstilt status og forsøkes på nytt.",
+        "parameters": [
+          {
+            "name": "meldingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/meldinger/requeue-all": {
+      "patch": {
+        "tags": [
+          "Meldinger"
+        ],
+        "summary": "Flytt alle meldinger fra DLQ tilbake til ordinær kø. (roller: Queue.Manage)",
+        "description": "Alle meldinger får nullstilt status og forsøkes på nytt.",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/metadata/tilgangskoder": {
+      "get": {
+        "tags": [
+          "Metadata"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.Tilgangskode"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/metadata/tilgangskoder/{arkiv_username}": {
+      "get": {
+        "tags": [
+          "Metadata"
+        ],
+        "summary": "Lister tilgangskoder for en bruker",
+        "description": "Henter gjeldende tilgangskoder brukeren er klarert for i arkivet",
+        "parameters": [
+          {
+            "name": "arkiv_username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-zA-ZæøåÆØÅ_]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.Tilgangskode"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/metadata/sakstyper": {
+      "get": {
+        "tags": [
+          "Metadata"
+        ],
+        "summary": "Lister alle sakstyper",
+        "description": "Henter alle sakstyper som kan brukes for å arkivere en sak. Refereres til som 'mappetyper' i Elements",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.Mappetype"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/metadata/administrativenheter/{arkiv_username}": {
+      "get": {
+        "tags": [
+          "Metadata"
+        ],
+        "summary": "Lister alle administrative enheter en bruker har en rolle i",
+        "description": "Returnerer beskrivelse av enhet, enhetskode, og brukerens rolle i enheten",
+        "parameters": [
+          {
+            "name": "arkiv_username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-zA-ZæøåÆØÅ_]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.AdministrativEnhetMedRolleForPerson"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/saker/{eksternId}": {
+      "get": {
+        "tags": [
+          "Saker"
+        ],
+        "summary": "Hent en sak basert på ekstern id (roller: Read, ReadWrite)",
+        "description": "Som standard returneres ikke journalposter. For å inkludere journalposter, sett query-parameteren includeJournalposter til true.",
+        "parameters": [
+          {
+            "name": "eksternId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeJournalposter",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.HentSakResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Saker"
+        ],
+        "summary": "Oppdater en eksisterende sak (asynkron) (roller: ReadWrite)",
+        "description": "Endring av tilgangskode vil kun endre tilgangskoden på saken, ikke journalposter eller dokumenter.",
+        "parameters": [
+          {
+            "name": "eksternId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OppdaterSakRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OppdaterSakRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OppdaterSakRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.Queue.MeldingStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Saker"
+        ],
+        "summary": "Avslutt en sak (asynkron) (roller: ReadWrite)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "eksternId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.Queue.MeldingStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/saker": {
+      "post": {
+        "tags": [
+          "Saker"
+        ],
+        "summary": "Opprett en ny sak (asynkron) (roller: ReadWrite)",
+        "description": "For å avslutte saken umiddelbart etter opprettelse, sett query-parameteren avslutt til true.",
+        "parameters": [
+          {
+            "name": "avslutt",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "payload"
+                ],
+                "type": "object",
+                "properties": {
+                  "payload": {
+                    "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettSakRequest"
+                  },
+                  "filer": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                }
+              },
+              "encoding": {
+                "filer": {
+                  "style": "form"
+                },
+                "payload": {
+                  "contentType": "application/json"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.Queue.MeldingStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/saker/{eksternId}/gjenoppta": {
+      "put": {
+        "tags": [
+          "Saker"
+        ],
+        "summary": "Åpne en lukket sak (asynkron) (roller: ReadWrite)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "eksternId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.Queue.MeldingStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/saker/{eksternId}/journalpost": {
+      "post": {
+        "tags": [
+          "Saker"
+        ],
+        "summary": "Legg til en journalpost på en sak (asynkron) (roller: ReadWrite)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "eksternId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "payload"
+                ],
+                "type": "object",
+                "properties": {
+                  "payload": {
+                    "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettJournalpostRequest"
+                  },
+                  "filer": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                }
+              },
+              "encoding": {
+                "filer": {
+                  "style": "form"
+                },
+                "payload": {
+                  "contentType": "application/json"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.Queue.MeldingStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AT.eArkiv.Entiteter.API.V3.AdministrativEnhetMedRolleForPerson": {
+        "type": "object",
+        "properties": {
+          "beskrivelse": {
+            "type": "string",
+            "nullable": true
+          },
+          "roller": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "kode": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V3.HentSakResponse": {
+        "required": [
+          "ansvarligEnhetKode",
+          "arkivkode",
+          "eksternId",
+          "saksId",
+          "saksbehandler",
+          "sakstype",
+          "status",
+          "tilgangskodeVerdi",
+          "tittel"
+        ],
+        "type": "object",
+        "properties": {
+          "saksId": {
+            "type": "string",
+            "nullable": true
+          },
+          "tittel": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksbehandler": {
+            "type": "string",
+            "nullable": true
+          },
+          "ansvarligEnhetKode": {
+            "type": "string",
+            "nullable": true
+          },
+          "eksternId": {
+            "type": "string",
+            "nullable": true
+          },
+          "eksternTag": {
+            "type": "string",
+            "nullable": true
+          },
+          "sakstype": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.Sakstatus"
+          },
+          "tilgangskodeVerdi": {
+            "type": "string",
+            "nullable": true
+          },
+          "arkivkode": {
+            "type": "string",
+            "nullable": true
+          },
+          "saksparter": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.HentSakResponseSaksPart"
+            },
+            "nullable": true
+          },
+          "journalposter": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.HentSakResponseJournalpost"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V3.HentSakResponseDokument": {
+        "required": [
+          "dokumentId",
+          "filending",
+          "tittel"
+        ],
+        "type": "object",
+        "properties": {
+          "tittel": {
+            "type": "string",
+            "nullable": true
+          },
+          "filending": {
+            "type": "string",
+            "nullable": true
+          },
+          "dokumentId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V3.HentSakResponseJournalpost": {
+        "required": [
+          "eksternId",
+          "hoveddokument",
+          "journalpostType",
+          "personInfo",
+          "tittel"
+        ],
+        "type": "object",
+        "properties": {
+          "eksternId": {
+            "type": "string",
+            "nullable": true
+          },
+          "journalpostType": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.Journalposttype"
+          },
+          "tittel": {
+            "type": "string",
+            "nullable": true
+          },
+          "personInfo": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.HentSakResponsePersonInfo"
+          },
+          "hoveddokument": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.HentSakResponseDokument"
+          },
+          "vedlegg": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.HentSakResponseDokument"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V3.HentSakResponsePersonInfo": {
+        "required": [
+          "navn"
+        ],
+        "type": "object",
+        "properties": {
+          "navn": {
+            "type": "string",
+            "nullable": true
+          },
+          "organisasjonsnummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "personnummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "adresse": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "poststed": {
+            "type": "string",
+            "nullable": true
+          },
+          "epost": {
+            "type": "string",
+            "nullable": true
+          },
+          "telefon": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V3.HentSakResponseSaksPart": {
+        "required": [
+          "navn"
+        ],
+        "type": "object",
+        "properties": {
+          "navn": {
+            "type": "string",
+            "nullable": true
+          },
+          "organisasjonsnummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "personnummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "adresse": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "poststed": {
+            "type": "string",
+            "nullable": true
+          },
+          "epost": {
+            "type": "string",
+            "nullable": true
+          },
+          "telefon": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V3.Journalposttype": {
+        "enum": [
+          "Inngaaende",
+          "Utgaaende",
+          "Notat",
+          "Intern"
+        ],
+        "type": "string"
+      },
+      "AT.eArkiv.Entiteter.API.V3.Mappetype": {
+        "type": "object",
+        "properties": {
+          "kode": {
+            "type": "string",
+            "nullable": true
+          },
+          "beskrivelse": {
+            "type": "string",
+            "nullable": true
+          },
+          "arkivdel": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V3.OppdaterSakRequest": {
+        "type": "object",
+        "properties": {
+          "tittel": {
+            "maxLength": 255,
+            "type": "string",
+            "description": "Ny tittel for saken. Maks 255 tegn.",
+            "nullable": true
+          },
+          "skjermetOrd": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Ord i tittelen som skal skjermes",
+            "nullable": true
+          },
+          "skjermetNavn": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Navn i tittelen som skal skjermes. Eks. ['ola nordman', 'kari brekstad']",
+            "nullable": true
+          },
+          "saksbehandler": {
+            "type": "string",
+            "description": "Nytt Elements brukernavn til saksbehandler (f.eks ETTERNAVN_F).",
+            "nullable": true
+          },
+          "ansvarligEnhetKode": {
+            "type": "string",
+            "description": "Ny ansvarlig enhetskode (administrativ inndeling), f.eks. 'UAT'.",
+            "nullable": true
+          },
+          "eksternTag": {
+            "maxLength": 200,
+            "type": "string",
+            "description": "Ny ekstern tag (klassering EKSTERNREF). Maks 200 tegn.",
+            "nullable": true
+          },
+          "sakstype": {
+            "type": "string",
+            "description": "Ny sakstype (mappetype) for saken.",
+            "nullable": true
+          },
+          "tilgangskode": {
+            "type": "string",
+            "description": "Ny tilgangskode for skjerming av saken.",
+            "nullable": true
+          },
+          "arkivkode": {
+            "type": "string",
+            "description": "Ny arkivkode for saken.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request om å oppdatere en eksisterende sak i saksarkivet."
+      },
+      "AT.eArkiv.Entiteter.API.V3.OpprettJournalpostRequest": {
+        "required": [
+          "eksternId",
+          "hoveddokumentFilnavn",
+          "journalpostType",
+          "personInfo",
+          "tittel"
+        ],
+        "type": "object",
+        "properties": {
+          "eksternId": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9_\\-\\:]+$",
+            "type": "string"
+          },
+          "journalpostType": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.Journalposttype"
+          },
+          "tittel": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "Journalpostens tittel. Maks 255 tegn."
+          },
+          "skjermetOrd": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Ord i tittelen som skal skjermes",
+            "nullable": true
+          },
+          "skjermetNavn": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Navn i tittelen som skal skjermes. Eks. ['ola nordman', 'kari brekstad']",
+            "nullable": true
+          },
+          "hoveddokumentFilnavn": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Navnet på hoveddokumentet i journalposten. En fil med samme navn må lastes opp i 'filer'-feltet."
+          },
+          "vedleggFilnavn": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Navn på vedlegg til journalposten. Alle filnavn må finnes i listen med opplastede filer.",
+            "nullable": true
+          },
+          "personInfo": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettJournalpostRequestPersonInfo"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Forespørsel om å opprette en ny journalpost på eksisterende sak i saksarkivet."
+      },
+      "AT.eArkiv.Entiteter.API.V3.OpprettJournalpostRequestPersonInfo": {
+        "required": [
+          "navn"
+        ],
+        "type": "object",
+        "properties": {
+          "navn": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "organisasjonsnummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "personnummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "adresse": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "poststed": {
+            "type": "string",
+            "nullable": true
+          },
+          "epost": {
+            "type": "string",
+            "format": "email",
+            "nullable": true
+          },
+          "telefon": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V3.OpprettSakRequest": {
+        "required": [
+          "ansvarligEnhetKode",
+          "arkivkode",
+          "eksternId",
+          "saksbehandler",
+          "sakstype",
+          "tilgangskode",
+          "tittel"
+        ],
+        "type": "object",
+        "properties": {
+          "tittel": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "Sakens tittel. Maks 255 tegn."
+          },
+          "saksbehandler": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Elements brukernavn (f.eks ETTERNAVN_F) til saksbehandler av saken."
+          },
+          "ansvarligEnhetKode": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Kode for ansvarlig organisasjonsenhet (administrativ inndeling). F.eks: 'UAT'. Kan listes ut ved '/apiv2/metadata/organisatoriskeEnheter' "
+          },
+          "eksternId": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9_\\-\\:]+$",
+            "type": "string",
+            "description": "Unik ekstern id fra kallende fagsystem. Maks 200 tegn. Kan brukes til å sette en unik identifikator på en sak før den er opprettet i arkivet."
+          },
+          "eksternTag": {
+            "maxLength": 200,
+            "type": "string",
+            "description": "En indeksert og søkbar vilkårlig tekst som lagres som en klassering (EKSTERNREF).Kan f.eks. brukes til å korrelere saker. Maks 200 tegn.",
+            "nullable": true
+          },
+          "sakstype": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Kontakt dokumentforvaltning for å få en sakstype for dine saker. Arkivdel avledes av denne. Kalles også 'Mappetype' i Elements"
+          },
+          "arkivkode": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Arkivkode under Arbeidstilsynets arkivnøkkel. Kontakt dokumentforvaltning for å få en kode som passer."
+          },
+          "tilgangskode": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Tilgangskode for skjerming av saken. Finn gjeldende koder på '/v3/metadata/tilgangskoder'"
+          },
+          "saksparter": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettSakRequestSakspart"
+            },
+            "description": "Hvilken person eller bedrift saken angår, eller andre interessenter.",
+            "nullable": true
+          },
+          "skjermetOrd": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Ord i tittelen som skal skjermes",
+            "nullable": true
+          },
+          "skjermetNavn": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Navn i tittelen som skal skjermes. Eks. ['ola nordman', 'kari brekstad']",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.Sakstatus"
+          },
+          "journalposter": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettSakRequestJournalpost"
+            },
+            "description": "Journalposter som skal opprettes sammen med saken.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Forespørsel om å opprette en ny sak i saksarkivet."
+      },
+      "AT.eArkiv.Entiteter.API.V3.OpprettSakRequestJournalpost": {
+        "required": [
+          "eksternId",
+          "hoveddokumentFilnavn",
+          "journalpostType",
+          "personInfo",
+          "tittel"
+        ],
+        "type": "object",
+        "properties": {
+          "eksternId": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "journalpostType": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.Journalposttype"
+          },
+          "tittel": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "description": "Journalpostens tittel. Maks 255 tegn."
+          },
+          "skjermetOrd": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Ord i tittelen som skal skjermes",
+            "nullable": true
+          },
+          "skjermetNavn": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Navn i tittelen som skal skjermes. Eks. ['ola nordman', 'kari brekstad']",
+            "nullable": true
+          },
+          "hoveddokumentFilnavn": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Navnet på hoveddokumentet i journalposten. En fil med samme navn må lastes opp i 'filer' feltet."
+          },
+          "vedleggFilnavn": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Navn på vedlegg til journalposten. Alle filnavn må finnes i listen med opplastede filer.",
+            "nullable": true
+          },
+          "personInfo": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettSakRequestPersonInfo"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V3.OpprettSakRequestPersonInfo": {
+        "required": [
+          "navn"
+        ],
+        "type": "object",
+        "properties": {
+          "navn": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "organisasjonsnummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "personnummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "adresse": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "poststed": {
+            "type": "string",
+            "nullable": true
+          },
+          "epost": {
+            "type": "string",
+            "format": "email",
+            "nullable": true
+          },
+          "telefon": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V3.OpprettSakRequestSakspart": {
+        "required": [
+          "navn"
+        ],
+        "type": "object",
+        "properties": {
+          "navn": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Sakspartens fulle navn (person eller organisasjon). Påkrevd."
+          },
+          "organisasjonsnummer": {
+            "type": "string",
+            "description": "Organisasjonsnummer (9 siffer). Valgfritt, kan ikke kombineres med Personnummer.",
+            "nullable": true
+          },
+          "personnummer": {
+            "type": "string",
+            "description": "Personnummer/fødselsnummer (11 siffer). Valgfritt, kan ikke kombineres med Organisasjonsnummer.",
+            "nullable": true
+          },
+          "adresse": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnummer": {
+            "type": "string",
+            "nullable": true
+          },
+          "poststed": {
+            "type": "string",
+            "nullable": true
+          },
+          "epost": {
+            "type": "string",
+            "format": "email",
+            "nullable": true
+          },
+          "telefon": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Sakspart på en sak. Enten organisasjonsnummer eller personnummer kan angis, ikke begge."
+      },
+      "AT.eArkiv.Entiteter.API.V3.Sakstatus": {
+        "enum": [
+          "UnderBehandling",
+          "Avsluttet"
+        ],
+        "type": "string"
+      },
+      "AT.eArkiv.Entiteter.API.V3.Tilgangskode": {
+        "type": "object",
+        "properties": {
+          "kode": {
+            "type": "string",
+            "nullable": true
+          },
+          "beskrivelse": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Domain.V3.ArkivProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "nullable": true
+          },
+          "traceId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "Domain.V3.Queue.MeldingOperasjon": {
+        "enum": [
+          "TestOperasjon",
+          "OpprettSak",
+          "OppdaterSak",
+          "AvsluttSak",
+          "OpprettJournalpost",
+          "GjenopptaSak"
+        ],
+        "type": "string"
+      },
+      "Domain.V3.Queue.MeldingStatus": {
+        "required": [
+          "arkivBrukernavn",
+          "meldingId",
+          "operasjon",
+          "opprettet",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "meldingId": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/Domain.V3.Queue.MeldingStatusType"
+          },
+          "operasjon": {
+            "$ref": "#/components/schemas/Domain.V3.Queue.MeldingOperasjon"
+          },
+          "opprettet": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "arkivBrukernavn": {
+            "type": "string",
+            "nullable": true
+          },
+          "resultat": {
+            "type": "string",
+            "nullable": true
+          },
+          "feil": {
+            "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+          },
+          "fullfort": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "attempts": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sekvensnummer": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "eksternId": {
+            "type": "string",
+            "nullable": true
+          },
+          "slettingBegrunnelse": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Domain.V3.Queue.MeldingStatusOversikt": {
+        "type": "object",
+        "properties": {
+          "mottatt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fullfort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "feilet": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "deadLetter": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "slettet": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Domain.V3.Queue.MeldingStatusType": {
+        "enum": [
+          "Mottatt",
+          "Fullfort",
+          "Feilet",
+          "Slettet",
+          "DeadLetter"
+        ],
+        "type": "string"
+      },
+      "Domain.V3.Queue.PaginatedMeldingStatus": {
+        "required": [
+          "meldinger",
+          "oversikt",
+          "totaltAntall"
+        ],
+        "type": "object",
+        "properties": {
+          "meldinger": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Domain.V3.Queue.MeldingStatus"
+            },
+            "nullable": true
+          },
+          "totaltAntall": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "oversikt": {
+            "$ref": "#/components/schemas/Domain.V3.Queue.MeldingStatusOversikt"
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "oauth2": {
+        "type": "oauth2",
+        "description": "Logg inn med Entra for å autorisere kall direkte i Swagger UI.",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://login.microsoftonline.com/da4bf886-a8a6-450d-a806-c347b8eb8d80/oauth2/v2.0/authorize",
+            "tokenUrl": "https://login.microsoftonline.com/da4bf886-a8a6-450d-a806-c347b8eb8d80/oauth2/v2.0/token",
+            "scopes": {
+              "a1ace59d-a80d-424b-b7f8-4f3cb149c1a4/.default": "Tilgang til Saksarkiv API'et med dine tildelte roller"
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "oauth2": [ ]
+    }
+  ],
+  "tags": [
+    {
+      "name": "Dokumenter"
+    },
+    {
+      "name": "Filer",
+      "description": "Intern: Brukes for mellomlagring av filer som skal sendes til eArkiv. Ikke for bruk av eksterne klienter."
+    },
+    {
+      "name": "Health",
+      "description": "Helse- og tilgjengelighetssjekk"
+    },
+    {
+      "name": "Meldinger"
+    },
+    {
+      "name": "Metadata",
+      "description": "Utlisting av metadata i arkivet som tilgangskoder, sakstyper og administrative enheter"
+    },
+    {
+      "name": "Saker",
+      "description": "Hent, opprett, avslutt og åpne saker, samt legg til journalposter."
+    }
+  ]
+}
