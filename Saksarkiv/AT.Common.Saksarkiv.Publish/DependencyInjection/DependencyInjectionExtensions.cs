@@ -14,7 +14,7 @@ namespace Arbeidstilsynet.Common.Saksarkiv.DependencyInjection;
 public static class DependencyInjectionExtensions
 {
     internal const string SaksarkivHttpClientName = "SaksarkivHttpClient";
-    internal const string V3HealthProbePath = "/api/v3/metadata/tilgangskoder";
+    internal const string HealthProbePath = "/api/health";
 
     /// <summary>
     /// Registers the Saksarkiv <b>v3</b> client (the default) with explicit configuration.
@@ -27,7 +27,8 @@ public static class DependencyInjectionExtensions
     /// <remarks>
     /// Resolve <see cref="SaksarkivClientV3"/> to call the v3 API. To additionally use the legacy
     /// v2 API, call <see cref="AddSaksarkivClientV2"/>. This registration also adds a health check
-    /// named <c>Saksarkiv</c> that probes the v3 API.
+    /// named <c>Saksarkiv</c> that probes the version-agnostic <c>GET /api/health/authPing</c>
+    /// endpoint.
     /// </remarks>
     public static IServiceCollection AddSaksarkivClient(
         this IServiceCollection services,
@@ -113,8 +114,7 @@ public static class DependencyInjectionExtensions
             return false;
         }
 
-        return requestPath.StartsWith(V3HealthProbePath, StringComparison.OrdinalIgnoreCase)
-            || requestPath.StartsWith("/apiv2/health", StringComparison.OrdinalIgnoreCase);
+        return requestPath.StartsWith(HealthProbePath, StringComparison.OrdinalIgnoreCase);
     }
 
     private static void ConfigureDefaultResilience(HttpStandardResilienceOptions options)

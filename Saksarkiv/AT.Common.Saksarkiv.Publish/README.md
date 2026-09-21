@@ -80,7 +80,7 @@ The default resilience settings are:
 - 5 seconds retry delay
 - 15 seconds per-attempt timeout
 - 1 minute total request timeout
-- retries disabled for all `POST` requests, for the v3 health probe `/api/v3/metadata/tilgangskoder`, and for `/apiv2/health*`
+- retries disabled for all `POST` requests and for the version-agnostic health probe `/api/health*`
 
 ## Token provider example
 

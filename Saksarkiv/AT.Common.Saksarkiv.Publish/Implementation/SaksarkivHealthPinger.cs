@@ -7,9 +7,8 @@ namespace Arbeidstilsynet.Common.Saksarkiv.Implementation;
 /// health check can be unit tested without the Kiota-generated client.
 /// </summary>
 /// <remarks>
-/// The v3 API has no dedicated health endpoint, so a lightweight, unauthenticated-safe GET
-/// (<c>/api/v3/metadata/tilgangskoder</c>) is used as the liveness probe until a version-agnostic
-/// health endpoint becomes available.
+/// Probes the version-agnostic <c>GET /api/health/authPing</c> endpoint, which verifies
+/// authentication and basic access and is shared across all API versions.
 /// </remarks>
 internal interface ISaksarkivHealthPinger
 {
@@ -20,10 +19,10 @@ internal class SaksarkivHealthPinger(SaksarkivClientV3 saksarkivClient) : ISaksa
 {
     public async Task<string?> PongAsync(CancellationToken cancellationToken = default)
     {
-        var response = await saksarkivClient.Api.V3.Metadata.Tilgangskoder.GetAsync(
+        var response = await saksarkivClient.Api.Health.AuthPing.GetAsync(
             cancellationToken: cancellationToken
         );
 
-        return $"tilgangskoder: {response?.Count ?? 0}";
+        return $"authPing: {response ?? "<null>"}";
     }
 }

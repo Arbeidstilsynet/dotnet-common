@@ -35,8 +35,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Breaking:** `AddSaksarkivClient(...)` now registers the **v3** client (`SaksarkivClientV3`) as
   the default instead of the v2 client. Consumers that still need v2 must call
   `AddSaksarkivClientV2(...)` and resolve `SaksarkivClient`.
-- The `Saksarkiv` health check now probes the v3 endpoint `GET /api/v3/metadata/tilgangskoder`
-  (v3 has no dedicated health endpoint) instead of the v2 `/apiv2/health/pong`.
+- The `Saksarkiv` health check now probes the version-agnostic endpoint
+  `GET /api/health/authPing` (shared across all API versions) instead of the v2 `/apiv2/health/pong`.
 
 
 ## 1.1.0
