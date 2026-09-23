@@ -107,7 +107,7 @@ internal static class AltinnSpecificationExtensions
         return (mainData, structuredData, attachmentData);
     }
 
-    private static string GetFilename(this AltinnAppSpecification appSpec, DataElement dataElement)
+    private static string? GetFilename(this AltinnAppSpecification appSpec, DataElement dataElement)
     {
         if (appSpec.MainPdfDataTypeId == dataElement.DataType)
         {

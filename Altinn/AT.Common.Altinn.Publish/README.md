@@ -12,10 +12,11 @@ dotnet add package Arbeidstilsynet.Common.Altinn
 
 ## 🚀 Features
 
-- **Extension Methods** for common Altinn operations
-- **Altinn Adapter**  Provides a high-level abstraction for Arbeidstilsynet’s integration needs, streamlining communication with Altinn instances.
-- **Altinn API Clients** Robust REST API clients for direct and flexible interaction with Altinn’s services, supporting both general and advanced use cases.
-- **Per-client configuration** Register only the APIs you use, each with its own Maskinporten scopes.
+- **Extension methods** for common Altinn operations.
+- **Altinn adapters** for subscriptions, instance data and correspondence.
+- **Altinn API clients** for direct interaction with Altinn services.
+- **Per-client configuration** to register only the APIs you use, each with its own
+  Maskinporten scopes.
 
 ## 🧑‍💻 Usage
 
@@ -181,8 +182,8 @@ Altinn-specific `Code`, `ErrorCode`, `StatusDescription`, `TraceId`, `Validation
 
 Generation is scoped to the functional area each client serves — instances for storage and
 apps, subscriptions for events, and dialogs for Dialogporten. To reach an endpoint outside
-those areas, widen the relevant `--include-path` filter in `GenerateClients.targets`, regenerate, and
-expose it through the corresponding port.
+those areas, widen the relevant `--include-path` filter in `GenerateClients.targets`,
+regenerate, and expose it through the corresponding port.
 
 ## 🔄 Regenerating the clients
 
@@ -191,7 +192,7 @@ not shipped inside the package. Generated clients are not committed either: a no
 restores the repository-pinned Kiota tool and generates changed clients incrementally under `obj`.
 Node.js is required to prepare temporary copies of the specifications.
 
-To force regeneration of every client:
+From the `Altinn` directory, force regeneration of every client with:
 
 ```bash
 npm run generate:client
@@ -207,7 +208,7 @@ are generated from the TT02 specifications, which are a strict superset of the
 production ones — generating a client per environment would split the generated model
 types in two. The consequence is that a production application can call an endpoint that
 has not yet been released to production and receive a `404`. To check that the assumption
-still holds:
+still holds, run this from the `Altinn` directory:
 
 ```bash
 npm run check:spec-drift
@@ -215,7 +216,8 @@ npm run check:spec-drift
 
 ## 🤝 Contributing
 
-This library follows standard .NET conventions and includes comprehensive unit tests. When contributing:
+This library follows standard .NET conventions and includes comprehensive unit tests.
+When contributing:
 
 1. Add unit tests for new functionality
 2. Follow existing code patterns

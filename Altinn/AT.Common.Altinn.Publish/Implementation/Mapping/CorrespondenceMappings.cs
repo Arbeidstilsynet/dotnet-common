@@ -27,7 +27,6 @@ internal static class CorrespondenceMappings
         return new Generated.BaseCorrespondenceExt
         {
             ResourceId = source.ResourceId,
-            Sender = source.Sender,
             SendersReference = source.SendersReference,
             MessageSender = source.MessageSender,
             RequestedPublishTime = source.RequestedPublishTime,
@@ -102,7 +101,6 @@ internal static class CorrespondenceMappings
             CorrespondenceId = source.CorrespondenceId ?? Guid.Empty,
             Recipient = source.Recipient ?? string.Empty,
             ResourceId = source.ResourceId ?? string.Empty,
-            Sender = source.Sender,
             SendersReference = source.SendersReference ?? string.Empty,
             MessageSender = source.MessageSender,
             Created = source.Created ?? default,

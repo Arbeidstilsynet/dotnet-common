@@ -140,6 +140,26 @@ public class MaskinportenClientTests
         await Should.ThrowAsync<Exception>(() => _sut.GetToken(Scopes));
     }
 
+    [Fact]
+    public async Task GetToken_Throws_WhenResponseHasNoAccessToken()
+    {
+        _handler.RespondWith("""{"token_type":"Bearer","expires_in":120}""");
+
+        await Should.ThrowAsync<JsonException>(() => _sut.GetToken(Scopes));
+    }
+
+    [Fact]
+    public async Task GetToken_AllowsResponseWithoutScope()
+    {
+        _handler.RespondWith(
+            """{"access_token":"access-token","token_type":"Bearer","expires_in":120}"""
+        );
+
+        var result = await _sut.GetToken(Scopes);
+
+        result.Scope.ShouldBeNull();
+    }
+
     private static string NewToken(int expiresIn, string accessToken = "access-token-1") =>
         JsonSerializer.Serialize(
             new MaskinportenTokenResponse

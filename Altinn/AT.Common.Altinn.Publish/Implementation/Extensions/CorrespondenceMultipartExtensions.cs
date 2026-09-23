@@ -60,7 +60,6 @@ internal static class CorrespondenceMultipartExtensions
         const string prefix = "Correspondence";
 
         body.AddText($"{prefix}.ResourceId", source.ResourceId);
-        body.AddText($"{prefix}.Sender", source.Sender);
         body.AddText($"{prefix}.SendersReference", source.SendersReference);
         body.AddText($"{prefix}.MessageSender", source.MessageSender);
         body.AddText($"{prefix}.RequestedPublishTime", source.RequestedPublishTime);

@@ -51,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `HostEnvironmentExtensions` (`CreateDefaultAltinnConfiguration`, `GetMaskinportenUrl`, `GetAltinnPlattformUrl`, `GetAltinnAppBaseUrl`). Base URLs are resolved from `AltinnConfiguration.Environment` instead.
 - **BREAKING**: `MappedQueryParameterAttribute` and `MappedRequestHeaderParameterAttribute`. Query parameters are now mapped explicitly rather than by reflection over attributes.
 - **BREAKING**: `AltinnHttpRequestException`, which belonged to the retired hand-written HTTP layer and can no longer be thrown. Catch Kiota's `ApiException` and call `GetAltinnProblemDetails()` instead.
+- **BREAKING**: Removed the deprecated correspondence `Sender` property. Altinn now determines the sender automatically from the Resource Registry using `ResourceId`.
 
 ### Fixed
 
