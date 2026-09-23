@@ -27,11 +27,11 @@
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
+  <Import Project="..\GenerateClients.targets" />
   <!--
     The OpenAPI specifications are deliberately not packed. Nothing reads them at runtime; they are
-    inputs to client generation only, which runs from the repository. Shipping all eight added
-    roughly a third to the package size while duplicating files that are already versioned in the
-    repository alongside the code generated from them.
+    inputs to build-time client generation only. Shipping all eight added roughly a third to the
+    package size.
   -->
   <Target
     Name="InjectPackageReleaseNotesFromFile"

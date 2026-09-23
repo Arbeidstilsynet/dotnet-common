@@ -4,11 +4,6 @@
     "title": "Altinn Platform Authentication",
     "version": "v1"
   },
-  "servers": [
-    {
-      "url": "https://platform.tt02.altinn.no/authentication/api/v1"
-    }
-  ],
   "paths": {
     "/authentication": {
       "get": {

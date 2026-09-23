@@ -181,22 +181,26 @@ Altinn-specific `Code`, `ErrorCode`, `StatusDescription`, `TraceId`, `Validation
 
 Generation is scoped to the functional area each client serves — instances for storage and
 apps, subscriptions for events, and dialogs for Dialogporten. To reach an endpoint outside
-those areas, widen the relevant `--include-path` filter in `package.json`, regenerate, and
+those areas, widen the relevant `--include-path` filter in `GenerateClients.targets`, regenerate, and
 expose it through the corresponding port.
 
 ## 🔄 Regenerating the clients
 
 The OpenAPI specifications live alongside the source. They are inputs to generation only and are
-not shipped inside the package.
-After refreshing one from Altinn, regenerate with:
+not shipped inside the package. Generated clients are not committed either: a normal `dotnet build`
+restores the repository-pinned Kiota tool and generates changed clients incrementally under `obj`.
+Node.js is required to prepare temporary copies of the specifications.
+
+To force regeneration of every client:
 
 ```bash
 npm run generate:client
 ```
 
-This normalises the specifications first, which matters: Kiota only wires a client's
-base URL up when the specification declares a server, and the Altinn apps and
-authentication specifications declare none.
+Generation never modifies the committed specifications. It prepares temporary copies under `obj`
+and adds the missing server declarations there. This matters because Kiota only wires a client's
+base URL up when the specification declares a server, and the Altinn apps and authentication
+specifications declare none.
 
 Correspondence and Dialogporten publish a specification per environment. The clients
 are generated from the TT02 specifications, which are a strict superset of the
