@@ -42,14 +42,7 @@ internal static class AltinnTestData
             },
             Process = new ProcessState { Started = processStart, Ended = processEnd },
             Data = dataElements ?? CreateDefaultDataElements(),
-            DataValues = dataValues ?? new Dictionary<string, string>(),
-            SelfLinks = new ResourceLinks
-            {
-                Apps =
-                    $"https://{actualOrg}.apps.altinn.no/{actualAppId}/instances/{actualPartyId}/{instanceGuid}",
-                Platform =
-                    $"https://platform.altinn.no/storage/api/v1/instances/{actualPartyId}/{instanceGuid}",
-            },
+            DataValues = dataValues ?? [],
         };
     }
 
@@ -97,7 +90,6 @@ internal static class AltinnTestData
             Filename = filename ?? $"{dataType}.{GetExtensionFromContentType(contentType)}",
             FileScanResult = fileScanResult,
             Size = Faker.Random.Long(1024, 10485760), // 1KB to 10MB
-            Locked = Faker.Random.Bool(0.1f), // 10% chance of being locked
             IsRead = Faker.Random.Bool(0.8f), // 80% chance of being read
         };
     }
@@ -173,53 +165,6 @@ internal static class AltinnTestData
             ProcessIsComplete = processIsComplete,
             ExcludeConfirmedBy = excludeConfirmedBy ?? actualOrg,
         };
-    }
-
-    public static Faker<AltinnInstance> GetAltinnInstanceFaker(
-        string? org = null,
-        string? appId = null
-    )
-    {
-        var actualOrg = org ?? "dat";
-        var actualAppId = appId ?? $"{actualOrg}/{{appName}}-app";
-
-        return new Faker<AltinnInstance>()
-            .RuleFor(x => x.Id, f => $"{f.Random.Number(10000, 99999)}/{f.Random.Guid()}")
-            .RuleFor(x => x.AppId, f => actualAppId.Replace("{appName}", f.Lorem.Word()))
-            .RuleFor(x => x.Org, actualOrg)
-            .RuleFor(
-                x => x.InstanceOwner,
-                f => new InstanceOwner
-                {
-                    PartyId = f.Random.Number(10000, 99999).ToString(),
-                    OrganisationNumber = f.Company.Ein(),
-                }
-            )
-            .RuleFor(
-                x => x.Process,
-                f =>
-                {
-                    var start = f.Date.Recent(30);
-                    return new ProcessState
-                    {
-                        Started = start,
-                        Ended = f.Date.Between(start, DateTime.UtcNow),
-                    };
-                }
-            )
-            .RuleFor(x => x.Data, f => CreateDefaultDataElements())
-            .RuleFor(x => x.DataValues, f => new Dictionary<string, string>())
-            .RuleFor(
-                x => x.SelfLinks,
-                (f, instance) =>
-                    new ResourceLinks
-                    {
-                        Apps =
-                            $"https://{actualOrg}.apps.altinn.no/{instance.AppId}/instances/{instance.Id}",
-                        Platform =
-                            $"https://platform.altinn.no/storage/api/v1/instances/{instance.Id}",
-                    }
-            );
     }
 
     private static string GetExtensionFromContentType(string contentType)

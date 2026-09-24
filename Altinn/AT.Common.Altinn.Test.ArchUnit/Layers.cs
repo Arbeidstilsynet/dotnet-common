@@ -12,6 +12,7 @@ namespace AT.Common.Altinn.Test.ArchUnit
             "DependencyInjection"
         );
         internal static string ModelNamespace = CreateNamespaceRegex("Model");
+        internal static string PortsNamespace = CreateNamespaceRegex("Ports");
 
         private static string CreateNamespaceRegex(string namespaceSection)
         {
@@ -60,6 +61,8 @@ namespace AT.Common.Altinn.Test.ArchUnit
             .AreNot(PublicInterfaces)
             .As("interface implementations");
 
+        // The Kiota-generated types are internal, so their namespaces are deliberately absent here:
+        // only these four may contain public types.
         internal static readonly IObjectProvider<IType> ExportableTypes = Types()
             .That()
             .ResideInNamespaceMatching(Constants.ExtensionsNamespace)
@@ -67,6 +70,8 @@ namespace AT.Common.Altinn.Test.ArchUnit
             .ResideInNamespaceMatching(Constants.DependencyInjectionNamespace)
             .Or()
             .ResideInNamespaceMatching(Constants.ModelNamespace)
+            .Or()
+            .ResideInNamespaceMatching(Constants.PortsNamespace)
             .As("inside exportable namespaces");
 
         internal static readonly IObjectProvider<IType> TypesInInternalNamespaces = Types()

@@ -1,40 +1,23 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
+using Arbeidstilsynet.Common.Altinn.Dialogporten;
+using Arbeidstilsynet.Common.Altinn.Implementation.Mapping;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
-using Arbeidstilsynet.Common.Altinn.Ports.Token;
-using static Arbeidstilsynet.Common.Altinn.DependencyInjection.DependencyInjectionExtensions;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Clients;
 
-internal class AltinnDialogportenClient : IAltinnDialogportenClient
+internal class AltinnDialogportenClient(DialogportenApiClient client) : IAltinnDialogportenClient
 {
-    private readonly IAltinnTokenProvider _altinnTokenProvider;
-    private readonly HttpClient _httpClient;
-    private readonly JsonSerializerOptions _jsonSerializerOptions;
-
-    public AltinnDialogportenClient(
-        IHttpClientFactory httpClientFactory,
-        IAltinnTokenProvider altinnTokenProvider
+    public async Task<DialogportenLookupResponse> LookupDialog(
+        string instanceRef,
+        CancellationToken cancellationToken = default
     )
     {
-        _altinnTokenProvider = altinnTokenProvider;
-        _httpClient = httpClientFactory.CreateClient(DialogportenApiClientKey);
-        _jsonSerializerOptions = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        };
-        _jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    }
+        var lookup = await client.Api.V1.Serviceowner.Dialoglookup.GetAsync(
+            request => request.QueryParameters.InstanceRef = instanceRef,
+            cancellationToken
+        );
 
-    public async Task<DialogportenLookupResponse> LookupDialog(string instanceRef)
-    {
-        return await _httpClient
-                .Get("serviceowner/dialoglookup")
-                .WithBearerToken(await _altinnTokenProvider.GetToken())
-                .WithQueryParameter("instanceRef", instanceRef)
-                .ReceiveContent<DialogportenLookupResponse>(_jsonSerializerOptions)
+        return lookup?.ToLookupResponse()
             ?? throw new InvalidOperationException("Failed to look up dialog");
     }
 }

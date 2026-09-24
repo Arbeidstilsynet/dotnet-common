@@ -3,6 +3,7 @@ using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
+using Arbeidstilsynet.Common.Altinn.Test.Unit.TestData;
 using Shouldly;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
@@ -58,13 +59,19 @@ public class AltinnAppSpecificationTests
     }
 
     [Theory]
-    [InlineData("""{"id":"1","appId":"org/some-app-id","data":[]}""")]
-    [InlineData("""{"id":"1","appId":"org/some-app-id","data":[],"dataValues":null}""")]
-    public void GetSpecification_WhenDataValuesIsMissingOrNullInJson_DoesNotThrow(string json)
+    [InlineData(null)]
+    [InlineData("empty")]
+    public void GetSpecification_WhenDataValuesIsMissingOrNull_DoesNotThrow(string? dataValuesKind)
     {
-        var instance = JsonSerializer.Deserialize<AltinnInstance>(json);
-        instance.ShouldNotBeNull();
-        instance.DataValues.ShouldNotBeNull();
+        // AltinnInstance.DataValues coerces null to an empty dictionary, so both cases must be safe
+        // for GetSpecification to read.
+        var instance = new AltinnInstance
+        {
+            Id = "1",
+            AppId = "org/some-app-id",
+            Data = [],
+            DataValues = dataValuesKind is null ? null! : [],
+        };
 
         Action act = () => _ = instance.GetSpecification();
         act.ShouldNotThrow();

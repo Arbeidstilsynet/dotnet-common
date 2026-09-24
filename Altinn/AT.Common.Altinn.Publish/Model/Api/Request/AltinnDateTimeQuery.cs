@@ -1,31 +1,54 @@
 namespace Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 
-public class AltinnDateTimeQuery
+/// <summary>
+/// Represents a date and comparison operator used in an Altinn query.
+/// </summary>
+public record AltinnDateTimeQuery
 {
-    public DateTimeCompareOperator CompareOperator { get; set; }
+    /// <summary>
+    /// Gets the comparison operator.
+    /// </summary>
+    public DateTimeCompareOperator CompareOperator { get; init; }
 
-    public string DateTime { get; set; }
+    /// <summary>
+    /// Gets the date and time value to compare.
+    /// </summary>
+    public required string DateTime { get; init; }
 
+    /// <inheritdoc />
     public override string ToString()
     {
         return $"{CompareOperator}:{DateTime}";
     }
 }
 
+/// <summary>
+/// Defines comparison operators for Altinn date and time queries.
+/// </summary>
 public enum DateTimeCompareOperator
 {
-    // greater than
+    /// <summary>
+    /// Greater than.
+    /// </summary>
     gt,
 
-    // greater than or equal to
+    /// <summary>
+    /// Greater than or equal to.
+    /// </summary>
     gte,
 
-    // less than
+    /// <summary>
+    /// Less than.
+    /// </summary>
     lt,
 
-    // less than or equal to
+    /// <summary>
+    /// Less than or equal to.
+    /// </summary>
     lte,
 
-    // equal
+    /// <summary>
+    /// Equal to.
+    /// </summary>
     eq,
 }
