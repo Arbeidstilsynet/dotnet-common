@@ -65,6 +65,14 @@ internal class AltinnStorageClient(
         CancellationToken cancellationToken = default
     )
     {
+        var storageBaseUrl = new Uri($"{_storageUrl.ToString().TrimEnd('/')}/");
+        if (!absoluteUri.IsAbsoluteUri || !storageBaseUrl.IsBaseOf(absoluteUri))
+        {
+            throw new InvalidOperationException(
+                $"The data element URL must be within the configured Altinn storage API at <{storageBaseUrl}>."
+            );
+        }
+
         // The path parameters are irrelevant here: WithUrl replaces the whole URL. Data elements
         // are commonly addressed by the absolute self-link returned on an instance.
         return await client

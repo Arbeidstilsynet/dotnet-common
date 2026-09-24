@@ -261,6 +261,24 @@ public class DependencyInjectionExtensionTests
     }
 
     [Fact]
+    public void RegistrationGraph_PassesScopeValidation()
+    {
+        var services = new ServiceCollection();
+        services.AddAltinnAdapter(
+            _development,
+            _maskinportenConfiguration,
+            new AltinnConfiguration { Environment = AltinnEnvironment.Tt02 }
+        );
+
+        using var provider = services.BuildServiceProvider(
+            new ServiceProviderOptions { ValidateScopes = true, ValidateOnBuild = true }
+        );
+        using var scope = provider.CreateScope();
+
+        scope.ServiceProvider.GetRequiredService<IAltinnTokenProvider>().ShouldNotBeNull();
+    }
+
+    [Fact]
     public void Staging_WithOverride_RegistersWarningService()
     {
         var services = new ServiceCollection();

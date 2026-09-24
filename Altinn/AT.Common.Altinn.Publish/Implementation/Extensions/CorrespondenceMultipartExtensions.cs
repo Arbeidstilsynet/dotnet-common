@@ -42,10 +42,13 @@ internal static class CorrespondenceMultipartExtensions
             body.AddCorrespondence(correspondence);
         }
 
-        foreach (var attachment in attachments ?? [])
+        var files = attachments ?? [];
+
+        for (var i = 0; i < files.Count; i++)
         {
+            var attachment = files[i];
             body.AddOrReplacePart(
-                "attachments",
+                $"attachments[{i}]",
                 attachment.ContentType ?? DefaultAttachmentContentType,
                 attachment.OpenReadStream(),
                 attachment.FileName

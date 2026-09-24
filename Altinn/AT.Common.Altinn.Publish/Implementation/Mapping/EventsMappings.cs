@@ -17,6 +17,7 @@ internal static class EventsMappings
             Id = source.Id ?? 0,
             EndPoint = ToUri(source.EndPoint),
             SourceFilter = ToUri(source.SourceFilter),
+            AlternativeSubjectFilter = source.AlternativeSubjectFilter,
             TypeFilter = source.TypeFilter,
             Consumer = source.Consumer,
             CreatedBy = source.CreatedBy,

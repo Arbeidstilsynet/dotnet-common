@@ -85,6 +85,11 @@ public class AltinnStorageClientSeamTests
 
     private string CapturedUri() => CapturedRequest().URI.ToString();
 
+    private bool RequestWasSent() =>
+        _requestAdapter
+            .ReceivedCalls()
+            .Any(call => call.GetArguments().FirstOrDefault() is RequestInformation);
+
     [Fact]
     public async Task GetInstance_UsesTheGuidOnlyEndpoint()
     {
@@ -147,6 +152,34 @@ public class AltinnStorageClientSeamTests
         await _sut.GetInstanceData(absoluteUri);
 
         CapturedUri().ShouldBe(absoluteUri.ToString());
+    }
+
+    [Fact]
+    public async Task GetInstanceData_ByAbsoluteUri_RejectsDifferentOrigin()
+    {
+        var act = () =>
+            _sut.GetInstanceData(
+                new Uri("https://example.com/storage/api/v1/instances/1/2/data/3")
+            );
+
+        var exception = await Should.ThrowAsync<InvalidOperationException>(act);
+
+        exception.Message.ShouldContain("configured Altinn storage API");
+        RequestWasSent().ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task GetInstanceData_ByAbsoluteUri_RejectsPathOutsideStorageApi()
+    {
+        var act = () =>
+            _sut.GetInstanceData(
+                new Uri("https://platform.tt02.altinn.no/authentication/api/v1/exchange")
+            );
+
+        var exception = await Should.ThrowAsync<InvalidOperationException>(act);
+
+        exception.Message.ShouldContain("configured Altinn storage API");
+        RequestWasSent().ShouldBeFalse();
     }
 
     [Fact]

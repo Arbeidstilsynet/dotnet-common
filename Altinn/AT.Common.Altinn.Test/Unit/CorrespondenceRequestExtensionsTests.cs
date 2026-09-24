@@ -2,9 +2,11 @@ using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Bundle;
 using Microsoft.Kiota.Serialization.Multipart;
+using Shouldly;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 
@@ -161,6 +163,35 @@ public class CorrespondenceRequestExtensionsTests
     }
 
     [Fact]
+    public void MultipleAttachments_Map_ToDistinctMultipartParts()
+    {
+        var request = CreateMinimalCorrespondenceRequest().ToApiRequest();
+        List<IFormFile> attachments =
+        [
+            CreateFormFile("first", "first.txt"),
+            CreateFormFile("second", "second.txt"),
+        ];
+
+        var formFields = ExtractFormFields(request, attachments);
+
+        formFields["attachments[0]"].ShouldBe("first");
+        formFields["attachments[1]"].ShouldBe("second");
+    }
+
+    private static FormFile CreateFormFile(string content, string fileName) =>
+        new(
+            new MemoryStream(System.Text.Encoding.UTF8.GetBytes(content)),
+            0,
+            content.Length,
+            "attachments",
+            fileName
+        )
+        {
+            Headers = new HeaderDictionary(),
+            ContentType = "text/plain",
+        };
+
+    [Fact]
     public async Task ReceiverTypes_Map_ToReceiverList()
     {
         List<IAltinnRecipient> receivers =
@@ -179,11 +210,14 @@ public class CorrespondenceRequestExtensionsTests
     /// Serialises the request as the generated client would and returns the resulting form fields,
     /// so the snapshot covers the exact names and values that reach the wire.
     /// </summary>
-    private static Dictionary<string, string> ExtractFormFields(InitializeCorrespondences request)
+    private static Dictionary<string, string> ExtractFormFields(
+        InitializeCorrespondences request,
+        List<IFormFile>? attachments = null
+    )
     {
         var adapter = new DefaultRequestAdapter(new AnonymousAuthenticationProvider());
 
-        var body = request.ToMultipartBody(adapter, attachments: null);
+        var body = request.ToMultipartBody(adapter, attachments);
 
         var writer = new MultipartSerializationWriterFactory().GetSerializationWriter(
             "multipart/form-data"

@@ -104,11 +104,11 @@ public static class DependencyInjectionExtensions
         // the local test-token endpoint only issues tokens a local Altinn instance accepts.
         if (resolution.Target == AltinnEnvironment.Local)
         {
-            services.TryAddSingleton<IAltinnTokenProvider, LocalAltinnTokenProvider>();
+            services.TryAddScoped<IAltinnTokenProvider, LocalAltinnTokenProvider>();
         }
         else
         {
-            services.TryAddSingleton<IAltinnTokenProvider, AltinnTokenProvider>();
+            services.TryAddScoped<IAltinnTokenProvider, AltinnTokenProvider>();
         }
 
         var builder = new AltinnBuilder(services, resolution, overrides, hostEnvironment);

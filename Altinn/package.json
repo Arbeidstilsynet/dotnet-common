@@ -2,7 +2,8 @@
   "private": true,
   "scripts": {
     "generate:client": "dotnet msbuild AT.Common.Altinn.Publish/AT.Common.Altinn.Publish.csproj -t:RegenerateAltinnKiotaClients -p:AltinnKiotaLogLevel=Warning",
-    "check:spec-drift": "node scripts/check-spec-drift.mjs",
+    "check:spec-drift": "npm run test:spec-drift && node scripts/check-spec-drift.mjs",
+    "test:spec-drift": "node --test scripts/check-spec-drift.test.mjs",
     "prepare:specs": "node scripts/prepare-specs.mjs AT.Common.Altinn.Publish AT.Common.Altinn.Publish/obj/Kiota/Specs"
   }
 }

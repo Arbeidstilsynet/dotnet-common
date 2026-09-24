@@ -1,5 +1,8 @@
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using GeneratedAppsInstance = Arbeidstilsynet.Common.Altinn.Apps.Models.Instance;
+using GeneratedDataElement = Arbeidstilsynet.Common.Altinn.Apps.Models.DataElement;
+using GeneratedFileScanResult = Arbeidstilsynet.Common.Altinn.Apps.Models.FileScanResult;
+using GeneratedKeyValueEntry = Arbeidstilsynet.Common.Altinn.Apps.Models.KeyValueEntry;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Mapping;
 
@@ -37,8 +40,50 @@ internal static class AppsMappings
                     EndEvent = process.EndEvent,
                 }
                 : null,
-            Data = null,
-            DataValues = [],
+            Data = source.Data is { } data ? [.. data.Select(ToDataElement)] : null,
+            DataValues = ToStringDictionary(source.DataValues?.AdditionalData),
         };
     }
+
+    private static DataElement ToDataElement(GeneratedDataElement source)
+    {
+        return new DataElement
+        {
+            Id = source.Id,
+            InstanceGuid = source.InstanceGuid,
+            DataType = source.DataType,
+            Filename = source.Filename,
+            ContentType = source.ContentType,
+            Size = source.Size,
+            ContentHash = source.ContentHash,
+            IsRead = source.IsRead,
+            Tags = source.Tags ?? [],
+            UserDefinedMetadata = ToStringDictionary(source.UserDefinedMetadata),
+            Metadata = ToStringDictionary(source.Metadata),
+            FileScanResult = source.FileScanResult switch
+            {
+                GeneratedFileScanResult.Clean => FileScanResult.Clean,
+                GeneratedFileScanResult.Infected => FileScanResult.Infected,
+                GeneratedFileScanResult.Pending => FileScanResult.Pending,
+                GeneratedFileScanResult.NotApplicable => FileScanResult.NotApplicable,
+                _ => null,
+            },
+        };
+    }
+
+    private static Dictionary<string, string> ToStringDictionary(
+        List<GeneratedKeyValueEntry>? entries
+    ) =>
+        entries
+            ?.Where(entry => entry.Key is not null)
+            .ToDictionary(entry => entry.Key!, entry => entry.Value ?? string.Empty)
+        ?? [];
+
+    private static Dictionary<string, string> ToStringDictionary(
+        IDictionary<string, object>? additionalData
+    ) =>
+        additionalData
+            ?.Where(entry => entry.Value is not null)
+            .ToDictionary(entry => entry.Key, entry => entry.Value.ToString() ?? string.Empty)
+        ?? [];
 }

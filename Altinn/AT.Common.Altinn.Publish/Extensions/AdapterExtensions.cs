@@ -81,7 +81,7 @@ public static class AdapterExtensions
     /// <summary>
     /// Converts an <see cref="AltinnInstanceSummary"/> to a metadata dictionary with an Altinn reference.
     /// </summary>
-    /// <param name="altinnInstanceSummary">The Altinn AltinnInstance summary to convert.</param>
+    /// <param name="altinnInstanceSummary">The Altinn instance summary to convert.</param>
     /// <returns>A dictionary containing metadata and the Altinn reference.</returns>
     public static Dictionary<string, string> ToMetadataDictionary(
         this AltinnInstanceSummary altinnInstanceSummary
