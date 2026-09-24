@@ -74,6 +74,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `InstanceQueryParameters` also remains hand-written, because Kiota omits header parameters from the generated query-parameter class and the storage query needs `X-Ai-InstanceOwnerIdentifier`.
 - Correspondence and Dialogporten publish a specification per environment. Both TT02 specifications are a strict superset of their production counterparts, so a single client is generated per API from TT02; generating one per environment would split the model types. A production application may therefore see a `404` from an endpoint that has not yet been released to production. `npm run check:spec-drift` fails if production ever declares a path or schema that TT02 lacks.
 
+## 3.4.0
+
+### Added
+
+- feat: add `GetCorrespondences` to `IAltinnCorrespondenceClient` supporting all Altinn correspondence lookup query parameters (resourceId, from, to, status, role, onBehalfOf, sendersReference, idempotentKey, altinn2CorrespondenceId).
+- feat: add `GetCorrespondenceByIdempotentKey` to `IAltinnMeldingerAdapter`, looking up correspondences by idempotent key using role `Sender` and resource `dat-meldinger-correspondence`.
+
+### Changed
+
+- feat!: replace `IAltinnCorrespondenceClient.GetCorrespondenceByIdempotentKey` with the more general `GetCorrespondences`. The idempotent-key lookup convenience now lives on `IAltinnMeldingerAdapter`.
+
+## 3.3.0
+
+### Added
+
+- feat: enhance altinn meldinger adapter with lookup by idempotent key method
+
 ## 3.2.4
 
 ### Changed

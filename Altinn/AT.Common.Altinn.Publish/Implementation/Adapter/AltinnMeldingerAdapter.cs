@@ -1,5 +1,6 @@
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Ports.Adapter;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
@@ -17,6 +18,15 @@ internal class AltinnMeldingerAdapter(IAltinnCorrespondenceClient correspondence
     )
     {
         return correspondenceClient.InitializeCorrespondence(request.ToApiRequest(), attachments);
+    }
+
+    public Task<CorrespondenceLookupResponse> GetCorrespondenceByIdempotentKey(Guid idempotentKey)
+    {
+        return correspondenceClient.GetCorrespondences(
+            resourceId: "dat-meldinger-correspondence",
+            role: CorrespondencesRoleType.Sender,
+            idempotentKey: idempotentKey
+        );
     }
 
     public async Task<AltinnCorrespondenceOverview?> GetCorrespondence(Guid correspondenceId)

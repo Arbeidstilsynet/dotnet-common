@@ -227,6 +227,13 @@ internal static class CorrespondenceMappings
         };
     }
 
+    public static CorrespondenceLookupResponse ToLookupResponse(
+        this Generated.CorrespondencesExt source
+    )
+    {
+        return new CorrespondenceLookupResponse { Ids = source.Ids?.OfType<Guid>().ToList() };
+    }
+
     private static Generated.InitializeCorrespondenceNotificationExt ToGenerated(
         this InitializeCorrespondenceNotification source
     )

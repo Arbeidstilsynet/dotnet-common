@@ -6,6 +6,7 @@ using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Microsoft.AspNetCore.Http;
+using Generated = Arbeidstilsynet.Common.Altinn.Correspondence.Models;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Clients;
 
@@ -25,6 +26,43 @@ internal class AltinnCorrespondenceClient(
 
         return overview?.ToOverview()
             ?? throw new InvalidOperationException("Failed to retrieve correspondence");
+    }
+
+    public async Task<CorrespondenceLookupResponse> GetCorrespondences(
+        string? resourceId = null,
+        DateTimeOffset? from = null,
+        DateTimeOffset? to = null,
+        CorrespondenceStatus? status = null,
+        CorrespondencesRoleType? role = null,
+        string? onBehalfOf = null,
+        string? sendersReference = null,
+        Guid? idempotentKey = null,
+        int? altinn2CorrespondenceId = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var response = await client.Correspondence.Api.V1.Correspondence.GetAsync(
+            configuration =>
+            {
+                configuration.QueryParameters.ResourceId = resourceId;
+                configuration.QueryParameters.From = from;
+                configuration.QueryParameters.To = to;
+                configuration.QueryParameters.Status = ParseEnum<Generated.CorrespondenceStatusExt>(
+                    status
+                );
+                configuration.QueryParameters.Role = ParseEnum<Generated.CorrespondencesRoleType>(
+                    role
+                );
+                configuration.QueryParameters.OnBehalfOf = onBehalfOf;
+                configuration.QueryParameters.SendersReference = sendersReference;
+                configuration.QueryParameters.IdempotentKey = idempotentKey;
+                configuration.QueryParameters.Altinn2CorrespondenceId = altinn2CorrespondenceId;
+            },
+            cancellationToken
+        );
+
+        return response?.ToLookupResponse()
+            ?? throw new InvalidOperationException("Failed to retrieve correspondences");
     }
 
     public async Task<CorrespondenceResponse> InitializeCorrespondence(
@@ -56,4 +94,8 @@ internal class AltinnCorrespondenceClient(
         return uploadResponse?.ToResponse()
             ?? throw new InvalidOperationException("Failed to send correspondence");
     }
+
+    private static TTarget? ParseEnum<TTarget>(Enum? value)
+        where TTarget : struct, Enum =>
+        Enum.TryParse<TTarget>(value?.ToString(), out var parsed) ? parsed : null;
 }

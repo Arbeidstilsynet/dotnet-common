@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed <!-- for any bug fixes. -->
 
-- fixed: `StructuredDataManager` now verifies that structured data exists by process end even when `KeepAppDataModelAfterMapping = true`.
-
 ### Security <!-- in case of vulnerabilities. -->
+
+## 2.9.0
+
+### Added
+
+- feat: Adds a new PatchDialog service task and DI extension to enable Altinn apps to patch Dialogporten dialogs, plus supporting ports and dependencies in the Arbeidstilsynet.Common.AltinnApp NuGet package
 
 ## 2.8.1
 

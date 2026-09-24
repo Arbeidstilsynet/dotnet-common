@@ -25,6 +25,18 @@ public record CorrespondenceResponse
 }
 
 /// <summary>
+/// Contains information about a correspondence list request.
+/// </summary>
+public record CorrespondenceLookupResponse
+{
+    /// <summary>
+    /// The initialized correspondences
+    /// </summary>
+    [JsonPropertyName("ids")]
+    public List<Guid>? Ids { get; init; }
+}
+
+/// <summary>
 /// Represents a correspondence that has been initialized
 /// </summary>
 public record InitializedCorrespondences
@@ -123,6 +135,11 @@ public enum CorrespondenceStatus
     /// Attachments have been downloaded by recipient
     /// </summary>
     AttachmentsDownloaded = 12,
+
+    /// <summary>
+    /// Correspondence has been forwarded by recipient.
+    /// </summary>
+    Forwarded = 13,
 }
 
 /// <summary>

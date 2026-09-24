@@ -47,6 +47,9 @@ public class DependencyInjectionTests
 
         provider.GetRequiredService<SaksarkivConfiguration>().ShouldBe(config);
         provider.GetRequiredService<SaksarkivClient>().ShouldNotBeNull();
+        provider
+            .GetRequiredService<Implementation.ISaksarkivHealthPinger>()
+            .ShouldBeOfType<Implementation.SaksarkivHealthPinger>();
 
         var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
         var httpClient = httpClientFactory.CreateClient("SaksarkivHttpClient");

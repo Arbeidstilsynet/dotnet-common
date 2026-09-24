@@ -44,6 +44,7 @@ public static class DependencyInjectionExtensions
             });
 
         services.AddHealthChecks().AddCheck<SaksarkivHealthCheck>("Saksarkiv");
+        services.AddScoped<ISaksarkivHealthPinger, SaksarkivHealthPinger>();
         services.AddScoped<SaksarkivAuthAdapter>();
         services.AddScoped<SaksarkivRequestAdapter>();
         services.AddScoped<SaksarkivClient>(serviceProvider => new SaksarkivClient(
