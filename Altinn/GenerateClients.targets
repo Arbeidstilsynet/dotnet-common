@@ -1,24 +1,24 @@
 <Project>
   <PropertyGroup>
-    <AltinnRepositoryRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\'))</AltinnRepositoryRoot>
-    <AltinnKiotaOutputRoot>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\$(BaseIntermediateOutputPath)Kiota'))</AltinnKiotaOutputRoot>
-    <AltinnKiotaSpecsDirectory>$(AltinnKiotaOutputRoot)\Specs</AltinnKiotaSpecsDirectory>
-    <AltinnKiotaToolStamp>$(AltinnKiotaOutputRoot)\tool-restore.stamp</AltinnKiotaToolStamp>
+    <AltinnRepositoryRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..'))</AltinnRepositoryRoot>
+    <AltinnKiotaOutputRoot>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)/$(BaseIntermediateOutputPath)/Kiota'))</AltinnKiotaOutputRoot>
+    <AltinnKiotaSpecsDirectory>$(AltinnKiotaOutputRoot)/Specs</AltinnKiotaSpecsDirectory>
+    <AltinnKiotaToolStamp>$(AltinnKiotaOutputRoot)/tool-restore.stamp</AltinnKiotaToolStamp>
     <AltinnKiotaTargetsFile>$(MSBuildThisFileFullPath)</AltinnKiotaTargetsFile>
-    <AltinnKiotaToolManifest>$(AltinnRepositoryRoot).config\dotnet-tools.json</AltinnKiotaToolManifest>
-    <AltinnPrepareSpecsScript>$(MSBuildThisFileDirectory)scripts\prepare-specs.mjs</AltinnPrepareSpecsScript>
+    <AltinnKiotaToolManifest>$(AltinnRepositoryRoot)/.config/dotnet-tools.json</AltinnKiotaToolManifest>
+    <AltinnPrepareSpecsScript>$(MSBuildThisFileDirectory)scripts/prepare-specs.mjs</AltinnPrepareSpecsScript>
     <AltinnKiotaLogLevel Condition="'$(AltinnKiotaLogLevel)' == ''">Critical</AltinnKiotaLogLevel>
   </PropertyGroup>
 
   <ItemGroup>
-    <AltinnOpenApiSpec Include="$(MSBuildProjectDirectory)\openapi-storage.json" />
-    <AltinnOpenApiSpec Include="$(MSBuildProjectDirectory)\openapi-events.json" />
-    <AltinnOpenApiSpec Include="$(MSBuildProjectDirectory)\openapi-authentication.json" />
-    <AltinnOpenApiSpec Include="$(MSBuildProjectDirectory)\openapi-correspondence-tt02.json" />
-    <AltinnOpenApiSpec Include="$(MSBuildProjectDirectory)\openapi-app.json" />
-    <AltinnOpenApiSpec Include="$(MSBuildProjectDirectory)\openapi-dialogporten-tt02.json" />
+    <AltinnOpenApiSpec Include="$(MSBuildProjectDirectory)/openapi-storage.json" />
+    <AltinnOpenApiSpec Include="$(MSBuildProjectDirectory)/openapi-events.json" />
+    <AltinnOpenApiSpec Include="$(MSBuildProjectDirectory)/openapi-authentication.json" />
+    <AltinnOpenApiSpec Include="$(MSBuildProjectDirectory)/openapi-correspondence-tt02.json" />
+    <AltinnOpenApiSpec Include="$(MSBuildProjectDirectory)/openapi-app.json" />
+    <AltinnOpenApiSpec Include="$(MSBuildProjectDirectory)/openapi-dialogporten-tt02.json" />
 
-    <AltinnPreparedOpenApiSpec Include="@(AltinnOpenApiSpec->'$(AltinnKiotaSpecsDirectory)\%(Filename)%(Extension)')" />
+    <AltinnPreparedOpenApiSpec Include="@(AltinnOpenApiSpec->'$(AltinnKiotaSpecsDirectory)/%(Filename)%(Extension)')" />
   </ItemGroup>
 
   <Target
@@ -48,13 +48,13 @@
   <Target
     Name="GenerateAltinnStorageClient"
     DependsOnTargets="PrepareAltinnOpenApiSpecs;RestoreAltinnKiotaTool"
-    Inputs="$(AltinnKiotaSpecsDirectory)\openapi-storage.json;$(AltinnKiotaToolManifest);$(AltinnKiotaTargetsFile)"
-    Outputs="$(AltinnKiotaOutputRoot)\Storage\StorageApiClient.cs"
+    Inputs="$(AltinnKiotaSpecsDirectory)/openapi-storage.json;$(AltinnKiotaToolManifest);$(AltinnKiotaTargetsFile)"
+    Outputs="$(AltinnKiotaOutputRoot)/Storage/StorageApiClient.cs"
     Condition="'$(DesignTimeBuild)' != 'true'"
   >
     <Message Importance="High" Text="Generating Altinn storage client with Kiota" />
     <Exec
-      Command="dotnet kiota generate -l CSharp -c StorageApiClient -n Arbeidstilsynet.Common.Altinn.Storage -d &quot;$(AltinnKiotaSpecsDirectory)\openapi-storage.json&quot; -o &quot;$(AltinnKiotaOutputRoot)\Storage&quot; --exclude-backward-compatible --clean-output --type-access-modifier Internal --log-level $(AltinnKiotaLogLevel) --include-path &quot;/instances&quot; --include-path &quot;/instances/**&quot; --exclude-path &quot;/instances/{instanceGuid}&quot;"
+      Command="dotnet kiota generate -l CSharp -c StorageApiClient -n Arbeidstilsynet.Common.Altinn.Storage -d &quot;$(AltinnKiotaSpecsDirectory)/openapi-storage.json&quot; -o &quot;$(AltinnKiotaOutputRoot)/Storage&quot; --exclude-backward-compatible --clean-output --type-access-modifier Internal --log-level $(AltinnKiotaLogLevel) --include-path &quot;/instances&quot; --include-path &quot;/instances/**&quot; --exclude-path &quot;/instances/{instanceGuid}&quot;"
       EnvironmentVariables="KIOTA_OFFLINE_ENABLED=true"
       IgnoreStandardErrorWarningFormat="true"
       WorkingDirectory="$(AltinnRepositoryRoot)"
@@ -64,13 +64,13 @@
   <Target
     Name="GenerateAltinnEventsClient"
     DependsOnTargets="PrepareAltinnOpenApiSpecs;RestoreAltinnKiotaTool"
-    Inputs="$(AltinnKiotaSpecsDirectory)\openapi-events.json;$(AltinnKiotaToolManifest);$(AltinnKiotaTargetsFile)"
-    Outputs="$(AltinnKiotaOutputRoot)\Events\EventsApiClient.cs"
+    Inputs="$(AltinnKiotaSpecsDirectory)/openapi-events.json;$(AltinnKiotaToolManifest);$(AltinnKiotaTargetsFile)"
+    Outputs="$(AltinnKiotaOutputRoot)/Events/EventsApiClient.cs"
     Condition="'$(DesignTimeBuild)' != 'true'"
   >
     <Message Importance="High" Text="Generating Altinn events client with Kiota" />
     <Exec
-      Command="dotnet kiota generate -l CSharp -c EventsApiClient -n Arbeidstilsynet.Common.Altinn.Events -d &quot;$(AltinnKiotaSpecsDirectory)\openapi-events.json&quot; -o &quot;$(AltinnKiotaOutputRoot)\Events&quot; --exclude-backward-compatible --clean-output --type-access-modifier Internal --log-level $(AltinnKiotaLogLevel) --include-path &quot;/subscriptions&quot; --include-path &quot;/subscriptions/**&quot;"
+      Command="dotnet kiota generate -l CSharp -c EventsApiClient -n Arbeidstilsynet.Common.Altinn.Events -d &quot;$(AltinnKiotaSpecsDirectory)/openapi-events.json&quot; -o &quot;$(AltinnKiotaOutputRoot)/Events&quot; --exclude-backward-compatible --clean-output --type-access-modifier Internal --log-level $(AltinnKiotaLogLevel) --include-path &quot;/subscriptions&quot; --include-path &quot;/subscriptions/**&quot;"
       EnvironmentVariables="KIOTA_OFFLINE_ENABLED=true"
       IgnoreStandardErrorWarningFormat="true"
       WorkingDirectory="$(AltinnRepositoryRoot)"
@@ -80,13 +80,13 @@
   <Target
     Name="GenerateAltinnAuthenticationClient"
     DependsOnTargets="PrepareAltinnOpenApiSpecs;RestoreAltinnKiotaTool"
-    Inputs="$(AltinnKiotaSpecsDirectory)\openapi-authentication.json;$(AltinnKiotaToolManifest);$(AltinnKiotaTargetsFile)"
-    Outputs="$(AltinnKiotaOutputRoot)\Authentication\AuthenticationApiClient.cs"
+    Inputs="$(AltinnKiotaSpecsDirectory)/openapi-authentication.json;$(AltinnKiotaToolManifest);$(AltinnKiotaTargetsFile)"
+    Outputs="$(AltinnKiotaOutputRoot)/Authentication/AuthenticationApiClient.cs"
     Condition="'$(DesignTimeBuild)' != 'true'"
   >
     <Message Importance="High" Text="Generating Altinn authentication client with Kiota" />
     <Exec
-      Command="dotnet kiota generate -l CSharp -c AuthenticationApiClient -n Arbeidstilsynet.Common.Altinn.Authentication -d &quot;$(AltinnKiotaSpecsDirectory)\openapi-authentication.json&quot; -o &quot;$(AltinnKiotaOutputRoot)\Authentication&quot; --exclude-backward-compatible --clean-output --type-access-modifier Internal --log-level $(AltinnKiotaLogLevel) --include-path &quot;/exchange/**&quot;"
+      Command="dotnet kiota generate -l CSharp -c AuthenticationApiClient -n Arbeidstilsynet.Common.Altinn.Authentication -d &quot;$(AltinnKiotaSpecsDirectory)/openapi-authentication.json&quot; -o &quot;$(AltinnKiotaOutputRoot)/Authentication&quot; --exclude-backward-compatible --clean-output --type-access-modifier Internal --log-level $(AltinnKiotaLogLevel) --include-path &quot;/exchange/**&quot;"
       EnvironmentVariables="KIOTA_OFFLINE_ENABLED=true"
       IgnoreStandardErrorWarningFormat="true"
       WorkingDirectory="$(AltinnRepositoryRoot)"
@@ -96,13 +96,13 @@
   <Target
     Name="GenerateAltinnCorrespondenceClient"
     DependsOnTargets="PrepareAltinnOpenApiSpecs;RestoreAltinnKiotaTool"
-    Inputs="$(AltinnKiotaSpecsDirectory)\openapi-correspondence-tt02.json;$(AltinnKiotaToolManifest);$(AltinnKiotaTargetsFile)"
-    Outputs="$(AltinnKiotaOutputRoot)\Correspondence\CorrespondenceApiClient.cs"
+    Inputs="$(AltinnKiotaSpecsDirectory)/openapi-correspondence-tt02.json;$(AltinnKiotaToolManifest);$(AltinnKiotaTargetsFile)"
+    Outputs="$(AltinnKiotaOutputRoot)/Correspondence/CorrespondenceApiClient.cs"
     Condition="'$(DesignTimeBuild)' != 'true'"
   >
     <Message Importance="High" Text="Generating Altinn correspondence client with Kiota" />
     <Exec
-      Command="dotnet kiota generate -l CSharp -c CorrespondenceApiClient -n Arbeidstilsynet.Common.Altinn.Correspondence -d &quot;$(AltinnKiotaSpecsDirectory)\openapi-correspondence-tt02.json&quot; -o &quot;$(AltinnKiotaOutputRoot)\Correspondence&quot; --exclude-backward-compatible --clean-output --type-access-modifier Internal --log-level $(AltinnKiotaLogLevel)"
+      Command="dotnet kiota generate -l CSharp -c CorrespondenceApiClient -n Arbeidstilsynet.Common.Altinn.Correspondence -d &quot;$(AltinnKiotaSpecsDirectory)/openapi-correspondence-tt02.json&quot; -o &quot;$(AltinnKiotaOutputRoot)/Correspondence&quot; --exclude-backward-compatible --clean-output --type-access-modifier Internal --log-level $(AltinnKiotaLogLevel)"
       EnvironmentVariables="KIOTA_OFFLINE_ENABLED=true"
       IgnoreStandardErrorWarningFormat="true"
       WorkingDirectory="$(AltinnRepositoryRoot)"
@@ -112,13 +112,13 @@
   <Target
     Name="GenerateAltinnAppsClient"
     DependsOnTargets="PrepareAltinnOpenApiSpecs;RestoreAltinnKiotaTool"
-    Inputs="$(AltinnKiotaSpecsDirectory)\openapi-app.json;$(AltinnKiotaToolManifest);$(AltinnKiotaTargetsFile)"
-    Outputs="$(AltinnKiotaOutputRoot)\Apps\AppsApiClient.cs"
+    Inputs="$(AltinnKiotaSpecsDirectory)/openapi-app.json;$(AltinnKiotaToolManifest);$(AltinnKiotaTargetsFile)"
+    Outputs="$(AltinnKiotaOutputRoot)/Apps/AppsApiClient.cs"
     Condition="'$(DesignTimeBuild)' != 'true'"
   >
     <Message Importance="High" Text="Generating Altinn apps client with Kiota" />
     <Exec
-      Command="dotnet kiota generate -l CSharp -c AppsApiClient -n Arbeidstilsynet.Common.Altinn.Apps -d &quot;$(AltinnKiotaSpecsDirectory)\openapi-app.json&quot; -o &quot;$(AltinnKiotaOutputRoot)\Apps&quot; --exclude-backward-compatible --clean-output --type-access-modifier Internal --log-level $(AltinnKiotaLogLevel) --include-path &quot;/*/*/instances/**&quot; --exclude-path &quot;**/data/*/validate&quot;"
+      Command="dotnet kiota generate -l CSharp -c AppsApiClient -n Arbeidstilsynet.Common.Altinn.Apps -d &quot;$(AltinnKiotaSpecsDirectory)/openapi-app.json&quot; -o &quot;$(AltinnKiotaOutputRoot)/Apps&quot; --exclude-backward-compatible --clean-output --type-access-modifier Internal --log-level $(AltinnKiotaLogLevel) --include-path &quot;/*/*/instances/**&quot; --exclude-path &quot;**/data/*/validate&quot;"
       EnvironmentVariables="KIOTA_OFFLINE_ENABLED=true"
       IgnoreStandardErrorWarningFormat="true"
       WorkingDirectory="$(AltinnRepositoryRoot)"
@@ -128,13 +128,13 @@
   <Target
     Name="GenerateAltinnDialogportenClient"
     DependsOnTargets="PrepareAltinnOpenApiSpecs;RestoreAltinnKiotaTool"
-    Inputs="$(AltinnKiotaSpecsDirectory)\openapi-dialogporten-tt02.json;$(AltinnKiotaToolManifest);$(AltinnKiotaTargetsFile)"
-    Outputs="$(AltinnKiotaOutputRoot)\Dialogporten\DialogportenApiClient.cs"
+    Inputs="$(AltinnKiotaSpecsDirectory)/openapi-dialogporten-tt02.json;$(AltinnKiotaToolManifest);$(AltinnKiotaTargetsFile)"
+    Outputs="$(AltinnKiotaOutputRoot)/Dialogporten/DialogportenApiClient.cs"
     Condition="'$(DesignTimeBuild)' != 'true'"
   >
     <Message Importance="High" Text="Generating Altinn Dialogporten client with Kiota" />
     <Exec
-      Command="dotnet kiota generate -l CSharp -c DialogportenApiClient -n Arbeidstilsynet.Common.Altinn.Dialogporten -d &quot;$(AltinnKiotaSpecsDirectory)\openapi-dialogporten-tt02.json&quot; -o &quot;$(AltinnKiotaOutputRoot)\Dialogporten&quot; --exclude-backward-compatible --clean-output --type-access-modifier Internal --log-level $(AltinnKiotaLogLevel) --include-path &quot;/api/v1/serviceowner/dialoglookup&quot; --include-path &quot;/api/v1/serviceowner/dialogs/**&quot;"
+      Command="dotnet kiota generate -l CSharp -c DialogportenApiClient -n Arbeidstilsynet.Common.Altinn.Dialogporten -d &quot;$(AltinnKiotaSpecsDirectory)/openapi-dialogporten-tt02.json&quot; -o &quot;$(AltinnKiotaOutputRoot)/Dialogporten&quot; --exclude-backward-compatible --clean-output --type-access-modifier Internal --log-level $(AltinnKiotaLogLevel) --include-path &quot;/api/v1/serviceowner/dialoglookup&quot; --include-path &quot;/api/v1/serviceowner/dialogs/**&quot;"
       EnvironmentVariables="KIOTA_OFFLINE_ENABLED=true"
       IgnoreStandardErrorWarningFormat="true"
       WorkingDirectory="$(AltinnRepositoryRoot)"
@@ -162,7 +162,7 @@
     Condition="'$(DesignTimeBuild)' != 'true'"
   >
     <ItemGroup>
-      <Compile Include="$(AltinnKiotaOutputRoot)\**\*.cs" />
+      <Compile Include="$(AltinnKiotaOutputRoot)/**/*.cs" />
     </ItemGroup>
   </Target>
 </Project>
