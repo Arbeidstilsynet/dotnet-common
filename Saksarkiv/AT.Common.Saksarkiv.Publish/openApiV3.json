@@ -1,13 +1,14 @@
 {
-  "openapi": "3.0.4",
+  "openapi": "3.1.1",
   "info": {
     "title": "Saksarkivtjenesten v3",
-    "description": "### Asynkront REST API for arkiveringsoperasjoner\n- Operasjoner som oppretter eller muterer returnerer 202 Accepted med en meldings-ID for statussporing\n- Overvåk status for kømeldinger via `/meldinger/{meldingId}`-endepunktet\n- Bruk `eksternId` for å entydig identifisere Saker og Journalposter. Disse genereres av klienten, og er påkrevd av API'et. Kan være nyttig å prefikse med navn på fagsystem\n- Feilede meldinger flyttes til Dead Letter Queue og kan legges tilbake i kø etter inspeksjon\n- API'et garanterer at meldinger som muterer samme ressurs, behandles i rekkefølgen de kom inn, det medfører at:\n    - Om en melding som behandler ressurs X feiler, vil alle påfølgende meldinger som muterer ressurs X også feile\n    - For å løse opp i en blokkert sekvens, må vi enten; A) Fikse problemet/buggen, og legge meldingen tilbake i kø, eller B) Slette meldingen fra Dead Letter Queue. Da vil neste melding i sekvensen bli prosessert\n    - Det er kun administratorer som kan administrere meldinger på køen (gjenprøv, slett, list, etc.)\n\n#### Autentisering Bearer-token med rollebasert tilgang:\n- Den autentiserte brukeren må ha tilgang via arkivets (Elements) eget system for tilgangskontroll i tillegg til Saksarkivtjenesten\n- For å kunne benytte en systembruker til kommunikasjon med Saksarkivtjenesten, må en Azure Administrator legge inn arkivbrukernavnet som et sikkerhetsattributt i den brukte EntraId Enterprise App\n##### Roller\n- `ReadWrite` - Opprett/oppdater-operasjoner\n- `Read` - Leseoperasjoner\n- `Queue.Manage` - Køadministrasjon\n\n#### Arkiveringsattributter\n\nFor spørsmål om hvilke verdier som skal benyttes for arkivspesifikke attributter (tilgangskode, sakstype, arkivkode, etc.), kontakt avdeling for Dokumentforvaltning",
+    "description": "### Asynkront REST API for arkiveringsoperasjoner\n- Operasjoner som oppretter eller muterer returnerer 202 Accepted med en meldings-ID for statussporing\n- Overvåk status for kømeldinger via `/meldinger/{meldingId}`-endepunktet\n- Feilede meldinger flyttes til Dead Letter Queue og kan legges tilbake i kø etter inspeksjon\n- API'et garanterer at meldinger som muterer samme ressurs, behandles i rekkefølgen de kom inn, det medfører at:\n    - Om en melding som behandler ressurs X feiler, vil alle påfølgende meldinger som muterer ressurs X også feile\n    - For å løse opp i en blokkert sekvens, må vi enten; A) Fikse problemet/buggen, og legge meldingen tilbake i kø, eller B) Slette meldingen fra Dead Letter Queue. Da vil neste melding i sekvensen bli prosessert\n    - Det er kun administratorer som kan administrere meldinger på køen (gjenprøv, slett, list, etc.)\n\n#### Autentisering Bearer-token med rollebasert tilgang:\n- Den autentiserte brukeren må ha tilgang via arkivets (Elements) eget system for tilgangskontroll i tillegg til Saksarkivtjenesten\n- For å kunne benytte en systembruker til kommunikasjon med Saksarkivtjenesten, må en Azure Administrator legge inn arkivbrukernavnet som et sikkerhetsattributt i den brukte EntraId Enterprise App\n##### Roller\n- `ReadWrite` - Opprett/oppdater-operasjoner\n- `Read` - Leseoperasjoner\n- `Queue.Manage` - Køadministrasjon\n\n#### Arkiveringsattributter\n\nFor spørsmål om hvilke verdier som skal benyttes for arkivspesifikke attributter (tilgangskode, sakstype, arkivkode, etc.), kontakt avdeling for Dokumentforvaltning\n\n#### Andre attributter\n- `eksternId` - Entydig identifikator for Saker og Journalposter, generert av klienten. Må være unik globalt. Kan være nyttig å prefikse med navn på fagsystem\n- `eksternTag` - Valgfritt tekst felt som kan brukes til å legge ved tillgesinformasjon om Saker og Journalposter\n- `skjermetOrd`/`skjermetNavn` - Uavhengig av tilgangskode, kan alle titler leses av offentligheten. Om tittel på saker eller journalposter inneholder sensitive opplysninger, skal disse feltene benyttes for å skjerme deler av tittel.\n    For eksempel:\n    ```\n        \"Tittel\": \"Sak om dårlig oppførsel begått av Kari Nordmann\"\n        \"SkjermetNavn\": [\"Kari Nordmann\"]\n        \"SkjermetOrd\": [\"dårlig\", \"oppførsel\"]\n        ----------------------------------------------\n        Resultat: \"Sak om ***** ***** begått av +++++ ++++_\n    ```",
     "contact": {
       "name": "Team Plattform",
       "url": "https://arbeidstilsynet-group.slack.com/archives/C09TZT2R6FM"
     },
-    "version": "v3"
+    "version": "v3",
+    "summary": "Build: v1.1+0130aef7"
   },
   "paths": {
     "/api/v3/dokumenter/{dokumentId}": {
@@ -1067,16 +1068,19 @@
           "content": {
             "application/json": {
               "schema": {
+                "description": "Request om å oppdatere en eksisterende sak i saksarkivet.",
                 "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OppdaterSakRequest"
               }
             },
             "text/json": {
               "schema": {
+                "description": "Request om å oppdatere en eksisterende sak i saksarkivet.",
                 "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OppdaterSakRequest"
               }
             },
             "application/*+json": {
               "schema": {
+                "description": "Request om å oppdatere en eksisterende sak i saksarkivet.",
                 "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OppdaterSakRequest"
               }
             }
@@ -1211,17 +1215,6 @@
           "Saker"
         ],
         "summary": "Opprett en ny sak (asynkron) (roller: ReadWrite)",
-        "description": "For å avslutte saken umiddelbart etter opprettelse, sett query-parameteren avslutt til true.",
-        "parameters": [
-          {
-            "name": "avslutt",
-            "in": "query",
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
-          }
-        ],
         "requestBody": {
           "content": {
             "multipart/form-data": {
@@ -1232,6 +1225,7 @@
                 "type": "object",
                 "properties": {
                   "payload": {
+                    "description": "Forespørsel om å opprette en ny sak i saksarkivet.",
                     "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettSakRequest"
                   },
                   "filer": {
@@ -1406,6 +1400,7 @@
                 "type": "object",
                 "properties": {
                   "payload": {
+                    "description": "Forespørsel om å opprette en ny journalpost på eksisterende sak i saksarkivet.",
                     "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettJournalpostRequest"
                   },
                   "filer": {
@@ -1489,89 +1484,106 @@
         "type": "object",
         "properties": {
           "beskrivelse": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "roller": {
-            "type": "array",
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
               "type": "string"
-            },
-            "nullable": true
+            }
           },
           "kode": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false
       },
       "AT.eArkiv.Entiteter.API.V3.HentSakResponse": {
         "required": [
-          "ansvarligEnhetKode",
           "arkivkode",
           "eksternId",
           "saksId",
           "saksbehandler",
           "sakstype",
           "status",
-          "tilgangskodeVerdi",
           "tittel"
         ],
         "type": "object",
         "properties": {
           "saksId": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "tittel": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "saksbehandler": {
-            "type": "string",
-            "nullable": true
-          },
-          "ansvarligEnhetKode": {
-            "type": "string",
-            "nullable": true
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.Saksbehandler"
           },
           "eksternId": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "eksternTag": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "sakstype": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "status": {
             "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.Sakstatus"
           },
-          "tilgangskodeVerdi": {
-            "type": "string",
-            "nullable": true
+          "tilgangskode": {
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "arkivkode": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "saksparter": {
-            "type": "array",
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
               "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.HentSakResponseSaksPart"
-            },
-            "nullable": true
+            }
           },
           "journalposter": {
-            "type": "array",
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
               "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.HentSakResponseJournalpost"
-            },
-            "nullable": true
+            }
           }
         },
         "additionalProperties": false
@@ -1585,16 +1597,28 @@
         "type": "object",
         "properties": {
           "tittel": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "filending": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "dokumentId": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "tilgangskode": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false
@@ -1605,20 +1629,34 @@
           "hoveddokument",
           "journalpostType",
           "personInfo",
+          "saksbehandler",
           "tittel"
         ],
         "type": "object",
         "properties": {
           "eksternId": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "journalpostType": {
             "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.Journalposttype"
           },
+          "saksbehandler": {
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.Saksbehandler"
+          },
           "tittel": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "tilgangskode": {
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "personInfo": {
             "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.HentSakResponsePersonInfo"
@@ -1627,11 +1665,13 @@
             "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.HentSakResponseDokument"
           },
           "vedlegg": {
-            "type": "array",
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
               "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.HentSakResponseDokument"
-            },
-            "nullable": true
+            }
           }
         },
         "additionalProperties": false
@@ -1643,36 +1683,52 @@
         "type": "object",
         "properties": {
           "navn": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "organisasjonsnummer": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "personnummer": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "adresse": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "postnummer": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "poststed": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "epost": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "telefon": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false
@@ -1684,36 +1740,52 @@
         "type": "object",
         "properties": {
           "navn": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "organisasjonsnummer": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "personnummer": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "adresse": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "postnummer": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "poststed": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "epost": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "telefon": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false
@@ -1731,16 +1803,22 @@
         "type": "object",
         "properties": {
           "kode": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "beskrivelse": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "arkivdel": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false
@@ -1750,65 +1828,94 @@
         "properties": {
           "tittel": {
             "maxLength": 255,
-            "type": "string",
-            "description": "Ny tittel for saken. Maks 255 tegn.",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Ny tittel for saken. Maks 255 tegn."
           },
           "skjermetOrd": {
-            "type": "array",
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
               "type": "string"
             },
-            "description": "Ord i tittelen som skal skjermes",
-            "nullable": true
+            "description": "Ord i tittelen som skal skjermes"
           },
           "skjermetNavn": {
-            "type": "array",
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
               "type": "string"
             },
-            "description": "Navn i tittelen som skal skjermes. Eks. ['ola nordman', 'kari brekstad']",
-            "nullable": true
+            "description": "Navn i tittelen som skal skjermes. Eks. ['ola nordman', 'kari brekstad']"
           },
           "saksbehandler": {
-            "type": "string",
-            "description": "Nytt Elements brukernavn til saksbehandler (f.eks ETTERNAVN_F).",
-            "nullable": true
-          },
-          "ansvarligEnhetKode": {
-            "type": "string",
-            "description": "Ny ansvarlig enhetskode (administrativ inndeling), f.eks. 'UAT'.",
-            "nullable": true
+            "description": "Ny saksbehandler",
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.Saksbehandler"
           },
           "eksternTag": {
             "maxLength": 200,
-            "type": "string",
-            "description": "Ny ekstern tag (klassering EKSTERNREF). Maks 200 tegn.",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Ny ekstern tag (klassering EKSTERNREF). Maks 200 tegn."
           },
           "sakstype": {
-            "type": "string",
-            "description": "Ny sakstype (mappetype) for saken.",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Ny sakstype (mappetype) for saken."
           },
           "tilgangskode": {
-            "type": "string",
-            "description": "Ny tilgangskode for skjerming av saken.",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Ny tilgangskode for skjerming av saken."
           },
           "arkivkode": {
-            "type": "string",
-            "description": "Ny arkivkode for saken.",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Ny arkivkode for saken."
           }
         },
         "additionalProperties": false,
         "description": "Request om å oppdatere en eksisterende sak i saksarkivet."
       },
+      "AT.eArkiv.Entiteter.API.V3.OpprettDokumentRequest": {
+        "required": [
+          "filnavn"
+        ],
+        "type": "object",
+        "properties": {
+          "filnavn": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Filnavnet på dokumentet. Må matche et opplastet filnavn."
+          },
+          "tilgangskode": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Tilgangskode for dokumentet. Hvis den ikke settes, brukes sakens eller journalpostens tilgangskode."
+          }
+        },
+        "additionalProperties": false
+      },
       "AT.eArkiv.Entiteter.API.V3.OpprettJournalpostRequest": {
         "required": [
           "eksternId",
-          "hoveddokumentFilnavn",
+          "hoveddokument",
           "journalpostType",
           "personInfo",
           "tittel"
@@ -1830,36 +1937,53 @@
             "type": "string",
             "description": "Journalpostens tittel. Maks 255 tegn."
           },
+          "tilgangskode": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Tilgangskode for skjerming av journalposten. Hvis den ikke settes, arves sakens tilgangskode."
+          },
           "skjermetOrd": {
-            "type": "array",
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
               "type": "string"
             },
-            "description": "Ord i tittelen som skal skjermes",
-            "nullable": true
+            "description": "Ord i tittelen som skal skjermes"
           },
           "skjermetNavn": {
-            "type": "array",
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
               "type": "string"
             },
-            "description": "Navn i tittelen som skal skjermes. Eks. ['ola nordman', 'kari brekstad']",
-            "nullable": true
+            "description": "Navn i tittelen som skal skjermes. Eks. ['ola nordman', 'kari brekstad']"
           },
-          "hoveddokumentFilnavn": {
-            "minLength": 1,
-            "type": "string",
-            "description": "Navnet på hoveddokumentet i journalposten. En fil med samme navn må lastes opp i 'filer'-feltet."
+          "saksbehandler": {
+            "description": "Saksbehandler av journalposten. Hvis tom, brukes sakens saksbehandler.",
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.Saksbehandler"
           },
-          "vedleggFilnavn": {
-            "type": "array",
+          "hoveddokument": {
+            "description": "Hoveddokumentet i journalposten. Filnavnet må finnes i listen med opplastede filer.",
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettDokumentRequest"
+          },
+          "vedlegg": {
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettDokumentRequest"
             },
-            "description": "Navn på vedlegg til journalposten. Alle filnavn må finnes i listen med opplastede filer.",
-            "nullable": true
+            "description": "Vedlegg til journalposten. Filnavn må finnes i listen med opplastede filer."
           },
           "personInfo": {
+            "description": "Personinfo for avsender/mottaker pa journalposten.",
             "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettJournalpostRequestPersonInfo"
           }
         },
@@ -1877,45 +2001,57 @@
             "type": "string"
           },
           "organisasjonsnummer": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "personnummer": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "adresse": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "postnummer": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "poststed": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "epost": {
-            "type": "string",
-            "format": "email",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "email"
           },
           "telefon": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false
       },
       "AT.eArkiv.Entiteter.API.V3.OpprettSakRequest": {
         "required": [
-          "ansvarligEnhetKode",
           "arkivkode",
           "eksternId",
           "saksbehandler",
           "sakstype",
-          "tilgangskode",
           "tittel"
         ],
         "type": "object",
@@ -1927,14 +2063,8 @@
             "description": "Sakens tittel. Maks 255 tegn."
           },
           "saksbehandler": {
-            "minLength": 1,
-            "type": "string",
-            "description": "Elements brukernavn (f.eks ETTERNAVN_F) til saksbehandler av saken."
-          },
-          "ansvarligEnhetKode": {
-            "minLength": 1,
-            "type": "string",
-            "description": "Kode for ansvarlig organisasjonsenhet (administrativ inndeling). F.eks: 'UAT'. Kan listes ut ved '/apiv2/metadata/organisatoriskeEnheter' "
+            "description": "Saksbehandler av saken (Også referert til som 'Saksansvarlig').",
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.Saksbehandler"
           },
           "eksternId": {
             "maxLength": 200,
@@ -1945,9 +2075,11 @@
           },
           "eksternTag": {
             "maxLength": 200,
-            "type": "string",
-            "description": "En indeksert og søkbar vilkårlig tekst som lagres som en klassering (EKSTERNREF).Kan f.eks. brukes til å korrelere saker. Maks 200 tegn.",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "En indeksert og søkbar vilkårlig tekst som lagres som en klassering (EKSTERNREF).Kan f.eks. brukes til å korrelere saker. Maks 200 tegn."
           },
           "sakstype": {
             "minLength": 1,
@@ -1960,44 +2092,56 @@
             "description": "Arkivkode under Arbeidstilsynets arkivnøkkel. Kontakt dokumentforvaltning for å få en kode som passer."
           },
           "tilgangskode": {
-            "minLength": 1,
-            "type": "string",
-            "description": "Tilgangskode for skjerming av saken. Finn gjeldende koder på '/v3/metadata/tilgangskoder'"
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Tilgangskode for skjerming av saken. Hvis den ikke settes, tolkes det som 'offentlig informasjon'. Finn gjeldende koder på '/v3/metadata/tilgangskoder'"
           },
           "saksparter": {
-            "type": "array",
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
+              "description": "Sakspart på en sak. Enten organisasjonsnummer eller personnummer kan angis, ikke begge.",
               "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettSakRequestSakspart"
             },
-            "description": "Hvilken person eller bedrift saken angår, eller andre interessenter.",
-            "nullable": true
+            "description": "Hvilken person eller bedrift saken angår, eller andre interessenter."
           },
           "skjermetOrd": {
-            "type": "array",
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
               "type": "string"
             },
-            "description": "Ord i tittelen som skal skjermes",
-            "nullable": true
+            "description": "Ord i tittelen som skal skjermes"
           },
           "skjermetNavn": {
-            "type": "array",
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
               "type": "string"
             },
-            "description": "Navn i tittelen som skal skjermes. Eks. ['ola nordman', 'kari brekstad']",
-            "nullable": true
+            "description": "Navn i tittelen som skal skjermes. Eks. ['ola nordman', 'kari brekstad']"
           },
           "status": {
+            "description": "Saksstatus. Avsluttet brukes når sak skal opprettes som ferdigstilt.",
             "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.Sakstatus"
           },
           "journalposter": {
-            "type": "array",
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
               "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettSakRequestJournalpost"
             },
-            "description": "Journalposter som skal opprettes sammen med saken.",
-            "nullable": true
+            "description": "Journalposter som skal opprettes sammen med saken."
           }
         },
         "additionalProperties": false,
@@ -2006,7 +2150,7 @@
       "AT.eArkiv.Entiteter.API.V3.OpprettSakRequestJournalpost": {
         "required": [
           "eksternId",
-          "hoveddokumentFilnavn",
+          "hoveddokument",
           "journalpostType",
           "personInfo",
           "tittel"
@@ -2027,36 +2171,53 @@
             "type": "string",
             "description": "Journalpostens tittel. Maks 255 tegn."
           },
+          "tilgangskode": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Tilgangskode for skjerming av journalposten. Hvis den ikke settes, arves saken sin tilgangskode. Finn gjeldende koder på '/api/v3/metadata/tilgangskoder'"
+          },
           "skjermetOrd": {
-            "type": "array",
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
               "type": "string"
             },
-            "description": "Ord i tittelen som skal skjermes",
-            "nullable": true
+            "description": "Ord i tittelen som skal skjermes"
           },
           "skjermetNavn": {
-            "type": "array",
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
               "type": "string"
             },
-            "description": "Navn i tittelen som skal skjermes. Eks. ['ola nordman', 'kari brekstad']",
-            "nullable": true
+            "description": "Navn i tittelen som skal skjermes. Eks. ['ola nordman', 'kari brekstad']"
           },
-          "hoveddokumentFilnavn": {
-            "minLength": 1,
-            "type": "string",
-            "description": "Navnet på hoveddokumentet i journalposten. En fil med samme navn må lastes opp i 'filer' feltet."
+          "saksbehandler": {
+            "description": "Saksbehandler av journalposten. Hvis tom, brukes sakens saksbehandler.",
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.Saksbehandler"
           },
-          "vedleggFilnavn": {
-            "type": "array",
+          "hoveddokument": {
+            "description": "Hoveddokumentet i journalposten. Filnavnet må finnes i listen med opplastede filer.",
+            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettDokumentRequest"
+          },
+          "vedlegg": {
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettDokumentRequest"
             },
-            "description": "Navn på vedlegg til journalposten. Alle filnavn må finnes i listen med opplastede filer.",
-            "nullable": true
+            "description": "Vedlegg til journalposten. Filnavn må finnes i listen med opplastede filer."
           },
           "personInfo": {
+            "description": "Person info for mottaker av journalposten. TODO: Alltid påkrevd?",
             "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettSakRequestPersonInfo"
           }
         },
@@ -2073,33 +2234,47 @@
             "type": "string"
           },
           "organisasjonsnummer": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "personnummer": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "adresse": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "postnummer": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "poststed": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "epost": {
-            "type": "string",
-            "format": "email",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "email"
           },
           "telefon": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false
@@ -2116,39 +2291,73 @@
             "description": "Sakspartens fulle navn (person eller organisasjon). Påkrevd."
           },
           "organisasjonsnummer": {
-            "type": "string",
-            "description": "Organisasjonsnummer (9 siffer). Valgfritt, kan ikke kombineres med Personnummer.",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Organisasjonsnummer (9 siffer). Valgfritt, kan ikke kombineres med Personnummer."
           },
           "personnummer": {
-            "type": "string",
-            "description": "Personnummer/fødselsnummer (11 siffer). Valgfritt, kan ikke kombineres med Organisasjonsnummer.",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Personnummer/fødselsnummer (11 siffer). Valgfritt, kan ikke kombineres med Organisasjonsnummer."
           },
           "adresse": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "postnummer": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "poststed": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "epost": {
-            "type": "string",
-            "format": "email",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "email"
           },
           "telefon": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false,
         "description": "Sakspart på en sak. Enten organisasjonsnummer eller personnummer kan angis, ikke begge."
+      },
+      "AT.eArkiv.Entiteter.API.V3.Saksbehandler": {
+        "required": [
+          "avdeling",
+          "brukernavn"
+        ],
+        "type": "object",
+        "properties": {
+          "brukernavn": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Arkivbrukernavn (f.eks ETTERNAVN_F) til saksbehandler."
+          },
+          "avdeling": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Avdelingskode for saksbehandler (administrativ inndeling). F.eks: 'UAT'. Kan listes ut ved '/api/v3/metadata/administrativenheter/{arkivbruker}' "
+          }
+        },
+        "additionalProperties": false
       },
       "AT.eArkiv.Entiteter.API.V3.Sakstatus": {
         "enum": [
@@ -2161,12 +2370,16 @@
         "type": "object",
         "properties": {
           "kode": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "beskrivelse": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false
@@ -2175,42 +2388,56 @@
         "type": "object",
         "properties": {
           "type": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "title": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
           },
           "detail": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "instance": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "errors": {
-            "type": "object",
+            "type": [
+              "null",
+              "object"
+            ],
             "additionalProperties": {
               "type": "array",
               "items": {
                 "type": "string"
               }
-            },
-            "nullable": true
+            }
           },
           "traceId": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
-        "additionalProperties": { }
+        "additionalProperties": {}
       },
       "Domain.V3.Queue.MeldingOperasjon": {
         "enum": [
@@ -2234,8 +2461,10 @@
         "type": "object",
         "properties": {
           "meldingId": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "status": {
             "$ref": "#/components/schemas/Domain.V3.Queue.MeldingStatusType"
@@ -2248,37 +2477,49 @@
             "format": "date-time"
           },
           "arkivBrukernavn": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "resultat": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "feil": {
             "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
           },
           "fullfort": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
           },
           "attempts": {
             "type": "integer",
             "format": "int32"
           },
           "sekvensnummer": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
           },
           "eksternId": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "slettingBegrunnelse": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false
@@ -2328,11 +2569,13 @@
         "type": "object",
         "properties": {
           "meldinger": {
-            "type": "array",
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
               "$ref": "#/components/schemas/Domain.V3.Queue.MeldingStatus"
-            },
-            "nullable": true
+            }
           },
           "totaltAntall": {
             "type": "integer",
@@ -2342,34 +2585,16 @@
             "$ref": "#/components/schemas/Domain.V3.Queue.MeldingStatusOversikt"
           },
           "nextCursor": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false
       }
-    },
-    "securitySchemes": {
-      "oauth2": {
-        "type": "oauth2",
-        "description": "Logg inn med Entra for å autorisere kall direkte i Swagger UI.",
-        "flows": {
-          "authorizationCode": {
-            "authorizationUrl": "https://login.microsoftonline.com/da4bf886-a8a6-450d-a806-c347b8eb8d80/oauth2/v2.0/authorize",
-            "tokenUrl": "https://login.microsoftonline.com/da4bf886-a8a6-450d-a806-c347b8eb8d80/oauth2/v2.0/token",
-            "scopes": {
-              "a1ace59d-a80d-424b-b7f8-4f3cb149c1a4/.default": "Tilgang til Saksarkiv API'et med dine tildelte roller"
-            }
-          }
-        }
-      }
     }
   },
-  "security": [
-    {
-      "oauth2": [ ]
-    }
-  ],
   "tags": [
     {
       "name": "Dokumenter"

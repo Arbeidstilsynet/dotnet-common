@@ -37,7 +37,6 @@ public static class SaksarkivClientV3Extensions
         this SaksarkivClientV3 client,
         OpprettSakRequest request,
         IEnumerable<SaksarkivFile>? files = null,
-        bool avslutt = false,
         CancellationToken cancellationToken = default
     )
     {
@@ -48,7 +47,6 @@ public static class SaksarkivClientV3Extensions
 
         return await client.Api.V3.Saker.PostAsync(
             body,
-            config => config.QueryParameters.Avslutt = avslutt,
             cancellationToken: cancellationToken
         );
     }

@@ -7,10 +7,11 @@ using System.IO;
 using System;
 namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
 {
+    /// <summary>
+    /// Personinfo for avsender/mottaker pa journalposten.
+    /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    #pragma warning disable CS1591
     public partial class OpprettJournalpostRequestPersonInfo : IParsable
-    #pragma warning restore CS1591
     {
         /// <summary>The adresse property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

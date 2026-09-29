@@ -7,28 +7,21 @@ using System.IO;
 using System;
 namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
 {
+    /// <summary>
+    /// Hoveddokumentet i journalposten. Filnavnet må finnes i listen med opplastede filer.
+    /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    #pragma warning disable CS1591
-    public partial class HentSakResponseDokument : IParsable
-    #pragma warning restore CS1591
+    public partial class OpprettDokumentRequest : IParsable
     {
-        /// <summary>The dokumentId property</summary>
+        /// <summary>Filnavnet på dokumentet. Må matche et opplastet filnavn.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? DokumentId { get; set; }
+        public string? Filnavn { get; set; }
 #nullable restore
 #else
-        public string DokumentId { get; set; }
+        public string Filnavn { get; set; }
 #endif
-        /// <summary>The filending property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Filending { get; set; }
-#nullable restore
-#else
-        public string Filending { get; set; }
-#endif
-        /// <summary>The tilgangskode property</summary>
+        /// <summary>Tilgangskode for dokumentet. Hvis den ikke settes, brukes sakens eller journalpostens tilgangskode.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? Tilgangskode { get; set; }
@@ -36,23 +29,15 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
 #else
         public string Tilgangskode { get; set; }
 #endif
-        /// <summary>The tittel property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Tittel { get; set; }
-#nullable restore
-#else
-        public string Tittel { get; set; }
-#endif
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.HentSakResponseDokument"/></returns>
+        /// <returns>A <see cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettDokumentRequest"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.HentSakResponseDokument CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettDokumentRequest CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-            return new global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.HentSakResponseDokument();
+            return new global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettDokumentRequest();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -62,10 +47,8 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "dokumentId", n => { DokumentId = n.GetStringValue(); } },
-                { "filending", n => { Filending = n.GetStringValue(); } },
+                { "filnavn", n => { Filnavn = n.GetStringValue(); } },
                 { "tilgangskode", n => { Tilgangskode = n.GetStringValue(); } },
-                { "tittel", n => { Tittel = n.GetStringValue(); } },
             };
         }
         /// <summary>
@@ -75,10 +58,8 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteStringValue("dokumentId", DokumentId);
-            writer.WriteStringValue("filending", Filending);
+            writer.WriteStringValue("filnavn", Filnavn);
             writer.WriteStringValue("tilgangskode", Tilgangskode);
-            writer.WriteStringValue("tittel", Tittel);
         }
     }
 }

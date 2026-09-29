@@ -20,23 +20,31 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
 #else
         public string EksternId { get; set; }
 #endif
-        /// <summary>Navnet på hoveddokumentet i journalposten. En fil med samme navn må lastes opp i &apos;filer&apos; feltet.</summary>
+        /// <summary>Hoveddokumentet i journalposten. Filnavnet må finnes i listen med opplastede filer.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? HoveddokumentFilnavn { get; set; }
+        public global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettDokumentRequest? Hoveddokument { get; set; }
 #nullable restore
 #else
-        public string HoveddokumentFilnavn { get; set; }
+        public global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettDokumentRequest Hoveddokument { get; set; }
 #endif
         /// <summary>The journalpostType property</summary>
         public global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Journalposttype? JournalpostType { get; set; }
-        /// <summary>The personInfo property</summary>
+        /// <summary>Person info for mottaker av journalposten. TODO: Alltid påkrevd?</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettSakRequestPersonInfo? PersonInfo { get; set; }
 #nullable restore
 #else
         public global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettSakRequestPersonInfo PersonInfo { get; set; }
+#endif
+        /// <summary>Saksbehandler av journalposten. Hvis tom, brukes sakens saksbehandler.</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Saksbehandler? Saksbehandler { get; set; }
+#nullable restore
+#else
+        public global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Saksbehandler Saksbehandler { get; set; }
 #endif
         /// <summary>Navn i tittelen som skal skjermes. Eks. [&apos;ola nordman&apos;, &apos;kari brekstad&apos;]</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -54,6 +62,14 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
 #else
         public List<string> SkjermetOrd { get; set; }
 #endif
+        /// <summary>Tilgangskode for skjerming av journalposten. Hvis den ikke settes, arves saken sin tilgangskode. Finn gjeldende koder på &apos;/api/v3/metadata/tilgangskoder&apos;</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Tilgangskode { get; set; }
+#nullable restore
+#else
+        public string Tilgangskode { get; set; }
+#endif
         /// <summary>Journalpostens tittel. Maks 255 tegn.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -62,13 +78,13 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
 #else
         public string Tittel { get; set; }
 #endif
-        /// <summary>Navn på vedlegg til journalposten. Alle filnavn må finnes i listen med opplastede filer.</summary>
+        /// <summary>Vedlegg til journalposten. Filnavn må finnes i listen med opplastede filer.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public List<string>? VedleggFilnavn { get; set; }
+        public List<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettDokumentRequest>? Vedlegg { get; set; }
 #nullable restore
 #else
-        public List<string> VedleggFilnavn { get; set; }
+        public List<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettDokumentRequest> Vedlegg { get; set; }
 #endif
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
@@ -89,13 +105,15 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "eksternId", n => { EksternId = n.GetStringValue(); } },
-                { "hoveddokumentFilnavn", n => { HoveddokumentFilnavn = n.GetStringValue(); } },
+                { "hoveddokument", n => { Hoveddokument = n.GetObjectValue<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettDokumentRequest>(global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettDokumentRequest.CreateFromDiscriminatorValue); } },
                 { "journalpostType", n => { JournalpostType = n.GetEnumValue<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Journalposttype>(); } },
                 { "personInfo", n => { PersonInfo = n.GetObjectValue<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettSakRequestPersonInfo>(global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettSakRequestPersonInfo.CreateFromDiscriminatorValue); } },
+                { "saksbehandler", n => { Saksbehandler = n.GetObjectValue<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Saksbehandler>(global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Saksbehandler.CreateFromDiscriminatorValue); } },
                 { "skjermetNavn", n => { SkjermetNavn = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
                 { "skjermetOrd", n => { SkjermetOrd = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
+                { "tilgangskode", n => { Tilgangskode = n.GetStringValue(); } },
                 { "tittel", n => { Tittel = n.GetStringValue(); } },
-                { "vedleggFilnavn", n => { VedleggFilnavn = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
+                { "vedlegg", n => { Vedlegg = n.GetCollectionOfObjectValues<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettDokumentRequest>(global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettDokumentRequest.CreateFromDiscriminatorValue)?.AsList(); } },
             };
         }
         /// <summary>
@@ -106,13 +124,15 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("eksternId", EksternId);
-            writer.WriteStringValue("hoveddokumentFilnavn", HoveddokumentFilnavn);
+            writer.WriteObjectValue<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettDokumentRequest>("hoveddokument", Hoveddokument);
             writer.WriteEnumValue<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Journalposttype>("journalpostType", JournalpostType);
             writer.WriteObjectValue<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettSakRequestPersonInfo>("personInfo", PersonInfo);
+            writer.WriteObjectValue<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Saksbehandler>("saksbehandler", Saksbehandler);
             writer.WriteCollectionOfPrimitiveValues<string>("skjermetNavn", SkjermetNavn);
             writer.WriteCollectionOfPrimitiveValues<string>("skjermetOrd", SkjermetOrd);
+            writer.WriteStringValue("tilgangskode", Tilgangskode);
             writer.WriteStringValue("tittel", Tittel);
-            writer.WriteCollectionOfPrimitiveValues<string>("vedleggFilnavn", VedleggFilnavn);
+            writer.WriteCollectionOfObjectValues<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettDokumentRequest>("vedlegg", Vedlegg);
         }
     }
 }

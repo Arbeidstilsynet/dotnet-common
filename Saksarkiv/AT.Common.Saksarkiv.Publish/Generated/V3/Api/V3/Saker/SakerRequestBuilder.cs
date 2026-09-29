@@ -36,7 +36,7 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Saker
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public SakerRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/v3/saker{?avslutt*}", pathParameters)
+        public SakerRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/v3/saker", pathParameters)
         {
         }
         /// <summary>
@@ -44,11 +44,11 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Saker
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public SakerRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/v3/saker{?avslutt*}", rawUrl)
+        public SakerRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/v3/saker", rawUrl)
         {
         }
         /// <summary>
-        /// For å avslutte saken umiddelbart etter opprettelse, sett query-parameteren avslutt til true.
+        /// Opprett en ny sak (asynkron) (roller: ReadWrite)
         /// </summary>
         /// <returns>A <see cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.Queue.MeldingStatus"/></returns>
         /// <param name="body">The request body</param>
@@ -60,11 +60,11 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Saker
         /// <exception cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.ArkivProblemDetails">When receiving a 500 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.Queue.MeldingStatus?> PostAsync(MultipartBody body, Action<RequestConfiguration<global::Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Saker.SakerRequestBuilder.SakerRequestBuilderPostQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.Queue.MeldingStatus?> PostAsync(MultipartBody body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.Queue.MeldingStatus> PostAsync(MultipartBody body, Action<RequestConfiguration<global::Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Saker.SakerRequestBuilder.SakerRequestBuilderPostQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.Queue.MeldingStatus> PostAsync(MultipartBody body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));
@@ -79,18 +79,18 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Saker
             return await RequestAdapter.SendAsync<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.Queue.MeldingStatus>(requestInfo, global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.Queue.MeldingStatus.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }
         /// <summary>
-        /// For å avslutte saken umiddelbart etter opprettelse, sett query-parameteren avslutt til true.
+        /// Opprett en ny sak (asynkron) (roller: ReadWrite)
         /// </summary>
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="body">The request body</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public RequestInformation ToPostRequestInformation(MultipartBody body, Action<RequestConfiguration<global::Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Saker.SakerRequestBuilder.SakerRequestBuilderPostQueryParameters>>? requestConfiguration = default)
+        public RequestInformation ToPostRequestInformation(MultipartBody body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
         {
 #nullable restore
 #else
-        public RequestInformation ToPostRequestInformation(MultipartBody body, Action<RequestConfiguration<global::Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Saker.SakerRequestBuilder.SakerRequestBuilderPostQueryParameters>> requestConfiguration = default)
+        public RequestInformation ToPostRequestInformation(MultipartBody body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
         {
 #endif
             if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));
@@ -108,15 +108,6 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Saker
         public global::Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Saker.SakerRequestBuilder WithUrl(string rawUrl)
         {
             return new global::Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Saker.SakerRequestBuilder(rawUrl, RequestAdapter);
-        }
-        /// <summary>
-        /// For å avslutte saken umiddelbart etter opprettelse, sett query-parameteren avslutt til true.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class SakerRequestBuilderPostQueryParameters 
-        {
-            [QueryParameter("avslutt")]
-            public bool? Avslutt { get; set; }
         }
     }
 }

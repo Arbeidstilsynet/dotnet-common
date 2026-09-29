@@ -13,14 +13,6 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class OppdaterSakRequest : IParsable
     {
-        /// <summary>Ny ansvarlig enhetskode (administrativ inndeling), f.eks. &apos;UAT&apos;.</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? AnsvarligEnhetKode { get; set; }
-#nullable restore
-#else
-        public string AnsvarligEnhetKode { get; set; }
-#endif
         /// <summary>Ny arkivkode for saken.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -37,13 +29,13 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
 #else
         public string EksternTag { get; set; }
 #endif
-        /// <summary>Nytt Elements brukernavn til saksbehandler (f.eks ETTERNAVN_F).</summary>
+        /// <summary>Ny saksbehandler</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Saksbehandler { get; set; }
+        public global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Saksbehandler? Saksbehandler { get; set; }
 #nullable restore
 #else
-        public string Saksbehandler { get; set; }
+        public global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Saksbehandler Saksbehandler { get; set; }
 #endif
         /// <summary>Ny sakstype (mappetype) for saken.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -103,10 +95,9 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "ansvarligEnhetKode", n => { AnsvarligEnhetKode = n.GetStringValue(); } },
                 { "arkivkode", n => { Arkivkode = n.GetStringValue(); } },
                 { "eksternTag", n => { EksternTag = n.GetStringValue(); } },
-                { "saksbehandler", n => { Saksbehandler = n.GetStringValue(); } },
+                { "saksbehandler", n => { Saksbehandler = n.GetObjectValue<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Saksbehandler>(global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Saksbehandler.CreateFromDiscriminatorValue); } },
                 { "sakstype", n => { Sakstype = n.GetStringValue(); } },
                 { "skjermetNavn", n => { SkjermetNavn = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
                 { "skjermetOrd", n => { SkjermetOrd = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
@@ -121,10 +112,9 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteStringValue("ansvarligEnhetKode", AnsvarligEnhetKode);
             writer.WriteStringValue("arkivkode", Arkivkode);
             writer.WriteStringValue("eksternTag", EksternTag);
-            writer.WriteStringValue("saksbehandler", Saksbehandler);
+            writer.WriteObjectValue<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Saksbehandler>("saksbehandler", Saksbehandler);
             writer.WriteStringValue("sakstype", Sakstype);
             writer.WriteCollectionOfPrimitiveValues<string>("skjermetNavn", SkjermetNavn);
             writer.WriteCollectionOfPrimitiveValues<string>("skjermetOrd", SkjermetOrd);

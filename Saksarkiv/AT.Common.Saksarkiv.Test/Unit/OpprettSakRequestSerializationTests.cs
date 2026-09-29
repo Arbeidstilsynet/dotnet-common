@@ -34,8 +34,11 @@ public class OpprettSakRequestSerializationTests
         var request = new OpprettSakRequest
         {
             Tittel = "Min sak",
-            Saksbehandler = "user@arbeidstilsynet.no",
-            AnsvarligEnhetKode = "ABC",
+            Saksbehandler = new Saksbehandler()
+            {
+                Brukernavn = "user@arbeidstilsynet.no",
+                Avdeling = "ABC"
+            },
             EksternId = "ext-1",
             Sakstype = "type",
             Arkivkode = "code",
@@ -59,8 +62,11 @@ public class OpprettSakRequestSerializationTests
         var request = new OpprettSakRequest
         {
             Tittel = "t",
-            Saksbehandler = "s",
-            AnsvarligEnhetKode = "e",
+            Saksbehandler = new Saksbehandler()
+            {
+                Brukernavn = "s",
+                Avdeling = "e"
+            },
             EksternId = "ext-1",
             Sakstype = "type",
             Arkivkode = "code",

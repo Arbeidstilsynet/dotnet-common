@@ -38,6 +38,22 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
 #else
         public global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.HentSakResponsePersonInfo PersonInfo { get; set; }
 #endif
+        /// <summary>The saksbehandler property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Saksbehandler? Saksbehandler { get; set; }
+#nullable restore
+#else
+        public global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Saksbehandler Saksbehandler { get; set; }
+#endif
+        /// <summary>The tilgangskode property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Tilgangskode { get; set; }
+#nullable restore
+#else
+        public string Tilgangskode { get; set; }
+#endif
         /// <summary>The tittel property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -76,6 +92,8 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
                 { "hoveddokument", n => { Hoveddokument = n.GetObjectValue<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.HentSakResponseDokument>(global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.HentSakResponseDokument.CreateFromDiscriminatorValue); } },
                 { "journalpostType", n => { JournalpostType = n.GetEnumValue<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Journalposttype>(); } },
                 { "personInfo", n => { PersonInfo = n.GetObjectValue<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.HentSakResponsePersonInfo>(global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.HentSakResponsePersonInfo.CreateFromDiscriminatorValue); } },
+                { "saksbehandler", n => { Saksbehandler = n.GetObjectValue<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Saksbehandler>(global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Saksbehandler.CreateFromDiscriminatorValue); } },
+                { "tilgangskode", n => { Tilgangskode = n.GetStringValue(); } },
                 { "tittel", n => { Tittel = n.GetStringValue(); } },
                 { "vedlegg", n => { Vedlegg = n.GetCollectionOfObjectValues<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.HentSakResponseDokument>(global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.HentSakResponseDokument.CreateFromDiscriminatorValue)?.AsList(); } },
             };
@@ -91,6 +109,8 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
             writer.WriteObjectValue<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.HentSakResponseDokument>("hoveddokument", Hoveddokument);
             writer.WriteEnumValue<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Journalposttype>("journalpostType", JournalpostType);
             writer.WriteObjectValue<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.HentSakResponsePersonInfo>("personInfo", PersonInfo);
+            writer.WriteObjectValue<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Saksbehandler>("saksbehandler", Saksbehandler);
+            writer.WriteStringValue("tilgangskode", Tilgangskode);
             writer.WriteStringValue("tittel", Tittel);
             writer.WriteCollectionOfObjectValues<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.HentSakResponseDokument>("vedlegg", Vedlegg);
         }

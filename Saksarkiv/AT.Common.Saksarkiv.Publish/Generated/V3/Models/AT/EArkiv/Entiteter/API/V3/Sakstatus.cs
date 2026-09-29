@@ -3,10 +3,9 @@ using System.Runtime.Serialization;
 using System;
 namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
 {
+    /// <summary>Saksstatus. Avsluttet brukes når sak skal opprettes som ferdigstilt.</summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    #pragma warning disable CS1591
     public enum Sakstatus
-    #pragma warning restore CS1591
     {
         [EnumMember(Value = "UnderBehandling")]
         #pragma warning disable CS1591
