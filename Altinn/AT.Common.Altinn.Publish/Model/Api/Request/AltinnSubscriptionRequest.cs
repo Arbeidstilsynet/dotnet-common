@@ -24,4 +24,22 @@ public record AltinnSubscriptionRequest
     /// </summary>
     [JsonPropertyName("typeFilter")]
     public string? TypeFilter { get; init; }
+
+    /// <summary>
+    /// Filter on resource
+    /// </summary>
+    [JsonPropertyName("resourceFilter")]
+    public string? ResourceFilter { get; init; }
+
+    /// <summary>
+    /// Filter on subject
+    /// </summary>
+    [JsonPropertyName("subjectFilter")]
+    public string? SubjectFilter { get; init; }
+
+    /// <summary>
+    /// Filter on alternative subject
+    /// </summary>
+    [JsonPropertyName("alternativeSubjectFilter")]
+    public string? AlternativeSubjectFilter { get; init; }
 }

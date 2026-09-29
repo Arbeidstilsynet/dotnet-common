@@ -179,4 +179,49 @@ public class GeneratedModelMappingsTests
 
         source.ToAltinnSubscription().AlternativeSubjectFilter.ShouldBe("/party/123");
     }
+
+    [Fact]
+    public void EventSubscriptionRequest_PreservesAllFilters()
+    {
+        var source = new AltinnSubscriptionRequest
+        {
+            EndPoint = new Uri("https://example.com/events"),
+            SourceFilter = new Uri(
+                "https://platform.tt02.altinn.no/correspondence/api/v1/correspondence"
+            ),
+            TypeFilter = "no.altinn.correspondence.correspondencepublished",
+            ResourceFilter = "urn:altinn:resource:dat-hms-melding",
+            SubjectFilter = "/organisation/123456789",
+            AlternativeSubjectFilter = "/party/123",
+        };
+
+        var result = source.ToGeneratedRequest();
+
+        result.EndPoint.ShouldBe("https://example.com/events");
+        result.SourceFilter.ShouldBe(
+            "https://platform.tt02.altinn.no/correspondence/api/v1/correspondence"
+        );
+        result.TypeFilter.ShouldBe("no.altinn.correspondence.correspondencepublished");
+        result.ResourceFilter.ShouldBe("urn:altinn:resource:dat-hms-melding");
+        result.SubjectFilter.ShouldBe("/organisation/123456789");
+        result.AlternativeSubjectFilter.ShouldBe("/party/123");
+    }
+
+    [Fact]
+    public void EventSubscriptionRequest_LeavesUnsetFiltersNull()
+    {
+        var source = new AltinnSubscriptionRequest
+        {
+            EndPoint = new Uri("https://example.com/events"),
+        };
+
+        var result = source.ToGeneratedRequest();
+
+        result.EndPoint.ShouldBe("https://example.com/events");
+        result.SourceFilter.ShouldBeNull();
+        result.TypeFilter.ShouldBeNull();
+        result.ResourceFilter.ShouldBeNull();
+        result.SubjectFilter.ShouldBeNull();
+        result.AlternativeSubjectFilter.ShouldBeNull();
+    }
 }

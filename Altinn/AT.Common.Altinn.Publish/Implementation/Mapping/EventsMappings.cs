@@ -35,6 +35,9 @@ internal static class EventsMappings
             EndPoint = source.EndPoint?.ToString(),
             SourceFilter = source.SourceFilter?.ToString(),
             TypeFilter = source.TypeFilter,
+            ResourceFilter = source.ResourceFilter,
+            SubjectFilter = source.SubjectFilter,
+            AlternativeSubjectFilter = source.AlternativeSubjectFilter,
         };
     }
 
