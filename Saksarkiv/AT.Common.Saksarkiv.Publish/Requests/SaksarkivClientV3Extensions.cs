@@ -45,10 +45,7 @@ public static class SaksarkivClientV3Extensions
 
         var body = BuildOpprettSakBody(request, files);
 
-        return await client.Api.V3.Saker.PostAsync(
-            body,
-            cancellationToken: cancellationToken
-        );
+        return await client.Api.V3.Saker.PostAsync(body, cancellationToken: cancellationToken);
     }
 
     internal static MultipartBody BuildOpprettSakBody(
