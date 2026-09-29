@@ -51,7 +51,7 @@ public class OpprettSakRequestSerializationTests
         content.ShouldContain("name=\"payload\"");
         content.ShouldContain("Content-Type: application/json");
         content.ShouldContain("\"tittel\":\"Min sak\"");
-        content.ShouldContain("\"ansvarligEnhetKode\":\"ABC\"");
+        content.ShouldContain("\"avdeling\":\"ABC\"");
         content.ShouldContain("\"eksternId\":\"ext-1\"");
         content.ShouldContain("\"status\":\"Avsluttet\"");
     }
