@@ -159,8 +159,11 @@
     Name="IncludeAltinnKiotaClients"
     BeforeTargets="CoreCompile"
     DependsOnTargets="GenerateAltinnKiotaClients"
-    Condition="'$(DesignTimeBuild)' != 'true'"
   >
+    <!--
+      Runs in design-time builds as well so the IDE sees previously generated clients.
+      Generation itself is skipped during design-time builds by the targets above.
+    -->
     <ItemGroup>
       <Compile Include="$(AltinnKiotaOutputRoot)/**/*.cs" />
     </ItemGroup>
