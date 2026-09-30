@@ -8,12 +8,19 @@
     <IsTestProject>true</IsTestProject>
     <OutputType>Exe</OutputType>
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+    <!--
+      xUnit1051 asks that every call accepting a CancellationToken is passed
+      TestContext.Current.CancellationToken. Most such calls here are NSubstitute arrangements and
+      verifications rather than real invocations, and giving those a concrete token makes the stub
+      match only that token while the subject passes its own default, so the arrangement silently
+      stops matching. The rule's fixer also cannot apply itself across a solution.
+    -->
+    <NoWarn>$(NoWarn);xUnit1051</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Bogus" Version="35.6.5" />
     <PackageReference Include="NSubstitute" Version="6.0.0" />
     <PackageReference Include="Shouldly" Version="4.3.0" />
-    <PackageReference Include="WireMock.Net" Version="2.11.0" />
     <PackageReference Include="JsonConverter.System.Text.Json" Version="0.13.0" />
     <PackageReference Include="JsonConverter.Newtonsoft.Json" Version="0.13.0" />
     <PackageReference Include="Verify" Version="31.20.0" />
@@ -31,20 +38,15 @@
     <ProjectReference Include="..\AT.Common.Altinn.Publish\AT.Common.Altinn.Publish.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile
-      Include="..\..\shared\test\WireMockExtensions.cs"
-      Link="Shared\WireMockExtensions.cs"
-    />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Unit\TestData\**" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="**\TestData\**">
+    <!--
+      Scoped to the source folder: a "**\TestData\**" glob also matches the copies already made
+      under bin, so each build nests another copy inside the previous one.
+    -->
+    <None Include="Unit\TestData\**" Exclude="$(BaseOutputPath)**;$(BaseIntermediateOutputPath)**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Unit\TestData\openapi\" />
   </ItemGroup>
 </Project>

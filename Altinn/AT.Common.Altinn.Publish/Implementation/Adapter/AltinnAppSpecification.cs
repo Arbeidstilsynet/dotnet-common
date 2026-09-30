@@ -1,6 +1,6 @@
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
-using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
+using Arbeidstilsynet.Common.Altinn.Storage.Models;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 
@@ -19,7 +19,7 @@ internal record AltinnAppSpecification(string AppId)
         ?? throw new ArgumentException("AppId cannot be null or empty", nameof(AppId));
 
     /// <summary>
-    /// The <see cref="DataElement.DataType"/> of the main PDF document in <see cref="AltinnInstance.Data"/>. Defaults to "ref-data-as-pdf".
+    /// The <see cref="DataElement.DataType"/> of the main PDF document in <see cref="Instance.Data"/>. Defaults to "ref-data-as-pdf".
     /// </summary>
     public string MainPdfDataTypeId { get; init; } = "ref-data-as-pdf";
 
@@ -29,7 +29,7 @@ internal record AltinnAppSpecification(string AppId)
     public string MainPdfFileName { get; init; } = "main-document.pdf";
 
     /// <summary>
-    /// The <see cref="DataElement.DataType"/> of the structured data (if any) in <see cref="AltinnInstance.Data"/>. Defaults to "structured-data".
+    /// The <see cref="DataElement.DataType"/> of the structured data (if any) in <see cref="Instance.Data"/>. Defaults to "structured-data".
     /// </summary>
     /// <remarks>Use the AddStructuredData extension in order to facilitate this feature</remarks>
     public string StructuredDataTypeId { get; init; } = "structured-data";

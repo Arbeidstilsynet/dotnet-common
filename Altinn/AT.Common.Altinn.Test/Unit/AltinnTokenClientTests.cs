@@ -1,7 +1,10 @@
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
+using Shouldly;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 
@@ -79,5 +82,51 @@ public class AltinnTokenClientTests
                 "ValidTo",
                 "ValidFrom"
             );
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void JwtExtensions_GenerateJwtGrantWithJsonWebKey_CreatesSignedToken(
+        bool base64EncodeJson
+    )
+    {
+        // arrange
+        using RSA rsa = RSA.Create(2048);
+        var parameters = rsa.ExportParameters(true);
+        var jsonWebKey = JsonSerializer.Serialize(
+            new
+            {
+                alg = "RS256",
+                d = Base64UrlEncoder.Encode(parameters.D),
+                dp = Base64UrlEncoder.Encode(parameters.DP),
+                dq = Base64UrlEncoder.Encode(parameters.DQ),
+                e = Base64UrlEncoder.Encode(parameters.Exponent),
+                kid = "test-key",
+                kty = "RSA",
+                n = Base64UrlEncoder.Encode(parameters.Modulus),
+                p = Base64UrlEncoder.Encode(parameters.P),
+                q = Base64UrlEncoder.Encode(parameters.Q),
+                qi = Base64UrlEncoder.Encode(parameters.InverseQ),
+                use = "sig",
+            }
+        );
+        var privateKey = base64EncodeJson
+            ? Convert.ToBase64String(Encoding.UTF8.GetBytes(jsonWebKey))
+            : jsonWebKey;
+
+        // act
+        var result = JwtExtensions.GenerateJwtGrantWithKey(
+            "https://test.maskinporten.no/",
+            privateKey,
+            "test-key",
+            Guid.NewGuid().ToString(),
+            ["test:read"]
+        );
+
+        // assert
+        var token = new JsonWebTokenHandler().ReadJsonWebToken(result);
+        token.Kid.ShouldBe("test-key");
+        token.Alg.ShouldBe(SecurityAlgorithms.RsaSha256);
     }
 }

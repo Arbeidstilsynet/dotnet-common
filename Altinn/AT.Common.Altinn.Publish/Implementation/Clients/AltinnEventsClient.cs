@@ -1,56 +1,44 @@
-using System.Text.Json;
-using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
+using Arbeidstilsynet.Common.Altinn.Events;
+using Arbeidstilsynet.Common.Altinn.Implementation.Mapping;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
-using Arbeidstilsynet.Common.Altinn.Ports.Token;
-using static Arbeidstilsynet.Common.Altinn.DependencyInjection.DependencyInjectionExtensions;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Clients;
 
-internal class AltinnEventsClient : IAltinnEventsClient
+internal class AltinnEventsClient(EventsApiClient client) : IAltinnEventsClient
 {
-    private readonly IAltinnTokenProvider _altinnTokenProvider;
-    private readonly HttpClient _httpClient;
-
-    private readonly JsonSerializerOptions _jsonSerializerOptions;
-
-    public AltinnEventsClient(
-        IHttpClientFactory httpClientFactory,
-        IAltinnTokenProvider altinnTokenProvider
+    public async Task<AltinnSubscription?> GetAltinnSubscription(
+        int subscriptionId,
+        CancellationToken cancellationToken = default
     )
     {
-        _altinnTokenProvider = altinnTokenProvider;
-        _httpClient = httpClientFactory.CreateClient(AltinnEventsApiClientKey);
-        _jsonSerializerOptions = new System.Text.Json.JsonSerializerOptions()
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        };
+        var subscription = await client
+            .Subscriptions[subscriptionId]
+            .GetAsync(cancellationToken: cancellationToken);
+
+        return subscription?.ToAltinnSubscription()
+            ?? throw new InvalidOperationException("Failed to get subscription from Altinn");
     }
 
-    public async Task<AltinnSubscription> GetAltinnSubscription(int subscriptionId)
+    public async Task<AltinnSubscription> Subscribe(
+        AltinnSubscriptionRequest request,
+        CancellationToken cancellationToken = default
+    )
     {
-        return await _httpClient
-            .Get($"subscriptions/{subscriptionId}")
-            .WithBearerToken(await _altinnTokenProvider.GetToken())
-            .ReceiveContent<AltinnSubscription>(_jsonSerializerOptions);
+        var subscription = await client.Subscriptions.PostAsync(
+            request.ToGeneratedRequest(),
+            cancellationToken: cancellationToken
+        );
+
+        return subscription?.ToAltinnSubscription()
+            ?? throw new InvalidOperationException("Failed to subscribe to Altinn");
     }
 
-    public async Task<AltinnSubscription> Subscribe(AltinnSubscriptionRequest request)
+    public async Task Unsubscribe(int subscriptionId, CancellationToken cancellationToken = default)
     {
-        return await _httpClient
-                .PostAsJson("subscriptions", request)
-                .WithBearerToken(await _altinnTokenProvider.GetToken())
-                .ReceiveContent<AltinnSubscription>(_jsonSerializerOptions)
-            ?? throw new Exception("Failed to subscribe to Altinn");
-    }
-
-    public async Task<HttpResponseMessage> Unsubscribe(int subscriptionId)
-    {
-        return await _httpClient
-                .Delete($"subscriptions/{subscriptionId}")
-                .WithBearerToken(await _altinnTokenProvider.GetToken())
-                .Send()
-            ?? throw new Exception("Failed to unsubscribe from Altinn");
+        await client
+            .Subscriptions[subscriptionId]
+            .DeleteAsync(cancellationToken: cancellationToken);
     }
 }
