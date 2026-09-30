@@ -1,3 +1,4 @@
+using Arbeidstilsynet.Common.Altinn.Implementation.ErrorReporting;
 using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -47,6 +48,11 @@ public static class AltinnExceptionExtensions
     /// </example>
     public static AltinnProblemDetails? GetAltinnProblemDetails(this ApiException? exception)
     {
+        if (exception is AltinnApiException reported)
+        {
+            exception = reported.Original;
+        }
+
         return exception switch
         {
             StorageProblem problem => new AltinnProblemDetails

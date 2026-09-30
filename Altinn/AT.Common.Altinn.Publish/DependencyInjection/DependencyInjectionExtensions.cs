@@ -6,6 +6,7 @@ using Arbeidstilsynet.Common.Altinn.Events;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Implementation.Clients;
 using Arbeidstilsynet.Common.Altinn.Implementation.Configuration;
+using Arbeidstilsynet.Common.Altinn.Implementation.ErrorReporting;
 using Arbeidstilsynet.Common.Altinn.Implementation.Token;
 using Arbeidstilsynet.Common.Altinn.Ports.Adapter;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
@@ -435,11 +436,14 @@ public static class DependencyInjectionExtensions
 
         var services = builder.Services;
 
+        services.TryAddTransient<AltinnErrorResponseCaptureHandler>();
+
         services
             .AddHttpClient(
                 AltinnAuthenticationApiClientKey,
                 client => client.BaseAddress = builder.Resolution.Urls.AuthenticationUrl
             )
+            .AddHttpMessageHandler<AltinnErrorResponseCaptureHandler>()
             .AddStandardResilienceHandler();
         services
             .AddHttpClient(
@@ -453,7 +457,9 @@ public static class DependencyInjectionExtensions
         {
             var adapter = serviceProvider.GetRequiredService<AuthenticationRequestAdapter>();
             adapter.BaseUrl = builder.Resolution.Urls.AuthenticationUrl.ToString();
-            return new AuthenticationApiClient(adapter);
+            return new AuthenticationApiClient(
+                new AltinnErrorReportingRequestAdapter(adapter, "Authentication")
+            );
         });
 
         services.AddTransient<IAltinnAuthenticationClient, AltinnAuthenticationClient>();
@@ -534,10 +540,14 @@ public static class DependencyInjectionExtensions
     /// Registers a Kiota request adapter together with the generated client built on top of it,
     /// pinning the adapter's base URL to the client's effective value.
     /// </summary>
+    /// <remarks>
+    /// The generated client is given the adapter wrapped in an
+    /// <see cref="AltinnErrorReportingRequestAdapter"/>, so its failures state what Altinn said.
+    /// </remarks>
     private static void AddGeneratedClient<TAdapter, TClient>(
         this AltinnBuilder builder,
         string clientName,
-        Func<TAdapter, TClient> createClient
+        Func<IRequestAdapter, TClient> createClient
     )
         where TAdapter : class, IRequestAdapter
         where TClient : class
@@ -547,7 +557,7 @@ public static class DependencyInjectionExtensions
         {
             var adapter = serviceProvider.GetRequiredService<TAdapter>();
             adapter.BaseUrl = serviceProvider.EffectiveBaseUrl(clientName).ToString();
-            return createClient(adapter);
+            return createClient(new AltinnErrorReportingRequestAdapter(adapter, clientName));
         });
     }
 
@@ -563,6 +573,7 @@ public static class DependencyInjectionExtensions
                 (serviceProvider, client) =>
                     client.BaseAddress = serviceProvider.EffectiveBaseUrl(clientName)
             )
+            .AddHttpMessageHandler<AltinnErrorResponseCaptureHandler>()
             .AddStandardResilienceHandler();
     }
 

@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Maskinporten token failures now throw an `HttpRequestException` that includes the status code and Maskinporten's error response (e.g. `invalid_scope`), instead of only the status code.
+- Failed requests from every Altinn client (Storage, Events, Apps, Correspondence, Dialogporten and Authentication) now throw an `ApiException` whose message names the client, the HTTP method and URL, the status code, and the response body Altinn returned (truncated to 4096 characters). Before, the message was generic, and the body was lost entirely for status codes the API spec does not declare. `ResponseStatusCode`, `ResponseHeaders` and `GetAltinnProblemDetails()` work as before.
 
 ## 4.0.0
 
