@@ -85,7 +85,17 @@ internal class MaskinportenClient : IMaskinportenClient
             cancellationToken
         );
 
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            // Maskinporten explains rejections in an OAuth error body (e.g. invalid_scope), which
+            // EnsureSuccessStatusCode would discard.
+            var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+            throw new HttpRequestException(
+                $"Maskinporten token request failed with {(int)response.StatusCode} ({response.StatusCode}): {errorBody}",
+                inner: null,
+                statusCode: response.StatusCode
+            );
+        }
 
         var tokenResponse =
             await response.Content.ReadFromJsonAsync<MaskinportenTokenResponse>(

@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 4.0.1
+
+### Fixed
+
+- Maskinporten token failures now throw an `HttpRequestException` that includes the status code and Maskinporten's error response (e.g. `invalid_scope`), instead of only the status code.
+
 ## 4.0.0
 
 ### Added

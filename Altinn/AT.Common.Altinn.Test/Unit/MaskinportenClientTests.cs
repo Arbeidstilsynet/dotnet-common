@@ -135,9 +135,16 @@ public class MaskinportenClientTests
     [Fact]
     public async Task GetToken_Throws_WhenMaskinportenRejectsTheRequest()
     {
-        _handler.RespondWith(HttpStatusCode.BadRequest, """{"error":"invalid_grant"}""");
+        _handler.RespondWith(
+            HttpStatusCode.BadRequest,
+            """{"error":"invalid_scope","error_description":"Scope not allowed"}"""
+        );
 
-        await Should.ThrowAsync<Exception>(() => _sut.GetToken(Scopes));
+        var exception = await Should.ThrowAsync<HttpRequestException>(() => _sut.GetToken(Scopes));
+
+        exception.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        exception.Message.ShouldContain("invalid_scope");
+        exception.Message.ShouldContain("Scope not allowed");
     }
 
     [Fact]
