@@ -121,7 +121,7 @@ public record AltinnUrlOverrides
 public record MaskinportenConfiguration
 {
     /// <summary>
-    /// The private (rsa) key base64 encoded for the certificate used for authentication.
+    /// The private RSA key as a JWK or a base64-encoded PEM or PKCS#1 DER key.
     /// </summary>
     [Required]
     [ConfigurationKeyName("CertificatePrivateKey")]

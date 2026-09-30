@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added <!-- for new features. -->
 
-- `AltinnSubscriptionRequest` now exposes `ResourceFilter`, `SubjectFilter` and `AlternativeSubjectFilter`, and `IAltinnEventsClient.Subscribe` passes them through to Altinn. Subscriptions can now filter on a resource (for example correspondence events for one resource) rather than only on source and type.
-
 ### Changed <!--  for changes in existing functionality. -->
 
 ### Deprecated <!--  for soon-to-be removed features. -->
