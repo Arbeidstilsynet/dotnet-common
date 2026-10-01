@@ -176,8 +176,9 @@ catch (ApiException e)
 
 It returns `null` when the response carried no problem details, or when the request failed before
 a response arrived. Problem details are also read from the captured response body for status codes
-an endpoint does not declare, as long as the body is a complete JSON problem document (not one cut
-off at 4,096 characters). Beyond the RFC 9457 fields, `AltinnProblemDetails` exposes the
+an endpoint does not declare, as long as the body is a complete JSON problem document with at least
+one supported member of the expected type (not one cut off by the 4,096-byte capture limit, which
+multibyte UTF-8 text reaches in fewer characters). Beyond the RFC 9457 fields, `AltinnProblemDetails` exposes the
 Altinn-specific `Code`, `ErrorCode`, `StatusDescription`, `TraceId`, `ValidationErrors` and
 `Errors`, each populated by the APIs that return them. Altinn Correspondence sends `errorCode` as a
 JSON number (for example `1030`); `ErrorCode` then holds it as text (`"1030"`).

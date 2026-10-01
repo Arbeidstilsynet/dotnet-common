@@ -10,19 +10,10 @@ namespace Arbeidstilsynet.Common.Altinn.Implementation.ErrorReporting;
 /// </summary>
 internal static class AltinnProblemBody
 {
-    private static readonly string[] ProblemMembers =
-    [
-        "type",
-        "title",
-        "status",
-        "detail",
-        "code",
-        "errorCode",
-    ];
-
     /// <summary>
     /// The problem details in <paramref name="body"/>, or <see langword="null"/> if it is not a
-    /// complete JSON problem details document (for example a truncated or non-JSON body).
+    /// complete JSON object with at least one supported problem details member of the expected
+    /// type (for example a truncated, non-JSON or unrelated body).
     /// </summary>
     public static AltinnProblemDetails? Parse(string? body)
     {
@@ -36,33 +27,35 @@ internal static class AltinnProblemBody
             using var document = JsonDocument.Parse(body);
             var root = document.RootElement;
 
-            if (
-                root.ValueKind != JsonValueKind.Object
-                || !ProblemMembers.Any(member => root.TryGetProperty(member, out _))
-            )
+            if (root.ValueKind != JsonValueKind.Object)
             {
                 return null;
             }
 
-            return new AltinnProblemDetails
+            var problem = new AltinnProblemDetails
             {
                 Type = Text(root, "type"),
                 Title = Text(root, "title"),
-                Status =
-                    root.TryGetProperty("status", out var status)
-                    && status.ValueKind == JsonValueKind.Number
-                    && status.TryGetInt32(out var value)
-                        ? value
-                        : null,
+                Status = Status(root),
                 Detail = Text(root, "detail"),
                 Instance = Text(root, "instance"),
                 Code = Text(root, "code"),
-                ErrorCode = Text(root, "errorCode"),
+                ErrorCode = ErrorCode(root),
                 StatusDescription = Text(root, "statusDescription"),
                 TraceId = Text(root, "traceId"),
-                ValidationErrors = Member<List<AltinnValidationError>>(root, "validationErrors"),
-                Errors = Member<Dictionary<string, List<string>>>(root, "errors"),
+                ValidationErrors = Member<List<AltinnValidationError>>(
+                    root,
+                    "validationErrors",
+                    JsonValueKind.Array
+                ),
+                Errors = Member<Dictionary<string, List<string>>>(
+                    root,
+                    "errors",
+                    JsonValueKind.Object
+                ),
             };
+
+            return problem == new AltinnProblemDetails() ? null : problem;
         }
         catch (JsonException)
         {
@@ -70,12 +63,25 @@ internal static class AltinnProblemBody
         }
     }
 
+    private static string? Text(JsonElement root, string name) =>
+        root.TryGetProperty(name, out var member) && member.ValueKind == JsonValueKind.String
+            ? member.GetString()
+            : null;
+
+    private static int? Status(JsonElement root) =>
+        root.TryGetProperty("status", out var member)
+        && member.ValueKind == JsonValueKind.Number
+        && member.TryGetInt32(out var status)
+            ? status
+            : null;
+
     /// <summary>
-    /// A string member as is, or a number as written, so that a numeric code survives.
+    /// Altinn Correspondence sends <c>errorCode</c> as a number although its specification
+    /// declares a string; a number is kept as written.
     /// </summary>
-    private static string? Text(JsonElement root, string name)
+    private static string? ErrorCode(JsonElement root)
     {
-        if (!root.TryGetProperty(name, out var member))
+        if (!root.TryGetProperty("errorCode", out var member))
         {
             return null;
         }
@@ -88,17 +94,23 @@ internal static class AltinnProblemBody
         };
     }
 
-    private static T? Member<T>(JsonElement root, string name)
+    private static T? Member<T>(JsonElement root, string name, JsonValueKind kind)
         where T : class
     {
-        if (!root.TryGetProperty(name, out var member) || member.ValueKind == JsonValueKind.Null)
+        if (!root.TryGetProperty(name, out var member) || member.ValueKind != kind)
         {
             return null;
         }
 
         try
         {
-            return member.Deserialize<T>();
+            // An empty collection carries no problem information on its own.
+            return
+                member.Deserialize<T>()
+                    is var value
+                        and not System.Collections.ICollection { Count: 0 }
+                ? value
+                : null;
         }
         catch (JsonException)
         {
