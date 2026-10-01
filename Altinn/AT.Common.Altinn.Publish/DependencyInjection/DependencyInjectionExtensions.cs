@@ -463,7 +463,7 @@ public static class DependencyInjectionExtensions
         });
 
         services.AddTransient<IAltinnAuthenticationClient, AltinnAuthenticationClient>();
-        services.AddTransient<IMaskinportenClient, MaskinportenClient>();
+        services.AddSingleton<IMaskinportenClient, MaskinportenClient>();
     }
 
     /// <summary>

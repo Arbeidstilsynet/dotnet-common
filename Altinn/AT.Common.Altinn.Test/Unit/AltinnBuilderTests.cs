@@ -74,6 +74,22 @@ public class AltinnBuilderTests
     }
 
     [Fact]
+    public void AddAltinn_SharesTheMaskinportenClientAcrossScopes()
+    {
+        var services = new ServiceCollection();
+        Builder(services);
+
+        using var provider = services.BuildServiceProvider();
+        using var firstScope = provider.CreateScope();
+        using var secondScope = provider.CreateScope();
+
+        var first = firstScope.ServiceProvider.GetRequiredService<IMaskinportenClient>();
+        var second = secondScope.ServiceProvider.GetRequiredService<IMaskinportenClient>();
+
+        second.ShouldBeSameAs(first);
+    }
+
+    [Fact]
     public void AddSubscriptionAdapter_PullsInTheClientsItDependsOn()
     {
         var services = new ServiceCollection();
@@ -269,6 +285,45 @@ public class AltinnBuilderTests
                 descriptor.ImplementationType?.Name == "AltinnUrlOverrideWarningService"
             )
             .ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task ClientsWithoutSpecificScopes_PresentTokenForSharedFallbackScopes()
+    {
+        var tokenProvider = Substitute.For<IAltinnTokenProvider>();
+        tokenProvider
+            .GetToken(Arg.Any<IReadOnlyList<string>>(), Arg.Any<CancellationToken>())
+            .Returns("a-token");
+
+        var services = new ServiceCollection();
+        services.AddSingleton(tokenProvider);
+
+        // Registered without specific scopes:
+        Builder(services)
+            .AddStorage()
+            .AddEvents();
+
+        services
+            .AddHttpClient(DependencyInjectionExtensions.AltinnStorageApiClientKey)
+            .ConfigurePrimaryHttpMessageHandler(() => new NoContentHandler());
+        services
+            .AddHttpClient(DependencyInjectionExtensions.AltinnEventsApiClientKey)
+            .ConfigurePrimaryHttpMessageHandler(() => new NoContentHandler());
+
+        using var scope = services.BuildServiceProvider().CreateScope();
+
+        await scope
+            .ServiceProvider.GetRequiredService<IAltinnStorageClient>()
+            .GetInstances(new Model.Api.Request.InstanceQueryParameters { AppId = "dat/app" });
+
+        await tokenProvider
+            .Received(1)
+            .GetToken(
+                Arg.Is<IReadOnlyList<string>>(scopes =>
+                    scopes!.Count == 1 && scopes[0] == "shared:scope"
+                ),
+                Arg.Any<CancellationToken>()
+            );
     }
 
     [Fact]
