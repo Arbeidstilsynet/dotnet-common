@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Implementation.Clients;
+using Arbeidstilsynet.Common.Altinn.Implementation.ErrorReporting;
 using Arbeidstilsynet.Common.Altinn.Model.Api;
 using Microsoft.Extensions.Options;
 using NSubstitute;
@@ -145,6 +146,20 @@ public class MaskinportenClientTests
         exception.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         exception.Message.ShouldContain("invalid_scope");
         exception.Message.ShouldContain("Scope not allowed");
+    }
+
+    [Fact]
+    public async Task GetToken_TruncatesLongMaskinportenErrorResponses()
+    {
+        _handler.RespondWith(
+            HttpStatusCode.BadRequest,
+            new string('x', ErrorResponseBodyCapture.MaxBodyLength * 10)
+        );
+
+        var exception = await Should.ThrowAsync<HttpRequestException>(() => _sut.GetToken(Scopes));
+
+        exception.Message.ShouldContain("(truncated)");
+        exception.Message.Length.ShouldBeLessThan(ErrorResponseBodyCapture.MaxBodyLength + 200);
     }
 
     [Fact]

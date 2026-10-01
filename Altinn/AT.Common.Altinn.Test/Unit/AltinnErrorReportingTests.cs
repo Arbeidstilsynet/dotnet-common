@@ -52,6 +52,14 @@ public class AltinnErrorReportingTests
             );
     }
 
+    private sealed class ResponseHandler(HttpResponseMessage response) : HttpMessageHandler
+    {
+        protected override Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken
+        ) => Task.FromResult(response);
+    }
+
     private static AltinnEventsClient EventsClient(
         HttpStatusCode status,
         string body,
@@ -158,6 +166,32 @@ public class AltinnErrorReportingTests
     }
 
     [Fact]
+    public async Task LongBodies_ReadOnlyTheDiagnosticPrefixAndRestoreTheFullResponse()
+    {
+        var body = new string('x', AltinnErrorResponseCaptureHandler.MaxBodyLength * 10);
+        var stream = new CountingReadStream(Encoding.UTF8.GetBytes(body));
+        var response = new HttpResponseMessage(HttpStatusCode.InternalServerError)
+        {
+            Content = new StreamContent(stream),
+        };
+        var handler = new AltinnErrorResponseCaptureHandler
+        {
+            InnerHandler = new ResponseHandler(response),
+        };
+        var capture = new AltinnErrorResponseCapture();
+        using var request = new HttpRequestMessage(HttpMethod.Get, EventsBaseUrl);
+        request.Options.Set(AltinnErrorResponseCapture.Key, capture);
+        using var invoker = new HttpMessageInvoker(handler);
+
+        using var capturedResponse = await invoker.SendAsync(request, CancellationToken.None);
+
+        stream.BytesRead.ShouldBe(AltinnErrorResponseCaptureHandler.MaxBodyLength + 1);
+        capture.Body.ShouldEndWith("(truncated)");
+        capture.Body!.Length.ShouldBeLessThan(AltinnErrorResponseCaptureHandler.MaxBodyLength + 30);
+        (await capturedResponse.Content.ReadAsStringAsync()).ShouldBe(body);
+    }
+
+    [Fact]
     public async Task RegisteredClients_ReportWhatAltinnAnswered()
     {
         var tokenProvider = Substitute.For<IAltinnTokenProvider>();
@@ -199,5 +233,27 @@ public class AltinnErrorReportingTests
         exception.Message.ShouldContain("Altinn Events request POST");
         exception.Message.ShouldContain("The subscription endpoint is not reachable.");
         exception.ResponseStatusCode.ShouldBe(400);
+    }
+
+    private sealed class CountingReadStream(byte[] data) : MemoryStream(data)
+    {
+        public long BytesRead { get; private set; }
+
+        public override int Read(Span<byte> buffer)
+        {
+            var bytesRead = base.Read(buffer);
+            BytesRead += bytesRead;
+            return bytesRead;
+        }
+
+        public override async ValueTask<int> ReadAsync(
+            Memory<byte> buffer,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var bytesRead = await base.ReadAsync(buffer, cancellationToken);
+            BytesRead += bytesRead;
+            return bytesRead;
+        }
     }
 }
