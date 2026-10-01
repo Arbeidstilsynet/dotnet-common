@@ -16,12 +16,18 @@ namespace Arbeidstilsynet.Common.Altinn.Implementation.ErrorReporting;
 /// </remarks>
 internal sealed class AltinnApiException : ApiException
 {
-    public AltinnApiException(string message, ApiException original)
+    public AltinnApiException(string message, ApiException original, string? responseBody = null)
         : base(message, original)
     {
         ResponseStatusCode = original.ResponseStatusCode;
         ResponseHeaders = original.ResponseHeaders;
+        ResponseBody = responseBody;
     }
 
     public ApiException Original => (ApiException)InnerException!;
+
+    /// <summary>
+    /// The response body as captured, possibly truncated, or <see langword="null"/> if none was.
+    /// </summary>
+    public string? ResponseBody { get; }
 }

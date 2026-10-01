@@ -235,6 +235,135 @@ public class AltinnErrorReportingTests
         exception.ResponseStatusCode.ShouldBe(400);
     }
 
+    [Fact]
+    public async Task DeclaredProblem_NumericErrorCodeAndCode_AreReadFromTheBody()
+    {
+        // Altinn Correspondence sends errorCode as a number and a code its declared
+        // ProblemDetails type lacks; the generated client keeps neither.
+        var exception = await Should.ThrowAsync<ApiException>(() =>
+            GetCorrespondence(
+                HttpStatusCode.NotFound,
+                """
+                {
+                  "title": "Not Found",
+                  "status": 404,
+                  "detail": "The requested correspondence was not found",
+                  "code": "CORR-01001",
+                  "errorCode": 1001
+                }
+                """
+            )
+        );
+
+        var problem = exception.GetAltinnProblemDetails().ShouldNotBeNull();
+
+        problem.Status.ShouldBe(404);
+        problem.Detail.ShouldBe("The requested correspondence was not found");
+        problem.Code.ShouldBe("CORR-01001");
+        problem.ErrorCode.ShouldBe("1001");
+    }
+
+    [Fact]
+    public async Task UndeclaredStatus_ProblemBody_IsReturnedAsProblemDetails()
+    {
+        var exception = await Should.ThrowAsync<ApiException>(() =>
+            GetCorrespondence(
+                HttpStatusCode.BadRequest,
+                """{"title":"Bad Request","status":400,"detail":"Invalid id","errorCode":"CORR-01033"}"""
+            )
+        );
+
+        var problem = exception.GetAltinnProblemDetails().ShouldNotBeNull();
+
+        problem.Status.ShouldBe(400);
+        problem.Detail.ShouldBe("Invalid id");
+        problem.ErrorCode.ShouldBe("CORR-01033");
+    }
+
+    [Theory]
+    [InlineData("upstream exploded", "text/plain")]
+    [InlineData("""{"message":"not a problem document"}""", "application/json")]
+    [InlineData("""["title"]""", "application/json")]
+    [InlineData("""{"title":"Bad Request","detail":""", "application/problem+json")]
+    public async Task UndeclaredStatus_WithoutAProblemBody_HasNoProblemDetails(
+        string body,
+        string mediaType
+    )
+    {
+        var exception = await Should.ThrowAsync<ApiException>(() =>
+            GetCorrespondence(HttpStatusCode.BadRequest, body, mediaType)
+        );
+
+        exception.GetAltinnProblemDetails().ShouldBeNull();
+        exception.ResponseStatusCode.ShouldBe(400);
+    }
+
+    [Fact]
+    public async Task TruncatedProblemBody_KeepsTheGeneratedProblemDetails()
+    {
+        var detail = new string('x', AltinnErrorResponseCaptureHandler.MaxBodyLength);
+        var exception = await Should.ThrowAsync<ApiException>(() =>
+            GetCorrespondence(
+                HttpStatusCode.NotFound,
+                $$"""{"status":404,"detail":"{{detail}}","errorCode":1001}"""
+            )
+        );
+
+        var problem = exception.GetAltinnProblemDetails().ShouldNotBeNull();
+
+        problem.Detail.ShouldBe(detail);
+        problem.ErrorCode.ShouldBeNull();
+    }
+
+    private static async Task GetCorrespondence(
+        HttpStatusCode status,
+        string body,
+        string mediaType = "application/problem+json"
+    )
+    {
+        using var scope = RegisteredServices(
+                services => services.AddCorrespondence(),
+                DependencyInjectionExtensions.AltinnCorrespondenceApiClientKey,
+                new StubHandler(status, body, mediaType)
+            )
+            .CreateScope();
+        await scope
+            .ServiceProvider.GetRequiredService<IAltinnCorrespondenceClient>()
+            .GetCorrespondence(Guid.NewGuid());
+    }
+
+    private static ServiceProvider RegisteredServices(
+        Func<IAltinnBuilder, IAltinnBuilder> register,
+        string clientKey,
+        HttpMessageHandler handler
+    )
+    {
+        var tokenProvider = Substitute.For<IAltinnTokenProvider>();
+        tokenProvider
+            .GetToken(Arg.Any<IReadOnlyList<string>>(), Arg.Any<CancellationToken>())
+            .Returns("a-token");
+
+        var environment = Substitute.For<IWebHostEnvironment>();
+        environment.EnvironmentName.Returns(Environments.Staging);
+
+        var services = new ServiceCollection();
+        services.AddSingleton(tokenProvider);
+        register(
+            services.AddAltinn(
+                environment,
+                new MaskinportenConfiguration
+                {
+                    Scopes = ["shared:scope"],
+                    PrivateKey = "some-private-key",
+                    CertificateChain = "some-certificate-chain",
+                    IntegrationId = "some-integration-id",
+                }
+            )
+        );
+        services.AddHttpClient(clientKey).ConfigurePrimaryHttpMessageHandler(() => handler);
+        return services.BuildServiceProvider();
+    }
+
     private sealed class CountingReadStream(byte[] data) : MemoryStream(data)
     {
         public long BytesRead { get; private set; }
