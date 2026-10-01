@@ -34,7 +34,7 @@ public class AltinnCorrespondenceClientSeamTests
                 }
             );
 
-        _sut = new AltinnCorrespondenceClient(new CorrespondenceApiClient(_requestAdapter), null!);
+        _sut = new AltinnCorrespondenceClient(new CorrespondenceApiClient(_requestAdapter));
     }
 
     [Fact]

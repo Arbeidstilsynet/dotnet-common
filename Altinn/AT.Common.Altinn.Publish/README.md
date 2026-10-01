@@ -139,6 +139,19 @@ To move a single client, set its `BaseUrl` instead:
 
 Both forms obey the same rule: rejected in Production, warned about elsewhere.
 
+### Correspondence attachments
+
+Pass the files to `CreateCorrespondence` or `InitializeCorrespondence`, with matching attachment
+metadata in the request. The upload uses repeated `attachments` multipart file fields, preserving
+file order and names even when names repeat. `PropertyList` dictionary keys, including dots, are
+preserved using bracketed form keys. Requests without files still use the JSON endpoint.
+
+Upload serialization extends the generated request builder with `MultipartFormDataContent`:
+Kiota's `MultipartBody` replaces parts with the same field name and file name. The extension
+retains the generated route and the configured authentication, resilience and error-reporting
+pipeline. A successful initialization is not proof of publication or attachment availability;
+Altinn processes the upload asynchronously.
+
 ### Models and errors
 
 The clients return the package's own models from `Model.Api.Response` and

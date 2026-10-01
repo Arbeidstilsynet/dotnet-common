@@ -104,8 +104,7 @@ public class AltinnProblemDetailsTests
         var sut = new AltinnCorrespondenceClient(
             new CorrespondenceApiClient(
                 Adapter("https://platform.tt02.altinn.no", HttpStatusCode.NotFound, body)
-            ),
-            null!
+            )
         );
 
         var exception = await Should.ThrowAsync<ApiException>(() =>

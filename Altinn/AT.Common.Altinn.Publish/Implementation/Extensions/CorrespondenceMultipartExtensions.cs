@@ -1,6 +1,7 @@
+using System.Net.Http.Headers;
+using System.Text;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Kiota.Abstractions;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 
@@ -12,12 +13,12 @@ namespace Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 /// The upload endpoint accepts only multipart/form-data, and its schema describes 44 flat,
 /// dot-separated fields rather than a nested object -- it mirrors an ASP.NET Core
 /// <c>[FromForm]</c> binding contract. Kiota generates no model for such a schema, so the
-/// generated builder takes a bare <see cref="MultipartBody"/> and the flattening has to live here.
+/// generated builder takes a bare <c>MultipartBody</c> and the flattening has to live here.
 /// </para>
 /// <para>
-/// Field names follow the specification's casing. ASP.NET form binding is case-insensitive, so
-/// the previous camelCase names also bound correctly, but the specification is the only contract
-/// left once the hand-written request models are gone.
+/// File parts repeat the name "attachments"; indexing it prevents ASP.NET's file binder from
+/// finding them. MultipartFormDataContent also preserves files with identical names, whereas
+/// Kiota's MultipartBody replaces parts sharing a field name and file name.
 /// </para>
 /// </remarks>
 internal static class CorrespondenceMultipartExtensions
@@ -25,13 +26,12 @@ internal static class CorrespondenceMultipartExtensions
     private const string TextContentType = "text/plain";
     private const string DefaultAttachmentContentType = "application/octet-stream";
 
-    public static MultipartBody ToMultipartBody(
+    public static MultipartFormDataContent ToMultipartFormDataContent(
         this InitializeCorrespondences request,
-        IRequestAdapter requestAdapter,
         List<IFormFile>? attachments
     )
     {
-        var body = new MultipartBody { RequestAdapter = requestAdapter };
+        var body = new MultipartFormDataContent();
 
         body.AddCollection("Recipients", request.Recipients);
         body.AddCollection("ExistingAttachments", request.ExistingAttachments);
@@ -47,18 +47,21 @@ internal static class CorrespondenceMultipartExtensions
         for (var i = 0; i < files.Count; i++)
         {
             var attachment = files[i];
-            body.AddOrReplacePart(
-                $"attachments[{i}]",
-                attachment.ContentType ?? DefaultAttachmentContentType,
-                attachment.OpenReadStream(),
-                attachment.FileName
+            var contentType = new MediaTypeHeaderValue(
+                attachment.ContentType ?? DefaultAttachmentContentType
             );
+            var content = new StreamContent(attachment.OpenReadStream());
+            content.Headers.ContentType = contentType;
+            body.Add(content, "attachments", attachment.FileName);
         }
 
         return body;
     }
 
-    private static void AddCorrespondence(this MultipartBody body, BaseCorrespondence source)
+    private static void AddCorrespondence(
+        this MultipartFormDataContent body,
+        BaseCorrespondence source
+    )
     {
         const string prefix = "Correspondence";
 
@@ -111,13 +114,13 @@ internal static class CorrespondenceMultipartExtensions
         {
             foreach (var property in propertyList)
             {
-                body.AddText($"{prefix}.PropertyList.{property.Key}", property.Value);
+                body.AddText($"{prefix}.PropertyList[{property.Key}]", property.Value);
             }
         }
     }
 
     private static void AddContent(
-        this MultipartBody body,
+        this MultipartFormDataContent body,
         string prefix,
         InitializeCorrespondenceContent content
     )
@@ -145,7 +148,7 @@ internal static class CorrespondenceMultipartExtensions
     }
 
     private static void AddNotification(
-        this MultipartBody body,
+        this MultipartFormDataContent body,
         string prefix,
         InitializeCorrespondenceNotification notification
     )
@@ -175,7 +178,11 @@ internal static class CorrespondenceMultipartExtensions
         );
     }
 
-    private static void AddCollection<T>(this MultipartBody body, string name, List<T>? values)
+    private static void AddCollection<T>(
+        this MultipartFormDataContent body,
+        string name,
+        List<T>? values
+    )
     {
         var items = values ?? [];
 
@@ -189,7 +196,7 @@ internal static class CorrespondenceMultipartExtensions
     /// Adds a text part, skipping values the caller left unset so that the server applies its own
     /// defaults rather than receiving an empty string.
     /// </summary>
-    private static void AddText<T>(this MultipartBody body, string name, T? value)
+    private static void AddText<T>(this MultipartFormDataContent body, string name, T? value)
     {
         var text = value switch
         {
@@ -204,6 +211,6 @@ internal static class CorrespondenceMultipartExtensions
             return;
         }
 
-        body.AddOrReplacePart(name, TextContentType, text);
+        body.Add(new StringContent(text, Encoding.UTF8, TextContentType), name);
     }
 }
