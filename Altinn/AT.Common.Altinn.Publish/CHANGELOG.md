@@ -19,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 4.0.4
+
+### Fixed
+
+- Correspondence uploads now repeat the `attachments` file field so Altinn's ASP.NET form binder receives every file, including files with identical names. The v4 indexed file fields bound to an empty list.
+- Multipart `PropertyList` keys use bracket notation so dotted keys are preserved with their values. Previously these could bind to a truncated key with a null value and trigger a generic HTTP 500 in Altinn's property validation. JSON-only correspondence is unchanged.
+
 ## 4.0.3
 
 ### Fixed

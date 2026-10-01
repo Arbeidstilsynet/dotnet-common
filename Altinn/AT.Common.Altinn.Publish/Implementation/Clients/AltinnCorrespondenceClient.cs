@@ -1,5 +1,4 @@
 using Arbeidstilsynet.Common.Altinn.Correspondence;
-using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Mapping;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
@@ -10,10 +9,8 @@ using Generated = Arbeidstilsynet.Common.Altinn.Correspondence.Models;
 
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Clients;
 
-internal class AltinnCorrespondenceClient(
-    CorrespondenceApiClient client,
-    CorrespondenceRequestAdapter requestAdapter
-) : IAltinnCorrespondenceClient
+internal class AltinnCorrespondenceClient(CorrespondenceApiClient client)
+    : IAltinnCorrespondenceClient
 {
     public async Task<AltinnCorrespondenceOverview> GetCorrespondence(
         Guid correspondenceId,
@@ -82,9 +79,7 @@ internal class AltinnCorrespondenceClient(
                 ?? throw new InvalidOperationException("Failed to send correspondence");
         }
 
-        // MultipartBody serialises its parts through a request adapter, which the generated client
-        // does not surface, so the adapter is injected alongside it.
-        var body = request.ToMultipartBody(requestAdapter, attachments);
+        using var body = request.ToMultipartFormDataContent(attachments);
 
         var uploadResponse = await client.Correspondence.Api.V1.Correspondence.Upload.PostAsync(
             body,

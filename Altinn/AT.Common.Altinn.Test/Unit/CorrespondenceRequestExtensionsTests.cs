@@ -3,9 +3,6 @@ using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Kiota.Abstractions.Authentication;
-using Microsoft.Kiota.Bundle;
-using Microsoft.Kiota.Serialization.Multipart;
 using Shouldly;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
@@ -147,7 +144,7 @@ public class CorrespondenceRequestExtensionsTests
     {
         var request = CreateMinimalCorrespondenceRequest().ToApiRequest();
 
-        var formFields = ExtractFormFields(request);
+        var formFields = await ExtractFormFields(request);
 
         await Verifier.Verify(formFields, _verifySettings);
     }
@@ -157,13 +154,13 @@ public class CorrespondenceRequestExtensionsTests
     {
         var request = CreateFullCorrespondenceRequest().ToApiRequest();
 
-        var formFields = ExtractFormFields(request);
+        var formFields = await ExtractFormFields(request);
 
         await Verifier.Verify(formFields, _verifySettings);
     }
 
     [Fact]
-    public void MultipleAttachments_Map_ToDistinctMultipartParts()
+    public async Task MultipleAttachments_Map_ToRepeatedFileParts()
     {
         var request = CreateMinimalCorrespondenceRequest().ToApiRequest();
         List<IFormFile> attachments =
@@ -172,10 +169,13 @@ public class CorrespondenceRequestExtensionsTests
             CreateFormFile("second", "second.txt"),
         ];
 
-        var formFields = ExtractFormFields(request, attachments);
-
-        formFields["attachments[0]"].ShouldBe("first");
-        formFields["attachments[1]"].ShouldBe("second");
+        var form = await ReadForm(request, attachments);
+        form.Files.Select(file => file.Name).ShouldBe(["attachments", "attachments"]);
+        form.Files.Select(file => file.FileName).ShouldBe(["first.txt", "second.txt"]);
+        using var first = new StreamReader(form.Files[0].OpenReadStream());
+        first.ReadToEnd().ShouldBe("first");
+        using var second = new StreamReader(form.Files[1].OpenReadStream());
+        second.ReadToEnd().ShouldBe("second");
     }
 
     private static FormFile CreateFormFile(string content, string fileName) =>
@@ -210,55 +210,26 @@ public class CorrespondenceRequestExtensionsTests
     /// Serialises the request as the generated client would and returns the resulting form fields,
     /// so the snapshot covers the exact names and values that reach the wire.
     /// </summary>
-    private static Dictionary<string, string> ExtractFormFields(
+    private static async Task<Dictionary<string, string>> ExtractFormFields(
         InitializeCorrespondences request,
         List<IFormFile>? attachments = null
+    ) =>
+        (await ReadForm(request, attachments)).ToDictionary(
+            field => field.Key,
+            field => field.Value.ToString()
+        );
+
+    private static async Task<IFormCollection> ReadForm(
+        InitializeCorrespondences request,
+        List<IFormFile>? attachments
     )
     {
-        var adapter = new DefaultRequestAdapter(new AnonymousAuthenticationProvider());
-
-        var body = request.ToMultipartBody(adapter, attachments);
-
-        var writer = new MultipartSerializationWriterFactory().GetSerializationWriter(
-            "multipart/form-data"
+        using var body = request.ToMultipartFormDataContent(attachments);
+        var context = new DefaultHttpContext();
+        context.Request.ContentType = body.Headers.ContentType!.ToString();
+        context.Request.Body = new MemoryStream(
+            await body.ReadAsByteArrayAsync(TestContext.Current.CancellationToken)
         );
-        writer.WriteObjectValue(string.Empty, body);
-
-        using var stream = writer.GetSerializedContent();
-        using var reader = new StreamReader(stream);
-
-        var fields = new Dictionary<string, string>();
-
-        foreach (
-            var part in reader
-                .ReadToEnd()
-                .Split($"--{body.Boundary}", StringSplitOptions.RemoveEmptyEntries)
-        )
-        {
-            var nameStart = part.IndexOf("name=\"", StringComparison.Ordinal);
-
-            if (nameStart < 0)
-            {
-                continue;
-            }
-
-            nameStart += "name=\"".Length;
-            var name = part[nameStart..part.IndexOf('"', nameStart)];
-
-            var headerEnd = part.IndexOf("\r\n\r\n", StringComparison.Ordinal);
-            var separatorLength = 4;
-
-            if (headerEnd < 0)
-            {
-                headerEnd = part.IndexOf("\n\n", StringComparison.Ordinal);
-                separatorLength = 2;
-            }
-
-            var value = headerEnd < 0 ? string.Empty : part[(headerEnd + separatorLength)..].Trim();
-
-            fields[name] = value;
-        }
-
-        return fields;
+        return await context.Request.ReadFormAsync(TestContext.Current.CancellationToken);
     }
 }
