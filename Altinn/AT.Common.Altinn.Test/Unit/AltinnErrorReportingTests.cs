@@ -235,6 +235,155 @@ public class AltinnErrorReportingTests
         exception.ResponseStatusCode.ShouldBe(400);
     }
 
+    [Fact]
+    public async Task DeclaredProblem_NumericErrorCodeAndCode_AreReadFromTheBody()
+    {
+        // Altinn Correspondence sends errorCode as a number and a code its declared
+        // ProblemDetails type lacks; the generated client keeps neither.
+        var exception = await Should.ThrowAsync<ApiException>(() =>
+            GetCorrespondence(
+                HttpStatusCode.NotFound,
+                """
+                {
+                  "title": "Not Found",
+                  "status": 404,
+                  "detail": "The requested correspondence was not found",
+                  "code": "CORR-01001",
+                  "errorCode": 1001
+                }
+                """
+            )
+        );
+
+        var problem = exception.GetAltinnProblemDetails().ShouldNotBeNull();
+
+        problem.Status.ShouldBe(404);
+        problem.Detail.ShouldBe("The requested correspondence was not found");
+        problem.Code.ShouldBe("CORR-01001");
+        problem.ErrorCode.ShouldBe("1001");
+    }
+
+    // GET /correspondence/{id} declares no 409, so the generated client has no problem type for
+    // it and only the captured body can supply the details.
+    [Fact]
+    public async Task UndeclaredStatus_ProblemBody_IsReturnedAsProblemDetails()
+    {
+        var exception = await Should.ThrowAsync<ApiException>(() =>
+            GetCorrespondence(
+                HttpStatusCode.Conflict,
+                """{"title":"Conflict","status":409,"detail":"Already exists","errorCode":1034}"""
+            )
+        );
+
+        var problem = exception.GetAltinnProblemDetails().ShouldNotBeNull();
+
+        problem.Status.ShouldBe(409);
+        problem.Detail.ShouldBe("Already exists");
+        problem.ErrorCode.ShouldBe("1034");
+    }
+
+    [Theory]
+    [InlineData("""{"traceId":"00-abc-01"}""")]
+    [InlineData("""{"instance":"/correspondence/1"}""")]
+    [InlineData("""{"statusDescription":"Conflict"}""")]
+    [InlineData("""{"validationErrors":[{"code":"X","detail":"Bad","paths":["/a"]}]}""")]
+    [InlineData("""{"errors":{"Id":["Invalid"]}}""")]
+    public async Task UndeclaredStatus_ProblemBodyWithAnySupportedMember_IsReturned(string body)
+    {
+        var exception = await Should.ThrowAsync<ApiException>(() =>
+            GetCorrespondence(HttpStatusCode.Conflict, body)
+        );
+
+        exception.GetAltinnProblemDetails().ShouldNotBeNull().ShouldNotBe(new());
+    }
+
+    [Theory]
+    [InlineData("upstream exploded", "text/plain")]
+    [InlineData("""{"message":"not a problem document"}""", "application/json")]
+    [InlineData("""{"status":"failed"}""", "application/json")]
+    [InlineData("""{"title":5,"errorCode":true,"errors":[]}""", "application/json")]
+    [InlineData("""{"validationErrors":[],"errors":{}}""", "application/json")]
+    [InlineData("""["title"]""", "application/json")]
+    [InlineData("""{"title":"Conflict","detail":""", "application/problem+json")]
+    public async Task UndeclaredStatus_WithoutAProblemBody_HasNoProblemDetails(
+        string body,
+        string mediaType
+    )
+    {
+        var exception = await Should.ThrowAsync<ApiException>(() =>
+            GetCorrespondence(HttpStatusCode.Conflict, body, mediaType)
+        );
+
+        exception.GetAltinnProblemDetails().ShouldBeNull();
+        exception.ResponseStatusCode.ShouldBe(409);
+    }
+
+    [Fact]
+    public async Task TruncatedProblemBody_KeepsTheGeneratedProblemDetails()
+    {
+        var detail = new string('x', AltinnErrorResponseCaptureHandler.MaxBodyLength);
+        var exception = await Should.ThrowAsync<ApiException>(() =>
+            GetCorrespondence(
+                HttpStatusCode.NotFound,
+                $$"""{"status":404,"detail":"{{detail}}","errorCode":1001}"""
+            )
+        );
+
+        var problem = exception.GetAltinnProblemDetails().ShouldNotBeNull();
+
+        problem.Detail.ShouldBe(detail);
+        problem.ErrorCode.ShouldBeNull();
+    }
+
+    private static async Task GetCorrespondence(
+        HttpStatusCode status,
+        string body,
+        string mediaType = "application/problem+json"
+    )
+    {
+        using var scope = RegisteredServices(
+                services => services.AddCorrespondence(),
+                DependencyInjectionExtensions.AltinnCorrespondenceApiClientKey,
+                new StubHandler(status, body, mediaType)
+            )
+            .CreateScope();
+        await scope
+            .ServiceProvider.GetRequiredService<IAltinnCorrespondenceClient>()
+            .GetCorrespondence(Guid.NewGuid());
+    }
+
+    private static ServiceProvider RegisteredServices(
+        Func<IAltinnBuilder, IAltinnBuilder> register,
+        string clientKey,
+        HttpMessageHandler handler
+    )
+    {
+        var tokenProvider = Substitute.For<IAltinnTokenProvider>();
+        tokenProvider
+            .GetToken(Arg.Any<IReadOnlyList<string>>(), Arg.Any<CancellationToken>())
+            .Returns("a-token");
+
+        var environment = Substitute.For<IWebHostEnvironment>();
+        environment.EnvironmentName.Returns(Environments.Staging);
+
+        var services = new ServiceCollection();
+        services.AddSingleton(tokenProvider);
+        register(
+            services.AddAltinn(
+                environment,
+                new MaskinportenConfiguration
+                {
+                    Scopes = ["shared:scope"],
+                    PrivateKey = "some-private-key",
+                    CertificateChain = "some-certificate-chain",
+                    IntegrationId = "some-integration-id",
+                }
+            )
+        );
+        services.AddHttpClient(clientKey).ConfigurePrimaryHttpMessageHandler(() => handler);
+        return services.BuildServiceProvider();
+    }
+
     private sealed class CountingReadStream(byte[] data) : MemoryStream(data)
     {
         public long BytesRead { get; private set; }

@@ -107,7 +107,7 @@ internal sealed class AltinnErrorReportingRequestAdapter(IRequestAdapter inner, 
         }
         catch (ApiException e) when (e is not AltinnApiException)
         {
-            throw new AltinnApiException(Describe(requestInfo, e, capture.Body), e);
+            throw new AltinnApiException(Describe(requestInfo, e, capture.Body), e, capture.Body);
         }
     }
 

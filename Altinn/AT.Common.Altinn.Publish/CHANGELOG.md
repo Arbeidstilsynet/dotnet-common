@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 4.0.3
+
+### Fixed
+
+- `GetAltinnProblemDetails()` now reads the captured error response body for what the generated clients drop: Altinn Correspondence's numeric `errorCode` (returned as text, e.g. `"1030"`) and its `code`, which its declared `ProblemDetails` type lacks. A complete JSON problem document returned with a status code the specification does not declare is now returned too, instead of `null`, if at least one supported member has the expected type. Problem details parsed by the generated clients take precedence, and a truncated, non-JSON or unrelated body is ignored.
+
 ## 4.0.2
 
 ### Fixed

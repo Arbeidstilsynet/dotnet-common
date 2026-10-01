@@ -28,9 +28,15 @@ public static class AltinnExceptionExtensions
     /// stable, serialisable model.
     /// </para>
     /// <para>
+    /// The raw response body, when the client captured it, fills what the generated types miss:
+    /// Altinn Correspondence sends <c>errorCode</c> as a JSON number although its specification
+    /// declares a string, and a status code the specification does not describe has no generated
+    /// type at all. Such a body is read as a problem details document if it is one.
+    /// </para>
+    /// <para>
     /// Returns <see langword="null"/> when the response carried no problem details -- either
-    /// because the endpoint does not declare one for that status code, or because the failure
-    /// happened before a response was received.
+    /// because it had no problem details body, or because the failure happened before a response
+    /// was received.
     /// </para>
     /// </remarks>
     /// <example>
@@ -48,11 +54,33 @@ public static class AltinnExceptionExtensions
     /// </example>
     public static AltinnProblemDetails? GetAltinnProblemDetails(this ApiException? exception)
     {
-        if (exception is AltinnApiException reported)
+        if (exception is not AltinnApiException reported)
         {
-            exception = reported.Original;
+            return FromGeneratedProblem(exception);
         }
 
+        var problem = FromGeneratedProblem(reported.Original);
+        var body = AltinnProblemBody.Parse(reported.ResponseBody);
+
+        if (body is null)
+        {
+            return problem;
+        }
+
+        if (problem is null)
+        {
+            return body;
+        }
+
+        return problem with
+        {
+            Code = problem.Code ?? body.Code,
+            ErrorCode = problem.ErrorCode ?? body.ErrorCode,
+        };
+    }
+
+    private static AltinnProblemDetails? FromGeneratedProblem(ApiException? exception)
+    {
         return exception switch
         {
             StorageProblem problem => new AltinnProblemDetails
