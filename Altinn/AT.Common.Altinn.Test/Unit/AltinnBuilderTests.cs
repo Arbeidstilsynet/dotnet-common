@@ -299,9 +299,7 @@ public class AltinnBuilderTests
         services.AddSingleton(tokenProvider);
 
         // Registered without specific scopes:
-        Builder(services)
-            .AddStorage()
-            .AddEvents();
+        Builder(services).AddStorage().AddEvents();
 
         services
             .AddHttpClient(DependencyInjectionExtensions.AltinnStorageApiClientKey)
