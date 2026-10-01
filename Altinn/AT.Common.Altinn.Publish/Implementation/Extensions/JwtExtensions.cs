@@ -128,7 +128,12 @@ internal static class JwtExtensions
     )
     {
         var signingCredentials = new SigningCredentials(rsaKey, SecurityAlgorithms.RsaSha256);
-        var claims = new ClaimsIdentity([new Claim("scope", string.Join(" ", scopes))]);
+        var claims = new ClaimsIdentity(
+            [
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
+                new Claim("scope", string.Join(" ", scopes)),
+            ]
+        );
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),

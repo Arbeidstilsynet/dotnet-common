@@ -129,4 +129,35 @@ public class AltinnTokenClientTests
         token.Kid.ShouldBe("test-key");
         token.Alg.ShouldBe(SecurityAlgorithms.RsaSha256);
     }
+
+    [Fact]
+    public void JwtExtensions_GenerateJwtGrant_CreatesUniqueAssertions()
+    {
+        using var rsa = RSA.Create(2048);
+        var privateKey = Convert.ToBase64String(rsa.ExportRSAPrivateKey());
+
+        var first = JwtExtensions.GenerateJwtGrantWithKey(
+            "https://test.maskinporten.no/",
+            privateKey,
+            "test-key",
+            "test-integration",
+            ["test:read"]
+        );
+        var second = JwtExtensions.GenerateJwtGrantWithKey(
+            "https://test.maskinporten.no/",
+            privateKey,
+            "test-key",
+            "test-integration",
+            ["test:read"]
+        );
+
+        var handler = new JsonWebTokenHandler();
+        var firstToken = handler.ReadJsonWebToken(first);
+        var secondToken = handler.ReadJsonWebToken(second);
+
+        first.ShouldNotBe(second);
+        firstToken.Id.ShouldNotBeNullOrWhiteSpace();
+        secondToken.Id.ShouldNotBeNullOrWhiteSpace();
+        firstToken.Id.ShouldNotBe(secondToken.Id);
+    }
 }

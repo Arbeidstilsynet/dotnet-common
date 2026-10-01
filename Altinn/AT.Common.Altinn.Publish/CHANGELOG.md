@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 4.0.2
+
+### Fixed
+
+- Maskinporten assertions now include a unique JWT ID (`jti`), preventing simultaneous or rapidly retried token requests from being rejected as reused assertions.
+
 ## 4.0.1
 
 ### Fixed
