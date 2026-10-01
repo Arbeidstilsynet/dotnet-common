@@ -22,6 +22,7 @@ public class MaskinportenClientTests
     private static readonly string[] Scopes = ["altinn:serviceowner"];
 
     private readonly StubHandler _handler = new();
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly MaskinportenClient _sut;
 
     public MaskinportenClientTests()
@@ -36,15 +37,15 @@ public class MaskinportenClientTests
             Scopes = ["altinn:serviceowner"],
         };
 
-        var httpClientFactory = Substitute.For<IHttpClientFactory>();
-        httpClientFactory
+        _httpClientFactory = Substitute.For<IHttpClientFactory>();
+        _httpClientFactory
             .CreateClient(MaskinportenApiClientKey)
             .Returns(_ => new HttpClient(_handler)
             {
                 BaseAddress = new Uri("https://test.maskinporten.no/"),
             });
 
-        _sut = new MaskinportenClient(httpClientFactory, Options.Create(configuration));
+        _sut = new MaskinportenClient(_httpClientFactory, Options.Create(configuration));
     }
 
     [Fact]
@@ -90,6 +91,7 @@ public class MaskinportenClientTests
         first.AccessToken.ShouldBe("access-token-1");
         second.AccessToken.ShouldBe("access-token-2");
         _handler.Requests.Count.ShouldBe(2);
+        _httpClientFactory.Received(2).CreateClient(MaskinportenApiClientKey);
     }
 
     [Fact]
