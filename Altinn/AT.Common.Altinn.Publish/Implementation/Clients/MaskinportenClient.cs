@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Arbeidstilsynet.Common.Altinn.DependencyInjection;
+using Arbeidstilsynet.Common.Altinn.Implementation.ErrorReporting;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Api;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
@@ -85,7 +86,20 @@ internal class MaskinportenClient : IMaskinportenClient
             cancellationToken
         );
 
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            // Maskinporten explains rejections in an OAuth error body (e.g. invalid_scope), which
+            // EnsureSuccessStatusCode would discard.
+            var errorBody = await ErrorResponseBodyCapture.ReadDiagnosticBodyAsync(
+                response.Content,
+                cancellationToken
+            );
+            throw new HttpRequestException(
+                $"Maskinporten token request failed with {(int)response.StatusCode} ({response.StatusCode}): {errorBody}",
+                inner: null,
+                statusCode: response.StatusCode
+            );
+        }
 
         var tokenResponse =
             await response.Content.ReadFromJsonAsync<MaskinportenTokenResponse>(
