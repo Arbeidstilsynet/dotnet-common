@@ -19,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 4.0.2
+
+### Fixed
+
+- Maskinporten JWT assertions now include a unique `jti`, preventing concurrent token requests from submitting an identical grant and receiving `MP-012: Grant has been used before`.
+- The Maskinporten client and its per-scope token cache are shared across dependency injection scopes, avoiding unnecessary token requests from scoped consumers.
+
 ## 4.0.1
 
 ### Fixed

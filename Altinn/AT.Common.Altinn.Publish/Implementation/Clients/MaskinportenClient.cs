@@ -18,7 +18,7 @@ internal class MaskinportenClient : IMaskinportenClient
     private readonly ConcurrentDictionary<string, CachedToken> _tokens = new();
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
-    private readonly HttpClient _httpClient;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
     private readonly IOptions<MaskinportenConfiguration> _config;
 
@@ -27,7 +27,7 @@ internal class MaskinportenClient : IMaskinportenClient
         IOptions<MaskinportenConfiguration> altinnAuthenticationConfigurationOptions
     )
     {
-        _httpClient = httpClientFactory.CreateClient(MaskinportenApiClientKey);
+        _httpClientFactory = httpClientFactory;
         _jsonSerializerOptions = new System.Text.Json.JsonSerializerOptions()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -72,7 +72,8 @@ internal class MaskinportenClient : IMaskinportenClient
             return cachedToken!;
         }
 
-        var jwtGrant = _config.Value.GenerateJwtGrant(_httpClient.BaseAddress!, scopes);
+        using var httpClient = _httpClientFactory.CreateClient(MaskinportenApiClientKey);
+        var jwtGrant = _config.Value.GenerateJwtGrant(httpClient.BaseAddress!, scopes);
 
         var form = new Dictionary<string, string>
         {
@@ -80,7 +81,7 @@ internal class MaskinportenClient : IMaskinportenClient
             { "assertion", jwtGrant },
         };
 
-        using var response = await _httpClient.PostAsync(
+        using var response = await httpClient.PostAsync(
             "token",
             new FormUrlEncodedContent(form),
             cancellationToken
