@@ -19,11 +19,11 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="12.1.1" />
-    <PackageReference Include="Altinn.App.Api" Version="8.12.7">
+    <PackageReference Include="Altinn.App.Api" Version="8.12.11">
       <CopyToOutputDirectory>lib\$(TargetFramework)\*.xml</CopyToOutputDirectory>
     </PackageReference>
-    <PackageReference Include="Altinn.App.Core" Version="8.12.7" />
-    <PackageReference Include="OpenTelemetry.Api" Version="1.16.0" />
+    <PackageReference Include="Altinn.App.Core" Version="8.12.11" />
+    <PackageReference Include="OpenTelemetry.Api" Version="1.19.1" />
     <PackageReference
       Include="Altinn.ApiClients.Dialogporten.ServiceOwner"
       Version="1.118.10-alpha.1786357013"
