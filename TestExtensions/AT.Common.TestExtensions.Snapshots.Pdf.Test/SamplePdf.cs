@@ -1,16 +1,18 @@
 using UglyToad.PdfPig.Content;
 using UglyToad.PdfPig.Core;
-using UglyToad.PdfPig.Fonts.Standard14Fonts;
 using UglyToad.PdfPig.Writer;
 
 namespace Arbeidstilsynet.Common.TestExtensions.Snapshots.Pdf.Test;
 
 internal static class SamplePdf
 {
+    // Embedded so rendering doesn't depend on OS font substitution (Noto Sans, OFL-1.1, see Fonts/OFL.txt).
+    private static readonly byte[] Font = LoadFont();
+
     public static byte[] Create(params string[][] pages)
     {
         var builder = new PdfDocumentBuilder();
-        var font = builder.AddStandard14Font(Standard14Font.Helvetica);
+        var font = builder.AddTrueTypeFont(Font);
         foreach (var lines in pages)
         {
             var page = builder.AddPage(PageSize.A4);
@@ -22,5 +24,15 @@ internal static class SamplePdf
         }
 
         return builder.Build();
+    }
+
+    private static byte[] LoadFont()
+    {
+        using var stream = typeof(SamplePdf).Assembly.GetManifestResourceStream(
+            "NotoSans-Regular.ttf"
+        )!;
+        using var buffer = new MemoryStream();
+        stream.CopyTo(buffer);
+        return buffer.ToArray();
     }
 }

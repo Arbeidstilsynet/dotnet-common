@@ -66,3 +66,5 @@ The received/verified workflow, accept mode (`SNAPSHOT_ACCEPT=1`) and all `Snaps
 ## Platforms
 
 Native PDFium and Skia binaries are included for Linux (no extra system dependencies), macOS and Windows.
+
+PNG snapshots are only stable across operating systems when the PDF **embeds its fonts**. Non-embedded fonts, such as the standard-14 Helvetica, are replaced by a system font, and that font differs between macOS, Linux and Windows. PDFs from QuestPDF embed their fonts. For hand-built test PDFs, embed a TrueType font, or set `IncludeImages = false`.

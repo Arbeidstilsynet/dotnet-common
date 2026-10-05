@@ -305,6 +305,10 @@ complete serialized text, before it is compared.
   - Measured on a test page, a changed word drops the minimum window SSIM
     below `0.1`, while random ±25-level noise on 20,000 pixels keeps it above
     `0.55`.
+  - Rendering is deterministic for a given PDF only if the fonts are
+    embedded. With non-embedded fonts (for example standard-14 Helvetica),
+    PDFium uses a font from the OS. A test page rendered on macOS scored only
+    `0.971` against the same page rendered on Linux.
 - **The `#pdf.verified.pdf` file is not produced.** The PDF bytes usually
   contain timestamps and IDs and are not a useful snapshot.
 
