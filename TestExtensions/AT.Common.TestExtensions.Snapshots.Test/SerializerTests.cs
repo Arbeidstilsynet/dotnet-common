@@ -118,8 +118,12 @@ public class SerializerTests
         var original = new SnapshotSettings().ScrubMembers("A");
         var copy = new SnapshotSettings(original).ScrubMembers("B");
 
-        Snapshot.Serialize(new { A = 1, B = 2 }, original).ShouldBe("{\n  A: {Scrubbed},\n  B: 2\n}");
-        Snapshot.Serialize(new { A = 1, B = 2 }, copy).ShouldBe("{\n  A: {Scrubbed},\n  B: {Scrubbed}\n}");
+        Snapshot
+            .Serialize(new { A = 1, B = 2 }, original)
+            .ShouldBe("{\n  A: {Scrubbed},\n  B: 2\n}");
+        Snapshot
+            .Serialize(new { A = 1, B = 2 }, copy)
+            .ShouldBe("{\n  A: {Scrubbed},\n  B: {Scrubbed}\n}");
     }
 
     [Fact]

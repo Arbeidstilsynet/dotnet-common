@@ -492,7 +492,11 @@ public static class GoldenCorpus
         return
         [
             new("WholeMinutes", () => new WholeMinutes()),
-            new("WholeMinutesUnscrubbed", () => new WholeMinutes(), GoldenOptions.DontScrubDateTimes),
+            new(
+                "WholeMinutesUnscrubbed",
+                () => new WholeMinutes(),
+                GoldenOptions.DontScrubDateTimes
+            ),
             new("Claims", () => new ClaimHolder()),
             new("ClaimsUnscrubbed", () => new ClaimHolder(), all),
             new("TopClaim", () => new Claim("aud", "x")),

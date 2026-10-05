@@ -345,7 +345,10 @@ internal sealed class SnapshotSerializer
 
         var entries = new List<(Func<string> Label, object? Value)>
         {
-            (() => type, _settings.ScrubbedMembers.Contains(type) ? ScrubbedClaimMember : claim.Value),
+            (
+                () => type,
+                _settings.ScrubbedMembers.Contains(type) ? ScrubbedClaimMember : claim.Value
+            ),
         };
 
         const string propertiesName = nameof(Claim.Properties);
@@ -353,7 +356,9 @@ internal sealed class SnapshotSerializer
         {
             entries.Add((() => propertiesName, ScrubbedClaimMember));
         }
-        else if (!ShouldSkipEntryValue(claim.Properties, out var properties) && properties is not null)
+        else if (
+            !ShouldSkipEntryValue(claim.Properties, out var properties) && properties is not null
+        )
         {
             entries.Add((() => propertiesName, properties));
         }

@@ -138,10 +138,7 @@ public class AltinnAppSpecificationTests
         var fileMetadata = _defaultSpec.CreateFileMetadata(dataElement);
 
         fileMetadata.Metadata.ShouldBe(expectedMetadata);
-        await Snapshot.Verify(
-            fileMetadata,
-            _snapshotSettings.UseParameters(dataType, contentType)
-        );
+        await Snapshot.Verify(fileMetadata, _snapshotSettings.UseParameters(dataType, contentType));
     }
 
     private static AltinnInstance CreateCompliantInstance(
