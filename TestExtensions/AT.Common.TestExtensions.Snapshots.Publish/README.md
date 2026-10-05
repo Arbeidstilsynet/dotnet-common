@@ -6,8 +6,6 @@ The library serializes a value to readable text and compares it with a committed
 
 The snapshot format is **compatible with Verify's snapshot format**, so existing `.verified.txt` files can usually be reused unchanged. The library is a clean-room implementation and contains no Verify code. The full format and behaviour are specified in [SPEC.md](https://github.com/Arbeidstilsynet/dotnet-common/blob/main/TestExtensions/AT.Common.TestExtensions.Snapshots.Publish/SPEC.md).
 
-> **Preview.** Legal sign-off on licensing is required before the first non-preview release.
-
 ## Usage
 
 ```csharp

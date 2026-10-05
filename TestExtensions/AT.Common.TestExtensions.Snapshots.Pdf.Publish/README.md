@@ -7,8 +7,6 @@ A PDF is verified as:
 - **`{name}.verified.txt`**: the PDF version, the page count and the text of each page. Text diffs are readable in pull requests.
 - **`{name}.verified.png`** (one page) or **`{name}#00.verified.png`, `#01`, …** (several pages): every page rendered with PDFium. Images are compared with SSIM, so small rasterisation differences between machines are tolerated while layout and content changes still fail.
 
-> **Preview.** Legal sign-off on licensing is required before the first non-preview release. See [THIRD-PARTY-NOTICES.md](https://github.com/Arbeidstilsynet/dotnet-common/blob/main/TestExtensions/AT.Common.TestExtensions.Snapshots.Pdf.Publish/THIRD-PARTY-NOTICES.md).
-
 ## Usage
 
 ```csharp
