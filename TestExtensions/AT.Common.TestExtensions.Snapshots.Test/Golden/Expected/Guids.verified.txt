@@ -1,0 +1,21 @@
+﻿{
+  First: Guid_1,
+  Second: Guid_2,
+  Again: Guid_1,
+  Nullable: Guid_2,
+  GuidString: Guid_1,
+  GuidUpper: Guid_2,
+  GuidBraces: Guid_1,
+  GuidN: Guid_1,
+  InlineGuid: 3aa1d561-8c4e-7975-9c9b-f9dff6ede8e5-jp-inngaaende,
+  SentenceGuid: Ref a75da64f-053a-4c1e-9a1b-111122223333 was created,
+  NewGuidInline: id 11111111-2222-3333-4444-555555555555 end,
+  List: [
+    Guid_2,
+    Guid_1,
+    Guid_3
+  ],
+  Keyed: {
+    Guid_1: a
+  }
+}

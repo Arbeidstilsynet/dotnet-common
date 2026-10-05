@@ -13,7 +13,6 @@ Reusable [agent skills](https://agentskills.io) for the shared .NET libraries in
 | [era-client](era-client/) | ERA external API client with OAuth authentication |
 | [feature-flags](feature-flags/) | Feature flag evaluation backed by Unleash |
 | [geonorge](geonorge/) | Norwegian geographic data — address search, geocoding, county/municipality lookup |
-| [test-extensions](test-extensions/) | Testing utilities — WireMock server setup from OpenAPI specifications |
 
 ## Installation
 

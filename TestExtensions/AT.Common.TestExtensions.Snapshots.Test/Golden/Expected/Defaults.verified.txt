@@ -1,0 +1,7 @@
+﻿{
+  False: false,
+  EmptyString: ,
+  ZeroNullableInt: 0,
+  FalseNullableBool: false,
+  EmptyChild: {}
+}

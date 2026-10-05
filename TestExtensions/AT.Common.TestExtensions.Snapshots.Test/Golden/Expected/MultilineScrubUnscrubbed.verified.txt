@@ -1,0 +1,55 @@
+﻿{
+  GuidLine:
+a
+3aa1d561-8c4e-7975-9c9b-f9dff6ede8e5
+b,
+  GuidLineFirst:
+a75da64f-053a-4c1e-9a1b-111122223333
+b,
+  GuidLineLast:
+a
+3aa1d561-8c4e-7975-9c9b-f9dff6ede8e5,
+  GuidLineSpaces:
+a
+ a75da64f-053a-4c1e-9a1b-111122223333 
+b,
+  GuidInLine:
+a
+ref a75da64f-053a-4c1e-9a1b-111122223333 x
+b,
+  GuidNLine:
+a
+3aa1d5618c4e79759c9bf9dff6ede8e5
+b,
+  GuidCrLf:
+a
+a75da64f-053a-4c1e-9a1b-111122223333
+b,
+  GuidTrailing:
+3aa1d561-8c4e-7975-9c9b-f9dff6ede8e5
+,
+  NewGuidLine:
+x
+11111111-2222-3333-4444-555555555555
+y,
+  DateLine:
+a
+2026-02-28T07:46:15Z
+b,
+  DateSpaceLine:
+a
+2026-02-28 07:46:15
+b,
+  DateOnlyLine:
+a
+2026-02-28
+b,
+  DateInLine:
+a
+at 2026-02-28T07:46:15Z ok
+b,
+  List: [
+    q
+3aa1d561-8c4e-7975-9c9b-f9dff6ede8e5
+  ]
+}

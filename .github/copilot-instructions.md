@@ -14,7 +14,7 @@ PackageName/
 └── AT.Common.PackageName.Test.ArchUnit/  # Architecture tests (not published)
 ```
 
-Current packages: Altinn, AltinnApp, AspNetCore, BlubExtensions, Enhetsregisteret, EraClient, FeatureFlags, GeoNorge, Saksarkiv, TestExtensions.
+Current packages: Altinn, AltinnApp, AspNetCore, BlubExtensions, Enhetsregisteret, EraClient, FeatureFlags, GeoNorge, Saksarkiv, TestExtensions (Snapshots, Snapshots.Pdf).
 
 ## Versioning Conventions
 

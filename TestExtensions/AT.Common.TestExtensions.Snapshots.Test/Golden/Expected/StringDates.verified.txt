@@ -1,0 +1,14 @@
+﻿{
+  IsoZ: DateTimeOffset_1,
+  IsoNoZone: DateTimeOffset_2,
+  IsoFraction: DateTimeOffset_3,
+  IsoOffset: DateTimeOffset_4,
+  DateOnlyString: 2026-02-28,
+  SpaceSeparated: 2026-02-28 07:46:15,
+  Digit: 1,
+  Year: 2026,
+  Clock: 10:20,
+  Words: March 1, 2026,
+  IsoZAgain: DateTimeOffset_1,
+  SameInstant: DateTimeOffset_1
+}

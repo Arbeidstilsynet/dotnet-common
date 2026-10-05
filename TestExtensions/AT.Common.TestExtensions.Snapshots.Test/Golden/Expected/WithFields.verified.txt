@@ -1,0 +1,6 @@
+﻿{
+  PublicField: field,
+  ReadonlyField: 3,
+  Prop: prop,
+  Computed: prop!
+}
