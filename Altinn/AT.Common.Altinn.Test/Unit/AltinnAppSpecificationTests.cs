@@ -128,10 +128,15 @@ public class AltinnAppSpecificationTests
         string contentType
     )
     {
-        var dataElement = CreateDataElement(dataType, contentType);
+        var expectedMetadata = new Dictionary<string, string> { ["source"] = "test" };
+        var dataElement = CreateDataElement(dataType, contentType) with
+        {
+            Metadata = expectedMetadata,
+        };
 
         var fileMetadata = _defaultSpec.CreateFileMetadata(dataElement);
 
+        fileMetadata.Metadata.ShouldBe(expectedMetadata);
         await Verify(fileMetadata, _verifySettings).UseParameters(dataType, contentType);
     }
 

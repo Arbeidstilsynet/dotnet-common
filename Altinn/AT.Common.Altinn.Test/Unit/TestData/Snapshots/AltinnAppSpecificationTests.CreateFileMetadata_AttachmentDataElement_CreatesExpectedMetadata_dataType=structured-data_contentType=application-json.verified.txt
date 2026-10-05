@@ -3,5 +3,8 @@
   AltinnDataType: structured-data,
   FileScanResult: Clean,
   ContentType: application/json,
-  Filename: structured-data.json
+  Filename: structured-data.json,
+  Metadata: {
+    source: test
+  }
 }

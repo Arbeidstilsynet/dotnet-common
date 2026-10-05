@@ -31,4 +31,9 @@ public record FileMetadata
     /// Gets the file name.
     /// </summary>
     public string? Filename { get; init; }
+
+    /// <summary>
+    /// Gets application-defined metadata associated with the data element.
+    /// </summary>
+    public Dictionary<string, string> Metadata { get; init; } = [];
 }

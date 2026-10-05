@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 4.0.5
+
+### Fixed
+
+- File metadata now includes application-defined metadata from the Altinn data element.
+
 ## 4.0.4
 
 ### Fixed
