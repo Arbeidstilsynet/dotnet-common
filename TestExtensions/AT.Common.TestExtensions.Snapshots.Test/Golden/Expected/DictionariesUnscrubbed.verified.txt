@@ -1,0 +1,55 @@
+﻿{
+  Mixed: {
+    alpha: lower,
+    bool-field: false,
+    date-field: 2026-03-01 +0,
+    datetime-field: 2026-03-01 Utc,
+    double-field: 1.0,
+    int-field: 1,
+    list-field: [
+      1,
+      two
+    ],
+    long-field: 2,
+    nested-field: {
+      nested-string-field: ut
+    },
+    string-field: fugiat,
+    Zeta: upper
+  },
+  IntKeys: {
+    2: two,
+    10: ten
+  },
+  OddKeys: {
+    : 3,
+    a b: 1,
+    a:b: 2,
+    Ø: 4
+  },
+  EnumKeys: {
+    Red: 0,
+    Green: 1
+  },
+  ObjectValues: {
+    c: {
+      Name: n,
+      Value: 0,
+      Tags: null
+    }
+  },
+  NullValue: {
+    n: null,
+    v: x
+  },
+  ZeroValue: {
+    zero: 0
+  },
+  Sorted: {
+    a: 1,
+    b: 2
+  },
+  ReadOnly: {
+    r: 1
+  }
+}

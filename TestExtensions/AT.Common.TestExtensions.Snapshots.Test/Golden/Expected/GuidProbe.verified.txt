@@ -1,0 +1,18 @@
+﻿{
+  Spaced: Guid_1,
+  Tabbed: Guid_2,
+  XFormat: Guid_1,
+  PFormat: Guid_2,
+  NInline: x 3aa1d5618c4e79759c9bf9dff6ede8e5 y,
+  NAdjacent: xa75da64f053a4c1e9a1b111122223333y,
+  BInline: x {3aa1d561-8c4e-7975-9c9b-f9dff6ede8e5} y,
+  PInline: x (a75da64f-053a-4c1e-9a1b-111122223333) y,
+  UpperInline: x A75DA64F-053A-4C1E-9A1B-111122223333 y,
+  Underscore: x_3aa1d561-8c4e-7975-9c9b-f9dff6ede8e5_y,
+  DigitAdjacent: x 3aa1d561-8c4e-7975-9c9b-f9dff6ede8e50 y,
+  LetterAdjacent: x 3aa1d561-8c4e-7975-9c9b-f9dff6ede8e5g y,
+  Hex33: x 0123456789abcdef0123456789abcdef0 y,
+  Hex32: x 0123456789abcdef0123456789abcdef y,
+  TwoInline: 3aa1d561-8c4e-7975-9c9b-f9dff6ede8e5a75da64f-053a-4c1e-9a1b-111122223333,
+  Dotted: file.3aa1d561-8c4e-7975-9c9b-f9dff6ede8e5.pdf
+}

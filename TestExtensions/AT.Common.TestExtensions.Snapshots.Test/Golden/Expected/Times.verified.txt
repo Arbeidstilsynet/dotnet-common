@@ -1,0 +1,25 @@
+﻿{
+  Utc: DateTime_1,
+  UtcMidnight: DateTime_2,
+  UtcSeconds: DateTime_3,
+  UtcMillis: DateTime_4,
+  EndOfDay: DateTime_5,
+  Unspecified: DateTime_6,
+  UnspecifiedMidnight: DateTime_7,
+  OffsetZero: DateTimeOffset_1,
+  OffsetZeroTime: DateTimeOffset_2,
+  OffsetPlusTwo: DateTimeOffset_3,
+  OffsetMinus: DateTimeOffset_4,
+  Date: Date_1,
+  NullableDate: DateTime_8,
+  DuplicateOfUtc: DateTime_1,
+  DuplicateDate: Date_1,
+  OtherDate: Date_2,
+  MaxValue: Date_MaxValue,
+  DateLikeString: DateTimeOffset_5,
+  DateInSentence: Sent 2026-02-28 07:46:15 by user,
+  List: [
+    DateTime_9,
+    DateTime_2
+  ]
+}

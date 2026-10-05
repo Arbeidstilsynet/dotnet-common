@@ -1,0 +1,25 @@
+﻿{
+  Utc: 2026-02-28 07:46:15.3770601 Utc,
+  UtcMidnight: 2026-06-10 Utc,
+  UtcSeconds: 2026-06-10 12:30:05 Utc,
+  UtcMillis: 2026-06-10 12:30:05.123 Utc,
+  EndOfDay: 2026-07-08 23:59:59.9999999 Utc,
+  Unspecified: 2026-01-02 03:04:05,
+  UnspecifiedMidnight: 2026-01-02,
+  OffsetZero: 2026-03-01 +0,
+  OffsetZeroTime: 2026-03-01 10:20:30 +0,
+  OffsetPlusTwo: 2026-03-01 10:20:30 +2,
+  OffsetMinus: 2026-03-01 -5-30,
+  Date: 1985-07-17,
+  NullableDate: 2020-01-01 Utc,
+  DuplicateOfUtc: 2026-02-28 07:46:15.3770601 Utc,
+  DuplicateDate: 1985-07-17,
+  OtherDate: 1990-01-01,
+  MaxValue: 9999-12-31 23:59:59.9999999,
+  DateLikeString: 2026-02-28T07:46:15Z,
+  DateInSentence: Sent 2026-02-28 07:46:15 by user,
+  List: [
+    2021-01-01 Utc,
+    2026-06-10 Utc
+  ]
+}

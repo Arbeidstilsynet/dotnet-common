@@ -1,0 +1,14 @@
+﻿{
+  IsoZ: 2026-02-28T07:46:15Z,
+  IsoNoZone: 2026-02-28T07:46:15,
+  IsoFraction: 2026-02-28T07:46:15.1234567Z,
+  IsoOffset: 2026-02-28T07:46:15+02:00,
+  DateOnlyString: 2026-02-28,
+  SpaceSeparated: 2026-02-28 07:46:15,
+  Digit: 1,
+  Year: 2026,
+  Clock: 10:20,
+  Words: March 1, 2026,
+  IsoZAgain: 2026-02-28T07:46:15Z,
+  SameInstant: 2026-02-28 07:46:15 +0
+}

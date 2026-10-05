@@ -1,0 +1,5 @@
+﻿{
+  DerivedProp: derived,
+  BaseProp: base,
+  Shared: 1
+}

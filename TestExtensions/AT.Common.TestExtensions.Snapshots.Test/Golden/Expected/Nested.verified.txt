@@ -1,0 +1,66 @@
+﻿{
+  Child: {
+    Name: c,
+    Value: 1,
+    Tags: [
+      x,
+      y
+    ]
+  },
+  Children: [
+    {
+      Name: a
+    },
+    {
+      Value: 2
+    }
+  ],
+  Matrix: [
+    [
+      1,
+      2
+    ],
+    [
+      3
+    ]
+  ],
+  WithNulls: [
+    a,
+    null,
+    b
+  ],
+  ChildrenWithNull: [
+    {
+      Name: z
+    },
+    null
+  ],
+  Boxed: 5,
+  Runtime: {
+    Name: runtime
+  },
+  Linq: [
+    2,
+    4,
+    6
+  ],
+  Set: [
+    b,
+    a
+  ],
+  ReadOnly: [
+    9,
+    8
+  ],
+  Tuple: {
+    Item1: 1,
+    Item2: one
+  },
+  Pair: {
+    k: 1
+  },
+  Bytes: aG92ZWRkb2t1bWVudA==,
+  ChildrenOfEmpty: [
+    {}
+  ]
+}

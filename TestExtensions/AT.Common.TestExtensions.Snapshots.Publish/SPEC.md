@@ -1,0 +1,319 @@
+# Snapshot format & behaviour specification
+
+This document is the **single reference** for implementing
+`Arbeidstilsynet.Common.TestExtensions.Snapshots`. The output format is
+compatible with the snapshot files produced by Verify. The specification was
+derived **black-box**: we observed existing `.verified.txt` files and the
+output of running Verify against a corpus of inputs (see
+`AT.Common.TestExtensions.Snapshots.Test/Golden`). No Verify, Argon or
+DiffEngine source code was consulted.
+
+## 1. File naming
+
+```
+{directory}/{name}{suffix}.verified.{ext}
+{directory}/{name}{suffix}.received.{ext}
+```
+
+- **directory**: the directory of the calling source file (`[CallerFilePath]`),
+  combined with `SnapshotSettings.UseDirectory(path)` when that is set.
+- **name**: `SnapshotSettings.UseFileName(name)` when set. Otherwise
+  `{Class}.{Method}{Parameters}`.
+  - **Class**: the test class's simple name. For nested classes the declaring
+    types are included and separated by `.` (`Outer.Nested`). Generic arity
+    suffixes (`` `1 ``) are removed. Without an xunit v3 `TestContext`, the
+    caller's file name (without extension) is used.
+  - **Method**: the test method name from `TestContext`, or `[CallerMemberName]`
+    as a fallback. A trailing `Async` is kept.
+  - **Parameters**:
+    - Use the values from `SnapshotSettings.UseParameters(...)` when set,
+      otherwise the theory arguments from `TestContext`.
+    - The values are paired positionally with the method's parameter names.
+    - Each pair is written as `_{parameterName}={value}`.
+    - No suffix is written when there are no values or no parameters.
+- **Parameter value formatting**:
+
+  | Value | Written as |
+  | --- | --- |
+  | `null` | `null` |
+  | `bool` | `True` / `False` |
+  | Enum | Member name |
+  | `IFormattable` | Invariant culture |
+  | Arrays / enumerables | Items joined with `,` |
+  | Anything else | `ToString()` |
+
+  After formatting, each of `< > : " / \ | ? *` and every control character is
+  replaced by `-`.
+- **suffix**: an optional per-target suffix, for example `#00` for the first
+  page image of a PDF.
+- **Example**: `NamingTests.Theory_IntBool_n=-2_flag=False.verified.txt`.
+
+## 2. Workflow
+
+1. Each target is compared with its verified file.
+   - **Text targets**: compared after removing a leading UTF-8 BOM and
+     normalising `\r\n` and `\r` to `\n`.
+     - A single extra trailing `\n` in the verified file is tolerated, because
+       editors often add one.
+   - **Binary targets**: compared with the target's comparer. The default
+     comparer checks for byte equality.
+2. **Match**: any stale `.received.*` file for that target is deleted.
+3. **Mismatch, or no verified file**:
+   - **Accept mode** is enabled when `SNAPSHOT_ACCEPT` or `UPDATE_SNAPSHOTS` is
+     `1`/`true` and `CI` is not `true`.
+     - The verified file is written and the received file deleted.
+     - The target counts as passed.
+   - **Otherwise** the received file is written and the target fails.
+4. All targets are processed before a single `SnapshotMismatchException` is
+   thrown. Its message lists every failing target and includes a unified line
+   diff for text targets (or "new snapshot" when nothing was verified before).
+5. Text files are written as UTF-8 **with BOM**, with `\n` line endings and
+   **no trailing newline**.
+
+## 3. Serialization (text output)
+
+The format looks like relaxed JSON: names and strings are not quoted, and the
+indentation is 2 spaces per level.
+
+### 3.1 Top-level values
+
+A **scalar** at the top level is written on its own, without scrubbing of the
+value itself:
+
+| Value | Output |
+| --- | --- |
+| `null` | `null` |
+| `""` | `emptyString` |
+| Any other string | Raw string (newlines normalised) |
+| `bool` | `True` / `False` |
+| `double` / `float` / `decimal` / integers | `ToString(InvariantCulture)`, e.g. `1`, `2.50` |
+| Enum | Name |
+| `Guid` | `D` format |
+| `DateTime` / `DateTimeOffset` / `DateOnly` | Unscrubbed formats (§3.5) |
+
+Inline GUID scrubbing (§4.3) and custom scrubbers (§4.4) still apply to the
+final text.
+
+Collections and objects at the top level are written with the rules below.
+
+### 3.2 Objects
+
+```
+{
+  Name: value,
+  Other: value
+}
+```
+
+- **Empty object**: `{}`.
+- **Member order**: all public instance **fields** first (most-derived type
+  first), then all public instance readable, non-indexer **properties**
+  (most-derived first).
+  - When a member hides another with the same name, only the most-derived one
+    is written.
+  - Static, non-public and write-only members are skipped.
+- **Member names** are written as declared. Anonymous types keep their casing.
+- **When a member is skipped**:
+  - `null`. When `IncludeDefaultValues` is on, it is written as `null`
+    instead.
+  - **Default values**: the value equals `default(T)` for the member's
+    *declared* type.
+    - For example, `0`, `0.0`, `Guid.Empty`, `DateTime.MinValue`, enum value
+      `0`, `'\0'`, and default structs.
+    - **Exception**: `bool` `false` is always written.
+    - Nullable members holding a value are always written, e.g.
+      `int? = 0` → `0`.
+    - Not applied when `IncludeDefaultValues` is on.
+  - **Empty collections** (including empty dictionaries and empty `byte[]`).
+    - Not applied when `DontIgnoreEmptyCollections` is on.
+    - When `IncludeDefaultValues` is on and empty collections are ignored, they
+      are written as `null`.
+  - **Reference cycles**: a value that is already on the current ancestor path
+    is skipped silently.
+- A property getter that throws makes serialization fail with an exception
+  naming the member and type.
+
+### 3.3 Collections
+
+```
+[
+  item,
+  item
+]
+```
+
+- **Empty collection**: `[]`. A top-level empty collection is always written.
+- **Null items**: written as `null`.
+- **Empty collection items**: skipped unless `DontIgnoreEmptyCollections` is on.
+- **Item order**: enumeration order (sets are not sorted).
+- **`byte[]`**: written as a base64 string.
+- **`KeyValuePair<K,V>`**: written as an object with a single member,
+  `{ key: value }`.
+- **Value tuples**: written as objects with `Item1`, `Item2`, and so on.
+
+### 3.4 Dictionaries
+
+Any `IDictionary`, `IDictionary<K,V>` or `IReadOnlyDictionary<K,V>`:
+
+```
+{
+  key: value
+}
+```
+
+- **Key order**: keys are **sorted**.
+  - String keys: `StringComparer.OrdinalIgnoreCase`.
+  - Other keys: `Comparer.Default`. For example, numbers are sorted
+    numerically and enums by value.
+- **Key text**: keys are formatted like scalar values, including scrubbing
+  (e.g. a `Guid` key becomes `Guid_1`). An empty key gives `: value`.
+- **Values**: values are **never** skipped as defaults, and `null` is written
+  as `null`. Empty collections follow the object-member rules.
+- **Empty dictionary**: `{}`.
+
+### 3.5 Scalars
+
+| Type | Format |
+| --- | --- |
+| `string` | Raw, unquoted, unescaped (control characters too). Empty string → nothing after `: `. |
+| `bool` | `true` / `false` |
+| Integers | Invariant `ToString()` |
+| `double` / `float` | Shortest round-trip (`R`). Append `.0` when the result has no `.`, `E`, `N` or `I` (e.g. `1.0`, `1E+20`, `1E-07`). |
+| `decimal` | Invariant `ToString()`. Append `.0` when there is no `.` (`100.0`, `12.50`). |
+| `char` | The character itself |
+| Enum | `ToString()`: name, `Read, Exec` for flags, or a number if undefined |
+| `Guid` | `D` format (when not scrubbed) |
+| `TimeSpan` | `c` format (`1.02:03:04.0050000`) |
+| `Uri` | `OriginalString` |
+| `Version` | `ToString()` |
+| `DateTime` | `yyyy-MM-dd`, then ` HH:mm:ss[.fffffff]` if the time of day is non-zero (fraction trimmed of trailing zeros), then ` Utc` / ` Local` (nothing for Unspecified) |
+| `DateTimeOffset` | Same date/time part, then ` ` + sign + hours (no padding) + `-` + minutes if the minutes are non-zero, e.g. `+0`, `+2`, `-5-30`, `+0-30` |
+| `DateOnly` | `yyyy-MM-dd` |
+| `TimeOnly` | `h:mm tt` (invariant), e.g. `1:45 PM` |
+
+**Multi-line strings** (containing `\n` or `\r`): newlines are normalised to
+`\n` and the text is written raw.
+- As a member or dictionary value: `Name:` followed by a newline and then the
+  text. There is no space after the colon.
+- As a collection item: indentation followed by the text.
+- Following lines are not indented.
+
+## 4. Scrubbing
+
+Scrubbing happens **during the walk**, in output order (after dictionary keys
+are sorted). Each category has its own counter. Equal values reuse the same
+number.
+
+### 4.1 GUIDs (on by default; off with `DontScrubGuids`)
+
+- A `Guid` value becomes `Guid_n`. `Guid.Empty` becomes `Guid_Empty`.
+- A **string** whose whole value parses as a GUID (any standard format: `D`,
+  `N`, `B`, `P` or `X`, any case, surrounding whitespace ignored) is scrubbed
+  the same way and shares the same counter and values. For example, `"{guid}\n"`
+  becomes `Guid_1`.
+- GUIDs that are only *part* of a string (including a line of a multi-line
+  string) are **not** scrubbed by default; see §4.3.
+
+### 4.2 Dates (on by default; off with `DontScrubDateTimes`)
+
+| Type | Scrubbed | Min / max |
+| --- | --- | --- |
+| `DateTime` | `DateTime_n` | `Date_MinValue` / `Date_MaxValue` |
+| `DateTimeOffset` | `DateTimeOffset_n` | `Date_MinValue` / `Date_MaxValue` |
+| `DateOnly` | `Date_n` | `Date_MinValue` / `Date_MaxValue` |
+| `TimeOnly` | `Time_n` | `Time_MinValue` / `Time_MaxValue` |
+
+- A **string** that is exactly an ISO-8601 date-time with a `T` separator
+  (`yyyy-MM-ddTHH:mm[:ss[.f…]][Z|±HH:mm]`) counts as a `DateTimeOffset`.
+  - It shares the `DateTimeOffset` counter. A zoned string equals a
+    `DateTimeOffset` value at the same instant.
+  - Strings without a zone only equal identical zoneless strings.
+  - Date-only strings (`2026-02-28`), space-separated date-times and
+    culture-specific formats are **not** scrubbed.
+
+### 4.3 Inline GUIDs (opt-in with `ScrubInlineGuids`)
+
+- Inside any string (including a top-level string and every line of a
+  multi-line string), each GUID in `D` format (any case) or `N` format (32 hex
+  digits) is replaced with `Guid_n` when it is not directly adjacent to an
+  ASCII letter or digit.
+  - Hyphens, underscores, dots, braces, parentheses and whitespace all count
+    as boundaries, so `x_{guid}_y` → `x_Guid_1_y` and `{guid}` inside braces →
+    `{Guid_1}`.
+  - Two GUIDs written back-to-back are not scrubbed.
+- It shares the GUID counter.
+
+### 4.4 Custom scrubbers
+
+`AddScrubber(Func<string, string>)` functions run in registration order on the
+complete serialized text, before it is compared.
+
+## 5. Known, deliberate deviations from Verify
+
+- **Culture-specific date strings**, for example `28.02.2026` under `nb-NO`,
+  are never scrubbed. This makes the output culture-independent.
+- **`System.Text.Json` values**:
+  - `JsonElement` / `JsonNode` / `JsonDocument` are written as their JSON
+    structure: objects with sorted keys, arrays, and raw values.
+  - Verify writes `{ ValueKind: Object }` or empty objects instead.
+- **Maximum depth**: nesting deeper than 64 complex values throws an
+  `InvalidOperationException` instead of overflowing the stack. This
+  protects against getters that return a new object on every call
+  (e.g. `DirectoryInfo.Root`), which reference-based cycle detection cannot
+  catch.
+- **Getter failures**: a property getter that throws fails with an
+  `InvalidOperationException` instead of an Argon `JsonSerializationException`.
+- **Inline GUIDs without GUID scrubbing**: `DontScrubGuids()` combined with
+  `ScrubInlineGuids()` is allowed in any order. GUID values are then written
+  as-is while GUIDs inside text are still scrubbed. Verify rejects this
+  combination when `DontScrubGuids()` is called first.
+
+## 6. PDF snapshots (`.Pdf` package)
+
+`PdfSnapshot.VerifyPdf(stream | bytes, settings, options)` produces:
+
+- **`{name}.verified.txt`** containing the serialized object
+  `{ Version, PageCount, Pages: [ { Index, Text } ] }`.
+  - `Version` is the PDF header version, formatted with the invariant culture
+    (e.g. `1.7`).
+  - `Index` is the zero-based page index. Like any default value it is omitted
+    for the first page.
+  - `Text` is the page text in content-stream order: PdfPig
+    `ContentOrderTextExtractor`, with line endings normalised to `\n` and
+    trailing newlines removed. Multi-line text follows the normal multi-line
+    string rule (§3).
+  - All scrubbers apply, so inline GUIDs in page text need
+    `ScrubInlineGuids()`.
+- **One PNG per page**, unless `IncludeImages = false`.
+  - Pages are rendered with PDFium (PDFtoImage) at `Dpi` (default `144`, so
+    A4 is 1191×1684) on a white background, without annotations and with
+    anti-aliasing on.
+  - A single page is written as `{name}.verified.png`.
+  - Several pages are written as `{name}#00.verified.png`, `#01`, and so on.
+- **Image comparison** uses SSIM (Wang et al., 2004):
+  - Both images are decoded and composited over white.
+  - Luminance is `0.299 R + 0.587 G + 0.114 B`.
+  - SSIM is computed on non-overlapping 8×8 windows (partial windows at the
+    edges included) with `C1 = (0.01·255)²` and `C2 = (0.03·255)²`.
+  - Windows that are uniform and identical in both images (blank background)
+    are excluded, so a mostly empty page does not dilute real changes.
+  - The images are equal when:
+    - the dimensions match,
+    - the mean SSIM over the remaining windows is ≥ `SsimThreshold`
+      (default `0.98`), and
+    - every remaining window has SSIM ≥ `MinWindowSsim` (default `0.5`).
+  - Measured on a test page, a changed word drops the minimum window SSIM
+    below `0.1`, while random ±25-level noise on 20,000 pixels keeps it above
+    `0.55`.
+- **The `#pdf.verified.pdf` file is not produced.** The PDF bytes usually
+  contain timestamps and IDs and are not a useful snapshot.
+
+### 6.1 Compatibility with existing Verify PDF snapshots
+
+- **Text snapshots are byte-for-byte compatible.** This was checked against
+  existing snapshots of real letters.
+- **Page images are not interchangeable.**
+  - Images rendered by other PDFium-based tools (e.g. Docnet) have the same
+    dimensions but slightly different glyph rasterisation and scaling.
+  - Measured mean SSIM is 0.90–0.98, which is below the default threshold.
+  - When migrating, re-accept the PNGs once.
