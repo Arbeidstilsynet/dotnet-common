@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Arbeidstilsynet.Common.TestExtensions.Snapshots.Pdf</RootNamespace>
+    <AssemblyName>Arbeidstilsynet.Common.TestExtensions.Snapshots.Pdf</AssemblyName>
+    <PackageId>Arbeidstilsynet.Common.TestExtensions.Snapshots.Pdf</PackageId>
+    <Product>Arbeidstilsynet.Common.TestExtensions.Snapshots.Pdf</Product>
+    <Authors>Digital Samhandling</Authors>
+    <Company>Arbeidstilsynet</Company>
+    <Description>PDF snapshot testing (page text plus rendered page images compared with SSIM) for Arbeidstilsynet.Common.TestExtensions.Snapshots.</Description>
+    <PackageTags>snapshot;testing;pdf;ssim</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Version>0.1.0-preview.1</Version>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/Arbeidstilsynet/dotnet-common</PackageProjectUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="AT.Common.TestExtensions.Snapshots.Pdf.Test" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="PdfPig" Version="0.1.16" />
+    <PackageReference Include="PDFtoImage" Version="5.4.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AT.Common.TestExtensions.Snapshots.Publish\AT.Common.TestExtensions.Snapshots.Publish.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="THIRD-PARTY-NOTICES.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+  <Target
+    Name="InjectPackageReleaseNotesFromFile"
+    BeforeTargets="GenerateNuspec"
+    Condition="Exists('CHANGELOG.md')"
+  >
+    <PropertyGroup>
+      <PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/CHANGELOG.md"))</PackageReleaseNotes>
+    </PropertyGroup>
+  </Target>
+</Project>
