@@ -1,4 +1,5 @@
 using System.Net;
+using Arbeidstilsynet.Common.TestExtensions.Snapshots;
 using Arbeidstilsynet.Shared.CrossCutting;
 using Arbeidstilsynet.Shared.DependencyInjection;
 using Microsoft.Extensions.Caching.Memory;
@@ -18,11 +19,11 @@ public class MemoryCachingHandlerTests
         }
     );
 
-    private readonly VerifySettings _verifySettings = new();
+    private readonly SnapshotSettings _snapshotSettings = new();
 
     public MemoryCachingHandlerTests()
     {
-        _verifySettings.UseDirectory("TestData/Snapshots");
+        _snapshotSettings.UseDirectory("TestData/Snapshots");
     }
 
     [Fact]
@@ -96,7 +97,7 @@ public class MemoryCachingHandlerTests
 
         var response = await invoker.SendAsync(request, CancellationToken.None);
 
-        await Verify(response, _verifySettings);
+        await Snapshot.Verify(response, _snapshotSettings);
         var content = await response.Content.ReadAsStringAsync(
             TestContext.Current.CancellationToken
         );
@@ -199,7 +200,7 @@ public class MemoryCachingHandlerTests
         // Third call: should get a mutated header (since same instance is returned)
         var thirdResponse = await invoker.SendAsync(request, CancellationToken.None);
 
-        await Verify(thirdResponse, _verifySettings);
+        await Snapshot.Verify(thirdResponse, _snapshotSettings);
         var content = await thirdResponse.Content.ReadAsStringAsync(
             TestContext.Current.CancellationToken
         );

@@ -94,6 +94,39 @@ public class SerializerTests
     }
 
     [Fact]
+    public void WholeMinuteWithSubMillisecondTicks_KeepsFraction()
+    {
+        Snapshot
+            .Serialize(
+                new { When = new DateTime(2026, 1, 2, 3, 4, 0, DateTimeKind.Utc).AddTicks(5) },
+                new SnapshotSettings().DontScrubDateTimes()
+            )
+            .ShouldBe("{\n  When: 2026-01-02 03:04:00.0000005 Utc\n}");
+    }
+
+    [Fact]
+    public void ScrubMembers_AppliesToTopLevelAnonymousType()
+    {
+        Snapshot
+            .Serialize(new { A = 1, B = 2 }, new SnapshotSettings().ScrubMembers("B"))
+            .ShouldBe("{\n  A: 1,\n  B: {Scrubbed}\n}");
+    }
+
+    [Fact]
+    public void Settings_CopyConstructor_CopiesScrubbedMembers()
+    {
+        var original = new SnapshotSettings().ScrubMembers("A");
+        var copy = new SnapshotSettings(original).ScrubMembers("B");
+
+        Snapshot
+            .Serialize(new { A = 1, B = 2 }, original)
+            .ShouldBe("{\n  A: {Scrubbed},\n  B: 2\n}");
+        Snapshot
+            .Serialize(new { A = 1, B = 2 }, copy)
+            .ShouldBe("{\n  A: {Scrubbed},\n  B: {Scrubbed}\n}");
+    }
+
+    [Fact]
     public void TimeOnlyMinValue_WithIncludeDefaults_IsScrubbed()
     {
         Snapshot

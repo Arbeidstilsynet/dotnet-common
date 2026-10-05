@@ -1,0 +1,7 @@
+﻿{
+  UtcMinutes: DateTime_1,
+  UtcMinutesOdd: DateTime_2,
+  UnspecifiedMinutes: DateTime_3,
+  OffsetMinutes: DateTimeOffset_1,
+  OffsetMinutesHalf: DateTimeOffset_2
+}

@@ -1,0 +1,25 @@
+﻿{
+  Secret: {Scrubbed},
+  NullSecret: {Scrubbed},
+  ZeroSecret: {Scrubbed},
+  When: {Scrubbed},
+  Keep: k,
+  Child: {
+    Secret: {Scrubbed},
+    Numbers: [
+      1
+    ]
+  },
+  Dict: {
+    other: o,
+    Secret: {Scrubbed}
+  },
+  Claims: [
+    {
+      Secret: Scrubbed
+    },
+    {
+      Keep: k
+    }
+  ]
+}
