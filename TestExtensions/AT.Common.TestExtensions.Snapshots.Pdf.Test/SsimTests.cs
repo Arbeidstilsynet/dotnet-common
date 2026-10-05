@@ -5,7 +5,10 @@ namespace Arbeidstilsynet.Common.TestExtensions.Snapshots.Pdf.Test;
 
 public class SsimTests
 {
-    private static readonly byte[] Page = PdfRenderer.RenderPages(SamplePdf.Create(["Forhandsmelding", "Linje to"]), 72)[0];
+    private static readonly byte[] Page = PdfRenderer.RenderPages(
+        SamplePdf.Create(["Forhandsmelding", "Linje to"]),
+        72
+    )[0];
 
     [Fact]
     public void IdenticalImages_AreEqual()
@@ -16,14 +19,18 @@ public class SsimTests
     [Fact]
     public void Rendering_IsDeterministic()
     {
-        var again = PdfRenderer.RenderPages(SamplePdf.Create(["Forhandsmelding", "Linje to"]), 72)[0];
+        var again = PdfRenderer.RenderPages(SamplePdf.Create(["Forhandsmelding", "Linje to"]), 72)[
+            0
+        ];
         Ssim.Compare(Page, again, 0.999).ShouldBe(SnapshotCompareResult.Equal);
     }
 
     [Fact]
     public void DifferentContent_IsNotEqual()
     {
-        var other = PdfRenderer.RenderPages(SamplePdf.Create(["Ulykkesvarsel", "Annen linje"]), 72)[0];
+        var other = PdfRenderer.RenderPages(SamplePdf.Create(["Ulykkesvarsel", "Annen linje"]), 72)[
+            0
+        ];
 
         var result = Ssim.Compare(Page, other, 0.98);
 
@@ -34,7 +41,9 @@ public class SsimTests
     [Fact]
     public void OneChangedWord_IsNotEqual()
     {
-        var other = PdfRenderer.RenderPages(SamplePdf.Create(["Forhandsmelding", "Linje tre"]), 72)[0];
+        var other = PdfRenderer.RenderPages(SamplePdf.Create(["Forhandsmelding", "Linje tre"]), 72)[
+            0
+        ];
 
         Ssim.Compare(Page, other, 0.98).IsEqual.ShouldBeTrue();
         Ssim.Compare(Page, other, 0.98, 0.5).Message!.ShouldContain("Local SSIM");
@@ -61,7 +70,9 @@ public class SsimTests
     [Fact]
     public void DifferentSize_IsNotEqual()
     {
-        var larger = PdfRenderer.RenderPages(SamplePdf.Create(["Forhandsmelding", "Linje to"]), 96)[0];
+        var larger = PdfRenderer.RenderPages(SamplePdf.Create(["Forhandsmelding", "Linje to"]), 96)[
+            0
+        ];
 
         Ssim.Compare(Page, larger, 0.98).Message!.ShouldContain("size differs");
     }
@@ -76,7 +87,8 @@ public class SsimTests
         using var white = new SKBitmap(8, 8, SKColorType.Rgba8888, SKAlphaType.Premul);
         white.Erase(SKColors.White);
 
-        Ssim.Compare(Encode(transparent), Encode(white), 0.999).ShouldBe(SnapshotCompareResult.Equal);
+        Ssim.Compare(Encode(transparent), Encode(white), 0.999)
+            .ShouldBe(SnapshotCompareResult.Equal);
     }
 
     [Fact]

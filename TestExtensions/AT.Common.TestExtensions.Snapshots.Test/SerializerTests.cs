@@ -41,13 +41,17 @@ public class SerializerTests
     {
         var node = JsonNode.Parse("""{"name": "n", "count": 2}""");
 
-        Snapshot.Serialize(new { Node = node }).ShouldBe("{\n  Node: {\n    count: 2,\n    name: n\n  }\n}");
+        Snapshot
+            .Serialize(new { Node = node })
+            .ShouldBe("{\n  Node: {\n    count: 2,\n    name: n\n  }\n}");
     }
 
     [Fact]
     public void ThrowingGetter_ThrowsWithMemberAndType()
     {
-        var exception = Should.Throw<InvalidOperationException>(() => Snapshot.Serialize(new Golden.Throwing()));
+        var exception = Should.Throw<InvalidOperationException>(() =>
+            Snapshot.Serialize(new Golden.Throwing())
+        );
 
         exception.Message.ShouldContain("'Boom'");
         exception.Message.ShouldContain(nameof(Golden.Throwing));
@@ -93,7 +97,10 @@ public class SerializerTests
     public void TimeOnlyMinValue_WithIncludeDefaults_IsScrubbed()
     {
         Snapshot
-            .Serialize(new { Time = TimeOnly.MinValue }, new SnapshotSettings().IncludeDefaultValues())
+            .Serialize(
+                new { Time = TimeOnly.MinValue },
+                new SnapshotSettings().IncludeDefaultValues()
+            )
             .ShouldBe("{\n  Time: Time_MinValue\n}");
     }
 
@@ -106,7 +113,9 @@ public class SerializerTests
     [Fact]
     public void UnboundedGraph_ThrowsInsteadOfOverflowingTheStack()
     {
-        var exception = Should.Throw<InvalidOperationException>(() => Snapshot.Serialize(new Endless(0)));
+        var exception = Should.Throw<InvalidOperationException>(() =>
+            Snapshot.Serialize(new Endless(0))
+        );
 
         exception.Message.ShouldContain("maximum depth");
     }

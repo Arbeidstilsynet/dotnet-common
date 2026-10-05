@@ -11,7 +11,10 @@ public sealed class WorkflowTests : IDisposable
 {
     private static readonly string[] Variables = ["CI", "SNAPSHOT_ACCEPT", "UPDATE_SNAPSHOTS"];
 
-    private readonly string _directory = Path.Combine(Path.GetTempPath(), "snapshots-" + Guid.NewGuid().ToString("N"));
+    private readonly string _directory = Path.Combine(
+        Path.GetTempPath(),
+        "snapshots-" + Guid.NewGuid().ToString("N")
+    );
     private readonly Dictionary<string, string?> _originalVariables = Variables.ToDictionary(
         v => v,
         Environment.GetEnvironmentVariable
@@ -38,7 +41,8 @@ public sealed class WorkflowTests : IDisposable
         }
     }
 
-    private SnapshotSettings Settings => new SnapshotSettings().UseDirectory(_directory).UseFileName("Sample");
+    private SnapshotSettings Settings =>
+        new SnapshotSettings().UseDirectory(_directory).UseFileName("Sample");
 
     private string Verified => Path.Combine(_directory, "Sample.verified.txt");
     private string Received => Path.Combine(_directory, "Sample.received.txt");
@@ -106,7 +110,9 @@ public sealed class WorkflowTests : IDisposable
         Environment.SetEnvironmentVariable("SNAPSHOT_ACCEPT", "1");
         Environment.SetEnvironmentVariable("CI", "true");
 
-        await Should.ThrowAsync<SnapshotMismatchException>(() => Snapshot.Verify(new { Name = "a" }, Settings));
+        await Should.ThrowAsync<SnapshotMismatchException>(() =>
+            Snapshot.Verify(new { Name = "a" }, Settings)
+        );
 
         File.Exists(Verified).ShouldBeFalse();
     }
@@ -116,14 +122,22 @@ public sealed class WorkflowTests : IDisposable
     {
         Directory.CreateDirectory(_directory);
         await File.WriteAllTextAsync(Path.Combine(_directory, "Sample.verified.txt"), "text");
-        await File.WriteAllBytesAsync(Path.Combine(_directory, "Sample#00.verified.bin"), [1, 2, 3]);
+        await File.WriteAllBytesAsync(
+            Path.Combine(_directory, "Sample#00.verified.bin"),
+            [1, 2, 3]
+        );
         await File.WriteAllBytesAsync(Path.Combine(_directory, "Sample#01.verified.bin"), [9]);
 
         var exception = await Should.ThrowAsync<SnapshotMismatchException>(() =>
             Snapshot.VerifyTargets(
                 [
                     SnapshotTarget.ForText("text"),
-                    SnapshotTarget.ForBinary([1, 2, 4], "bin", (_, _) => SnapshotCompareResult.Equal, "#00"),
+                    SnapshotTarget.ForBinary(
+                        [1, 2, 4],
+                        "bin",
+                        (_, _) => SnapshotCompareResult.Equal,
+                        "#00"
+                    ),
                     SnapshotTarget.ForBinary([8], "bin", suffix: "#01"),
                     SnapshotTarget.ForBinary(
                         [7],
@@ -153,7 +167,13 @@ public sealed class WorkflowTests : IDisposable
 
         var exception = await Should.ThrowAsync<SnapshotMismatchException>(() =>
             Snapshot.VerifyTargets(
-                [SnapshotTarget.ForBinary([2], "bin", (_, _) => SnapshotCompareResult.NotEqual("custom reason"))],
+                [
+                    SnapshotTarget.ForBinary(
+                        [2],
+                        "bin",
+                        (_, _) => SnapshotCompareResult.NotEqual("custom reason")
+                    ),
+                ],
                 Settings,
                 "",
                 ""

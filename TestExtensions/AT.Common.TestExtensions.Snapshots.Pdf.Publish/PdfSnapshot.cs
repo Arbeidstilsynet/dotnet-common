@@ -51,9 +51,18 @@ public static class PdfSnapshot
             var windowThreshold = options.MinWindowSsim;
             for (var i = 0; i < pages.Count; i++)
             {
-                var suffix = pages.Count == 1 ? null : "#" + i.ToString("00", System.Globalization.CultureInfo.InvariantCulture);
+                var suffix =
+                    pages.Count == 1
+                        ? null
+                        : "#" + i.ToString("00", System.Globalization.CultureInfo.InvariantCulture);
                 targets.Add(
-                    SnapshotTarget.ForBinary(pages[i], "png", (verified, received) => Ssim.Compare(verified, received, threshold, windowThreshold), suffix)
+                    SnapshotTarget.ForBinary(
+                        pages[i],
+                        "png",
+                        (verified, received) =>
+                            Ssim.Compare(verified, received, threshold, windowThreshold),
+                        suffix
+                    )
                 );
             }
         }

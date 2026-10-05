@@ -51,7 +51,10 @@ internal static class TestContextReader
 
         foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
         {
-            if (assembly.GetName().Name?.StartsWith("xunit", StringComparison.OrdinalIgnoreCase) != true)
+            if (
+                assembly.GetName().Name?.StartsWith("xunit", StringComparison.OrdinalIgnoreCase)
+                != true
+            )
             {
                 continue;
             }

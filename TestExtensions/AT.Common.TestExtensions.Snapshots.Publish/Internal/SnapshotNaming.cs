@@ -10,7 +10,11 @@ internal static class SnapshotNaming
 {
     private const string InvalidFileNameCharacters = "<>:\"/\\|?*";
 
-    public static SnapshotLocation Resolve(SnapshotSettings settings, string sourceFilePath, string memberName)
+    public static SnapshotLocation Resolve(
+        SnapshotSettings settings,
+        string sourceFilePath,
+        string memberName
+    )
     {
         var sourceDirectory = string.IsNullOrEmpty(sourceFilePath)
             ? Environment.CurrentDirectory
@@ -29,7 +33,8 @@ internal static class SnapshotNaming
             ? FormatTypeName(testClass)
             : Path.GetFileNameWithoutExtension(sourceFilePath);
         var methodName = test?.Method?.Name ?? memberName;
-        var parameterNames = test?.Method?.GetParameters().Select(p => p.Name ?? "").ToArray() ?? [];
+        var parameterNames =
+            test?.Method?.GetParameters().Select(p => p.Name ?? "").ToArray() ?? [];
         var parameterValues = settings.Parameters ?? test?.Arguments ?? [];
 
         var name = new StringBuilder();

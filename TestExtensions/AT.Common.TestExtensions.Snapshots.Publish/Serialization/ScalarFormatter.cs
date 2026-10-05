@@ -97,7 +97,9 @@ internal static class ScalarFormatter
         builder.Append(Math.Abs(offset.Hours).ToString(CultureInfo.InvariantCulture));
         if (offset.Minutes != 0)
         {
-            builder.Append('-').Append(Math.Abs(offset.Minutes).ToString("00", CultureInfo.InvariantCulture));
+            builder
+                .Append('-')
+                .Append(Math.Abs(offset.Minutes).ToString("00", CultureInfo.InvariantCulture));
         }
 
         return builder.ToString();

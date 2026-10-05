@@ -50,7 +50,11 @@ public sealed class SnapshotTarget
     public Func<byte[], byte[], SnapshotCompareResult>? Comparer { get; }
 
     /// <summary>Creates a text target. Text is stored as UTF-8 with BOM and <c>\n</c> line endings.</summary>
-    public static SnapshotTarget ForText(string text, string extension = "txt", string? suffix = null)
+    public static SnapshotTarget ForText(
+        string text,
+        string extension = "txt",
+        string? suffix = null
+    )
     {
         ArgumentNullException.ThrowIfNull(text);
         return new(extension, suffix, text, null, null);

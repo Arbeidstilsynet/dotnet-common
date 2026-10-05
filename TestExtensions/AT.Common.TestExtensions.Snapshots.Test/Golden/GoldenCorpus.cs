@@ -13,7 +13,11 @@ public enum GoldenOptions
     ScrubInlineGuids = 16,
 }
 
-public sealed record GoldenCase(string Name, Func<object?> Create, GoldenOptions Options = GoldenOptions.None)
+public sealed record GoldenCase(
+    string Name,
+    Func<object?> Create,
+    GoldenOptions Options = GoldenOptions.None
+)
 {
     public override string ToString() => Name;
 }
@@ -121,20 +125,26 @@ public class Strings
 
 public class Times
 {
-    public DateTime Utc { get; set; } = new DateTime(2026, 2, 28, 7, 46, 15, DateTimeKind.Utc).AddTicks(3770601);
+    public DateTime Utc { get; set; } =
+        new DateTime(2026, 2, 28, 7, 46, 15, DateTimeKind.Utc).AddTicks(3770601);
     public DateTime UtcMidnight { get; set; } = new(2026, 6, 10, 0, 0, 0, DateTimeKind.Utc);
     public DateTime UtcSeconds { get; set; } = new(2026, 6, 10, 12, 30, 5, DateTimeKind.Utc);
     public DateTime UtcMillis { get; set; } = new(2026, 6, 10, 12, 30, 5, 123, DateTimeKind.Utc);
-    public DateTime EndOfDay { get; set; } = new DateTime(2026, 7, 9, 0, 0, 0, DateTimeKind.Utc).AddTicks(-1);
+    public DateTime EndOfDay { get; set; } =
+        new DateTime(2026, 7, 9, 0, 0, 0, DateTimeKind.Utc).AddTicks(-1);
     public DateTime Unspecified { get; set; } = new(2026, 1, 2, 3, 4, 5, DateTimeKind.Unspecified);
-    public DateTime UnspecifiedMidnight { get; set; } = new(2026, 1, 2, 0, 0, 0, DateTimeKind.Unspecified);
+    public DateTime UnspecifiedMidnight { get; set; } =
+        new(2026, 1, 2, 0, 0, 0, DateTimeKind.Unspecified);
     public DateTimeOffset OffsetZero { get; set; } = new(2026, 3, 1, 0, 0, 0, TimeSpan.Zero);
     public DateTimeOffset OffsetZeroTime { get; set; } = new(2026, 3, 1, 10, 20, 30, TimeSpan.Zero);
-    public DateTimeOffset OffsetPlusTwo { get; set; } = new(2026, 3, 1, 10, 20, 30, TimeSpan.FromHours(2));
-    public DateTimeOffset OffsetMinus { get; set; } = new(2026, 3, 1, 0, 0, 0, TimeSpan.FromHours(-5.5));
+    public DateTimeOffset OffsetPlusTwo { get; set; } =
+        new(2026, 3, 1, 10, 20, 30, TimeSpan.FromHours(2));
+    public DateTimeOffset OffsetMinus { get; set; } =
+        new(2026, 3, 1, 0, 0, 0, TimeSpan.FromHours(-5.5));
     public DateOnly Date { get; set; } = new(1985, 7, 17);
     public DateTime? NullableDate { get; set; } = new(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-    public DateTime DuplicateOfUtc { get; set; } = new DateTime(2026, 2, 28, 7, 46, 15, DateTimeKind.Utc).AddTicks(3770601);
+    public DateTime DuplicateOfUtc { get; set; } =
+        new DateTime(2026, 2, 28, 7, 46, 15, DateTimeKind.Utc).AddTicks(3770601);
     public DateOnly DuplicateDate { get; set; } = new(1985, 7, 17);
     public DateOnly OtherDate { get; set; } = new(1990, 1, 1);
     public DateTime MinValue { get; set; } = DateTime.MinValue;
@@ -143,10 +153,7 @@ public class Times
     public string DateLikeString { get; set; } = "2026-02-28T07:46:15Z";
     public string DateInSentence { get; set; } = "Sent 2026-02-28 07:46:15 by user";
     public List<DateTime> List { get; set; } =
-    [
-        new(2021, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-        new(2026, 6, 10, 0, 0, 0, DateTimeKind.Utc),
-    ];
+    [new(2021, 1, 1, 0, 0, 0, DateTimeKind.Utc), new(2026, 6, 10, 0, 0, 0, DateTimeKind.Utc)];
 }
 
 public class Guids
@@ -166,19 +173,27 @@ public class Guids
     public string InlineGuid { get; set; } = $"{A}-jp-inngaaende";
     public string SentenceGuid { get; set; } = $"Ref {B} was created";
     public string NewGuidInline { get; set; } = "id 11111111-2222-3333-4444-555555555555 end";
-    public List<Guid> List { get; set; } = [B, A, Guid.Parse("11111111-2222-3333-4444-555555555555")];
+    public List<Guid> List { get; set; } =
+    [B, A, Guid.Parse("11111111-2222-3333-4444-555555555555")];
     public Dictionary<Guid, string> Keyed { get; set; } = new() { [A] = "a" };
 }
 
 public class Nested
 {
-    public Child Child { get; set; } = new() { Name = "c", Value = 1, Tags = ["x", "y"] };
-    public List<Child> Children { get; set; } =
+    public Child Child { get; set; } =
+        new()
+        {
+            Name = "c",
+            Value = 1,
+            Tags = ["x", "y"],
+        };
+    public List<Child> Children { get; set; } = [new() { Name = "a" }, new() { Value = 2 }];
+    public List<List<int>> Matrix { get; set; } =
     [
-        new() { Name = "a" },
-        new() { Value = 2 },
+        [1, 2],
+        [3],
+        [],
     ];
-    public List<List<int>> Matrix { get; set; } = [[1, 2], [3], []];
     public string?[] WithNulls { get; set; } = ["a", null, "b"];
     public List<Child?> ChildrenWithNull { get; set; } = [new() { Name = "z" }, null];
     public object Boxed { get; set; } = 5;
@@ -206,10 +221,16 @@ public class Dictionaries
             { "bool-field", false },
             { "date-field", new DateTimeOffset(2026, 3, 1, 0, 0, 0, TimeSpan.Zero) },
             { "datetime-field", new DateTime(2026, 3, 1, 0, 0, 0, DateTimeKind.Utc) },
-            { "nested-field", new Dictionary<string, object> { { "nested-string-field", "ut" } } },
+            {
+                "nested-field",
+                new Dictionary<string, object> { { "nested-string-field", "ut" } }
+            },
             { "Zeta", "upper" },
             { "alpha", "lower" },
-            { "list-field", new List<object> { 1, "two" } },
+            {
+                "list-field",
+                new List<object> { 1, "two" }
+            },
         };
     public Dictionary<int, string> IntKeys { get; set; } = new() { [10] = "ten", [2] = "two" };
     public Dictionary<string, int> OddKeys { get; set; } =
@@ -220,12 +241,16 @@ public class Dictionaries
             [""] = 3,
             ["Ø"] = 4,
         };
-    public Dictionary<Color, int> EnumKeys { get; set; } = new() { [Color.Green] = 1, [Color.Red] = 0 };
-    public Dictionary<string, Child> ObjectValues { get; set; } = new() { ["c"] = new() { Name = "n" } };
-    public Dictionary<string, string?> NullValue { get; set; } = new() { ["n"] = null, ["v"] = "x" };
+    public Dictionary<Color, int> EnumKeys { get; set; } =
+        new() { [Color.Green] = 1, [Color.Red] = 0 };
+    public Dictionary<string, Child> ObjectValues { get; set; } =
+        new() { ["c"] = new() { Name = "n" } };
+    public Dictionary<string, string?> NullValue { get; set; } =
+        new() { ["n"] = null, ["v"] = "x" };
     public Dictionary<string, int> ZeroValue { get; set; } = new() { ["zero"] = 0 };
     public SortedDictionary<string, int> Sorted { get; set; } = new() { ["b"] = 2, ["a"] = 1 };
-    public IReadOnlyDictionary<string, int> ReadOnly { get; set; } = new Dictionary<string, int> { ["r"] = 1 };
+    public IReadOnlyDictionary<string, int> ReadOnly { get; set; } =
+        new Dictionary<string, int> { ["r"] = 1 };
 }
 
 public record PositionalRecord(string Name, int Age, Child? Child = null);
@@ -278,7 +303,6 @@ public class ObjectHolder
     public object? Value { get; set; }
 }
 
-
 public class StringDates
 {
     public string IsoZ { get; set; } = "2026-02-28T07:46:15Z";
@@ -297,17 +321,21 @@ public class StringDates
 
 public class Offsets
 {
-    public DateTimeOffset PlusFiveThirty { get; set; } = new(2026, 3, 1, 1, 2, 3, TimeSpan.FromMinutes(330));
+    public DateTimeOffset PlusFiveThirty { get; set; } =
+        new(2026, 3, 1, 1, 2, 3, TimeSpan.FromMinutes(330));
     public DateTimeOffset PlusTen { get; set; } = new(2026, 3, 1, 1, 2, 3, TimeSpan.FromHours(10));
     public DateTimeOffset MinusTwo { get; set; } = new(2026, 3, 1, 1, 2, 3, TimeSpan.FromHours(-2));
-    public DateTimeOffset PlusHalf { get; set; } = new(2026, 3, 1, 1, 2, 3, TimeSpan.FromMinutes(30));
-    public DateTimeOffset WithFraction { get; set; } = new DateTimeOffset(2026, 3, 1, 1, 2, 3, TimeSpan.Zero).AddTicks(1230000);
+    public DateTimeOffset PlusHalf { get; set; } =
+        new(2026, 3, 1, 1, 2, 3, TimeSpan.FromMinutes(30));
+    public DateTimeOffset WithFraction { get; set; } =
+        new DateTimeOffset(2026, 3, 1, 1, 2, 3, TimeSpan.Zero).AddTicks(1230000);
     public DateTimeOffset Min { get; set; } = DateTimeOffset.MinValue;
     public DateTimeOffset Max { get; set; } = DateTimeOffset.MaxValue;
     public DateTime Local { get; set; } = new(2026, 3, 1, 1, 2, 3, DateTimeKind.Local);
     public DateOnly DateMax { get; set; } = DateOnly.MaxValue;
     public TimeOnly Time { get; set; } = new(13, 45, 10);
-    public TimeOnly TimeFraction { get; set; } = new TimeOnly(13, 45, 10).Add(TimeSpan.FromTicks(5));
+    public TimeOnly TimeFraction { get; set; } =
+        new TimeOnly(13, 45, 10).Add(TimeSpan.FromTicks(5));
     public TimeOnly TimeMidnight { get; set; } = TimeOnly.MinValue;
     public TimeOnly TimeMax { get; set; } = TimeOnly.MaxValue;
     public TimeOnly TimeAgain { get; set; } = new(13, 45, 10);
@@ -349,7 +377,8 @@ public class Structs
     public Point DefaultPoint { get; set; }
     public Point? NullablePoint { get; set; } = new() { X = 2 };
     public List<KeyValuePair<string, int>> Pairs { get; set; } = [new("b", 1), new("a", 2)];
-    public Dictionary<string, Guid> GuidValues { get; set; } = new() { ["b"] = Guids.A, ["a"] = Guids.B };
+    public Dictionary<string, Guid> GuidValues { get; set; } =
+        new() { ["b"] = Guids.A, ["a"] = Guids.B };
 }
 
 public class MultilineScrub
@@ -427,7 +456,11 @@ public static class GoldenCorpus
             new("TopBoolTrue", () => true),
             new("TopChar", () => 'c'),
             new("TopEmptyDict", () => new Dictionary<string, int>()),
-            new("TopEmptyDictKept", () => new Dictionary<string, int>(), GoldenOptions.DontIgnoreEmptyCollections),
+            new(
+                "TopEmptyDictKept",
+                () => new Dictionary<string, int>(),
+                GoldenOptions.DontIgnoreEmptyCollections
+            ),
             new("TopString", () => "hello world"),
             new("TopMultilineString", () => "first\nsecond"),
             new("TopEmptyString", () => ""),
@@ -438,17 +471,28 @@ public static class GoldenCorpus
             new("TopGuidUnscrubbed", () => Guids.A, GoldenOptions.DontScrubGuids),
             new("TopDateTime", () => new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)),
             new("TopEnum", () => Color.Green),
-            new("TopEnumList", () => new List<Color> { Color.Red, Color.Green, Color.Hovedentreprenør }),
+            new(
+                "TopEnumList",
+                () => new List<Color> { Color.Red, Color.Green, Color.Hovedentreprenør }
+            ),
             new("TopStringList", () => new[] { "a", "b,c", "d e" }),
             new("TopEmptyList", () => new List<int>()),
-            new("TopEmptyListKept", () => new List<int>(), GoldenOptions.DontIgnoreEmptyCollections),
+            new(
+                "TopEmptyListKept",
+                () => new List<int>(),
+                GoldenOptions.DontIgnoreEmptyCollections
+            ),
             new("TopIntArray", () => new[] { 1, 2, 3 }),
             new("TopEmptyObject", () => new Child()),
             new("TopDictionary", () => new Dictionary<string, int> { ["b"] = 2, ["a"] = 1 }),
             new("Primitives", () => new Primitives()),
             new("Defaults", () => new Defaults()),
             new("DefaultsIncluded", () => new Defaults(), GoldenOptions.IncludeDefaultValues),
-            new("DefaultsKeepEmpty", () => new Defaults(), GoldenOptions.DontIgnoreEmptyCollections),
+            new(
+                "DefaultsKeepEmpty",
+                () => new Defaults(),
+                GoldenOptions.DontIgnoreEmptyCollections
+            ),
             new(
                 "DefaultsAllOptOuts",
                 () => new Defaults(),
@@ -463,7 +507,11 @@ public static class GoldenCorpus
             new("Nested", () => new Nested()),
             new("NestedKeepEmpty", () => new Nested(), GoldenOptions.DontIgnoreEmptyCollections),
             new("Dictionaries", () => new Dictionaries()),
-            new("DictionariesUnscrubbed", () => new Dictionaries(), all | GoldenOptions.IncludeDefaultValues),
+            new(
+                "DictionariesUnscrubbed",
+                () => new Dictionaries(),
+                all | GoldenOptions.IncludeDefaultValues
+            ),
             new(
                 "Cycle",
                 () =>
@@ -473,7 +521,10 @@ public static class GoldenCorpus
                     return parent;
                 }
             ),
-            new("PositionalRecord", () => new PositionalRecord("Ola", 30, new Child { Name = "c" })),
+            new(
+                "PositionalRecord",
+                () => new PositionalRecord("Ola", 30, new Child { Name = "c" })
+            ),
             new("DerivedRecord", () => new DerivedRecord()),
             new("WithFields", () => new WithFields()),
             new(
@@ -483,7 +534,14 @@ public static class GoldenCorpus
                     {
                         totalPages = 3,
                         totalResults = 30,
-                        data = new[] { new { Id = Guids.A, when = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc) } },
+                        data = new[]
+                        {
+                            new
+                            {
+                                Id = Guids.A,
+                                when = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                            },
+                        },
                     }
             ),
             new(

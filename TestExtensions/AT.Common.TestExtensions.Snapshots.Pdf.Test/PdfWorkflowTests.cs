@@ -2,7 +2,10 @@ namespace Arbeidstilsynet.Common.TestExtensions.Snapshots.Pdf.Test;
 
 public sealed class PdfWorkflowTests : IDisposable
 {
-    private readonly string _directory = Path.Combine(Path.GetTempPath(), "pdf-snapshots-" + Guid.NewGuid().ToString("N"));
+    private readonly string _directory = Path.Combine(
+        Path.GetTempPath(),
+        "pdf-snapshots-" + Guid.NewGuid().ToString("N")
+    );
 
     public void Dispose()
     {

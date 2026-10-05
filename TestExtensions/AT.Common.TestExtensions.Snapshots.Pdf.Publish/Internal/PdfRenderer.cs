@@ -7,9 +7,13 @@ internal static class PdfRenderer
 {
     public static IReadOnlyList<byte[]> RenderPages(byte[] pdf, int dpi)
     {
-        if (!(OperatingSystem.IsLinux() || OperatingSystem.IsMacOS() || OperatingSystem.IsWindows()))
+        if (
+            !(OperatingSystem.IsLinux() || OperatingSystem.IsMacOS() || OperatingSystem.IsWindows())
+        )
         {
-            throw new PlatformNotSupportedException("PDF rendering is supported on Linux, macOS and Windows.");
+            throw new PlatformNotSupportedException(
+                "PDF rendering is supported on Linux, macOS and Windows."
+            );
         }
 
         var options = new RenderOptions(Dpi: dpi, BackgroundColor: SKColors.White);

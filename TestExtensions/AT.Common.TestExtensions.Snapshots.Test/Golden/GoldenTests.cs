@@ -64,9 +64,16 @@ public class GoldenTests
 
     private static string ReadExpected(string name, [CallerFilePath] string sourceFile = "")
     {
-        var path = Path.Combine(Path.GetDirectoryName(sourceFile)!, "Expected", name + ".verified.txt");
+        var path = Path.Combine(
+            Path.GetDirectoryName(sourceFile)!,
+            "Expected",
+            name + ".verified.txt"
+        );
         var bytes = File.ReadAllBytes(path);
-        bytes.AsSpan(0, 3).ToArray().ShouldBe(new byte[] { 0xEF, 0xBB, 0xBF }, "golden files start with a UTF-8 BOM");
+        bytes
+            .AsSpan(0, 3)
+            .ToArray()
+            .ShouldBe(new byte[] { 0xEF, 0xBB, 0xBF }, "golden files start with a UTF-8 BOM");
         return new System.Text.UTF8Encoding(false).GetString(bytes, 3, bytes.Length - 3);
     }
 }

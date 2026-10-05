@@ -147,7 +147,9 @@ internal sealed class SnapshotSerializer
         return (type.GetProperty("Key")?.GetValue(pair), type.GetProperty("Value")?.GetValue(pair));
     }
 
-    private static List<KeyValuePair<object, object?>> SortEntries(List<KeyValuePair<object, object?>> entries)
+    private static List<KeyValuePair<object, object?>> SortEntries(
+        List<KeyValuePair<object, object?>> entries
+    )
     {
         if (entries.All(e => e.Key is string))
         {
@@ -178,7 +180,8 @@ internal sealed class SnapshotSerializer
             _ => false,
         };
 
-    private bool IsCycle(object value) => !value.GetType().IsValueType && _ancestors.Contains(value);
+    private bool IsCycle(object value) =>
+        !value.GetType().IsValueType && _ancestors.Contains(value);
 
     // ---------- writing ----------
 
@@ -247,7 +250,9 @@ internal sealed class SnapshotSerializer
                     continue;
                 }
 
-                lines.Add(() => _output.Append(NormalizeNewLines(ScalarFormatter.Format(item, _scrub))));
+                lines.Add(() =>
+                    _output.Append(NormalizeNewLines(ScalarFormatter.Format(item, _scrub)))
+                );
                 continue;
             }
 
@@ -415,7 +420,9 @@ internal sealed class SnapshotSerializer
     private string FormatKey(object key) =>
         key switch
         {
-            _ when ScalarFormatter.IsScalar(key.GetType()) => NormalizeNewLines(ScalarFormatter.Format(key, _scrub)),
+            _ when ScalarFormatter.IsScalar(key.GetType()) => NormalizeNewLines(
+                ScalarFormatter.Format(key, _scrub)
+            ),
             _ => key.ToString() ?? "",
         };
 
@@ -503,28 +510,41 @@ internal sealed class SnapshotSerializer
 
     // ---------- reflection ----------
 
-    private static object? GetDefault(Type type) => DefaultCache.GetOrAdd(type, Activator.CreateInstance);
+    private static object? GetDefault(Type type) =>
+        DefaultCache.GetOrAdd(type, Activator.CreateInstance);
 
-    private static MemberAccessor[] GetMembers(Type type) => MemberCache.GetOrAdd(type, BuildMembers);
+    private static MemberAccessor[] GetMembers(Type type) =>
+        MemberCache.GetOrAdd(type, BuildMembers);
 
     private static MemberAccessor[] BuildMembers(Type type)
     {
-        const BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+        const BindingFlags flags =
+            BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
         var seen = new HashSet<string>(StringComparer.Ordinal);
         var members = new List<MemberAccessor>();
 
-        for (var current = type; current is not null && current != typeof(object); current = current.BaseType)
+        for (
+            var current = type;
+            current is not null && current != typeof(object);
+            current = current.BaseType
+        )
         {
             foreach (var field in current.GetFields(flags))
             {
                 if (!field.FieldType.IsByRefLike && seen.Add(field.Name))
                 {
-                    members.Add(new MemberAccessor(field.Name, field.FieldType, type, field.GetValue));
+                    members.Add(
+                        new MemberAccessor(field.Name, field.FieldType, type, field.GetValue)
+                    );
                 }
             }
         }
 
-        for (var current = type; current is not null && current != typeof(object); current = current.BaseType)
+        for (
+            var current = type;
+            current is not null && current != typeof(object);
+            current = current.BaseType
+        )
         {
             foreach (var property in current.GetProperties(flags))
             {
@@ -539,14 +559,26 @@ internal sealed class SnapshotSerializer
                     continue;
                 }
 
-                members.Add(new MemberAccessor(property.Name, property.PropertyType, type, property.GetValue));
+                members.Add(
+                    new MemberAccessor(
+                        property.Name,
+                        property.PropertyType,
+                        type,
+                        property.GetValue
+                    )
+                );
             }
         }
 
         return [.. members];
     }
 
-    private sealed class MemberAccessor(string name, Type type, Type owner, Func<object?, object?> getter)
+    private sealed class MemberAccessor(
+        string name,
+        Type type,
+        Type owner,
+        Func<object?, object?> getter
+    )
     {
         public string Name { get; } = name;
         public Type Type { get; } = type;

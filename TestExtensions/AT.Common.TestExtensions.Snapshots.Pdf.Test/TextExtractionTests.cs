@@ -21,7 +21,9 @@ public class TextExtractionTests
     {
         var text = Snapshot.Serialize(PdfTextExtractor.Extract(SamplePdf.Create(["A"], ["B"])));
 
-        text.ShouldContain("Pages: [\n    {\n      Text: A\n    },\n    {\n      Index: 1,\n      Text: B\n    }\n  ]");
+        text.ShouldContain(
+            "Pages: [\n    {\n      Text: A\n    },\n    {\n      Index: 1,\n      Text: B\n    }\n  ]"
+        );
     }
 
     [Fact]

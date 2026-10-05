@@ -21,8 +21,14 @@ internal static class SnapshotRunner
         foreach (var target in targets)
         {
             var baseName = location.Name + target.Suffix;
-            var verifiedPath = Path.Combine(location.Directory, $"{baseName}.verified.{target.Extension}");
-            var receivedPath = Path.Combine(location.Directory, $"{baseName}.received.{target.Extension}");
+            var verifiedPath = Path.Combine(
+                location.Directory,
+                $"{baseName}.verified.{target.Extension}"
+            );
+            var receivedPath = Path.Combine(
+                location.Directory,
+                $"{baseName}.received.{target.Extension}"
+            );
 
             var failure = target.Text is not null
                 ? await CompareTextAsync(target.Text, verifiedPath, receivedPath, accept)
@@ -88,7 +94,12 @@ internal static class SnapshotRunner
         }
 
         return $"Snapshot mismatch: {verifiedPath}\n"
-            + LineDiff.Unified(verified, received, Path.GetFileName(verifiedPath), Path.GetFileName(receivedPath));
+            + LineDiff.Unified(
+                verified,
+                received,
+                Path.GetFileName(verifiedPath),
+                Path.GetFileName(receivedPath)
+            );
     }
 
     private static async Task<string?> CompareBinaryAsync(
@@ -104,7 +115,11 @@ internal static class SnapshotRunner
         {
             var verified = await File.ReadAllBytesAsync(verifiedPath);
             var result = target.Comparer is null
-                ? (verified.AsSpan().SequenceEqual(received) ? SnapshotCompareResult.Equal : SnapshotCompareResult.NotEqual())
+                ? (
+                    verified.AsSpan().SequenceEqual(received)
+                        ? SnapshotCompareResult.Equal
+                        : SnapshotCompareResult.NotEqual()
+                )
                 : target.Comparer(verified, received);
             if (result.IsEqual)
             {

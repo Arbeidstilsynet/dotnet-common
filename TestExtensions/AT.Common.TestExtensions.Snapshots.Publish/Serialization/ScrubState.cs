@@ -145,7 +145,9 @@ internal sealed partial class ScrubState(SnapshotSettings settings)
                 match =>
                 {
                     var guid = System.Guid.Parse(match.Value);
-                    return guid == System.Guid.Empty ? "Guid_Empty" : "Guid_" + Number(_guids, guid);
+                    return guid == System.Guid.Empty
+                        ? "Guid_Empty"
+                        : "Guid_" + Number(_guids, guid);
                 }
             );
     }

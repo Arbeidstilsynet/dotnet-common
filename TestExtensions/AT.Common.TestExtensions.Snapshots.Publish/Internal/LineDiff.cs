@@ -9,7 +9,12 @@ internal static class LineDiff
     private const int MaxLines = 200;
     private const int MaxCells = 4_000_000;
 
-    public static string Unified(string expected, string actual, string expectedName, string actualName)
+    public static string Unified(
+        string expected,
+        string actual,
+        string expectedName,
+        string actualName
+    )
     {
         var a = expected.Split('\n');
         var b = actual.Split('\n');
@@ -64,7 +69,9 @@ internal static class LineDiff
                 }
             }
 
-            output.Append($"@@ -{first.OldLine + 1},{oldCount} +{first.NewLine + 1},{newCount} @@\n");
+            output.Append(
+                $"@@ -{first.OldLine + 1},{oldCount} +{first.NewLine + 1},{newCount} @@\n"
+            );
             for (var k = start; k < end; k++)
             {
                 if (written++ >= MaxLines)
@@ -92,12 +99,15 @@ internal static class LineDiff
             for (var j = b.Length - 1; j >= 0; j--)
             {
                 lengths[i, j] =
-                    a[i] == b[j] ? lengths[i + 1, j + 1] + 1 : Math.Max(lengths[i + 1, j], lengths[i, j + 1]);
+                    a[i] == b[j]
+                        ? lengths[i + 1, j + 1] + 1
+                        : Math.Max(lengths[i + 1, j], lengths[i, j + 1]);
             }
         }
 
         var ops = new List<Op>();
-        int x = 0, y = 0;
+        int x = 0,
+            y = 0;
         while (x < a.Length || y < b.Length)
         {
             if (x < a.Length && y < b.Length && a[x] == b[y])

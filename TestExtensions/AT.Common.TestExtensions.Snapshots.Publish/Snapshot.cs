@@ -42,6 +42,11 @@ public static class Snapshot
     )
     {
         ArgumentNullException.ThrowIfNull(targets);
-        return SnapshotRunner.RunAsync(targets, settings ?? new SnapshotSettings(), sourceFilePath, memberName);
+        return SnapshotRunner.RunAsync(
+            targets,
+            settings ?? new SnapshotSettings(),
+            sourceFilePath,
+            memberName
+        );
     }
 }

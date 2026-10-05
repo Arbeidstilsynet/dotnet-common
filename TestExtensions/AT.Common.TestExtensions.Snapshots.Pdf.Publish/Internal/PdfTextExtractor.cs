@@ -6,7 +6,11 @@ namespace Arbeidstilsynet.Common.TestExtensions.Snapshots.Pdf.Internal;
 
 internal sealed record PdfTextPage(int Index, string Text);
 
-internal sealed record PdfTextDocument(string Version, int PageCount, IReadOnlyList<PdfTextPage> Pages);
+internal sealed record PdfTextDocument(
+    string Version,
+    int PageCount,
+    IReadOnlyList<PdfTextPage> Pages
+);
 
 internal static class PdfTextExtractor
 {
@@ -15,7 +19,10 @@ internal static class PdfTextExtractor
         using var document = PdfDocument.Open(pdf);
         var pages = document
             .GetPages()
-            .Select((page, index) => new PdfTextPage(index, Normalize(ContentOrderTextExtractor.GetText(page))))
+            .Select(
+                (page, index) =>
+                    new PdfTextPage(index, Normalize(ContentOrderTextExtractor.GetText(page)))
+            )
             .ToList();
         return new PdfTextDocument(
             document.Version.ToString("0.0", CultureInfo.InvariantCulture),
@@ -24,5 +31,6 @@ internal static class PdfTextExtractor
         );
     }
 
-    private static string Normalize(string text) => text.Replace("\r\n", "\n").Replace('\r', '\n').TrimEnd('\n');
+    private static string Normalize(string text) =>
+        text.Replace("\r\n", "\n").Replace('\r', '\n').TrimEnd('\n');
 }

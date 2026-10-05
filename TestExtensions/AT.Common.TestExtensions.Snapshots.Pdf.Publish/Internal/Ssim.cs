@@ -15,7 +15,12 @@ internal static class Ssim
     private const double C1 = 0.01 * 255 * (0.01 * 255);
     private const double C2 = 0.03 * 255 * (0.03 * 255);
 
-    public static SnapshotCompareResult Compare(byte[] verifiedPng, byte[] receivedPng, double threshold, double windowThreshold = 0)
+    public static SnapshotCompareResult Compare(
+        byte[] verifiedPng,
+        byte[] receivedPng,
+        double threshold,
+        double windowThreshold = 0
+    )
     {
         using var verified = Decode(verifiedPng);
         using var received = Decode(receivedPng);
@@ -31,11 +36,19 @@ internal static class Ssim
             );
         }
 
-        var score = Compute(Luminance(verified), Luminance(received), verified.Width, verified.Height);
+        var score = Compute(
+            Luminance(verified),
+            Luminance(received),
+            verified.Width,
+            verified.Height
+        );
         if (score.Mean < threshold)
         {
             return SnapshotCompareResult.NotEqual(
-                string.Create(CultureInfo.InvariantCulture, $"SSIM {score.Mean:0.0000} is below the threshold {threshold:0.0000}.")
+                string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"SSIM {score.Mean:0.0000} is below the threshold {threshold:0.0000}."
+                )
             );
         }
 
@@ -56,8 +69,11 @@ internal static class Ssim
 
     internal static Score Compute(byte[] a, byte[] b, int width, int height)
     {
-        double total = 0, min = 1;
-        int windows = 0, minX = 0, minY = 0;
+        double total = 0,
+            min = 1;
+        int windows = 0,
+            minX = 0,
+            minY = 0;
         for (var top = 0; top < height; top += Window)
         {
             for (var left = 0; left < width; left += Window)
@@ -81,9 +97,21 @@ internal static class Ssim
         return windows == 0 ? new Score(1, 1, 0, 0) : new Score(total / windows, min, minX, minY);
     }
 
-    private static double? WindowSsim(byte[] a, byte[] b, int stride, int left, int top, int w, int h)
+    private static double? WindowSsim(
+        byte[] a,
+        byte[] b,
+        int stride,
+        int left,
+        int top,
+        int w,
+        int h
+    )
     {
-        double sumA = 0, sumB = 0, sumAA = 0, sumBB = 0, sumAB = 0;
+        double sumA = 0,
+            sumB = 0,
+            sumAA = 0,
+            sumBB = 0,
+            sumAB = 0;
         for (var y = top; y < top + h; y++)
         {
             var row = y * stride;
@@ -110,7 +138,8 @@ internal static class Ssim
             return null;
         }
 
-        return (2 * meanA * meanB + C1) * (2 * covariance + C2)
+        return (2 * meanA * meanB + C1)
+            * (2 * covariance + C2)
             / ((meanA * meanA + meanB * meanB + C1) * (varA + varB + C2));
     }
 
@@ -122,7 +151,9 @@ internal static class Ssim
 
     private static byte[] Luminance(SKBitmap bitmap)
     {
-        using var rgba = bitmap.Copy(SKColorType.Rgba8888) ?? throw new InvalidOperationException("Unsupported PNG.");
+        using var rgba =
+            bitmap.Copy(SKColorType.Rgba8888)
+            ?? throw new InvalidOperationException("Unsupported PNG.");
         var pixels = rgba.GetPixelSpan();
         var premultiplied = rgba.AlphaType == SKAlphaType.Premul;
         var result = new byte[rgba.Width * rgba.Height];
@@ -130,7 +161,9 @@ internal static class Ssim
         {
             var p = i * 4;
             double alpha = pixels[p + 3] / 255.0;
-            double r = pixels[p], g = pixels[p + 1], bl = pixels[p + 2];
+            double r = pixels[p],
+                g = pixels[p + 1],
+                bl = pixels[p + 2];
             if (!premultiplied)
             {
                 r *= alpha;
