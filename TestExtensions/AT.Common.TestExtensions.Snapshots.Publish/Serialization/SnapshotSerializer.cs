@@ -193,14 +193,7 @@ internal sealed class SnapshotSerializer
             DictValue dict => dict.Source,
             _ => prepared,
         };
-        if (_depth >= MaxDepth)
-        {
-            throw new InvalidOperationException(
-                $"Snapshot serialization exceeded the maximum depth of {MaxDepth} at '{source.GetType().FullName}'. "
-                    + "The object graph is probably unbounded (e.g. a getter that returns a new object on every call). "
-                    + "Snapshot a projection of the value instead."
-            );
-        }
+        EnsureDepth(source.GetType().FullName);
 
         var tracked = !source.GetType().IsValueType && _ancestors.Add(source);
         _depth++;
@@ -426,6 +419,32 @@ internal sealed class SnapshotSerializer
             _ => key.ToString() ?? "",
         };
 
+    private void EnsureDepth(string? location)
+    {
+        if (_depth >= MaxDepth)
+        {
+            throw new InvalidOperationException(
+                $"Snapshot serialization exceeded the maximum depth of {MaxDepth} at '{location}'. "
+                    + "The object graph is probably unbounded (e.g. a getter that returns a new object on every call). "
+                    + "Snapshot a projection of the value instead."
+            );
+        }
+    }
+
+    private void WriteNestedJson(JsonElement element, int indent)
+    {
+        EnsureDepth($"JSON {element.ValueKind}");
+        _depth++;
+        try
+        {
+            WriteJson(element, indent);
+        }
+        finally
+        {
+            _depth--;
+        }
+    }
+
     private void WriteJson(JsonElement element, int indent)
     {
         switch (element.ValueKind)
@@ -477,7 +496,14 @@ internal sealed class SnapshotSerializer
         }
 
         _output.Append(' ');
-        WriteJson(element, indent);
+        if (element.ValueKind is JsonValueKind.Object or JsonValueKind.Array)
+        {
+            WriteNestedJson(element, indent);
+        }
+        else
+        {
+            WriteJson(element, indent);
+        }
     }
 
     private void WriteJsonItem(JsonElement element, int indent)
@@ -485,7 +511,7 @@ internal sealed class SnapshotSerializer
         switch (element.ValueKind)
         {
             case JsonValueKind.Object or JsonValueKind.Array:
-                WriteJson(element, indent);
+                WriteNestedJson(element, indent);
                 break;
             case JsonValueKind.String:
                 _output.Append(NormalizeNewLines(_scrub.String(element.GetString()!)));

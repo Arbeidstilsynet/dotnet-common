@@ -124,7 +124,9 @@ internal sealed partial class ScrubState(SnapshotSettings settings)
                 )
             )
             {
-                return "DateTimeOffset_" + Number(_dateTimeOffsets, (parsed.UtcTicks, zoned));
+                // Zoned strings compare by instant; zoneless strings only match the identical text.
+                object key = zoned ? (parsed.UtcTicks, true) : value;
+                return "DateTimeOffset_" + Number(_dateTimeOffsets, key);
             }
         }
 

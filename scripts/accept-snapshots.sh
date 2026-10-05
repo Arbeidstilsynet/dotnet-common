@@ -7,7 +7,12 @@ root="${1:-.}"
 count=0
 while IFS= read -r -d '' received; do
   name="$(basename -- "$received")"
-  verified="$(dirname -- "$received")/${name/.received./.verified.}"
+  # The workflow marker is the last .received./.verified. in the name; parameter values may contain either.
+  suffix="${name##*.received.}"
+  if [[ "$suffix" == *.verified.* ]]; then
+    continue
+  fi
+  verified="$(dirname -- "$received")/${name%.received.*}.verified.$suffix"
   mv -f -- "$received" "$verified"
   echo "accepted ${verified#"$root"/}"
   count=$((count + 1))

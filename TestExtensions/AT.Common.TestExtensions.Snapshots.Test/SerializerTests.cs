@@ -126,6 +126,53 @@ public class SerializerTests
         Snapshot.Serialize(new Finite(60)).ShouldContain("Depth: 1");
     }
 
+    [Fact]
+    public void DeepJson_ThrowsInsteadOfOverflowingTheStack()
+    {
+        var json = new string('[', 100) + new string(']', 100);
+        using var document = JsonDocument.Parse(json, new JsonDocumentOptions { MaxDepth = 200 });
+
+        var exception = Should.Throw<InvalidOperationException>(() =>
+            Snapshot.Serialize(document.RootElement)
+        );
+
+        exception.Message.ShouldContain("maximum depth");
+    }
+
+    [Fact]
+    public void DeepButFiniteJson_IsSerialized()
+    {
+        var json = new string('[', 60) + "1" + new string(']', 60);
+        using var document = JsonDocument.Parse(json);
+
+        Snapshot.Serialize(document.RootElement).ShouldContain("1");
+    }
+
+    [Fact]
+    public void ZonelessDateTimeStrings_OnlyMatchIdenticalText()
+    {
+        Snapshot
+            .Serialize(
+                new
+                {
+                    A = "2026-02-28T07:46",
+                    B = "2026-02-28T07:46:00",
+                    C = "2026-02-28T07:46",
+                }
+            )
+            .ShouldBe(
+                "{\n  A: DateTimeOffset_1,\n  B: DateTimeOffset_2,\n  C: DateTimeOffset_1\n}"
+            );
+    }
+
+    [Fact]
+    public void ZonedDateTimeStrings_MatchByInstant()
+    {
+        Snapshot
+            .Serialize(new { A = "2026-02-28T07:46:00Z", B = "2026-02-28T08:46:00+01:00" })
+            .ShouldBe("{\n  A: DateTimeOffset_1,\n  B: DateTimeOffset_1\n}");
+    }
+
     private sealed record Endless(int Depth)
     {
         public Endless Next => new(Depth + 1);
