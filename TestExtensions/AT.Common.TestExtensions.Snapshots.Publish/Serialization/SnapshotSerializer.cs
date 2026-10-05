@@ -340,7 +340,11 @@ internal sealed class SnapshotSerializer
         var type = claim.Type;
         foreach (var prefix in ClaimTypePrefixes)
         {
-            type = type.Replace(prefix, "", StringComparison.Ordinal);
+            if (type.StartsWith(prefix, StringComparison.Ordinal))
+            {
+                type = type[prefix.Length..];
+                break;
+            }
         }
 
         var entries = new List<(Func<string> Label, object? Value)>
