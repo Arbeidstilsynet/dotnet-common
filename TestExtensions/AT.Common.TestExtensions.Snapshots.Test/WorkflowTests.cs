@@ -56,7 +56,7 @@ public sealed class WorkflowTests : IDisposable
 
         exception.Message.ShouldContain("New snapshot");
         File.Exists(Verified).ShouldBeFalse();
-        var bytes = await File.ReadAllBytesAsync(Received);
+        var bytes = await File.ReadAllBytesAsync(Received, TestContext.Current.CancellationToken);
         bytes.Take(3).ShouldBe(new byte[] { 0xEF, 0xBB, 0xBF });
         Encoding.UTF8.GetString(bytes, 3, bytes.Length - 3).ShouldBe("{\n  Name: a\n}");
     }
@@ -65,8 +65,13 @@ public sealed class WorkflowTests : IDisposable
     public async Task Match_Passes_AndDeletesStaleReceived()
     {
         Directory.CreateDirectory(_directory);
-        await File.WriteAllTextAsync(Verified, "{\r\n  Name: a\r\n}\r\n", new UTF8Encoding(true));
-        await File.WriteAllTextAsync(Received, "stale");
+        await File.WriteAllTextAsync(
+            Verified,
+            "{\r\n  Name: a\r\n}\r\n",
+            new UTF8Encoding(true),
+            TestContext.Current.CancellationToken
+        );
+        await File.WriteAllTextAsync(Received, "stale", TestContext.Current.CancellationToken);
 
         await Snapshot.Verify(new { Name = "a" }, Settings);
 
@@ -77,7 +82,11 @@ public sealed class WorkflowTests : IDisposable
     public async Task Mismatch_ThrowsWithUnifiedDiff()
     {
         Directory.CreateDirectory(_directory);
-        await File.WriteAllTextAsync(Verified, "{\n  Name: a,\n  Other: same\n}");
+        await File.WriteAllTextAsync(
+            Verified,
+            "{\n  Name: a,\n  Other: same\n}",
+            TestContext.Current.CancellationToken
+        );
 
         var exception = await Should.ThrowAsync<SnapshotMismatchException>(() =>
             Snapshot.Verify(new { Name = "b", Other = "same" }, Settings)
@@ -100,7 +109,9 @@ public sealed class WorkflowTests : IDisposable
 
         await Snapshot.Verify(new { Name = "a" }, Settings);
 
-        (await File.ReadAllTextAsync(Verified)).ShouldBe("{\n  Name: a\n}");
+        (await File.ReadAllTextAsync(Verified, TestContext.Current.CancellationToken)).ShouldBe(
+            "{\n  Name: a\n}"
+        );
         File.Exists(Received).ShouldBeFalse();
     }
 
@@ -121,12 +132,21 @@ public sealed class WorkflowTests : IDisposable
     public async Task MultipleTargets_ReportAllFailures_AndUseBinaryComparer()
     {
         Directory.CreateDirectory(_directory);
-        await File.WriteAllTextAsync(Path.Combine(_directory, "Sample.verified.txt"), "text");
+        await File.WriteAllTextAsync(
+            Path.Combine(_directory, "Sample.verified.txt"),
+            "text",
+            TestContext.Current.CancellationToken
+        );
         await File.WriteAllBytesAsync(
             Path.Combine(_directory, "Sample#00.verified.bin"),
-            [1, 2, 3]
+            [1, 2, 3],
+            TestContext.Current.CancellationToken
         );
-        await File.WriteAllBytesAsync(Path.Combine(_directory, "Sample#01.verified.bin"), [9]);
+        await File.WriteAllBytesAsync(
+            Path.Combine(_directory, "Sample#01.verified.bin"),
+            [9],
+            TestContext.Current.CancellationToken
+        );
 
         var exception = await Should.ThrowAsync<SnapshotMismatchException>(() =>
             Snapshot.VerifyTargets(
@@ -163,7 +183,11 @@ public sealed class WorkflowTests : IDisposable
     public async Task CustomComparerMessage_IsReported()
     {
         Directory.CreateDirectory(_directory);
-        await File.WriteAllBytesAsync(Path.Combine(_directory, "Sample.verified.bin"), [1]);
+        await File.WriteAllBytesAsync(
+            Path.Combine(_directory, "Sample.verified.bin"),
+            [1],
+            TestContext.Current.CancellationToken
+        );
 
         var exception = await Should.ThrowAsync<SnapshotMismatchException>(() =>
             Snapshot.VerifyTargets(
