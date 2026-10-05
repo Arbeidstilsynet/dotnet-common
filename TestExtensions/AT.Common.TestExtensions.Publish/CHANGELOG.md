@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.0.0
+
+### Removed
+
+- removed(deps)!: The package no longer references `Verify` and `Verify.XunitV3`. The package code never used them; they only reached consumers as transitive dependencies. Projects that call `Verify(...)` must now reference `Verify.XunitV3` directly or switch to `Arbeidstilsynet.Common.TestExtensions.Snapshots`.
+
 ## 1.2.2
 
 ### Changed
