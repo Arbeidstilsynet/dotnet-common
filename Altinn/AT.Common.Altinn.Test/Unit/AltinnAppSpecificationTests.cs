@@ -4,6 +4,7 @@ using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 using Arbeidstilsynet.Common.Altinn.Test.Unit.TestData;
+using Arbeidstilsynet.Common.TestExtensions.Snapshots;
 using Shouldly;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
@@ -12,17 +13,17 @@ public class AltinnAppSpecificationTests
 {
     private readonly AltinnAppSpecification _defaultSpec = new("default");
 
-    private readonly VerifySettings _verifySettings = new();
+    private readonly SnapshotSettings _snapshotSettings = new();
 
     public AltinnAppSpecificationTests()
     {
-        _verifySettings.UseDirectory("TestData/Snapshots");
+        _snapshotSettings.UseDirectory("TestData/Snapshots");
     }
 
     [Fact]
     public async Task DefaultsAreCorrect()
     {
-        await Verify(_defaultSpec, _verifySettings);
+        await Snapshot.Verify(_defaultSpec, _snapshotSettings);
     }
 
     [Theory]
@@ -95,7 +96,7 @@ public class AltinnAppSpecificationTests
 
         var (mainData, _, _) = compliantInstance.GetDataElementsBySignificance();
 
-        await Verify(mainData, _verifySettings);
+        await Snapshot.Verify(mainData, _snapshotSettings);
     }
 
     [Fact]
@@ -137,7 +138,10 @@ public class AltinnAppSpecificationTests
         var fileMetadata = _defaultSpec.CreateFileMetadata(dataElement);
 
         fileMetadata.Metadata.ShouldBe(expectedMetadata);
-        await Verify(fileMetadata, _verifySettings).UseParameters(dataType, contentType);
+        await Snapshot.Verify(
+            fileMetadata,
+            _snapshotSettings.UseParameters(dataType, contentType)
+        );
     }
 
     private static AltinnInstance CreateCompliantInstance(

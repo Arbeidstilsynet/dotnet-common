@@ -2,6 +2,7 @@ using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+using Arbeidstilsynet.Common.TestExtensions.Snapshots;
 using Microsoft.AspNetCore.Http;
 using Shouldly;
 
@@ -9,11 +10,11 @@ namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 
 public class CorrespondenceRequestExtensionsTests
 {
-    private readonly VerifySettings _verifySettings = new();
+    private readonly SnapshotSettings _snapshotSettings = new();
 
     public CorrespondenceRequestExtensionsTests()
     {
-        _verifySettings.UseDirectory("TestData/Snapshots");
+        _snapshotSettings.UseDirectory("TestData/Snapshots");
     }
 
     private static CorrespondenceRequest CreateMinimalCorrespondenceRequest() =>
@@ -126,7 +127,7 @@ public class CorrespondenceRequestExtensionsTests
 
         var result = request.ToApiRequest();
 
-        await Verifier.Verify(result, _verifySettings);
+        await Snapshot.Verify(result, _snapshotSettings);
     }
 
     [Fact]
@@ -136,7 +137,7 @@ public class CorrespondenceRequestExtensionsTests
 
         var result = request.ToApiRequest();
 
-        await Verifier.Verify(result, _verifySettings);
+        await Snapshot.Verify(result, _snapshotSettings);
     }
 
     [Fact]
@@ -146,7 +147,7 @@ public class CorrespondenceRequestExtensionsTests
 
         var formFields = await ExtractFormFields(request);
 
-        await Verifier.Verify(formFields, _verifySettings);
+        await Snapshot.Verify(formFields, _snapshotSettings);
     }
 
     [Fact]
@@ -156,7 +157,7 @@ public class CorrespondenceRequestExtensionsTests
 
         var formFields = await ExtractFormFields(request);
 
-        await Verifier.Verify(formFields, _verifySettings);
+        await Snapshot.Verify(formFields, _snapshotSettings);
     }
 
     [Fact]
@@ -203,7 +204,7 @@ public class CorrespondenceRequestExtensionsTests
 
         var result = receivers.ToReceiverList();
 
-        await Verifier.Verify(result, _verifySettings);
+        await Snapshot.Verify(result, _snapshotSettings);
     }
 
     /// <summary>

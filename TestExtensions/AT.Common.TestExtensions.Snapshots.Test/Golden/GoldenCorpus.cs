@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Security.Claims;
 
 namespace Arbeidstilsynet.Common.TestExtensions.Snapshots.Test.Golden;
 
@@ -16,7 +17,8 @@ public enum GoldenOptions
 public sealed record GoldenCase(
     string Name,
     Func<object?> Create,
-    GoldenOptions Options = GoldenOptions.None
+    GoldenOptions Options = GoldenOptions.None,
+    string[]? ScrubMembers = null
 )
 {
     public override string ToString() => Name;
@@ -154,6 +156,67 @@ public class Times
     public string DateInSentence { get; set; } = "Sent 2026-02-28 07:46:15 by user";
     public List<DateTime> List { get; set; } =
     [new(2021, 1, 1, 0, 0, 0, DateTimeKind.Utc), new(2026, 6, 10, 0, 0, 0, DateTimeKind.Utc)];
+}
+
+public class WholeMinutes
+{
+    public DateTime UtcMinutes { get; set; } = new(2025, 9, 25, 12, 0, 0, DateTimeKind.Utc);
+    public DateTime UtcMinutesOdd { get; set; } = new(2025, 9, 25, 13, 7, 0, DateTimeKind.Utc);
+    public DateTime UnspecifiedMinutes { get; set; } =
+        new(2026, 1, 2, 3, 4, 0, DateTimeKind.Unspecified);
+    public DateTimeOffset OffsetMinutes { get; set; } =
+        new(2026, 3, 1, 10, 20, 0, TimeSpan.FromHours(2));
+    public DateTimeOffset OffsetMinutesHalf { get; set; } =
+        new(2026, 3, 1, 10, 20, 0, TimeSpan.FromMinutes(330));
+}
+
+public class ClaimHolder
+{
+    public Claim Single { get; set; } = new("scope", "test:read");
+    public List<Claim> Claims { get; set; } =
+    [
+        new("aud", "https://example.com"),
+        new(ClaimTypes.Name, "Ola"),
+        new("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", "admin"),
+        new("http://schemas.xmlsoap.org/ws/2009/09/identity/claims/actor", "x"),
+        new("exp", "1791204808", ClaimValueTypes.Integer64),
+        new("empty", ""),
+        new("jti", "3aa1d561-8c4e-7975-9c9b-f9dff6ede8e5"),
+        WithProperties(),
+    ];
+
+    private static Claim WithProperties()
+    {
+        var claim = new Claim("p", "v");
+        claim.Properties["b"] = "2";
+        claim.Properties["a"] = "1";
+        return claim;
+    }
+}
+
+public class ScrubTarget
+{
+    public string Secret { get; set; } = "s";
+    public string? NullSecret { get; set; }
+    public int ZeroSecret { get; set; }
+    public DateTime When { get; set; } = new(2026, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+    public string Keep { get; set; } = "k";
+    public ScrubChild Child { get; set; } = new();
+    public Dictionary<string, string> Dict { get; set; } =
+        new() { ["Secret"] = "d", ["other"] = "o" };
+    public List<Claim> Claims { get; set; } = [new("Secret", "c"), new("Keep", "k")];
+}
+
+public class ScrubChild
+{
+    public string Secret { get; set; } = "nested";
+    public List<int> Numbers { get; set; } = [1];
+}
+
+public class ScrubCollection
+{
+    public List<int> Secret { get; set; } = [1, 2];
+    public ScrubChild When { get; set; } = new();
 }
 
 public class Guids
@@ -428,6 +491,21 @@ public static class GoldenCorpus
         var all = GoldenOptions.DontScrubGuids | GoldenOptions.DontScrubDateTimes;
         return
         [
+            new("WholeMinutes", () => new WholeMinutes()),
+            new("WholeMinutesUnscrubbed", () => new WholeMinutes(), GoldenOptions.DontScrubDateTimes),
+            new("Claims", () => new ClaimHolder()),
+            new("ClaimsUnscrubbed", () => new ClaimHolder(), all),
+            new("TopClaim", () => new Claim("aud", "x")),
+            new(
+                "ScrubMembers",
+                () => new ScrubTarget(),
+                ScrubMembers: ["Secret", "NullSecret", "ZeroSecret", "When"]
+            ),
+            new(
+                "ScrubMembersCollection",
+                () => new ScrubCollection(),
+                ScrubMembers: ["Secret", "When"]
+            ),
             new("GuidProbe", () => new GuidProbe()),
             new("GuidProbeInline", () => new GuidProbe(), GoldenOptions.ScrubInlineGuids),
             new("MultilineScrub", () => new MultilineScrub()),

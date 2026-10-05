@@ -119,6 +119,12 @@ internal static class ScalarFormatter
             return text;
         }
 
+        var ticks = value.TimeOfDay.Ticks;
+        if (ticks % TimeSpan.TicksPerMinute == 0)
+        {
+            return text + value.ToString(" HH:mm", CultureInfo.InvariantCulture);
+        }
+
         text += value.ToString(" HH:mm:ss", CultureInfo.InvariantCulture);
         var fraction = value.Ticks % TimeSpan.TicksPerSecond;
         if (fraction != 0)

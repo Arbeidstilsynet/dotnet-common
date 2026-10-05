@@ -19,6 +19,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 0.2.0
+
+### Added
+
+- feat: `SnapshotSettings.ScrubMembers(params string[])` writes the matching members, dictionary entries and claims as `{Scrubbed}`.
+- feat: `System.Security.Claims.Claim` is written as `{ type: value }`, matching Verify.
+
+### Fixed
+
+- fix: `DateTime` / `DateTimeOffset` values on a whole minute are now written as `HH:mm`, matching Verify, instead of `HH:mm:ss`.
+
 ## 0.1.0
 
 ### Added
