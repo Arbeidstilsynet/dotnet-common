@@ -57,8 +57,37 @@ jobs:
         with:
           working-directory: ${{ needs.check-and-prepare.outputs.parent_dir }}
 
+  license-check:
+    needs: check-and-prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: needs.check-and-prepare.outputs.should-build == 'true'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Is license check enabled?
+        id: enabled
+        run: |
+          if [ -f "${{ needs.check-and-prepare.outputs.package_path }}/allowed-licenses.json" ]; then
+            echo "enabled=true" >> $GITHUB_OUTPUT
+          else
+            echo "No allowed-licenses.json in the package directory; skipping license check."
+          fi
+      - name: Setup .NET SDK
+        if: steps.enabled.outputs.enabled == 'true'
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6
+        with:
+          global-json-file: global.json
+      - name: Check dependency licenses against allowed-licenses.json
+        if: steps.enabled.outputs.enabled == 'true'
+        working-directory: ${{ needs.check-and-prepare.outputs.package_path }}
+        run: |
+          dotnet tool install --global nuget-license --version 4.0.18
+          csproj=$(find . -maxdepth 1 -name '*.csproj' | head -n 1)
+          dotnet restore "$csproj"
+          nuget-license -i "$csproj" -t -a allowed-licenses.json -o Table
+
   post-build-checks:
-    needs: [check-and-prepare, build-dotnet]
+    needs: [check-and-prepare, build-dotnet, license-check]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     if: needs.check-and-prepare.outputs.should-publish == 'true'
