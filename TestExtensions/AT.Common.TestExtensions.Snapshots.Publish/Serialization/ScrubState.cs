@@ -155,7 +155,7 @@ internal sealed partial class ScrubState(SnapshotSettings settings)
     /// <summary>Whole-value GUIDs in any standard format; surrounding whitespace is ignored.</summary>
     private static bool TryParseGuid(string value, out Guid guid)
     {
-        guid = default;
+        guid = System.Guid.Empty;
         return value.Length is >= 32 and <= 80 && System.Guid.TryParse(value, out guid);
     }
 

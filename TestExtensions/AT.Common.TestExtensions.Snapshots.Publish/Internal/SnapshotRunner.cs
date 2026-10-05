@@ -115,11 +115,7 @@ internal static class SnapshotRunner
         {
             var verified = await File.ReadAllBytesAsync(verifiedPath);
             var result = target.Comparer is null
-                ? (
-                    verified.AsSpan().SequenceEqual(received)
-                        ? SnapshotCompareResult.Equal
-                        : SnapshotCompareResult.NotEqual()
-                )
+                ? CompareBytes(verified, received)
                 : target.Comparer(verified, received);
             if (result.IsEqual)
             {
@@ -150,6 +146,11 @@ internal static class SnapshotRunner
             File.Delete(path);
         }
     }
+
+    private static SnapshotCompareResult CompareBytes(byte[] verified, byte[] received) =>
+        verified.AsSpan().SequenceEqual(received)
+            ? SnapshotCompareResult.Equal
+            : SnapshotCompareResult.NotEqual();
 }
 
 internal static class AcceptMode

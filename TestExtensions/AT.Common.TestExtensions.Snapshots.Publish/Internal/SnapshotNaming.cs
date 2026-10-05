@@ -53,13 +53,14 @@ internal static class SnapshotNaming
 
     internal static string FormatTypeName(Type type)
     {
-        var name = StripArity(type.Name);
-        for (var parent = type.DeclaringType; parent is not null; parent = parent.DeclaringType)
+        var names = new List<string>();
+        for (Type? current = type; current is not null; current = current.DeclaringType)
         {
-            name = StripArity(parent.Name) + "." + name;
+            names.Add(StripArity(current.Name));
         }
 
-        return name;
+        names.Reverse();
+        return string.Join('.', names);
     }
 
     internal static string FormatParameter(object? value) =>

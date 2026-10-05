@@ -117,12 +117,7 @@ internal static class TestContextReader
             )
             {
                 var original = owner
-                    .GetMethods(
-                        BindingFlags.Public
-                            | BindingFlags.NonPublic
-                            | BindingFlags.Instance
-                            | BindingFlags.Static
-                    )
+                    .GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
                     .FirstOrDefault(m => m.Name == memberName);
                 return new TestInfo(owner, original, null);
             }

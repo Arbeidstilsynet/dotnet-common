@@ -133,7 +133,7 @@ internal static class Ssim
         var varA = sumAA / n - meanA * meanA;
         var varB = sumBB / n - meanB * meanB;
         var covariance = sumAB / n - meanA * meanB;
-        if (varA <= 0 && varB <= 0 && sumA == sumB)
+        if (varA <= 0 && varB <= 0 && Math.Abs(sumA - sumB) < 0.5)
         {
             return null;
         }

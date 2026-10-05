@@ -40,34 +40,10 @@ internal static class LineDiff
             }
 
             var start = Math.Max(0, i - Context);
-            var end = i;
-            var lastChange = i;
-            while (end < ops.Count && end - lastChange <= Context * 2)
-            {
-                if (ops[end].Kind != ' ')
-                {
-                    lastChange = end;
-                }
-
-                end++;
-            }
-
-            end = Math.Min(ops.Count, lastChange + Context + 1);
+            var end = HunkEnd(ops, i);
             var first = ops[start];
-            var oldCount = 0;
-            var newCount = 0;
-            for (var k = start; k < end; k++)
-            {
-                if (ops[k].Kind != '+')
-                {
-                    oldCount++;
-                }
-
-                if (ops[k].Kind != '-')
-                {
-                    newCount++;
-                }
-            }
+            var oldCount = Count(ops, start, end, '+');
+            var newCount = Count(ops, start, end, '-');
 
             output.Append(
                 $"@@ -{first.OldLine + 1},{oldCount} +{first.NewLine + 1},{newCount} @@\n"
@@ -87,6 +63,34 @@ internal static class LineDiff
         }
 
         return output.ToString();
+    }
+
+    private static int HunkEnd(List<Op> ops, int firstChange)
+    {
+        var lastChange = firstChange;
+        for (var k = firstChange; k < ops.Count && k - lastChange <= Context * 2; k++)
+        {
+            if (ops[k].Kind != ' ')
+            {
+                lastChange = k;
+            }
+        }
+
+        return Math.Min(ops.Count, lastChange + Context + 1);
+    }
+
+    private static int Count(List<Op> ops, int start, int end, char excludedKind)
+    {
+        var count = 0;
+        for (var k = start; k < end; k++)
+        {
+            if (ops[k].Kind != excludedKind)
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     private readonly record struct Op(char Kind, string Text, int OldLine, int NewLine);

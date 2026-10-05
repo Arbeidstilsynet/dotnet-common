@@ -516,49 +516,27 @@ internal sealed class SnapshotSerializer
     private static MemberAccessor[] GetMembers(Type type) =>
         MemberCache.GetOrAdd(type, BuildMembers);
 
+    private const BindingFlags MemberFlags =
+        BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+
     private static MemberAccessor[] BuildMembers(Type type)
     {
-        const BindingFlags flags =
-            BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
         var seen = new HashSet<string>(StringComparer.Ordinal);
         var members = new List<MemberAccessor>();
+        var hierarchy = TypeHierarchy(type).ToList();
 
-        for (
-            var current = type;
-            current is not null && current != typeof(object);
-            current = current.BaseType
-        )
+        foreach (var field in hierarchy.SelectMany(t => t.GetFields(MemberFlags)))
         {
-            foreach (var field in current.GetFields(flags))
+            if (!field.FieldType.IsByRefLike && seen.Add(field.Name))
             {
-                if (!field.FieldType.IsByRefLike && seen.Add(field.Name))
-                {
-                    members.Add(
-                        new MemberAccessor(field.Name, field.FieldType, type, field.GetValue)
-                    );
-                }
+                members.Add(new MemberAccessor(field.Name, field.FieldType, type, field.GetValue));
             }
         }
 
-        for (
-            var current = type;
-            current is not null && current != typeof(object);
-            current = current.BaseType
-        )
+        foreach (var property in hierarchy.SelectMany(t => t.GetProperties(MemberFlags)))
         {
-            foreach (var property in current.GetProperties(flags))
+            if (IsSerializable(property) && seen.Add(property.Name))
             {
-                if (
-                    property.GetMethod is not { IsPublic: true }
-                    || property.GetIndexParameters().Length > 0
-                    || property.PropertyType.IsByRefLike
-                    || property.PropertyType.IsPointer
-                    || !seen.Add(property.Name)
-                )
-                {
-                    continue;
-                }
-
                 members.Add(
                     new MemberAccessor(
                         property.Name,
@@ -572,6 +550,24 @@ internal sealed class SnapshotSerializer
 
         return [.. members];
     }
+
+    private static IEnumerable<Type> TypeHierarchy(Type type)
+    {
+        for (
+            var current = type;
+            current is not null && current != typeof(object);
+            current = current.BaseType
+        )
+        {
+            yield return current;
+        }
+    }
+
+    private static bool IsSerializable(PropertyInfo property) =>
+        property.GetMethod is { IsPublic: true }
+        && property.GetIndexParameters().Length == 0
+        && !property.PropertyType.IsByRefLike
+        && !property.PropertyType.IsPointer;
 
     private sealed class MemberAccessor(
         string name,
