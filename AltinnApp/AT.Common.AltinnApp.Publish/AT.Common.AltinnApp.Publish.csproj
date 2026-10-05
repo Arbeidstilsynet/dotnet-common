@@ -10,6 +10,7 @@
     <Authors>Digital Samhandling</Authors>
     <Company>Arbeidstilsynet</Company>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);NU5104</NoWarn>
     <Description>Provides common functionality for usage in Altinn Apps</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Version>2.9.0</Version>
