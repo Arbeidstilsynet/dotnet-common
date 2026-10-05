@@ -68,6 +68,7 @@ internal static class AltinnSpecificationExtensions
             AltinnDataType = dataElement.DataType,
             Filename = appSpec.GetFilename(dataElement),
             FileScanResult = dataElement.FileScanResult,
+            Metadata = dataElement.Metadata,
         };
     }
 
