@@ -10,7 +10,7 @@
     <Company>Arbeidstilsynet</Company>
     <Description>Clients for GeoNorge addresses, municipalities and Kartverket cadastral property locations.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>4.1.0-alpha</Version>
+    <Version>4.1.0</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/Arbeidstilsynet/dotnet-common</PackageProjectUrl>

@@ -14,7 +14,9 @@ public interface IPropertySearch
     /// <param name="queryParameters">The generated query parameters identifying the property.</param>
     /// <remarks>
     /// Output coordinates default to EPSG:4326 (WGS84) when <c>utkoordsys</c> is omitted.
-    /// Point coordinates are ordered longitude, latitude in that coordinate system.
+    /// In WGS84, point coordinates are ordered longitude, latitude.
+    /// Interpret coordinates in other requested systems according to their CRS;
+    /// for example, EPSG:25833 uses easting, northing.
     /// All matching parcels are returned without selecting a main parcel or an incident location.
     /// Setting <c>omrade</c> to true requests area geometries instead of representative points.
     /// Coordinates retain the generated, untyped GeoJSON representation.
