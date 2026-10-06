@@ -1,4 +1,5 @@
 using Arbeidstilsynet.Common.GeoNorge.Adresser;
+using Arbeidstilsynet.Common.GeoNorge.Eiendom;
 using Arbeidstilsynet.Common.GeoNorge.Implementation;
 using Arbeidstilsynet.Common.GeoNorge.KommuneInfo;
 using Arbeidstilsynet.Common.GeoNorge.Ports;
@@ -20,6 +21,13 @@ public record GeoNorgeConfig
     public string BaseUrl { get; init; } = "https://ws.geonorge.no/";
 
     /// <summary>
+    /// Base URL for cadastral property searches. Default is "https://api.kartverket.no/".
+    /// The API-specific base path "eiendom/v1" is appended automatically.
+    /// This setting is independent of <see cref="BaseUrl"/>.
+    /// </summary>
+    public string PropertyBaseUrl { get; init; } = "https://api.kartverket.no/";
+
+    /// <summary>
     /// If true, uses an approximate method for determining if coordinates are within Svalbard and Jan Mayen.
     /// </summary>
     /// <remarks>
@@ -35,22 +43,24 @@ public static class DependencyInjectionExtensions
 {
     internal const string AdresserHttpClientName = "GeoNorgeAdresserClient";
     internal const string KommuneInfoHttpClientName = "GeoNorgeKommuneInfoClient";
+    internal const string EiendomHttpClientName = "GeoNorgeEiendomClient";
 
     private const string AdresserBasePath = "adresser/v1";
     private const string KommuneInfoBasePath = "kommuneinfo/v1";
+    private const string EiendomBasePath = "eiendom/v1";
 
     /// <summary>
     /// Register GeoNorge services in the provided <see cref="IServiceCollection"/>.
     /// <br/>
-    /// Exposes the Kiota-generated <see cref="AdresserClient"/> and <see cref="KommuneInfoClient"/>
-    /// for local adaptation, as well as the <see cref="IAddressSearch"/> and
-    /// <see cref="IFylkeKommuneApi"/> ports that surface the generated models through a small,
+    /// Exposes the Kiota-generated <see cref="AdresserClient"/>, <see cref="KommuneInfoClient"/>
+    /// and <see cref="EiendomClient"/> for local adaptation, as well as the <see cref="IAddressSearch"/>,
+    /// <see cref="IFylkeKommuneApi"/> and <see cref="IPropertySearch"/> ports through a small,
     /// task-oriented API.
     /// </summary>
     /// <param name="services">The service collection to register with.</param>
     /// <param name="geoNorgeConfig">Optional configuration. Uses defaults if not specified.</param>
     /// <param name="configureResilience">
-    /// Optional callback for customizing the standard HTTP resilience handler applied to both clients.
+    /// Optional callback for customizing the standard HTTP resilience handler applied to all clients.
     /// </param>
     /// <returns><see cref="IServiceCollection"/> for chaining.</returns>
     public static IServiceCollection AddGeoNorge(
@@ -71,8 +81,13 @@ public static class DependencyInjectionExtensions
             .AddHttpClient(KommuneInfoHttpClientName)
             .AddStandardResilienceHandler(options => configureResilience?.Invoke(options));
 
+        services
+            .AddHttpClient(EiendomHttpClientName)
+            .AddStandardResilienceHandler(options => configureResilience?.Invoke(options));
+
         services.AddScoped<AdresserRequestAdapter>();
         services.AddScoped<KommuneInfoRequestAdapter>();
+        services.AddScoped<EiendomRequestAdapter>();
 
         services.AddScoped(serviceProvider =>
         {
@@ -89,6 +104,18 @@ public static class DependencyInjectionExtensions
         });
 
         services.AddScoped<IAddressSearch, AddressSearchClient>();
+
+        services.AddScoped(serviceProvider =>
+        {
+            var requestAdapter = serviceProvider.GetRequiredService<EiendomRequestAdapter>();
+            requestAdapter.BaseUrl = CombineBaseUrl(
+                geoNorgeConfig.PropertyBaseUrl,
+                EiendomBasePath
+            );
+            return new EiendomClient(requestAdapter);
+        });
+
+        services.AddScoped<IPropertySearch, PropertySearchClient>();
 
         services.AddScoped<FylkeKommuneClient>();
         services.AddScoped<IFylkeKommuneApi>(serviceProvider =>

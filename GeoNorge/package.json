@@ -3,6 +3,7 @@
   "scripts": {
     "generate:client:adresser": "dotnet kiota generate -l CSharp -c AdresserClient -n Arbeidstilsynet.Common.GeoNorge.Adresser -d AT.Common.GeoNorge.Publish/openapi-adresser.json -o AT.Common.GeoNorge.Publish/Generated/Adresser --exclude-backward-compatible --clean-output",
     "generate:client:kommuneinfo": "dotnet kiota generate -l CSharp -c KommuneInfoClient -n Arbeidstilsynet.Common.GeoNorge.KommuneInfo -d AT.Common.GeoNorge.Publish/openapi-kommuneinfo.json -o AT.Common.GeoNorge.Publish/Generated/KommuneInfo --exclude-backward-compatible --clean-output",
-    "generate:client": "npm run generate:client:adresser && npm run generate:client:kommuneinfo"
+    "generate:client:eiendom": "dotnet kiota generate -l CSharp -c EiendomClient -n Arbeidstilsynet.Common.GeoNorge.Eiendom -d AT.Common.GeoNorge.Publish/openapi-eiendom.json -o AT.Common.GeoNorge.Publish/Generated/Eiendom --include-path /geokoding#GET --exclude-backward-compatible --clean-output",
+    "generate:client": "npm run generate:client:adresser && npm run generate:client:kommuneinfo && npm run generate:client:eiendom"
   }
 }
