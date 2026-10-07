@@ -15,6 +15,7 @@ namespace GeoNorge.ArchUnit.Tests
         internal static string PortsNamespace = CreateNamespaceRegex("Ports");
         internal static string AdresserNamespace = CreateNamespaceRegex("Adresser");
         internal static string KommuneInfoNamespace = CreateNamespaceRegex("KommuneInfo");
+        internal static string EiendomNamespace = CreateNamespaceRegex("Eiendom");
 
         private static string CreateNamespaceRegex(string namespaceSection)
         {
@@ -65,6 +66,8 @@ namespace GeoNorge.ArchUnit.Tests
             .ResideInNamespaceMatching(Constants.AdresserNamespace)
             .Or()
             .ResideInNamespaceMatching(Constants.KommuneInfoNamespace)
+            .Or()
+            .ResideInNamespaceMatching(Constants.EiendomNamespace)
             .As("inside exportable namespaces");
 
         internal static readonly IObjectProvider<IType> TypesInInternalNamespaces = Types()

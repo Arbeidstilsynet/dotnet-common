@@ -19,6 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 4.1.0
+
+### Added
+
+- Added `IPropertySearch` and the Kiota-generated `EiendomClient` for cadastral property-location searches through Kartverket's `/geokoding` endpoint, including properties without registered addresses.
+- Property searches preserve all matching parcels and their GeoJSON geometries, default output coordinates to EPSG:4326, and support optional area geometries.
+- Added independent `GeoNorgeConfig.PropertyBaseUrl` configuration and dependency injection registration with anonymous authentication and standard HTTP resilience.
+
 ## 4.0.1
 
 ### Changed

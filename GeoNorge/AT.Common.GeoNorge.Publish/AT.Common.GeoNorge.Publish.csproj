@@ -8,9 +8,9 @@
     <Product>Arbeidstilsynet.Common.GeoNorge</Product>
     <Authors>Digital Samhandling</Authors>
     <Company>Arbeidstilsynet</Company>
-    <Description>Implements a client which integrates with https://ws.geonorge.no/.</Description>
+    <Description>Clients for GeoNorge addresses, municipalities and Kartverket cadastral property locations.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>4.0.1</Version>
+    <Version>4.1.0</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/Arbeidstilsynet/dotnet-common</PackageProjectUrl>
@@ -27,6 +27,7 @@
     <None Include="README.md" Pack="true" PackagePath="\" />
     <None Include="openapi-adresser.json" Pack="true" PackagePath="\" />
     <None Include="openapi-kommuneinfo.json" Pack="true" PackagePath="\" />
+    <None Include="openapi-eiendom.json" Pack="true" PackagePath="\" />
   </ItemGroup>
   <Target
     Name="InjectPackageReleaseNotesFromFile"

@@ -1,0 +1,37 @@
+{
+  "descriptionHash": "FA4FC8EE8CD48143297AE1B38E832086B3F50BC3BD75414F82AA5934C801F7C5534216E5A23672C3D775BF83F1EF3B1472EB64D8AA61208F7C5DFB2A8F6D8E66",
+  "descriptionLocation": "../../openapi-eiendom.json",
+  "lockFileVersion": "1.0.0",
+  "kiotaVersion": "1.35.0",
+  "clientClassName": "EiendomClient",
+  "typeAccessModifier": "Public",
+  "clientNamespaceName": "Arbeidstilsynet.Common.GeoNorge.Eiendom",
+  "language": "CSharp",
+  "usesBackingStore": false,
+  "excludeBackwardCompatible": true,
+  "includeAdditionalData": true,
+  "disableSSLValidation": false,
+  "serializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Text.TextSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Form.FormSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Multipart.MultipartSerializationWriterFactory"
+  ],
+  "deserializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Text.TextParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Form.FormParseNodeFactory"
+  ],
+  "structuredMimeTypes": [
+    "application/json",
+    "text/plain;q=0.9",
+    "application/x-www-form-urlencoded;q=0.2",
+    "multipart/form-data;q=0.1"
+  ],
+  "includePatterns": [
+    "/geokoding#GET"
+  ],
+  "excludePatterns": [],
+  "disabledValidationRules": [],
+  "allowedExternalOrigins": []
+}
