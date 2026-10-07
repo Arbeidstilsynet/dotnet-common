@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
+using Arbeidstilsynet.Common.TestExtensions.Snapshots;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Shouldly;
@@ -10,11 +11,23 @@ namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 
 public class AltinnTokenClientTests
 {
-    private readonly VerifySettings _verifySettings = new();
+    private readonly SnapshotSettings _snapshotSettings = new();
 
     public AltinnTokenClientTests()
     {
-        _verifySettings.UseDirectory("TestData/Snapshots");
+        _snapshotSettings
+            .UseDirectory("TestData/Snapshots")
+            .ScrubMembers(
+                "exp",
+                "iat",
+                "nbf",
+                "EncodedPayload",
+                "EncodedSignature",
+                "EncodedHeader",
+                "EncodedToken",
+                "ValidTo",
+                "ValidFrom"
+            );
     }
 
     [Fact]
@@ -36,19 +49,7 @@ public class AltinnTokenClientTests
         );
         //assert
         var handler = new JsonWebTokenHandler();
-        await Verifier
-            .Verify(handler.ReadJsonWebToken(result), _verifySettings)
-            .ScrubMembers(
-                "exp",
-                "iat",
-                "nbf",
-                "EncodedPayload",
-                "EncodedSignature",
-                "EncodedHeader",
-                "EncodedToken",
-                "ValidTo",
-                "ValidFrom"
-            );
+        await Snapshot.Verify(handler.ReadJsonWebToken(result), _snapshotSettings);
     }
 
     [Fact]
@@ -69,19 +70,7 @@ public class AltinnTokenClientTests
         );
         //assert
         var handler = new JsonWebTokenHandler();
-        await Verifier
-            .Verify(handler.ReadJsonWebToken(result), _verifySettings)
-            .ScrubMembers(
-                "exp",
-                "iat",
-                "nbf",
-                "EncodedPayload",
-                "EncodedSignature",
-                "EncodedHeader",
-                "EncodedToken",
-                "ValidTo",
-                "ValidFrom"
-            );
+        await Snapshot.Verify(handler.ReadJsonWebToken(result), _snapshotSettings);
     }
 
     [Fact]

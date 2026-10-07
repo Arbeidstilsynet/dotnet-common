@@ -22,6 +22,7 @@ public sealed class SnapshotSettings
         IncludeDefaultValuesEnabled = other.IncludeDefaultValuesEnabled;
         ScrubInlineGuidsEnabled = other.ScrubInlineGuidsEnabled;
         Scrubbers = [.. other.Scrubbers];
+        ScrubbedMembers = [.. other.ScrubbedMembers];
     }
 
     internal string? Directory { get; private set; }
@@ -33,6 +34,7 @@ public sealed class SnapshotSettings
     internal bool IncludeDefaultValuesEnabled { get; private set; }
     internal bool ScrubInlineGuidsEnabled { get; private set; }
     internal List<Func<string, string>> Scrubbers { get; } = [];
+    internal HashSet<string> ScrubbedMembers { get; } = new(StringComparer.Ordinal);
 
     /// <summary>
     /// Stores snapshots in <paramref name="directory"/>, relative to the directory of the calling source file.
@@ -94,6 +96,22 @@ public sealed class SnapshotSettings
     public SnapshotSettings IncludeDefaultValues()
     {
         IncludeDefaultValuesEnabled = true;
+        return this;
+    }
+
+    /// <summary>
+    /// Replaces the value of every member, dictionary entry or claim with one of these names
+    /// (case-sensitive, at any depth) with <c>{Scrubbed}</c>, even when the value is null or default.
+    /// </summary>
+    public SnapshotSettings ScrubMembers(params string[] names)
+    {
+        ArgumentNullException.ThrowIfNull(names);
+        foreach (var name in names)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(name);
+            ScrubbedMembers.Add(name);
+        }
+
         return this;
     }
 

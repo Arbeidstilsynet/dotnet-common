@@ -1,12 +1,13 @@
 using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
+using Arbeidstilsynet.Common.TestExtensions.Snapshots;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 
 public class AltinnSubscriptionAdapterExtensionTests
 {
-    private readonly VerifySettings _verifySettings = new();
+    private readonly SnapshotSettings _snapshotSettings = new();
 
     //testdata
     private static readonly string App = "test";
@@ -34,9 +35,9 @@ public class AltinnSubscriptionAdapterExtensionTests
 
     public AltinnSubscriptionAdapterExtensionTests()
     {
-        _verifySettings.DontScrubDateTimes();
-        _verifySettings.DontScrubGuids();
-        _verifySettings.UseDirectory("TestData/Snapshots");
+        _snapshotSettings.DontScrubDateTimes();
+        _snapshotSettings.DontScrubGuids();
+        _snapshotSettings.UseDirectory("TestData/Snapshots");
     }
 
     [Fact]
@@ -63,7 +64,7 @@ public class AltinnSubscriptionAdapterExtensionTests
         //act
         var result = metadata.ToAltinnMetadata();
         //assert
-        await Verify(result, _verifySettings);
+        await Snapshot.Verify(result, _snapshotSettings);
     }
 
     [Fact]
@@ -74,7 +75,7 @@ public class AltinnSubscriptionAdapterExtensionTests
         //act
         var result = metadata.ToInstanceAddress();
         //assert
-        await Verify(result, _verifySettings);
+        await Snapshot.Verify(result, _snapshotSettings);
     }
 
     [Fact]
@@ -90,7 +91,7 @@ public class AltinnSubscriptionAdapterExtensionTests
         //act
         var result = metadata.ToMetadataDictionary();
         //assert
-        await Verifier.Verify(result, _verifySettings);
+        await Snapshot.Verify(result, _snapshotSettings);
     }
 
     [Fact]
@@ -101,7 +102,7 @@ public class AltinnSubscriptionAdapterExtensionTests
         //act
         var result = metadata.ToMetadataDictionary();
         //assert
-        await Verifier.Verify(result, _verifySettings);
+        await Snapshot.Verify(result, _snapshotSettings);
     }
 
     [Fact]
@@ -112,6 +113,6 @@ public class AltinnSubscriptionAdapterExtensionTests
         //act
         var result = guid.ToAltinnReference();
         //assert
-        await Verifier.Verify(result, _verifySettings);
+        await Snapshot.Verify(result, _snapshotSettings);
     }
 }

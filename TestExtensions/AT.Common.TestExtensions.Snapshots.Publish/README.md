@@ -47,6 +47,7 @@ This creates `Snapshots/SakRepositoryTests.Create_StoresSak.verified.txt`:
 | `DontScrubDateTimes()` | Write `DateTime`, `DateTimeOffset`, `DateOnly` and ISO date strings as-is. |
 | `DontIgnoreEmptyCollections()` | Write empty collections as `[]` instead of omitting them. |
 | `IncludeDefaultValues()` | Write `null` and default members. |
+| `ScrubMembers(names)` | Write members, dictionary entries and claims with these names as `{Scrubbed}`. |
 | `AddScrubber(Func<string, string>)` | Post-process the serialized text. |
 
 Theory arguments from xunit v3's `TestContext` become part of the file name, e.g. `Tests.Method_language=Bokmål.verified.txt`.
@@ -74,7 +75,7 @@ Snapshot files are UTF-8 with BOM and `\n` line endings. Consider adding this to
 | `await Verify(value)` | `await Snapshot.Verify(value)` |
 | `await Verify(value, settings)` | `await Snapshot.Verify(value, settings)` |
 | `new VerifySettings()` | `new SnapshotSettings()` |
-| `settings.UseDirectory(...)`, `ScrubInlineGuids()`, `DontScrubGuids()`, `DontScrubDateTimes()`, `DontIgnoreEmptyCollections()`, `UseParameters(...)` | Same names |
+| `settings.UseDirectory(...)`, `ScrubInlineGuids()`, `DontScrubGuids()`, `DontScrubDateTimes()`, `DontIgnoreEmptyCollections()`, `UseParameters(...)`, `ScrubMembers(...)` | Same names |
 | `.UseParameters(x)` on the `Verify(...)` call | `settings.UseParameters(x)` (xunit v3 theory arguments are picked up automatically) |
 | `AddScrubber(StringBuilder => ...)` | `AddScrubber(string => string)` |
 

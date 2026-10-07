@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Reflection;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -74,10 +75,27 @@ internal sealed class SnapshotSerializer
 
     private sealed record JsonValueWrapper(JsonElement Element);
 
+    private sealed record ClaimValue(Claim Claim);
+
+    /// <summary>Text written verbatim as an entry value.</summary>
+    private sealed record RawValue(string Text);
+
+    private static readonly RawValue ScrubbedMember = new("{Scrubbed}");
+    private static readonly RawValue ScrubbedClaimMember = new("Scrubbed");
+
+    private static readonly string[] ClaimTypePrefixes =
+    [
+        "http://schemas.xmlsoap.org/ws/2009/09/identity/claims/",
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/",
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/",
+    ];
+
     private static object Prepare(object value)
     {
         switch (value)
         {
+            case Claim claim:
+                return new ClaimValue(claim);
             case JsonElement element:
                 return new JsonValueWrapper(element);
             case JsonDocument document:
@@ -191,6 +209,7 @@ internal sealed class SnapshotSerializer
         {
             ListValue list => list.Source,
             DictValue dict => dict.Source,
+            ClaimValue claim => claim.Claim,
             _ => prepared,
         };
         EnsureDepth(source.GetType().FullName);
@@ -209,6 +228,9 @@ internal sealed class SnapshotSerializer
                     break;
                 case JsonValueWrapper json:
                     WriteJson(json.Element, indent);
+                    break;
+                case ClaimValue claim:
+                    WriteClaim(claim.Claim, indent);
                     break;
                 default:
                     WriteObject(prepared, indent);
@@ -271,6 +293,12 @@ internal sealed class SnapshotSerializer
         var entries = new List<(Func<string> Label, object? Value)>();
         foreach (var (key, value) in dict.Entries)
         {
+            if (key is string name && _settings.ScrubbedMembers.Contains(name))
+            {
+                entries.Add((() => FormatKey(key), ScrubbedMember));
+                continue;
+            }
+
             if (ShouldSkipEntryValue(value, out var prepared))
             {
                 continue;
@@ -287,14 +315,56 @@ internal sealed class SnapshotSerializer
         var entries = new List<(Func<string> Label, object? Value)>();
         foreach (var member in GetMembers(value.GetType()))
         {
+            var name = member.Name;
+            if (_settings.ScrubbedMembers.Contains(name))
+            {
+                entries.Add((() => name, ScrubbedMember));
+                continue;
+            }
+
             var memberValue = member.GetValue(value);
             if (ShouldSkipMember(member, memberValue, out var prepared))
             {
                 continue;
             }
 
-            var name = member.Name;
             entries.Add((() => name, prepared));
+        }
+
+        WriteEntries(entries, indent);
+    }
+
+    /// <summary>Writes a claim as <c>{ type: value }</c>, followed by its properties when there are any.</summary>
+    private void WriteClaim(Claim claim, int indent)
+    {
+        var type = claim.Type;
+        foreach (var prefix in ClaimTypePrefixes)
+        {
+            if (type.StartsWith(prefix, StringComparison.Ordinal))
+            {
+                type = type[prefix.Length..];
+                break;
+            }
+        }
+
+        var entries = new List<(Func<string> Label, object? Value)>
+        {
+            (
+                () => type,
+                _settings.ScrubbedMembers.Contains(type) ? ScrubbedClaimMember : claim.Value
+            ),
+        };
+
+        const string propertiesName = nameof(Claim.Properties);
+        if (_settings.ScrubbedMembers.Contains(propertiesName))
+        {
+            entries.Add((() => propertiesName, ScrubbedClaimMember));
+        }
+        else if (
+            !ShouldSkipEntryValue(claim.Properties, out var properties) && properties is not null
+        )
+        {
+            entries.Add((() => propertiesName, properties));
         }
 
         WriteEntries(entries, indent);
@@ -374,6 +444,12 @@ internal sealed class SnapshotSerializer
         if (prepared is null)
         {
             _output.Append(" null");
+            return;
+        }
+
+        if (prepared is RawValue raw)
+        {
+            _output.Append(' ').Append(raw.Text);
             return;
         }
 

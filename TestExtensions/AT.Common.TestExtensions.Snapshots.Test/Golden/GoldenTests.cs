@@ -22,7 +22,13 @@ public class GoldenTests
         CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("nb-NO");
         try
         {
-            var actual = Snapshot.Serialize(goldenCase.Create(), ToSettings(goldenCase.Options));
+            var settings = ToSettings(goldenCase.Options);
+            if (goldenCase.ScrubMembers is { } members)
+            {
+                settings.ScrubMembers(members);
+            }
+
+            var actual = Snapshot.Serialize(goldenCase.Create(), settings);
             actual.ShouldBe(expected);
         }
         finally
