@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 4.0.7
+
+### Deprecated
+
+- `IAltinnMeldingerAdapter.GetCorrespondenceByIdempotentKey` is obsolete. It provides only a small simplification of `IAltinnCorrespondenceClient.GetCorrespondences` and is hard-wired to the `dat-meldinger-correspondence` resource owned by team Meldinger. Use `GetCorrespondences` with explicit `resourceId`, `role` and `idempotentKey` instead. Existing behavior is unchanged.
+
 ## 4.0.6
 
 ### Changed

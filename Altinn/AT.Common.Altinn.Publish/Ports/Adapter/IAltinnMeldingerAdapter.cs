@@ -1,6 +1,7 @@
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
+using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Microsoft.AspNetCore.Http;
 
 namespace Arbeidstilsynet.Common.Altinn.Ports.Adapter;
@@ -21,8 +22,17 @@ public interface IAltinnMeldingerAdapter
     /// Looks up correspondences by the idempotent key that was used when initializing them.
     /// Uses role <c>Sender</c> and resource <c>dat-meldinger-correspondence</c>.
     /// </summary>
+    /// <remarks>
+    /// Deprecated: this is only a small simplification of
+    /// <see cref="IAltinnCorrespondenceClient.GetCorrespondences"/> and is hard-wired to a resource
+    /// owned by team Meldinger. Use the client directly with an explicit resource, role and idempotent key.
+    /// </remarks>
     /// <param name="idempotentKey">The idempotent key used when initializing the correspondence.</param>
     /// <returns>The ids of the matching correspondences.</returns>
+    [Obsolete(
+        "Use IAltinnCorrespondenceClient.GetCorrespondences with explicit resourceId, role and idempotentKey instead. "
+            + "This method is only a small simplification and is hard-wired to the dat-meldinger-correspondence resource owned by team Meldinger."
+    )]
     public Task<CorrespondenceLookupResponse> GetCorrespondenceByIdempotentKey(Guid idempotentKey);
 
     /// <summary>
