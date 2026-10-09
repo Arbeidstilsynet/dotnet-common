@@ -20,6 +20,10 @@ internal class AltinnMeldingerAdapter(IAltinnCorrespondenceClient correspondence
         return correspondenceClient.InitializeCorrespondence(request.ToApiRequest(), attachments);
     }
 
+    [Obsolete(
+        "Use IAltinnCorrespondenceClient.GetCorrespondences with explicit resourceId, role and idempotentKey instead. "
+            + "This method is only a small simplification and is hard-wired to the dat-meldinger-correspondence resource owned by team Meldinger."
+    )]
     public Task<CorrespondenceLookupResponse> GetCorrespondenceByIdempotentKey(Guid idempotentKey)
     {
         return correspondenceClient.GetCorrespondences(

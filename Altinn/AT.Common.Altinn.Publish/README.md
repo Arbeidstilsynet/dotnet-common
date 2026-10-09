@@ -139,6 +139,26 @@ To move a single client, set its `BaseUrl` instead:
 
 Both forms obey the same rule: rejected in Production, warned about elsewhere.
 
+### Looking up correspondences by idempotent key
+
+`IAltinnMeldingerAdapter.GetCorrespondenceByIdempotentKey` is obsolete. It is only a small
+simplification of `IAltinnCorrespondenceClient.GetCorrespondences` and is hard-wired to
+`dat-meldinger-correspondence`, a resource owned by team Meldinger.
+
+Inject `IAltinnCorrespondenceClient` (registered by `AddCorrespondence()` or
+`AddMeldingerAdapter()`) and specify the resource, role and idempotent key directly:
+
+```csharp
+var result = await correspondenceClient.GetCorrespondences(
+    resourceId: resourceId,
+    role: CorrespondencesRoleType.Sender,
+    idempotentKey: idempotentKey
+);
+```
+
+To preserve the deprecated method's behavior, use `dat-meldinger-correspondence` as the
+resource ID. Otherwise, use the resource your application owns.
+
 ### Correspondence attachments
 
 Pass the files to `CreateCorrespondence` or `InitializeCorrespondence`, with matching attachment
