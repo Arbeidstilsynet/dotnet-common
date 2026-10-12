@@ -3,6 +3,8 @@ using Arbeidstilsynet.Common.Altinn.Extensions;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
 using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
+using Arbeidstilsynet.Common.Altinn.Test.Unit.TestData;
+using Arbeidstilsynet.Common.TestExtensions.Snapshots;
 using Shouldly;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
@@ -11,17 +13,17 @@ public class AltinnAppSpecificationTests
 {
     private readonly AltinnAppSpecification _defaultSpec = new("default");
 
-    private readonly VerifySettings _verifySettings = new();
+    private readonly SnapshotSettings _snapshotSettings = new();
 
     public AltinnAppSpecificationTests()
     {
-        _verifySettings.UseDirectory("TestData/Snapshots");
+        _snapshotSettings.UseDirectory("TestData/Snapshots");
     }
 
     [Fact]
     public async Task DefaultsAreCorrect()
     {
-        await Verify(_defaultSpec, _verifySettings);
+        await Snapshot.Verify(_defaultSpec, _snapshotSettings);
     }
 
     [Theory]
@@ -58,13 +60,19 @@ public class AltinnAppSpecificationTests
     }
 
     [Theory]
-    [InlineData("""{"id":"1","appId":"org/some-app-id","data":[]}""")]
-    [InlineData("""{"id":"1","appId":"org/some-app-id","data":[],"dataValues":null}""")]
-    public void GetSpecification_WhenDataValuesIsMissingOrNullInJson_DoesNotThrow(string json)
+    [InlineData(null)]
+    [InlineData("empty")]
+    public void GetSpecification_WhenDataValuesIsMissingOrNull_DoesNotThrow(string? dataValuesKind)
     {
-        var instance = JsonSerializer.Deserialize<AltinnInstance>(json);
-        instance.ShouldNotBeNull();
-        instance.DataValues.ShouldNotBeNull();
+        // AltinnInstance.DataValues coerces null to an empty dictionary, so both cases must be safe
+        // for GetSpecification to read.
+        var instance = new AltinnInstance
+        {
+            Id = "1",
+            AppId = "org/some-app-id",
+            Data = [],
+            DataValues = dataValuesKind is null ? null! : [],
+        };
 
         Action act = () => _ = instance.GetSpecification();
         act.ShouldNotThrow();
@@ -88,7 +96,7 @@ public class AltinnAppSpecificationTests
 
         var (mainData, _, _) = compliantInstance.GetDataElementsBySignificance();
 
-        await Verify(mainData, _verifySettings);
+        await Snapshot.Verify(mainData, _snapshotSettings);
     }
 
     [Fact]
@@ -121,11 +129,16 @@ public class AltinnAppSpecificationTests
         string contentType
     )
     {
-        var dataElement = CreateDataElement(dataType, contentType);
+        var expectedMetadata = new Dictionary<string, string> { ["source"] = "test" };
+        var dataElement = CreateDataElement(dataType, contentType) with
+        {
+            Metadata = expectedMetadata,
+        };
 
         var fileMetadata = _defaultSpec.CreateFileMetadata(dataElement);
 
-        await Verify(fileMetadata, _verifySettings).UseParameters(dataType, contentType);
+        fileMetadata.Metadata.ShouldBe(expectedMetadata);
+        await Snapshot.Verify(fileMetadata, _snapshotSettings.UseParameters(dataType, contentType));
     }
 
     private static AltinnInstance CreateCompliantInstance(

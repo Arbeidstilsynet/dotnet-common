@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed <!--  for changes in existing functionality. -->
 
+- Allow publishing with Dialogporten's prerelease client dependency (NU5104).
+
 ### Deprecated <!--  for soon-to-be removed features. -->
 
 ### Removed <!-- for now removed features. -->
@@ -18,6 +20,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed <!-- for any bug fixes. -->
 
 ### Security <!-- in case of vulnerabilities. -->
+
+## 2.9.1
+
+### Changed
+
+- changed(deps): Applied minor and patch updates to dependencies
 
 ## 2.9.0
 

@@ -1,0 +1,16 @@
+﻿{
+  PlusFiveThirty: DateTimeOffset_1,
+  PlusTen: DateTimeOffset_2,
+  MinusTwo: DateTimeOffset_3,
+  PlusHalf: DateTimeOffset_4,
+  WithFraction: DateTimeOffset_5,
+  Max: Date_MaxValue,
+  Local: DateTime_1,
+  DateMax: Date_MaxValue,
+  Time: Time_1,
+  TimeFraction: Time_2,
+  TimeMax: Time_MaxValue,
+  TimeAgain: Time_1,
+  NullableDate: Date_1,
+  NullableEnum: Red
+}

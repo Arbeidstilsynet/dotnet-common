@@ -1,0 +1,7 @@
+﻿{
+  UtcMinutes: 2025-09-25 12:00 Utc,
+  UtcMinutesOdd: 2025-09-25 13:07 Utc,
+  UnspecifiedMinutes: 2026-01-02 03:04,
+  OffsetMinutes: 2026-03-01 10:20 +2,
+  OffsetMinutesHalf: 2026-03-01 10:20 +5-30
+}

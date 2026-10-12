@@ -20,4 +20,18 @@ public class InstanceExtensionsTests
         // Assert
         result.ShouldBe(guid);
     }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("party-only")]
+    [InlineData("party/not-a-guid")]
+    public void GetInstanceGuid_WithInvalidId_Throws(string? id)
+    {
+        var instance = new AltinnInstance { Id = id };
+
+        var exception = Should.Throw<InvalidOperationException>(() => instance.GetInstanceGuid());
+
+        exception.Message.ShouldStartWith("AltinnInstance ID");
+    }
 }

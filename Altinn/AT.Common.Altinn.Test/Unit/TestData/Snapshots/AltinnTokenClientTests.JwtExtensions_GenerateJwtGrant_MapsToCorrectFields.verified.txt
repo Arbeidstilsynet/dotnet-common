@@ -26,6 +26,9 @@
       scope: test:read
     },
     {
+      jti: Guid_2
+    },
+    {
       nbf: Scrubbed
     }
   ],
@@ -43,7 +46,7 @@
   Azp: ,
   IssuedAt: DateTime_1,
   Issuer: Guid_1,
-  Id: ,
+  Id: Guid_2,
   Subject: ,
   ValidFrom: {Scrubbed},
   ValidTo: {Scrubbed}

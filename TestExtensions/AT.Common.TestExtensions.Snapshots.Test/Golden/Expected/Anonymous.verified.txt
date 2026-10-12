@@ -1,0 +1,10 @@
+﻿{
+  totalPages: 3,
+  totalResults: 30,
+  data: [
+    {
+      Id: Guid_1,
+      when: DateTime_1
+    }
+  ]
+}

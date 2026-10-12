@@ -29,9 +29,11 @@ public class AltinnStorageClientExtensionsTests
             Next = null,
         };
 
-        _client.GetInstances(queryParameters).Returns(firstPage);
         _client
-            .GetInstances(queryParameters with { ContinuationToken = "abc123" })
+            .GetInstances(Arg.Is<InstanceQueryParameters>(q => q!.ContinuationToken == null))
+            .Returns(firstPage);
+        _client
+            .GetInstances(Arg.Is<InstanceQueryParameters>(q => q!.ContinuationToken == "abc123"))
             .Returns(secondPage);
 
         // Act
@@ -60,9 +62,11 @@ public class AltinnStorageClientExtensionsTests
             Next = "http://example.com?continuationToken=abc123",
         };
 
-        _client.GetInstances(queryParameters).Returns(firstPage);
         _client
-            .GetInstances(queryParameters with { ContinuationToken = "abc123" })
+            .GetInstances(Arg.Is<InstanceQueryParameters>(q => q!.ContinuationToken == null))
+            .Returns(firstPage);
+        _client
+            .GetInstances(Arg.Is<InstanceQueryParameters>(q => q!.ContinuationToken == "abc123"))
             .Returns(secondPage);
 
         // Act
@@ -96,9 +100,11 @@ public class AltinnStorageClientExtensionsTests
             Next = null,
         };
 
-        _client.GetInstances(queryParameters).Returns(firstPage);
         _client
-            .GetInstances(queryParameters with { ContinuationToken = "abc123" })
+            .GetInstances(Arg.Is<InstanceQueryParameters>(q => q!.ContinuationToken == null))
+            .Returns(firstPage);
+        _client
+            .GetInstances(Arg.Is<InstanceQueryParameters>(q => q!.ContinuationToken == "abc123"))
             .Returns(secondPage);
 
         // Act

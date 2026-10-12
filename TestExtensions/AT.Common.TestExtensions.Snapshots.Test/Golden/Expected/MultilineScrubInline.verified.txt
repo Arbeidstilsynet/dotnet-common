@@ -1,0 +1,53 @@
+﻿{
+  GuidLine:
+a
+Guid_1
+b,
+  GuidLineFirst:
+Guid_2
+b,
+  GuidLineLast:
+a
+Guid_1,
+  GuidLineSpaces:
+a
+ Guid_2 
+b,
+  GuidInLine:
+a
+ref Guid_2 x
+b,
+  GuidNLine:
+a
+Guid_1
+b,
+  GuidCrLf:
+a
+Guid_2
+b,
+  GuidTrailing: Guid_1,
+  NewGuidLine:
+x
+Guid_3
+y,
+  DateLine:
+a
+2026-02-28T07:46:15Z
+b,
+  DateSpaceLine:
+a
+2026-02-28 07:46:15
+b,
+  DateOnlyLine:
+a
+2026-02-28
+b,
+  DateInLine:
+a
+at 2026-02-28T07:46:15Z ok
+b,
+  List: [
+    q
+Guid_1
+  ]
+}

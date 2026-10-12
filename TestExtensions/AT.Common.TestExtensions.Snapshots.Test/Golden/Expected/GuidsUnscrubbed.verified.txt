@@ -1,0 +1,21 @@
+﻿{
+  First: 3aa1d561-8c4e-7975-9c9b-f9dff6ede8e5,
+  Second: a75da64f-053a-4c1e-9a1b-111122223333,
+  Again: 3aa1d561-8c4e-7975-9c9b-f9dff6ede8e5,
+  Nullable: a75da64f-053a-4c1e-9a1b-111122223333,
+  GuidString: 3aa1d561-8c4e-7975-9c9b-f9dff6ede8e5,
+  GuidUpper: A75DA64F-053A-4C1E-9A1B-111122223333,
+  GuidBraces: {3aa1d561-8c4e-7975-9c9b-f9dff6ede8e5},
+  GuidN: 3aa1d5618c4e79759c9bf9dff6ede8e5,
+  InlineGuid: 3aa1d561-8c4e-7975-9c9b-f9dff6ede8e5-jp-inngaaende,
+  SentenceGuid: Ref a75da64f-053a-4c1e-9a1b-111122223333 was created,
+  NewGuidInline: id 11111111-2222-3333-4444-555555555555 end,
+  List: [
+    a75da64f-053a-4c1e-9a1b-111122223333,
+    3aa1d561-8c4e-7975-9c9b-f9dff6ede8e5,
+    11111111-2222-3333-4444-555555555555
+  ],
+  Keyed: {
+    3aa1d561-8c4e-7975-9c9b-f9dff6ede8e5: a
+  }
+}

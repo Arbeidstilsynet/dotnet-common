@@ -1,0 +1,21 @@
+﻿{
+  First: Guid_1,
+  Second: Guid_2,
+  Again: Guid_1,
+  Nullable: Guid_2,
+  GuidString: Guid_1,
+  GuidUpper: Guid_2,
+  GuidBraces: Guid_1,
+  GuidN: Guid_1,
+  InlineGuid: Guid_1-jp-inngaaende,
+  SentenceGuid: Ref Guid_2 was created,
+  NewGuidInline: id Guid_3 end,
+  List: [
+    Guid_2,
+    Guid_1,
+    Guid_3
+  ],
+  Keyed: {
+    Guid_1: a
+  }
+}

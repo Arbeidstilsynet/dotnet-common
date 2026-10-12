@@ -1,0 +1,26 @@
+﻿{
+  Plain: Samuel Haley,
+  Number: 03,
+  Quotes: say "hi" and 'bye',
+  Punctuation: a, b: c; {d} [e],
+  Backslash: C:\temp\file.txt,
+  Tab: a	b,
+  Leading:   padded  ,
+  Whitespace:    ,
+  Unicode: Ærlig østers på Å — ✓,
+  MultiLine:
+line1
+line2
+line3,
+  MultiLineCrLf:
+line1
+line2,
+  TrailingNewline:
+line1
+,
+  LiteralNull: null,
+  LooksTrue: true,
+  Url: https://example.com/path?x=1&y=2,
+  Html: <b>bold</b> & more,
+  ControlChar: bellend
+}

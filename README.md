@@ -48,6 +48,16 @@ If you want to test your changes by importing them into another project, you can
 ## 🚀 Publish
 Create a new branch and pull request. Remember to increment the version in `AT.Common.NewFancyClient.Adapters.csproj`. When the pull request is merged, a new release pipeline will start automatically.
 
+## 📸 Snapshot testing
+
+`Arbeidstilsynet.Common.TestExtensions.Snapshots` (and `.Snapshots.Pdf` for PDF documents) provides `*.verified.*` snapshot tests in a format compatible with Verify. See the [package README](TestExtensions/AT.Common.TestExtensions.Snapshots.Publish/README.md).
+
+To accept all pending `*.received.*` files, run `scripts/accept-snapshots.sh [directory]`, or re-run the tests with `SNAPSHOT_ACCEPT=1`.
+
+## ⚖️ License check
+
+Packages that contain an `allowed-licenses.json` (an array of SPDX identifiers) have all their transitive NuGet dependencies checked with [nuget-license](https://github.com/sensslen/nuget-license) in PR builds.
+
 ## 🛠️ Update Dependencies
 
 Renovate is configured to group all non-major versions together. Check Renovate's PR, update the version and changelog for the affected packages according to the updates, then commit & merge.

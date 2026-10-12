@@ -1,0 +1,26 @@
+﻿{
+  Point: {
+    X: 1,
+    Y: 0
+  },
+  DefaultPoint: {
+    X: 0,
+    Y: 0
+  },
+  NullablePoint: {
+    X: 2,
+    Y: 0
+  },
+  Pairs: [
+    {
+      b: 1
+    },
+    {
+      a: 2
+    }
+  ],
+  GuidValues: {
+    a: Guid_1,
+    b: Guid_2
+  }
+}

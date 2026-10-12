@@ -1,5 +1,6 @@
 using Arbeidstilsynet.Common.GeoNorge.Adresser;
 using Arbeidstilsynet.Common.GeoNorge.DependencyInjection;
+using Arbeidstilsynet.Common.GeoNorge.Eiendom;
 using Arbeidstilsynet.Common.GeoNorge.Implementation;
 using Arbeidstilsynet.Common.GeoNorge.KommuneInfo;
 using Arbeidstilsynet.Common.GeoNorge.Ports;
@@ -24,6 +25,51 @@ public class DependencyInjectionExtensionsTests
         using var scope = BuildScope();
 
         scope.ServiceProvider.GetService<KommuneInfoClient>().ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void AddGeoNorge_RegistersEiendomClientAndPropertySearchPort()
+    {
+        using var scope = BuildScope();
+
+        scope.ServiceProvider.GetRequiredService<EiendomClient>().ShouldNotBeNull();
+        scope
+            .ServiceProvider.GetRequiredService<IPropertySearch>()
+            .ShouldBeOfType<PropertySearchClient>();
+    }
+
+    [Fact]
+    public void AddGeoNorge_DefaultConfig_SetsCanonicalEiendomBaseUrl()
+    {
+        using var scope = BuildScope();
+
+        scope.ServiceProvider.GetRequiredService<EiendomClient>();
+
+        scope
+            .ServiceProvider.GetRequiredService<EiendomRequestAdapter>()
+            .BaseUrl.ShouldBe("https://api.kartverket.no/eiendom/v1");
+    }
+
+    [Theory]
+    [InlineData("https://properties.example.com/")]
+    [InlineData("https://properties.example.com")]
+    public void AddGeoNorge_CustomPropertyBaseUrl_OnlyChangesEiendomBaseUrl(string baseUrl)
+    {
+        using var scope = BuildScope(new GeoNorgeConfig { PropertyBaseUrl = baseUrl });
+
+        scope.ServiceProvider.GetRequiredService<EiendomClient>();
+        scope.ServiceProvider.GetRequiredService<AdresserClient>();
+        scope.ServiceProvider.GetRequiredService<KommuneInfoClient>();
+
+        scope
+            .ServiceProvider.GetRequiredService<EiendomRequestAdapter>()
+            .BaseUrl.ShouldBe("https://properties.example.com/eiendom/v1");
+        scope
+            .ServiceProvider.GetRequiredService<AdresserRequestAdapter>()
+            .BaseUrl.ShouldBe("https://ws.geonorge.no/adresser/v1");
+        scope
+            .ServiceProvider.GetRequiredService<KommuneInfoRequestAdapter>()
+            .BaseUrl.ShouldBe("https://ws.geonorge.no/kommuneinfo/v1");
     }
 
     [Fact]
@@ -100,6 +146,7 @@ public class DependencyInjectionExtensionsTests
 
         scope.ServiceProvider.GetRequiredService<AdresserClient>();
         scope.ServiceProvider.GetRequiredService<KommuneInfoClient>();
+        scope.ServiceProvider.GetRequiredService<EiendomClient>();
 
         scope
             .ServiceProvider.GetRequiredService<AdresserRequestAdapter>()
@@ -107,6 +154,9 @@ public class DependencyInjectionExtensionsTests
         scope
             .ServiceProvider.GetRequiredService<KommuneInfoRequestAdapter>()
             .BaseUrl.ShouldBe("https://example.com/kommuneinfo/v1");
+        scope
+            .ServiceProvider.GetRequiredService<EiendomRequestAdapter>()
+            .BaseUrl.ShouldBe("https://api.kartverket.no/eiendom/v1");
     }
 
     private static IServiceScope BuildScope(GeoNorgeConfig? config = null)

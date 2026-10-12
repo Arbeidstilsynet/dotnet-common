@@ -1,0 +1,35 @@
+﻿{
+  Single: {
+    scope: test:read
+  },
+  Claims: [
+    {
+      aud: https://example.com
+    },
+    {
+      name: Ola
+    },
+    {
+      role: admin
+    },
+    {
+      actor: x
+    },
+    {
+      exp: 1791204808
+    },
+    {
+      empty: 
+    },
+    {
+      jti: 3aa1d561-8c4e-7975-9c9b-f9dff6ede8e5
+    },
+    {
+      p: v,
+      Properties: {
+        a: 1,
+        b: 2
+      }
+    }
+  ]
+}

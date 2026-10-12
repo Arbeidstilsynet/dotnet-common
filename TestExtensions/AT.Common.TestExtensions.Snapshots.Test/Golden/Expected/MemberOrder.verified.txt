@@ -1,0 +1,7 @@
+﻿{
+  B: b,
+  BaseField: bf,
+  A: a,
+  C: c,
+  BaseProp: hidden
+}

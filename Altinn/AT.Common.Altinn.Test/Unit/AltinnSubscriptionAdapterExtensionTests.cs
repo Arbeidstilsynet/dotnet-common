@@ -1,0 +1,118 @@
+using Arbeidstilsynet.Common.Altinn.Extensions;
+using Arbeidstilsynet.Common.Altinn.Model.Adapter;
+using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
+using Arbeidstilsynet.Common.TestExtensions.Snapshots;
+
+namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
+
+public class AltinnSubscriptionAdapterExtensionTests
+{
+    private readonly SnapshotSettings _snapshotSettings = new();
+
+    //testdata
+    private static readonly string App = "test";
+    private static readonly string Org = "dat";
+    private static readonly string InstanceGuid = "651375fb-4f0f-4857-9f8d-a37d82a3aeb6";
+    private static readonly string InstanceOwnerPartyId = "51644866";
+    private static readonly string OrganisationNumber = "313546071";
+
+    private static readonly string DialogId = "651375fb-4f0f-4857-9f8d-a37d82a3aeb7";
+    private static readonly DateTime ProcessStarted = new(2025, 09, 25, 12, 0, 0, DateTimeKind.Utc);
+    private static readonly DateTime ProcessEnded = new(2025, 09, 25, 13, 0, 0, DateTimeKind.Utc);
+
+    private static readonly AltinnMetadata SampleAltinnMetadata = new AltinnMetadata()
+    {
+        App = App,
+        Org = Org,
+        InstanceGuid = Guid.Parse(InstanceGuid),
+        InstanceOwnerPartyId = InstanceOwnerPartyId,
+        OrganisationNumber = OrganisationNumber,
+        ProcessStarted = ProcessStarted,
+        ProcessEnded = ProcessEnded,
+        DialogId = DialogId,
+        DataValues = new Dictionary<string, string> { { "dialog.id", DialogId } },
+    };
+
+    public AltinnSubscriptionAdapterExtensionTests()
+    {
+        _snapshotSettings.DontScrubDateTimes();
+        _snapshotSettings.DontScrubGuids();
+        _snapshotSettings.UseDirectory("TestData/Snapshots");
+    }
+
+    [Fact]
+    public async Task AltinnInstance_Maps_ToAltinnMetadata()
+    {
+        //arrange
+        var metadata = new AltinnInstance()
+        {
+            AppId = $"{Org}/{App}",
+            Id = $"{InstanceOwnerPartyId}/{InstanceGuid}",
+            InstanceOwner = new Model.Api.Response.InstanceOwner()
+            {
+                OrganisationNumber = OrganisationNumber,
+                PartyId = InstanceOwnerPartyId,
+            },
+            Org = Org,
+            Process = new Model.Api.Response.ProcessState()
+            {
+                Started = ProcessStarted,
+                Ended = ProcessEnded,
+            },
+            DataValues = new Dictionary<string, string> { { "dialog.id", DialogId } },
+        };
+        //act
+        var result = metadata.ToAltinnMetadata();
+        //assert
+        await Snapshot.Verify(result, _snapshotSettings);
+    }
+
+    [Fact]
+    public async Task AltinnMetadata_Maps_ToInstanceAddress()
+    {
+        //arrange
+        var metadata = SampleAltinnMetadata;
+        //act
+        var result = metadata.ToInstanceAddress();
+        //assert
+        await Snapshot.Verify(result, _snapshotSettings);
+    }
+
+    [Fact]
+    public async Task AltinnInstanceSummary_Maps_ToMetadataDictionary()
+    {
+        //arrange
+        var metadata = new AltinnInstanceSummary
+        {
+            SkjemaAsPdf = null!,
+            Attachments = [],
+            Metadata = SampleAltinnMetadata,
+        };
+        //act
+        var result = metadata.ToMetadataDictionary();
+        //assert
+        await Snapshot.Verify(result, _snapshotSettings);
+    }
+
+    [Fact]
+    public async Task AltinnMetadata_Maps_ToMetadataDictionary()
+    {
+        //arrange
+        var metadata = SampleAltinnMetadata;
+        //act
+        var result = metadata.ToMetadataDictionary();
+        //assert
+        await Snapshot.Verify(result, _snapshotSettings);
+    }
+
+    [Fact]
+    public async Task Guid_Maps_ToAltinnReference()
+    {
+        //arrange
+        var guid = Guid.Parse(InstanceGuid);
+        //act
+        var result = guid.ToAltinnReference();
+        //assert
+        await Snapshot.Verify(result, _snapshotSettings);
+    }
+}

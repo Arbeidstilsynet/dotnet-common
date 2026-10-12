@@ -1,6 +1,8 @@
+using System.Reflection;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
+using Arbeidstilsynet.Common.Altinn.Ports.Adapter;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using NSubstitute;
 using Shouldly;
@@ -19,6 +21,29 @@ public class AltinnMeldingerAdapterTests
     }
 
     [Fact]
+    public void GetCorrespondenceByIdempotentKey_IsObsoleteOnInterfaceAndImplementation()
+    {
+        var interfaceAttribute = typeof(IAltinnMeldingerAdapter)
+            .GetMethod("GetCorrespondenceByIdempotentKey")!
+            .GetCustomAttribute<ObsoleteAttribute>();
+        var implementationAttribute = typeof(AltinnMeldingerAdapter)
+            .GetMethod("GetCorrespondenceByIdempotentKey")!
+            .GetCustomAttribute<ObsoleteAttribute>();
+
+        interfaceAttribute.ShouldNotBeNull();
+        interfaceAttribute.IsError.ShouldBeFalse();
+        interfaceAttribute.Message.ShouldNotBeNull();
+        interfaceAttribute.Message.ShouldContain("IAltinnCorrespondenceClient.GetCorrespondences");
+        interfaceAttribute.Message.ShouldContain("resourceId, role and idempotentKey");
+        interfaceAttribute.Message.ShouldContain("only a small simplification");
+        interfaceAttribute.Message.ShouldContain("dat-meldinger-correspondence");
+        interfaceAttribute.Message.ShouldContain("team Meldinger");
+        implementationAttribute.ShouldNotBeNull();
+        implementationAttribute.IsError.ShouldBeFalse();
+        implementationAttribute.Message.ShouldBe(interfaceAttribute.Message);
+    }
+
+    [Fact]
     public async Task GetCorrespondenceByIdempotentKey_ForwardsHardcodedRoleAndResource()
     {
         //arrange
@@ -33,7 +58,9 @@ public class AltinnMeldingerAdapterTests
             .Returns(expected);
 
         //act
+#pragma warning disable CS0618 // Verify the deprecated method preserves its behavior.
         var result = await _sut.GetCorrespondenceByIdempotentKey(idempotentKey);
+#pragma warning restore CS0618
 
         //assert
         result.ShouldBe(expected);

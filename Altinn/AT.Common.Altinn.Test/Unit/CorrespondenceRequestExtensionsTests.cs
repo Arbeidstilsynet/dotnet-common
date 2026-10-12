@@ -1,16 +1,20 @@
 using Arbeidstilsynet.Common.Altinn.Extensions;
+using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Request;
+using Arbeidstilsynet.Common.TestExtensions.Snapshots;
+using Microsoft.AspNetCore.Http;
+using Shouldly;
 
 namespace Arbeidstilsynet.Common.Altinn.Test.Unit;
 
 public class CorrespondenceRequestExtensionsTests
 {
-    private readonly VerifySettings _verifySettings = new();
+    private readonly SnapshotSettings _snapshotSettings = new();
 
     public CorrespondenceRequestExtensionsTests()
     {
-        _verifySettings.UseDirectory("TestData/Snapshots");
+        _snapshotSettings.UseDirectory("TestData/Snapshots");
     }
 
     private static CorrespondenceRequest CreateMinimalCorrespondenceRequest() =>
@@ -123,7 +127,7 @@ public class CorrespondenceRequestExtensionsTests
 
         var result = request.ToApiRequest();
 
-        await Verifier.Verify(result, _verifySettings);
+        await Snapshot.Verify(result, _snapshotSettings);
     }
 
     [Fact]
@@ -133,30 +137,60 @@ public class CorrespondenceRequestExtensionsTests
 
         var result = request.ToApiRequest();
 
-        await Verifier.Verify(result, _verifySettings);
+        await Snapshot.Verify(result, _snapshotSettings);
     }
 
     [Fact]
-    public async Task MinimalCorrespondenceRequest_Maps_ToMultipartFormData()
+    public async Task MinimalCorrespondenceRequest_Maps_ToMultipartBody()
     {
         var request = CreateMinimalCorrespondenceRequest().ToApiRequest();
 
-        var result = request.ToMultipartFormData(attachments: null);
-        var formFields = await ExtractFormFields(result);
+        var formFields = await ExtractFormFields(request);
 
-        await Verifier.Verify(formFields, _verifySettings);
+        await Snapshot.Verify(formFields, _snapshotSettings);
     }
 
     [Fact]
-    public async Task FullCorrespondenceRequest_Maps_ToMultipartFormData()
+    public async Task FullCorrespondenceRequest_Maps_ToMultipartBody()
     {
         var request = CreateFullCorrespondenceRequest().ToApiRequest();
 
-        var result = request.ToMultipartFormData(attachments: null);
-        var formFields = await ExtractFormFields(result);
+        var formFields = await ExtractFormFields(request);
 
-        await Verifier.Verify(formFields, _verifySettings);
+        await Snapshot.Verify(formFields, _snapshotSettings);
     }
+
+    [Fact]
+    public async Task MultipleAttachments_Map_ToRepeatedFileParts()
+    {
+        var request = CreateMinimalCorrespondenceRequest().ToApiRequest();
+        List<IFormFile> attachments =
+        [
+            CreateFormFile("first", "first.txt"),
+            CreateFormFile("second", "second.txt"),
+        ];
+
+        var form = await ReadForm(request, attachments);
+        form.Files.Select(file => file.Name).ShouldBe(["attachments", "attachments"]);
+        form.Files.Select(file => file.FileName).ShouldBe(["first.txt", "second.txt"]);
+        using var first = new StreamReader(form.Files[0].OpenReadStream());
+        first.ReadToEnd().ShouldBe("first");
+        using var second = new StreamReader(form.Files[1].OpenReadStream());
+        second.ReadToEnd().ShouldBe("second");
+    }
+
+    private static FormFile CreateFormFile(string content, string fileName) =>
+        new(
+            new MemoryStream(System.Text.Encoding.UTF8.GetBytes(content)),
+            0,
+            content.Length,
+            "attachments",
+            fileName
+        )
+        {
+            Headers = new HeaderDictionary(),
+            ContentType = "text/plain",
+        };
 
     [Fact]
     public async Task ReceiverTypes_Map_ToReceiverList()
@@ -170,20 +204,33 @@ public class CorrespondenceRequestExtensionsTests
 
         var result = receivers.ToReceiverList();
 
-        await Verifier.Verify(result, _verifySettings);
+        await Snapshot.Verify(result, _snapshotSettings);
     }
 
+    /// <summary>
+    /// Serialises the request as the generated client would and returns the resulting form fields,
+    /// so the snapshot covers the exact names and values that reach the wire.
+    /// </summary>
     private static async Task<Dictionary<string, string>> ExtractFormFields(
-        MultipartFormDataContent formData
+        InitializeCorrespondences request,
+        List<IFormFile>? attachments = null
+    ) =>
+        (await ReadForm(request, attachments)).ToDictionary(
+            field => field.Key,
+            field => field.Value.ToString()
+        );
+
+    private static async Task<IFormCollection> ReadForm(
+        InitializeCorrespondences request,
+        List<IFormFile>? attachments
     )
     {
-        var fields = new Dictionary<string, string>();
-        foreach (var content in formData)
-        {
-            var name = content.Headers.ContentDisposition?.Name?.Trim('"') ?? "unknown";
-            var value = await content.ReadAsStringAsync();
-            fields[name] = value;
-        }
-        return fields;
+        using var body = request.ToMultipartFormDataContent(attachments);
+        var context = new DefaultHttpContext();
+        context.Request.ContentType = body.Headers.ContentType!.ToString();
+        context.Request.Body = new MemoryStream(
+            await body.ReadAsByteArrayAsync(TestContext.Current.CancellationToken)
+        );
+        return await context.Request.ReadFormAsync(TestContext.Current.CancellationToken);
     }
 }

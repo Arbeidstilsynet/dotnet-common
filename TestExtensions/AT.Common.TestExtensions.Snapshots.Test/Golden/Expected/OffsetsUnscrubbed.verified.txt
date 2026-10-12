@@ -1,0 +1,16 @@
+﻿{
+  PlusFiveThirty: 2026-03-01 01:02:03 +5-30,
+  PlusTen: 2026-03-01 01:02:03 +10,
+  MinusTwo: 2026-03-01 01:02:03 -2,
+  PlusHalf: 2026-03-01 01:02:03 +0-30,
+  WithFraction: 2026-03-01 01:02:03.123 +0,
+  Max: 9999-12-31 23:59:59.9999999 +0,
+  Local: 2026-03-01 01:02:03 Local,
+  DateMax: 9999-12-31,
+  Time: 1:45 PM,
+  TimeFraction: 1:45 PM,
+  TimeMax: 11:59 PM,
+  TimeAgain: 1:45 PM,
+  NullableDate: 2000-01-01,
+  NullableEnum: Red
+}
