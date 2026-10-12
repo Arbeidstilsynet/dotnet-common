@@ -140,10 +140,10 @@ The rest of your application then depends on `IArchiveClient`, not on `Saksarkiv
 
 ## Creating a case (opprett sak)
 
-The v3 spec models the create-case payload as a query parameter, so the generated
-`Api.V3.Saker.PostAsync(...)` takes an untyped `MultipartBody`. The package ships a typed
-`OpprettSakAsync(...)` extension that wraps this: it serializes the generated `OpprettSakRequest`
-model into the JSON `payload` part and attaches any files.
+The v3 endpoint accepts a `multipart/form-data` body with a JSON `payload` part and optional files.
+The generated `Api.V3.Saker.PostAsync(...)` takes a `MultipartBody`; the package ships a typed
+`OpprettSakAsync(...)` extension that serializes `OpprettSakRequest` into the `payload` part and
+attaches any files.
 
 ```csharp
 using Arbeidstilsynet.Common.Saksarkiv.V3;
@@ -156,21 +156,24 @@ public sealed class ArchiveService(SaksarkivClientV3 client)
         var request = new OpprettSakRequest
         {
             Tittel = "Min sak",
-            Saksbehandler = "user@arbeidstilsynet.no",
-            AnsvarligEnhetKode = "ABC",
+            Saksbehandler = new Saksbehandler
+            {
+                Brukernavn = "ETTERNAVN_F",
+                Avdeling = "ABC",
+            },
             EksternId = Guid.NewGuid().ToString(), // client-generated, required
             Sakstype = "...",
             Arkivkode = "...",
             Tilgangskode = "...",
             Journalposter =
             [
-                new OpprettSakRequestJournalpost
+                new OpprettJournalpostRequest
                 {
                     EksternId = Guid.NewGuid().ToString(),
                     JournalpostType = Journalposttype.Inngaaende,
                     Tittel = "Brev",
-                    HoveddokumentFilnavn = "hoved.pdf",
-                    PersonInfo = new OpprettSakRequestPersonInfo { Navn = "Ola Nordmann" },
+                    Hoveddokument = new OpprettDokumentRequest { Filnavn = "hoved.pdf" },
+                    PersonInfo = new OpprettJournalpostRequestPersonInfo { Navn = "Ola Nordmann" },
                 },
             ],
         };
@@ -180,7 +183,7 @@ public sealed class ArchiveService(SaksarkivClientV3 client)
         {
             new SaksarkivFile
             {
-                FileName = "hoved.pdf", // must match HoveddokumentFilnavn/VedleggFilnavn
+                FileName = "hoved.pdf", // must match the document Filnavn values
                 Content = pdf,
                 ContentType = "application/pdf",
             },
@@ -193,5 +196,5 @@ public sealed class ArchiveService(SaksarkivClientV3 client)
 }
 ```
 
-File names in `SaksarkivFile.FileName` must match those referenced by `HoveddokumentFilnavn` /
-`VedleggFilnavn` and be unique within the request.
+File names in `SaksarkivFile.FileName` must match the `Filnavn` values in the main document and
+attachments, and be unique within the request.

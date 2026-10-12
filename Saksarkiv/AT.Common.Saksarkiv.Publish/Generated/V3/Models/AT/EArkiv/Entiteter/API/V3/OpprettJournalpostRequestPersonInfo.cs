@@ -8,7 +8,7 @@ using System;
 namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
 {
     /// <summary>
-    /// Personinfo for avsender/mottaker pa journalposten.
+    /// Personinfo for avsender/mottaker på journalposten.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class OpprettJournalpostRequestPersonInfo : IParsable

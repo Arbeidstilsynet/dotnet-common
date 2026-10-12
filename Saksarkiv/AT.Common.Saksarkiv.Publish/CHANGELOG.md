@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added <!-- for new features. -->
 
+- Added the v3 journal-post categories endpoint and `JournalpostKategori` model.
+- Added journal-post category fields to the v3 create and read models.
+
 ### Changed <!--  for changes in existing functionality. -->
 
 ### Deprecated <!--  for soon-to-be removed features. -->

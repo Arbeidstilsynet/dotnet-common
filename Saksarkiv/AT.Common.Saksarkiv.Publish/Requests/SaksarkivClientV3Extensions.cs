@@ -18,11 +18,8 @@ public static class SaksarkivClientV3Extensions
     /// <param name="files">
     /// Files to upload (case documents/attachments). Each file's
     /// <see cref="SaksarkivFile.FileName"/> must match the file names referenced in
-    /// <paramref name="request"/> (for example <c>HoveddokumentFilnavn</c> / <c>VedleggFilnavn</c>)
+    /// <paramref name="request"/> (for example <c>Hoveddokument.Filnavn</c> / <c>Vedlegg[].Filnavn</c>)
     /// and be unique within the request.
-    /// </param>
-    /// <param name="avslutt">
-    /// When <see langword="true"/>, the case is closed immediately after creation.
     /// </param>
     /// <param name="cancellationToken">Cancellation token to use when cancelling the request.</param>
     /// <returns>

@@ -69,7 +69,7 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Meldinger.Item
             await RequestAdapter.SendNoContentAsync(requestInfo, errorMapping, cancellationToken).ConfigureAwait(false);
         }
         /// <summary>
-        /// Henter en melding. Returnerer 403 om autorisert bruker ikke var den som skapte meldingen.
+        /// Hent status for en melding (roller: Queue.Manage)
         /// </summary>
         /// <returns>A <see cref="global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.Queue.MeldingStatus"/></returns>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
@@ -117,7 +117,7 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Meldinger.Item
             return requestInfo;
         }
         /// <summary>
-        /// Henter en melding. Returnerer 403 om autorisert bruker ikke var den som skapte meldingen.
+        /// Hent status for en melding (roller: Queue.Manage)
         /// </summary>
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>

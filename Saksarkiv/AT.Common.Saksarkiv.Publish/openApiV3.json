@@ -2,13 +2,13 @@
   "openapi": "3.1.1",
   "info": {
     "title": "Saksarkivtjenesten v3",
-    "description": "### Asynkront REST API for arkiveringsoperasjoner\n- Operasjoner som oppretter eller muterer returnerer 202 Accepted med en meldings-ID for statussporing\n- Overvåk status for kømeldinger via `/meldinger/{meldingId}`-endepunktet\n- Feilede meldinger flyttes til Dead Letter Queue og kan legges tilbake i kø etter inspeksjon\n- API'et garanterer at meldinger som muterer samme ressurs, behandles i rekkefølgen de kom inn, det medfører at:\n    - Om en melding som behandler ressurs X feiler, vil alle påfølgende meldinger som muterer ressurs X også feile\n    - For å løse opp i en blokkert sekvens, må vi enten; A) Fikse problemet/buggen, og legge meldingen tilbake i kø, eller B) Slette meldingen fra Dead Letter Queue. Da vil neste melding i sekvensen bli prosessert\n    - Det er kun administratorer som kan administrere meldinger på køen (gjenprøv, slett, list, etc.)\n\n#### Autentisering Bearer-token med rollebasert tilgang:\n- Den autentiserte brukeren må ha tilgang via arkivets (Elements) eget system for tilgangskontroll i tillegg til Saksarkivtjenesten\n- For å kunne benytte en systembruker til kommunikasjon med Saksarkivtjenesten, må en Azure Administrator legge inn arkivbrukernavnet som et sikkerhetsattributt i den brukte EntraId Enterprise App\n##### Roller\n- `ReadWrite` - Opprett/oppdater-operasjoner\n- `Read` - Leseoperasjoner\n- `Queue.Manage` - Køadministrasjon\n\n#### Arkiveringsattributter\n\nFor spørsmål om hvilke verdier som skal benyttes for arkivspesifikke attributter (tilgangskode, sakstype, arkivkode, etc.), kontakt avdeling for Dokumentforvaltning\n\n#### Andre attributter\n- `eksternId` - Entydig identifikator for Saker og Journalposter, generert av klienten. Må være unik globalt. Kan være nyttig å prefikse med navn på fagsystem\n- `eksternTag` - Valgfritt tekst felt som kan brukes til å legge ved tillgesinformasjon om Saker og Journalposter\n- `skjermetOrd`/`skjermetNavn` - Uavhengig av tilgangskode, kan alle titler leses av offentligheten. Om tittel på saker eller journalposter inneholder sensitive opplysninger, skal disse feltene benyttes for å skjerme deler av tittel.\n    For eksempel:\n    ```\n        \"Tittel\": \"Sak om dårlig oppførsel begått av Kari Nordmann\"\n        \"SkjermetNavn\": [\"Kari Nordmann\"]\n        \"SkjermetOrd\": [\"dårlig\", \"oppførsel\"]\n        ----------------------------------------------\n        Resultat: \"Sak om ***** ***** begått av +++++ ++++_\n    ```",
+    "description": "### Asynkront REST API for arkiveringsoperasjoner\n- Operasjoner som oppretter eller muterer returnerer 202 Accepted med en meldings-ID for statussporing\n- Feilede meldinger flyttes til Dead Letter Queue og kan legges tilbake i kø etter inspeksjon\n- API'et garanterer at meldinger som muterer samme ressurs, behandles i rekkefølgen de kom inn, det medfører at:\n    - Om en melding som behandler ressurs X feiler, vil alle påfølgende meldinger som muterer ressurs X også feile\n    - For å løse opp i en blokkert sekvens, må vi enten; A) Fikse problemet/buggen, og legge meldingen tilbake i kø, eller B) Slette meldingen fra Dead Letter Queue. Da vil neste melding i sekvensen bli prosessert\n    - Det er kun administratorer som kan administrere meldinger på køen (gjenprøv, slett, list, etc.)\n\n#### Autentisering Bearer-token med rollebasert tilgang:\n- Den autentiserte brukeren må ha tilgang via arkivets (Elements) eget system for tilgangskontroll i tillegg til Saksarkivtjenesten\n- For å kunne benytte en systembruker til kommunikasjon med Saksarkivtjenesten, må en Azure Administrator legge inn arkivbrukernavnet som et sikkerhetsattributt i den brukte EntraId Enterprise App\n##### Roller\n- `ReadWrite` - Opprett/oppdater-operasjoner\n- `Read` - Leseoperasjoner\n- `Queue.Manage` - Køadministrasjon\n\n#### Arkiveringsattributter\n\nFor spørsmål om hvilke verdier som skal benyttes for arkivspesifikke attributter (tilgangskode, sakstype, arkivkode, etc.), kontakt avdeling for Dokumentforvaltning\n\n#### Andre attributter\n- `eksternId` - Entydig identifikator for Saker og Journalposter, generert av klienten. Må være unik globalt. Kan være nyttig å prefikse med navn på fagsystem\n- `eksternTag` - Valgfritt tekst felt som kan brukes til å legge ved tillgesinformasjon om Saker og Journalposter\n- `skjermetOrd`/`skjermetNavn` - Uavhengig av tilgangskode, kan alle titler leses av offentligheten. Om tittel på saker eller journalposter inneholder sensitive opplysninger, skal disse feltene benyttes for å skjerme deler av tittel.\n    For eksempel:\n    ```\n        \"Tittel\": \"Sak om dårlig oppførsel begått av Kari Nordmann\"\n        \"SkjermetNavn\": [\"Kari Nordmann\"]\n        \"SkjermetOrd\": [\"dårlig\", \"oppførsel\"]\n        ----------------------------------------------\n        Resultat: \"Sak om ***** ***** begått av +++++ ++++_\n    ```",
     "contact": {
       "name": "Team Plattform",
       "url": "https://arbeidstilsynet-group.slack.com/archives/C09TZT2R6FM"
     },
     "version": "v3",
-    "summary": "Build: v1.1+0130aef7"
+    "summary": "Build: v1.1+2870b240"
   },
   "paths": {
     "/api/v3/dokumenter/{dokumentId}": {
@@ -440,8 +440,7 @@
         "tags": [
           "Meldinger"
         ],
-        "summary": "Hent status for en melding",
-        "description": "Henter en melding. Returnerer 403 om autorisert bruker ikke var den som skapte meldingen.",
+        "summary": "Hent status for en melding (roller: Queue.Manage)",
         "parameters": [
           {
             "name": "meldingId",
@@ -847,6 +846,70 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.Mappetype"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/metadata/journalpostkategorier": {
+      "get": {
+        "tags": [
+          "Metadata"
+        ],
+        "summary": "Lister alle journalpostkategorier",
+        "description": "Henter alle journalpostkategorier som kan brukes for å arkivere et dokument. Refereres til som 'dokumentkategori' i Elements",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.JournalpostKategori"
                   }
                 }
               }
@@ -1658,6 +1721,12 @@
               "string"
             ]
           },
+          "journalpostKategori": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
           "personInfo": {
             "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.HentSakResponsePersonInfo"
           },
@@ -1782,6 +1851,24 @@
             ]
           },
           "telefon": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V3.JournalpostKategori": {
+        "type": "object",
+        "properties": {
+          "kode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "beskrivelse": {
             "type": [
               "null",
               "string"
@@ -1942,7 +2029,7 @@
               "null",
               "string"
             ],
-            "description": "Tilgangskode for skjerming av journalposten. Hvis den ikke settes, arves sakens tilgangskode."
+            "description": "Tilgangskode for skjerming av journalposten. Hvis den ikke settes, arves saken sin tilgangskode. Finn gjeldende koder på '/api/v3/metadata/tilgangskoder'"
           },
           "skjermetOrd": {
             "type": [
@@ -1983,8 +2070,15 @@
             "description": "Vedlegg til journalposten. Filnavn må finnes i listen med opplastede filer."
           },
           "personInfo": {
-            "description": "Personinfo for avsender/mottaker pa journalposten.",
+            "description": "Personinfo for avsender/mottaker på journalposten.",
             "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettJournalpostRequestPersonInfo"
+          },
+          "journalpostKategori": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Kategori for journalposten. Kontakt dokumentforvaltning for å få korrekt journalpostKategori for ditt formål."
           }
         },
         "additionalProperties": false,
@@ -2139,145 +2233,14 @@
               "array"
             ],
             "items": {
-              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettSakRequestJournalpost"
+              "description": "Forespørsel om å opprette en ny journalpost på eksisterende sak i saksarkivet.",
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettJournalpostRequest"
             },
             "description": "Journalposter som skal opprettes sammen med saken."
           }
         },
         "additionalProperties": false,
         "description": "Forespørsel om å opprette en ny sak i saksarkivet."
-      },
-      "AT.eArkiv.Entiteter.API.V3.OpprettSakRequestJournalpost": {
-        "required": [
-          "eksternId",
-          "hoveddokument",
-          "journalpostType",
-          "personInfo",
-          "tittel"
-        ],
-        "type": "object",
-        "properties": {
-          "eksternId": {
-            "maxLength": 200,
-            "minLength": 1,
-            "type": "string"
-          },
-          "journalpostType": {
-            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.Journalposttype"
-          },
-          "tittel": {
-            "maxLength": 255,
-            "minLength": 1,
-            "type": "string",
-            "description": "Journalpostens tittel. Maks 255 tegn."
-          },
-          "tilgangskode": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "description": "Tilgangskode for skjerming av journalposten. Hvis den ikke settes, arves saken sin tilgangskode. Finn gjeldende koder på '/api/v3/metadata/tilgangskoder'"
-          },
-          "skjermetOrd": {
-            "type": [
-              "null",
-              "array"
-            ],
-            "items": {
-              "type": "string"
-            },
-            "description": "Ord i tittelen som skal skjermes"
-          },
-          "skjermetNavn": {
-            "type": [
-              "null",
-              "array"
-            ],
-            "items": {
-              "type": "string"
-            },
-            "description": "Navn i tittelen som skal skjermes. Eks. ['ola nordman', 'kari brekstad']"
-          },
-          "saksbehandler": {
-            "description": "Saksbehandler av journalposten. Hvis tom, brukes sakens saksbehandler.",
-            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.Saksbehandler"
-          },
-          "hoveddokument": {
-            "description": "Hoveddokumentet i journalposten. Filnavnet må finnes i listen med opplastede filer.",
-            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettDokumentRequest"
-          },
-          "vedlegg": {
-            "type": [
-              "null",
-              "array"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettDokumentRequest"
-            },
-            "description": "Vedlegg til journalposten. Filnavn må finnes i listen med opplastede filer."
-          },
-          "personInfo": {
-            "description": "Person info for mottaker av journalposten. TODO: Alltid påkrevd?",
-            "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.OpprettSakRequestPersonInfo"
-          }
-        },
-        "additionalProperties": false
-      },
-      "AT.eArkiv.Entiteter.API.V3.OpprettSakRequestPersonInfo": {
-        "required": [
-          "navn"
-        ],
-        "type": "object",
-        "properties": {
-          "navn": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "organisasjonsnummer": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "personnummer": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "adresse": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "postnummer": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "poststed": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "epost": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "email"
-          },
-          "telefon": {
-            "type": [
-              "null",
-              "string"
-            ]
-          }
-        },
-        "additionalProperties": false
       },
       "AT.eArkiv.Entiteter.API.V3.OpprettSakRequestSakspart": {
         "required": [
@@ -2593,22 +2556,43 @@
         },
         "additionalProperties": false
       }
+    },
+    "securitySchemes": {
+      "oauth2": {
+        "type": "oauth2",
+        "description": "Logg inn med Entra for å autorisere kall direkte i Swagger UI.",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://login.microsoftonline.com/da4bf886-a8a6-450d-a806-c347b8eb8d80/oauth2/v2.0/authorize",
+            "tokenUrl": "https://login.microsoftonline.com/da4bf886-a8a6-450d-a806-c347b8eb8d80/oauth2/v2.0/token",
+            "scopes": {
+              "a1ace59d-a80d-424b-b7f8-4f3cb149c1a4/.default": "Tilgang til Saksarkiv API'et med dine tildelte roller"
+            }
+          }
+        }
+      }
     }
   },
+  "security": [
+    {
+      "oauth2": []
+    }
+  ],
   "tags": [
     {
       "name": "Dokumenter"
     },
     {
       "name": "Filer",
-      "description": "Intern: Brukes for mellomlagring av filer som skal sendes til eArkiv. Ikke for bruk av eksterne klienter."
+      "description": "<b>Intern</b>: Brukes for mellomlagring av filer som skal sendes til eArkiv. Ikke for bruk av eksterne klienter."
     },
     {
       "name": "Health",
       "description": "Helse- og tilgjengelighetssjekk"
     },
     {
-      "name": "Meldinger"
+      "name": "Meldinger",
+      "description": "<b>Intern</b>: Administrer kømeldinger. Ikke for bruk av eksterne klienter."
     },
     {
       "name": "Metadata",

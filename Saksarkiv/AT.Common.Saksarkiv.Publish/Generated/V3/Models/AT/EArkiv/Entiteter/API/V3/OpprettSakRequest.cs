@@ -40,10 +40,10 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
         /// <summary>Journalposter som skal opprettes sammen med saken.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public List<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettSakRequestJournalpost>? Journalposter { get; set; }
+        public List<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettJournalpostRequest>? Journalposter { get; set; }
 #nullable restore
 #else
-        public List<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettSakRequestJournalpost> Journalposter { get; set; }
+        public List<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettJournalpostRequest> Journalposter { get; set; }
 #endif
         /// <summary>Saksbehandler av saken (Også referert til som &apos;Saksansvarlig&apos;).</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -124,7 +124,7 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
                 { "arkivkode", n => { Arkivkode = n.GetStringValue(); } },
                 { "eksternId", n => { EksternId = n.GetStringValue(); } },
                 { "eksternTag", n => { EksternTag = n.GetStringValue(); } },
-                { "journalposter", n => { Journalposter = n.GetCollectionOfObjectValues<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettSakRequestJournalpost>(global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettSakRequestJournalpost.CreateFromDiscriminatorValue)?.AsList(); } },
+                { "journalposter", n => { Journalposter = n.GetCollectionOfObjectValues<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettJournalpostRequest>(global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettJournalpostRequest.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "saksbehandler", n => { Saksbehandler = n.GetObjectValue<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Saksbehandler>(global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Saksbehandler.CreateFromDiscriminatorValue); } },
                 { "saksparter", n => { Saksparter = n.GetCollectionOfObjectValues<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettSakRequestSakspart>(global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettSakRequestSakspart.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "sakstype", n => { Sakstype = n.GetStringValue(); } },
@@ -145,7 +145,7 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
             writer.WriteStringValue("arkivkode", Arkivkode);
             writer.WriteStringValue("eksternId", EksternId);
             writer.WriteStringValue("eksternTag", EksternTag);
-            writer.WriteCollectionOfObjectValues<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettSakRequestJournalpost>("journalposter", Journalposter);
+            writer.WriteCollectionOfObjectValues<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettJournalpostRequest>("journalposter", Journalposter);
             writer.WriteObjectValue<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.Saksbehandler>("saksbehandler", Saksbehandler);
             writer.WriteCollectionOfObjectValues<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3.OpprettSakRequestSakspart>("saksparter", Saksparter);
             writer.WriteStringValue("sakstype", Sakstype);
