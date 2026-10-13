@@ -7,6 +7,8 @@ using Altinn.App.Core.Internal.Instances;
 using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.AltinnApp.DependencyInjection;
 using Arbeidstilsynet.Common.AltinnApp.Extensions;
+using Arbeidstilsynet.Common.AltinnApp.Model;
+using Arbeidstilsynet.Common.AltinnApp.Ports;
 using Microsoft.Extensions.Logging;
 
 namespace Arbeidstilsynet.Common.AltinnApp.Implementation;
@@ -36,6 +38,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
     private readonly Config _config;
     private readonly ILogger<StructuredDataManager<TDataModel, TStructuredData>> _logger;
     private readonly IStructuredDataValidator<TStructuredData> _structuredDataValidator;
+    private readonly IReadOnlyList<IStructuredDataPostProcessor> _postProcessors;
 
     public StructuredDataManager(
         IApplicationClient applicationClient,
@@ -43,7 +46,8 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         IInstanceClient instanceClient,
         Config config,
         ILogger<StructuredDataManager<TDataModel, TStructuredData>> logger,
-        IStructuredDataValidator<TStructuredData> structuredDataValidator
+        IStructuredDataValidator<TStructuredData> structuredDataValidator,
+        IEnumerable<IStructuredDataPostProcessor> postProcessors
     )
     {
         _applicationClient = applicationClient;
@@ -52,6 +56,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         _config = config;
         _logger = logger;
         _structuredDataValidator = structuredDataValidator;
+        _postProcessors = postProcessors.ToList();
     }
 
     public async Task End(Instance instance, List<InstanceEvent>? events)
@@ -81,6 +86,36 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         if (!_config.StructuredDataConfiguration.KeepAppDataModelAfterMapping)
         {
             await _dataClient.DeleteElement(instance, dataModelElement);
+        }
+
+        await RunPostProcessors(instance);
+    }
+
+    private async Task RunPostProcessors(Instance instance)
+    {
+        if (_postProcessors.Count == 0)
+        {
+            return;
+        }
+
+        // The instance passed to IProcessEnd is not updated with data elements created during the
+        // request (e.g. the PDF generated at task end), so fetch a fresh copy from storage.
+        var freshInstance = await _instanceClient.GetInstance(instance);
+
+        var context = new StructuredDataPostProcessingContext
+        {
+            Instance = freshInstance,
+            StructuredDataElement = freshInstance.GetRequiredLatestDataElement(
+                _config.StructuredDataConfiguration.StructuredDataTypeId
+            ),
+            MainPdfElement = freshInstance.GetRequiredLatestDataElement(
+                _config.StructuredDataConfiguration.MainPdfDataTypeId
+            ),
+        };
+
+        foreach (var postProcessor in _postProcessors)
+        {
+            await postProcessor.Process(context);
         }
     }
 
@@ -194,6 +229,19 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
 
 file static class Extensions
 {
+    public static DataElement GetRequiredLatestDataElement(this Instance instance, string dataType)
+    {
+        return instance
+                .Data.Where(d =>
+                    string.Equals(d.DataType, dataType, StringComparison.OrdinalIgnoreCase)
+                )
+                .OrderByDescending(d => d.Created)
+                .FirstOrDefault()
+            ?? throw new InvalidOperationException(
+                $"No data element of type '{dataType}' was found on instance {instance.Id} before structured data post-processing."
+            );
+    }
+
     public static async Task<DataElement> GetRequiredDataModelElement<T>(
         this IApplicationClient applicationClient,
         Instance instance

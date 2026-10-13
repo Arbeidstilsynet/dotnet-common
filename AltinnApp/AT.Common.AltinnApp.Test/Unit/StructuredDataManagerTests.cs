@@ -4,6 +4,8 @@ using Altinn.App.Core.Internal.Instances;
 using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.AltinnApp.Extensions;
 using Arbeidstilsynet.Common.AltinnApp.Implementation;
+using Arbeidstilsynet.Common.AltinnApp.Model;
+using Arbeidstilsynet.Common.AltinnApp.Ports;
 using Arbeidstilsynet.Common.AltinnApp.Test.Unit.TestFixtures;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -43,7 +45,8 @@ public class StructuredDataManagerTests
             _instanceClient,
             _config,
             _logger,
-            _structuredDataValidator
+            _structuredDataValidator,
+            []
         );
     }
 
@@ -280,7 +283,8 @@ public class StructuredDataManagerTests
                 },
             },
             _logger,
-            Substitute.For<IStructuredDataValidator<TestStructuredData>>()
+            Substitute.For<IStructuredDataValidator<TestStructuredData>>(),
+            []
         );
 
         // Act
@@ -376,7 +380,8 @@ public class StructuredDataManagerTests
                 },
             },
             _logger,
-            _structuredDataValidator
+            _structuredDataValidator,
+            []
         );
 
         // Act
@@ -639,7 +644,8 @@ public class StructuredDataManagerTests
                 },
             },
             _logger,
-            _structuredDataValidator
+            _structuredDataValidator,
+            []
         );
 
         // Act
@@ -685,7 +691,8 @@ public class StructuredDataManagerTests
                 },
             },
             _logger,
-            _structuredDataValidator
+            _structuredDataValidator,
+            []
         );
 
         _applicationClient
@@ -716,6 +723,198 @@ public class StructuredDataManagerTests
         await _instanceClient
             .Received(1)
             .UpdateDataValues(instance, Arg.Any<Dictionary<string, string?>>());
+    }
+
+    [Fact]
+    public async Task End_ProcessEnd_WithoutPostProcessors_DoesNotFetchInstance()
+    {
+        // Arrange
+        var instance = AltinnData.CreateTestInstance();
+        instance.Data.Add(
+            new DataElement { Id = Guid.NewGuid().ToString(), DataType = "structured-data" }
+        );
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName));
+
+        // Act
+        await _sut.End(instance, new List<InstanceEvent>());
+
+        // Assert
+        await _instanceClient.DidNotReceiveWithAnyArgs().GetInstance(default(Instance)!);
+    }
+
+    [Fact]
+    public async Task End_ProcessEnd_RunsPostProcessorsInOrder_WithFreshInstanceAndLatestElements()
+    {
+        // Arrange
+        var instance = AltinnData.CreateTestInstance();
+        instance.Data.Add(
+            new DataElement { Id = Guid.NewGuid().ToString(), DataType = "structured-data" }
+        );
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName));
+
+        var structuredDataElement = new DataElement
+        {
+            Id = Guid.NewGuid().ToString(),
+            DataType = "structured-data",
+        };
+        var olderPdfElement = new DataElement
+        {
+            Id = Guid.NewGuid().ToString(),
+            DataType = "ref-data-as-pdf",
+            Created = DateTime.UtcNow.AddMinutes(-5),
+        };
+        var latestPdfElement = new DataElement
+        {
+            Id = Guid.NewGuid().ToString(),
+            DataType = "ref-data-as-pdf",
+            Created = DateTime.UtcNow,
+        };
+        var freshInstance = AltinnData.CreateTestInstance();
+        freshInstance.Data = [structuredDataElement, olderPdfElement, latestPdfElement];
+        _instanceClient.GetInstance(instance).Returns(freshInstance);
+
+        var first = Substitute.For<IStructuredDataPostProcessor>();
+        var second = Substitute.For<IStructuredDataPostProcessor>();
+        var sut = CreateSut(postProcessors: [first, second]);
+
+        // Act
+        await sut.End(instance, new List<InstanceEvent>());
+
+        // Assert
+        Received.InOrder(() =>
+        {
+            first.Process(Arg.Any<StructuredDataPostProcessingContext>());
+            second.Process(Arg.Any<StructuredDataPostProcessingContext>());
+        });
+        await first
+            .Received(1)
+            .Process(
+                Arg.Is<StructuredDataPostProcessingContext>(c =>
+                    c.Instance == freshInstance
+                    && c.StructuredDataElement == structuredDataElement
+                    && c.MainPdfElement == latestPdfElement
+                )
+            );
+    }
+
+    [Fact]
+    public async Task End_ProcessEnd_RunsPostProcessorsAfterDeletingDataModel()
+    {
+        // Arrange
+        var instance = AltinnData.CreateTestInstance();
+        instance.Data.Add(
+            new DataElement { Id = Guid.NewGuid().ToString(), DataType = "structured-data" }
+        );
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName));
+        _instanceClient.GetInstance(instance).Returns(CreateInstanceWithRequiredElements());
+
+        var postProcessor = Substitute.For<IStructuredDataPostProcessor>();
+        var sut = CreateSut(postProcessors: [postProcessor]);
+
+        // Act
+        await sut.End(instance, new List<InstanceEvent>());
+
+        // Assert
+        Received.InOrder(() =>
+        {
+            _dataClient.DeleteData(
+                Arg.Any<int>(),
+                Arg.Any<Guid>(),
+                Arg.Any<Guid>(),
+                false,
+                cancellationToken: Arg.Any<CancellationToken>()
+            );
+            _instanceClient.GetInstance(instance);
+            postProcessor.Process(Arg.Any<StructuredDataPostProcessingContext>());
+        });
+    }
+
+    [Theory]
+    [InlineData("structured-data")]
+    [InlineData("ref-data-as-pdf")]
+    public async Task End_ProcessEnd_WhenRequiredElementIsMissingOnFreshInstance_ShouldThrowAndNotRunPostProcessors(
+        string missingDataType
+    )
+    {
+        // Arrange
+        var instance = AltinnData.CreateTestInstance();
+        instance.Data.Add(
+            new DataElement { Id = Guid.NewGuid().ToString(), DataType = "structured-data" }
+        );
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName));
+
+        var freshInstance = CreateInstanceWithRequiredElements();
+        freshInstance.Data.RemoveAll(d => d.DataType == missingDataType);
+        _instanceClient.GetInstance(instance).Returns(freshInstance);
+
+        var postProcessor = Substitute.For<IStructuredDataPostProcessor>();
+        var sut = CreateSut(postProcessors: [postProcessor]);
+
+        // Act
+        var act = () => sut.End(instance, new List<InstanceEvent>());
+
+        // Assert
+        var exception = await act.ShouldThrowAsync<InvalidOperationException>();
+        exception.Message.ShouldContain(missingDataType);
+        await postProcessor.DidNotReceiveWithAnyArgs().Process(default!);
+    }
+
+    [Fact]
+    public async Task End_TaskEnd_DoesNotRunPostProcessors()
+    {
+        // Arrange
+        var instance = AltinnData.CreateTestInstance();
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName));
+        _dataClient
+            .GetFormData(
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
+                cancellationToken: Arg.Any<CancellationToken>()
+            )
+            .Returns(new TestDataModel { Name = "Test" });
+
+        var postProcessor = Substitute.For<IStructuredDataPostProcessor>();
+        var sut = CreateSut(postProcessors: [postProcessor]);
+
+        // Act
+        await sut.End("task1", instance);
+
+        // Assert
+        await postProcessor.DidNotReceiveWithAnyArgs().Process(default!);
+    }
+
+    private StructuredDataManager<TestDataModel, TestStructuredData> CreateSut(
+        IEnumerable<IStructuredDataPostProcessor> postProcessors
+    ) =>
+        new(
+            _applicationClient,
+            _dataClient,
+            _instanceClient,
+            _config,
+            _logger,
+            _structuredDataValidator,
+            postProcessors
+        );
+
+    private static Instance CreateInstanceWithRequiredElements()
+    {
+        var instance = AltinnData.CreateTestInstance();
+        instance.Data =
+        [
+            new DataElement { Id = Guid.NewGuid().ToString(), DataType = "structured-data" },
+            new DataElement { Id = Guid.NewGuid().ToString(), DataType = "ref-data-as-pdf" },
+        ];
+        return instance;
     }
 
     public class TestDataModel

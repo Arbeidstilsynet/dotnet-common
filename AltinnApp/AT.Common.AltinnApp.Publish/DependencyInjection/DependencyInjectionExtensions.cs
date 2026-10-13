@@ -242,6 +242,25 @@ public static class DependencyInjectionExtensions
     }
 
     /// <summary>
+    /// Registers a <see cref="IStructuredDataPostProcessor"/> that runs at process end, from inside the structured data feature
+    /// (see <see cref="AddStructuredData{TDataModel, TStructuredData}(IServiceCollection, Func{TDataModel, TStructuredData}, IHostEnvironment)"/>).
+    /// <br/>
+    /// Post-processors run after the App data model has been deleted (unless kept by configuration), and are guaranteed that the
+    /// structured data element and the main PDF element exist on the instance. Multiple post-processors run in registration order.
+    /// </summary>
+    /// <typeparam name="T">The post-processor implementation.</typeparam>
+    /// <param name="services"></param>
+    /// <returns>Service collection for chaining</returns>
+    public static IServiceCollection AddStructuredDataPostProcessor<T>(
+        this IServiceCollection services
+    )
+        where T : class, IStructuredDataPostProcessor
+    {
+        services.TryAddEnumerable(ServiceDescriptor.Transient<IStructuredDataPostProcessor, T>());
+        return services;
+    }
+
+    /// <summary>
     /// Registers the <see cref="PatchDialogTask{TDataModel}"/> service task along with its
     /// required dependencies (Dialogporten client, patch operations provider and organisasjonsnummer provider).
     /// </summary>

@@ -74,6 +74,30 @@ public void ConfigureServices(IServiceCollection services)
 }
 
 ```
+
+#### 3. (Optional) Post-process the instance and data elements
+
+Implement `IStructuredDataPostProcessor` to run logic from inside the structured data feature at process end. Unlike a plain `IProcessEnd`, a post-processor is guaranteed that both the structured data element and the main PDF element exist on the instance. The instance is freshly fetched from storage, and the App data model has already been deleted unless `KeepAppDataModelAfterMapping` is set.
+
+Post-processors are responsible for persisting their own changes (e.g. via `IDataClient.Update`).
+
+```csharp
+internal class MyPostProcessor(IDataClient dataClient) : IStructuredDataPostProcessor
+{
+    public async Task Process(StructuredDataPostProcessingContext context)
+    {
+        var pdf = context.MainPdfElement;
+        pdf.Metadata ??= [];
+        pdf.Metadata.Add(new KeyValueEntry { Key = "MyKey", Value = "MyValue" });
+        await dataClient.Update(context.Instance, pdf);
+    }
+}
+
+services.AddStructuredDataPostProcessor<MyPostProcessor>();
+```
+
+Multiple post-processors run in registration order.
+
 ### Extension Methods
 
 #### Instance Extensions
