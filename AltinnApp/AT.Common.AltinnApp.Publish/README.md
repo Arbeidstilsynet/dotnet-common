@@ -63,8 +63,11 @@ internal class MeldingMapper(ILandskodeLookup landskoder)
     // Adds a DataElement to your instance to hold structured data of type MeldingStructuredData.
     // Content type will be "application/json".
     services.AddStructuredData<MeldingDataModel, MeldingStructuredData, MeldingMapper>(env);
+```
 
-    // Optionally adjust the environment-based defaults (error details are included outside production)
+Alternatively, adjust the environment-based defaults (error details are included outside production):
+
+```csharp
     services.AddStructuredData<MeldingDataModel, MeldingStructuredData, MeldingMapper>(
         env,
         config => config with { TaskIdFilter = ["Task_1"] }
