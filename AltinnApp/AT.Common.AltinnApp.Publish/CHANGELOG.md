@@ -11,8 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed <!--  for changes in existing functionality. -->
 
-- Allow publishing with Dialogporten's prerelease client dependency (NU5104).
-
 ### Deprecated <!--  for soon-to-be removed features. -->
 
 ### Removed <!-- for now removed features. -->
@@ -20,6 +18,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed <!-- for any bug fixes. -->
 
 ### Security <!-- in case of vulnerabilities. -->
+
+## 2.10.0
+
+### Added
+
+- feat: `IStructuredDataMapper<TDataModel, TStructuredData>` and `AddStructuredData<TDataModel, TStructuredData, TMapper>(env, configure)`. Mappers are resolved from DI (constructor injection, async mapping), and `configure` adjusts the environment-based default `StructuredDataConfiguration`.
+
+### Changed
+
+- Allow publishing with Dialogporten's prerelease client dependency (NU5104).
+
+### Deprecated
+
+- `AddStructuredData<TDataModel, TStructuredData>(Func<TDataModel, TStructuredData>, ...)` overloads. Implement `IStructuredDataMapper` and use the new overload instead.
 
 ## 2.9.1
 

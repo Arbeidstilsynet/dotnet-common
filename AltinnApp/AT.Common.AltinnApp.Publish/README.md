@@ -40,19 +40,38 @@ public void ConfigureServices(IServiceCollection services)
 
 ### Structured Data
 
-#### 1. Add the structured data extension to your service collection, specifying the data model and structured data types
+#### 1. Implement a mapper and register it, specifying the data model and structured data types
+
+The mapper is resolved from the service provider, so it can use constructor injection (e.g. `ILandskodeLookup`) and be unit tested on its own.
 
 ```csharp
-    // Adds a DataElement to you instance to hold structured data of type TStructuredData
-    // Content type will be "application/json".
-    services.AddStructuredData<TDataModel, TStructuredData>((datamodel) =>
+internal class MeldingMapper(ILandskodeLookup landskoder)
+    : IStructuredDataMapper<MeldingDataModel, MeldingStructuredData>
+{
+    public async Task<MeldingStructuredData> Map(MeldingDataModel dataModel)
     {
-        return new TStructuredData
+        var land = await landskoder.GetLandskode(dataModel.LandKode);
+        return new MeldingStructuredData
         {
             // Property mappings here
         };
-    });
+    }
+}
 ```
+
+```csharp
+    // Adds a DataElement to your instance to hold structured data of type MeldingStructuredData.
+    // Content type will be "application/json".
+    services.AddStructuredData<MeldingDataModel, MeldingStructuredData, MeldingMapper>(env);
+
+    // Optionally adjust the environment-based defaults (error details are included outside production)
+    services.AddStructuredData<MeldingDataModel, MeldingStructuredData, MeldingMapper>(
+        env,
+        config => config with { TaskIdFilter = ["Task_1"] }
+    );
+```
+
+> The `AddStructuredData<TDataModel, TStructuredData>(Func<TDataModel, TStructuredData> mapFunc, ...)` overloads are obsolete. Move the lambda into an `IStructuredDataMapper` implementation instead.
 
 #### 2. Add the data element to your App/config/applicationmetadata.json dataTypes
 

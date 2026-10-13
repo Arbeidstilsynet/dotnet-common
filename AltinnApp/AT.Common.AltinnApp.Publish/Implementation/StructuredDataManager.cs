@@ -7,6 +7,7 @@ using Altinn.App.Core.Internal.Instances;
 using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.AltinnApp.DependencyInjection;
 using Arbeidstilsynet.Common.AltinnApp.Extensions;
+using Arbeidstilsynet.Common.AltinnApp.Ports;
 using Microsoft.Extensions.Logging;
 
 namespace Arbeidstilsynet.Common.AltinnApp.Implementation;
@@ -22,12 +23,6 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
     {
         public StructuredDataConfiguration StructuredDataConfiguration { get; init; } =
             new StructuredDataConfiguration();
-        public Func<TDataModel, TStructuredData> MapFunc { get; init; }
-
-        public Config(Func<TDataModel, TStructuredData> mapFunc)
-        {
-            MapFunc = mapFunc;
-        }
     }
 
     private readonly IApplicationClient _applicationClient;
@@ -36,6 +31,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
     private readonly Config _config;
     private readonly ILogger<StructuredDataManager<TDataModel, TStructuredData>> _logger;
     private readonly IStructuredDataValidator<TStructuredData> _structuredDataValidator;
+    private readonly IStructuredDataMapper<TDataModel, TStructuredData> _mapper;
 
     public StructuredDataManager(
         IApplicationClient applicationClient,
@@ -43,7 +39,8 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         IInstanceClient instanceClient,
         Config config,
         ILogger<StructuredDataManager<TDataModel, TStructuredData>> logger,
-        IStructuredDataValidator<TStructuredData> structuredDataValidator
+        IStructuredDataValidator<TStructuredData> structuredDataValidator,
+        IStructuredDataMapper<TDataModel, TStructuredData> mapper
     )
     {
         _applicationClient = applicationClient;
@@ -52,6 +49,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         _config = config;
         _logger = logger;
         _structuredDataValidator = structuredDataValidator;
+        _mapper = mapper;
     }
 
     public async Task End(Instance instance, List<InstanceEvent>? events)
@@ -141,7 +139,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
             CancellationToken.None
         );
 
-        var structuredData = _config.MapFunc.Invoke(dataModel);
+        var structuredData = await _mapper.Map(dataModel);
 
         if (!_config.StructuredDataConfiguration.DisableValidation)
         {
