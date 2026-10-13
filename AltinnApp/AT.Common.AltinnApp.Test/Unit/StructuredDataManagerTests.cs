@@ -4,6 +4,7 @@ using Altinn.App.Core.Internal.Instances;
 using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.AltinnApp.Extensions;
 using Arbeidstilsynet.Common.AltinnApp.Implementation;
+using Arbeidstilsynet.Common.AltinnApp.Ports;
 using Arbeidstilsynet.Common.AltinnApp.Test.Unit.TestFixtures;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -22,6 +23,7 @@ public class StructuredDataManagerTests
     private readonly StructuredDataManager<TestDataModel, TestStructuredData> _sut;
 
     private readonly StructuredDataManager<TestDataModel, TestStructuredData>.Config _config;
+    private readonly IStructuredDataMapper<TestDataModel, TestStructuredData> _mapper;
 
     public StructuredDataManagerTests()
     {
@@ -33,7 +35,8 @@ public class StructuredDataManagerTests
         >();
         _structuredDataValidator = Substitute.For<IStructuredDataValidator<TestStructuredData>>();
 
-        _config = new StructuredDataManager<TestDataModel, TestStructuredData>.Config(
+        _config = new StructuredDataManager<TestDataModel, TestStructuredData>.Config();
+        _mapper = new DelegateStructuredDataMapper<TestDataModel, TestStructuredData>(
             dataModel => new TestStructuredData { Name = dataModel.Name }
         );
 
@@ -43,7 +46,8 @@ public class StructuredDataManagerTests
             _instanceClient,
             _config,
             _logger,
-            _structuredDataValidator
+            _structuredDataValidator,
+            _mapper
         );
     }
 
@@ -280,7 +284,8 @@ public class StructuredDataManagerTests
                 },
             },
             _logger,
-            Substitute.For<IStructuredDataValidator<TestStructuredData>>()
+            Substitute.For<IStructuredDataValidator<TestStructuredData>>(),
+            _mapper
         );
 
         // Act
@@ -376,7 +381,8 @@ public class StructuredDataManagerTests
                 },
             },
             _logger,
-            _structuredDataValidator
+            _structuredDataValidator,
+            _mapper
         );
 
         // Act
@@ -639,7 +645,8 @@ public class StructuredDataManagerTests
                 },
             },
             _logger,
-            _structuredDataValidator
+            _structuredDataValidator,
+            _mapper
         );
 
         // Act
@@ -685,7 +692,8 @@ public class StructuredDataManagerTests
                 },
             },
             _logger,
-            _structuredDataValidator
+            _structuredDataValidator,
+            _mapper
         );
 
         _applicationClient

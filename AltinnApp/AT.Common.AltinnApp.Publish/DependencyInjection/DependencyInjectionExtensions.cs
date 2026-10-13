@@ -155,6 +155,9 @@ public static class DependencyInjectionExtensions
     /// <param name="configuration">The structured data configuration.</param>
     /// <typeparam name="TStructuredData">The type of the structured data that the App data model will be mapped to and stored as.</typeparam>
     /// <typeparam name="TDataModel">The type of the App data model. This is the type that will be mapped to structured data and then deleted before storage.</typeparam>
+    [Obsolete(
+        "Implement IStructuredDataMapper<TDataModel, TStructuredData> and use AddStructuredData<TDataModel, TStructuredData, TMapper>(env, configure) instead."
+    )]
     public static IServiceCollection AddStructuredData<TDataModel, TStructuredData>(
         this IServiceCollection services,
         Func<TDataModel, TStructuredData> mapFunc,
@@ -163,12 +166,67 @@ public static class DependencyInjectionExtensions
         where TDataModel : class
         where TStructuredData : class
     {
-        var config = new StructuredDataManager<TDataModel, TStructuredData>.Config(mapFunc)
+        services.AddSingleton<IStructuredDataMapper<TDataModel, TStructuredData>>(
+            new DelegateStructuredDataMapper<TDataModel, TStructuredData>(mapFunc)
+        );
+
+        return services.AddStructuredDataInternal<TDataModel, TStructuredData>(configuration);
+    }
+
+    /// <summary>
+    /// Adds a mechanism to map the datamodel of type <typeparamref name="TDataModel"/> to structured data of type <typeparamref name="TStructuredData"/>,
+    /// using the mapper <typeparamref name="TMapper"/>.
+    /// <br/>
+    /// The mapper is resolved from the service provider (transient), so it can depend on other services through constructor injection.
+    /// <br/>
+    /// The data model is deleted right after PDF-generation so that it doesn't get transferred to storage (control this behavior with <see cref="StructuredDataConfiguration.KeepAppDataModelAfterMapping"/>). The structured data will be stored instead.
+    /// <br/>
+    /// A structured data element is always expected to exist by process end, regardless of whether the data model is kept.
+    /// <br/>
+    /// The app instance will also declare the <see cref="DataElement.DataType"/> of the structured data and main content. This declaration is written to DataValues, based on the <see cref="StructuredDataConfiguration"/>
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="env">The hosting environment. Used to determine configuration defaults: error details are included in non-production environments and excluded in production.</param>
+    /// <param name="configure">Optional function to adjust the environment-based default configuration, e.g. <c>c => c with { TaskIdFilter = ["Task_1"] }</c>.</param>
+    /// <typeparam name="TDataModel">The type of the App data model. This is the type that will be mapped to structured data and then deleted before storage.</typeparam>
+    /// <typeparam name="TStructuredData">The type of the structured data that the App data model will be mapped to and stored as.</typeparam>
+    /// <typeparam name="TMapper">The <see cref="IStructuredDataMapper{TDataModel, TStructuredData}"/> implementation.</typeparam>
+    /// <returns>Service collection for chaining</returns>
+    /// <remarks>
+    /// You need to add this to your App/config/applicationmetadata.json:
+    /// <br/>
+    /// {
+    /// <br/>    "id": "structured-data",
+    /// <br/>    "allowedContentTypes": [
+    /// <br/>    "application/json"
+    /// <br/>    ],
+    /// <br/>    "allowedContributors": [
+    /// <br/>    "app:owned"
+    /// <br/>    ]
+    /// <br/>},
+    /// </remarks>
+    public static IServiceCollection AddStructuredData<TDataModel, TStructuredData, TMapper>(
+        this IServiceCollection services,
+        IHostEnvironment env,
+        Func<StructuredDataConfiguration, StructuredDataConfiguration>? configure = null
+    )
+        where TDataModel : class
+        where TStructuredData : class
+        where TMapper : class, IStructuredDataMapper<TDataModel, TStructuredData>
+    {
+        var configuration = new StructuredDataConfiguration
         {
-            StructuredDataConfiguration = configuration,
+            IncludeErrorDetails = !env.IsProduction(),
         };
 
-        return services.AddStructuredDataInternal(config);
+        if (configure is not null)
+        {
+            configuration = configure(configuration);
+        }
+
+        services.AddTransient<IStructuredDataMapper<TDataModel, TStructuredData>, TMapper>();
+
+        return services.AddStructuredDataInternal<TDataModel, TStructuredData>(configuration);
     }
 
     /// <summary>
@@ -199,6 +257,9 @@ public static class DependencyInjectionExtensions
     /// <br/>    ]
     /// <br/>},
     /// </remarks>
+    [Obsolete(
+        "Implement IStructuredDataMapper<TDataModel, TStructuredData> and use AddStructuredData<TDataModel, TStructuredData, TMapper>(env, configure) instead."
+    )]
     public static IServiceCollection AddStructuredData<TDataModel, TStructuredData>(
         this IServiceCollection services,
         Func<TDataModel, TStructuredData> mapFunc,
@@ -207,25 +268,28 @@ public static class DependencyInjectionExtensions
         where TDataModel : class
         where TStructuredData : class
     {
-        var config = new StructuredDataManager<TDataModel, TStructuredData>.Config(mapFunc)
-        {
-            StructuredDataConfiguration = new StructuredDataConfiguration()
-            {
-                IncludeErrorDetails = !env.IsProduction(),
-            },
-        };
+        services.AddSingleton<IStructuredDataMapper<TDataModel, TStructuredData>>(
+            new DelegateStructuredDataMapper<TDataModel, TStructuredData>(mapFunc)
+        );
 
-        return services.AddStructuredDataInternal(config);
+        return services.AddStructuredDataInternal<TDataModel, TStructuredData>(
+            new StructuredDataConfiguration { IncludeErrorDetails = !env.IsProduction() }
+        );
     }
 
     private static IServiceCollection AddStructuredDataInternal<TDataModel, TStructuredData>(
         this IServiceCollection services,
-        StructuredDataManager<TDataModel, TStructuredData>.Config config
+        StructuredDataConfiguration configuration
     )
         where TDataModel : class
         where TStructuredData : class
     {
-        services.AddSingleton(config);
+        services.AddSingleton(
+            new StructuredDataManager<TDataModel, TStructuredData>.Config
+            {
+                StructuredDataConfiguration = configuration,
+            }
+        );
         services.AddTransient<StructuredDataManager<TDataModel, TStructuredData>>();
         services.AddTransient<
             IStructuredDataValidator<TStructuredData>,
