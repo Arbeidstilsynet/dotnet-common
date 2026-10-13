@@ -24,6 +24,7 @@ public class StructuredDataManagerTests
     private readonly StructuredDataManager<TestDataModel, TestStructuredData> _sut;
 
     private readonly StructuredDataManager<TestDataModel, TestStructuredData>.Config _config;
+    private readonly IStructuredDataMapper<TestDataModel, TestStructuredData> _mapper;
 
     public StructuredDataManagerTests()
     {
@@ -35,7 +36,8 @@ public class StructuredDataManagerTests
         >();
         _structuredDataValidator = Substitute.For<IStructuredDataValidator<TestStructuredData>>();
 
-        _config = new StructuredDataManager<TestDataModel, TestStructuredData>.Config(
+        _config = new StructuredDataManager<TestDataModel, TestStructuredData>.Config();
+        _mapper = new DelegateStructuredDataMapper<TestDataModel, TestStructuredData>(
             dataModel => new TestStructuredData { Name = dataModel.Name }
         );
 
@@ -46,6 +48,7 @@ public class StructuredDataManagerTests
             _config,
             _logger,
             _structuredDataValidator,
+            _mapper,
             []
         );
     }
@@ -284,6 +287,7 @@ public class StructuredDataManagerTests
             },
             _logger,
             Substitute.For<IStructuredDataValidator<TestStructuredData>>(),
+            _mapper,
             []
         );
 
@@ -381,6 +385,7 @@ public class StructuredDataManagerTests
             },
             _logger,
             _structuredDataValidator,
+            _mapper,
             []
         );
 
@@ -645,6 +650,7 @@ public class StructuredDataManagerTests
             },
             _logger,
             _structuredDataValidator,
+            _mapper,
             []
         );
 
@@ -692,6 +698,7 @@ public class StructuredDataManagerTests
             },
             _logger,
             _structuredDataValidator,
+            _mapper,
             []
         );
 
@@ -940,6 +947,7 @@ public class StructuredDataManagerTests
             _config,
             _logger,
             _structuredDataValidator,
+            _mapper,
             postProcessors
         );
 

@@ -24,12 +24,6 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
     {
         public StructuredDataConfiguration StructuredDataConfiguration { get; init; } =
             new StructuredDataConfiguration();
-        public Func<TDataModel, TStructuredData> MapFunc { get; init; }
-
-        public Config(Func<TDataModel, TStructuredData> mapFunc)
-        {
-            MapFunc = mapFunc;
-        }
     }
 
     private readonly IApplicationClient _applicationClient;
@@ -38,6 +32,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
     private readonly Config _config;
     private readonly ILogger<StructuredDataManager<TDataModel, TStructuredData>> _logger;
     private readonly IStructuredDataValidator<TStructuredData> _structuredDataValidator;
+    private readonly IStructuredDataMapper<TDataModel, TStructuredData> _mapper;
     private readonly IReadOnlyList<IStructuredDataPostProcessor> _postProcessors;
 
     public StructuredDataManager(
@@ -47,6 +42,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         Config config,
         ILogger<StructuredDataManager<TDataModel, TStructuredData>> logger,
         IStructuredDataValidator<TStructuredData> structuredDataValidator,
+        IStructuredDataMapper<TDataModel, TStructuredData> mapper,
         IEnumerable<IStructuredDataPostProcessor> postProcessors
     )
     {
@@ -56,6 +52,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         _config = config;
         _logger = logger;
         _structuredDataValidator = structuredDataValidator;
+        _mapper = mapper;
         _postProcessors = postProcessors.ToList();
     }
 
@@ -177,7 +174,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
             CancellationToken.None
         );
 
-        var structuredData = _config.MapFunc.Invoke(dataModel);
+        var structuredData = await _mapper.Map(dataModel);
 
         if (!_config.StructuredDataConfiguration.DisableValidation)
         {
