@@ -83,12 +83,13 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
             );
         }
 
+        // Run before the destructive deletion so a failing post-processor can be retried.
+        await RunPostProcessors(instance);
+
         if (!_config.StructuredDataConfiguration.KeepAppDataModelAfterMapping)
         {
             await _dataClient.DeleteElement(instance, dataModelElement);
         }
-
-        await RunPostProcessors(instance);
     }
 
     private async Task RunPostProcessors(Instance instance)

@@ -9,11 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added <!-- for new features. -->
 
-- feat: Adds `IStructuredDataPostProcessor` and `AddStructuredDataPostProcessor<T>()` for post-processing the instance, structured data element and main PDF element at process end, from inside the structured data feature.
-
 ### Changed <!--  for changes in existing functionality. -->
-
-- Allow publishing with Dialogporten's prerelease client dependency (NU5104).
 
 ### Deprecated <!--  for soon-to-be removed features. -->
 
@@ -22,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed <!-- for any bug fixes. -->
 
 ### Security <!-- in case of vulnerabilities. -->
+
+## 2.10.0
+
+### Added
+
+- feat: Adds `IStructuredDataPostProcessor` and `AddStructuredDataPostProcessor<T>()` for post-processing the instance, structured data element and main PDF element at process end, from inside the structured data feature.
+
+### Changed
+
+- Allow publishing with Dialogporten's prerelease client dependency (NU5104).
 
 ## 2.9.1
 

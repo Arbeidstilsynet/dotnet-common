@@ -245,8 +245,9 @@ public static class DependencyInjectionExtensions
     /// Registers a <see cref="IStructuredDataPostProcessor"/> that runs at process end, from inside the structured data feature
     /// (see <see cref="AddStructuredData{TDataModel, TStructuredData}(IServiceCollection, Func{TDataModel, TStructuredData}, IHostEnvironment)"/>).
     /// <br/>
-    /// Post-processors run after the App data model has been deleted (unless kept by configuration), and are guaranteed that the
-    /// structured data element and the main PDF element exist on the instance. Multiple post-processors run in registration order.
+    /// Post-processors run before the App data model is deleted (unless kept by configuration), and are guaranteed that the
+    /// structured data element and the main PDF element exist on the instance. Multiple post-processors run in registration order,
+    /// and should be idempotent since process end may be retried.
     /// </summary>
     /// <typeparam name="T">The post-processor implementation.</typeparam>
     /// <param name="services"></param>

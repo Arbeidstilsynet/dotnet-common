@@ -802,7 +802,7 @@ public class StructuredDataManagerTests
     }
 
     [Fact]
-    public async Task End_ProcessEnd_RunsPostProcessorsAfterDeletingDataModel()
+    public async Task End_ProcessEnd_RunsPostProcessorsBeforeDeletingDataModel()
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
@@ -823,6 +823,8 @@ public class StructuredDataManagerTests
         // Assert
         Received.InOrder(() =>
         {
+            _instanceClient.GetInstance(instance);
+            postProcessor.Process(Arg.Any<StructuredDataPostProcessingContext>());
             _dataClient.DeleteData(
                 Arg.Any<int>(),
                 Arg.Any<Guid>(),
@@ -830,9 +832,44 @@ public class StructuredDataManagerTests
                 false,
                 cancellationToken: Arg.Any<CancellationToken>()
             );
-            _instanceClient.GetInstance(instance);
-            postProcessor.Process(Arg.Any<StructuredDataPostProcessingContext>());
         });
+    }
+
+    [Fact]
+    public async Task End_ProcessEnd_WhenPostProcessorThrows_ShouldNotDeleteDataModel()
+    {
+        // Arrange
+        var instance = AltinnData.CreateTestInstance();
+        instance.Data.Add(
+            new DataElement { Id = Guid.NewGuid().ToString(), DataType = "structured-data" }
+        );
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName));
+        _instanceClient.GetInstance(instance).Returns(CreateInstanceWithRequiredElements());
+
+        var postProcessor = Substitute.For<IStructuredDataPostProcessor>();
+        postProcessor
+            .Process(Arg.Any<StructuredDataPostProcessingContext>())
+            .Returns(Task.FromException(new InvalidOperationException("boom")));
+        var sut = CreateSut(postProcessors: [postProcessor]);
+        var initialDataCount = instance.Data.Count;
+
+        // Act
+        var act = () => sut.End(instance, new List<InstanceEvent>());
+
+        // Assert
+        await act.ShouldThrowAsync<InvalidOperationException>();
+        await _dataClient
+            .DidNotReceiveWithAnyArgs()
+            .DeleteData(
+                default,
+                default,
+                default,
+                default,
+                cancellationToken: Arg.Any<CancellationToken>()
+            );
+        instance.Data.Count.ShouldBe(initialDataCount);
     }
 
     [Theory]
