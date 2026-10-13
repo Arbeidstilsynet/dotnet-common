@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.11.0
+
+### Added
+
+- feat: Adds `IStructuredDataPostProcessor` and `AddStructuredDataPostProcessor<T>()` for post-processing the instance, structured data element and main PDF element at process end, from inside the structured data feature.
+
 ## 2.10.0
 
 ### Added

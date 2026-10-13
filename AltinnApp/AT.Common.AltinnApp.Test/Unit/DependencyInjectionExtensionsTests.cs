@@ -3,6 +3,7 @@ using Altinn.App.Core.Internal.Data;
 using Altinn.App.Core.Internal.Instances;
 using Arbeidstilsynet.Common.AltinnApp.DependencyInjection;
 using Arbeidstilsynet.Common.AltinnApp.Implementation;
+using Arbeidstilsynet.Common.AltinnApp.Model;
 using Arbeidstilsynet.Common.AltinnApp.Ports;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -178,6 +179,56 @@ public class DependencyInjectionExtensionsTests
                 StructuredDataManager<DiTestDataModel, DiTestStructuredData>
             >()
             .ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void AddStructuredDataPostProcessor_RegistersEachPostProcessorOnce()
+    {
+        // Arrange
+        var services = CreateServicesWithAltinnSubstitutes();
+        services.AddStructuredDataPostProcessor<FirstPostProcessor>();
+        services.AddStructuredDataPostProcessor<SecondPostProcessor>();
+        services.AddStructuredDataPostProcessor<FirstPostProcessor>();
+
+        using var provider = services.BuildServiceProvider();
+
+        // Act
+        var postProcessors = provider.GetServices<IStructuredDataPostProcessor>().ToList();
+
+        // Assert
+        postProcessors.Count.ShouldBe(2);
+        postProcessors[0].ShouldBeOfType<FirstPostProcessor>();
+        postProcessors[1].ShouldBeOfType<SecondPostProcessor>();
+    }
+
+    [Fact]
+    public void AddStructuredDataPostProcessor_CanBeResolvedByManager()
+    {
+        // Arrange
+        var services = CreateServicesWithAltinnSubstitutes();
+        services.AddScoped<IValidator<DiTestStructuredData>, DiTestStructuredDataValidator>();
+        services.AddStructuredData<DiTestDataModel, DiTestStructuredData, DiTestMapper>(
+            CreateEnvironment(Environments.Production)
+        );
+        services.AddStructuredDataPostProcessor<FirstPostProcessor>();
+
+        // Act + Assert
+        var act = () =>
+            services.BuildServiceProvider(
+                new ServiceProviderOptions { ValidateScopes = true, ValidateOnBuild = true }
+            );
+
+        act.ShouldNotThrow();
+    }
+
+    public class FirstPostProcessor : IStructuredDataPostProcessor
+    {
+        public Task Process(StructuredDataPostProcessingContext context) => Task.CompletedTask;
+    }
+
+    public class SecondPostProcessor : IStructuredDataPostProcessor
+    {
+        public Task Process(StructuredDataPostProcessingContext context) => Task.CompletedTask;
     }
 
     private static IHostEnvironment CreateEnvironment(string environmentName)
