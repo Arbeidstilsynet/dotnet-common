@@ -198,10 +198,120 @@ public class StructuredDataManagerTests
                                 >.MainPdfDataTypeId,
                                 _config.StructuredDataConfiguration.MainPdfDataTypeId
                             },
+                            {
+                                StructuredDataManager<
+                                    TestDataModel,
+                                    TestStructuredData
+                                >.ExcludedAttachmentDataTypeIdsKey,
+                                """["testDataType"]"""
+                            },
                         }
                     )
                 )
             );
+    }
+
+    [Fact]
+    public async Task End_TaskEnd_AppendsConfiguredAttachmentExclusionsToDatamodelType()
+    {
+        var instance = AltinnData.CreateTestInstance();
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+        );
+        var sut = new StructuredDataManager<TestDataModel, TestStructuredData>(
+            _applicationClient,
+            _dataClient,
+            _instanceClient,
+            _config with
+            {
+                StructuredDataConfiguration = _config.StructuredDataConfiguration with
+                {
+                    ExcludedAttachmentDataTypeIds = ["internal-data", "testDataType"],
+                },
+            },
+            _logger,
+            _structuredDataValidator,
+            _mapper,
+            []
+        );
+
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(application);
+        _dataClient
+            .GetFormData(
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
+                cancellationToken: Arg.Any<CancellationToken>()
+            )
+            .Returns(new TestDataModel { Name = "Test" });
+
+        await sut.End("task1", instance);
+
+        await _instanceClient
+            .Received(1)
+            .UpdateDataValues(
+                instance,
+                Arg.Is<Dictionary<string, string?>>(dataValues =>
+                    dataValues[
+                        StructuredDataManager<
+                            TestDataModel,
+                            TestStructuredData
+                        >.ExcludedAttachmentDataTypeIdsKey
+                    ] == """["internal-data","testDataType"]"""
+                )
+            );
+    }
+
+    [Theory]
+    [InlineData("main-pdf")]
+    [InlineData("structured")]
+    public async Task End_TaskEnd_WhenDatamodelTypeCollidesWithSignificantType_ShouldThrowAndNotWriteDataValues(
+        string collidingWith
+    )
+    {
+        var instance = AltinnData.CreateTestInstance();
+        var application = AltinnData.CreateTestApplication(
+            classRef: typeof(TestDataModel).FullName
+        );
+        var structuredDataConfiguration =
+            collidingWith == "main-pdf"
+                ? _config.StructuredDataConfiguration with
+                {
+                    MainPdfDataTypeId = "TESTDATATYPE",
+                }
+                : _config.StructuredDataConfiguration with
+                {
+                    StructuredDataTypeId = "testDataType",
+                };
+        var sut = new StructuredDataManager<TestDataModel, TestStructuredData>(
+            _applicationClient,
+            _dataClient,
+            _instanceClient,
+            _config with
+            {
+                StructuredDataConfiguration = structuredDataConfiguration,
+            },
+            _logger,
+            _structuredDataValidator,
+            _mapper,
+            []
+        );
+
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(application);
+        _dataClient
+            .GetFormData(
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
+                cancellationToken: Arg.Any<CancellationToken>()
+            )
+            .Returns(new TestDataModel { Name = "Test" });
+
+        await Should.ThrowAsync<InvalidOperationException>(() => sut.End("task1", instance));
+
+        await _instanceClient.DidNotReceiveWithAnyArgs().UpdateDataValues(default!, default!);
     }
 
     [Fact]

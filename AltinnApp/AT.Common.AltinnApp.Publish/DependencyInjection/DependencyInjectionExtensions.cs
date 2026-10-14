@@ -68,6 +68,12 @@ public record StructuredDataConfiguration
     public string MainPdfDataTypeId { get; init; } = "ref-data-as-pdf";
 
     /// <summary>
+    /// Additional data type IDs to exclude from the consumer-facing attachment list. The datamodel
+    /// type is automatically added to this list.
+    /// </summary>
+    public string[] ExcludedAttachmentDataTypeIds { get; init; } = [];
+
+    /// <summary>
     /// Whether to include error details in the structured data in case of mapping errors. Default is false.
     /// </summary>
     public bool IncludeErrorDetails { get; init; } = false;
@@ -187,7 +193,7 @@ public static class DependencyInjectionExtensions
     /// </summary>
     /// <param name="services"></param>
     /// <param name="env">The hosting environment. Used to determine configuration defaults: error details are included in non-production environments and excluded in production.</param>
-    /// <param name="configure">Optional function to adjust the environment-based default configuration, e.g. <c>c => c with { TaskIdFilter = ["Task_1"] }</c>.</param>
+    /// <param name="configure">Optional function to adjust the environment-based defaults, e.g. <c>c => c with { TaskIdFilter = ["Task_1"], ExcludedAttachmentDataTypeIds = ["internal-data"] }</c>.</param>
     /// <typeparam name="TDataModel">The type of the App data model. This is the type that will be mapped to structured data and then deleted before storage.</typeparam>
     /// <typeparam name="TStructuredData">The type of the structured data that the App data model will be mapped to and stored as.</typeparam>
     /// <typeparam name="TMapper">The <see cref="IStructuredDataMapper{TDataModel, TStructuredData}"/> implementation.</typeparam>
@@ -284,6 +290,40 @@ public static class DependencyInjectionExtensions
         where TDataModel : class
         where TStructuredData : class
     {
+        ValidateSignificantDataTypes(configuration);
+
+        if (
+            configuration.ExcludedAttachmentDataTypeIds is null
+            || configuration.ExcludedAttachmentDataTypeIds.Any(string.IsNullOrWhiteSpace)
+        )
+        {
+            throw new ArgumentException(
+                "ExcludedAttachmentDataTypeIds cannot contain null, empty, or whitespace entries.",
+                nameof(configuration)
+            );
+        }
+
+        if (
+            configuration.ExcludedAttachmentDataTypeIds.Any(id =>
+                string.Equals(
+                    id,
+                    configuration.MainPdfDataTypeId,
+                    StringComparison.OrdinalIgnoreCase
+                )
+                || string.Equals(
+                    id,
+                    configuration.StructuredDataTypeId,
+                    StringComparison.OrdinalIgnoreCase
+                )
+            )
+        )
+        {
+            throw new ArgumentException(
+                "ExcludedAttachmentDataTypeIds cannot contain MainPdfDataTypeId or StructuredDataTypeId.",
+                nameof(configuration)
+            );
+        }
+
         services.AddSingleton(
             new StructuredDataManager<TDataModel, TStructuredData>.Config
             {
@@ -303,6 +343,34 @@ public static class DependencyInjectionExtensions
         );
 
         return services;
+    }
+
+    private static void ValidateSignificantDataTypes(StructuredDataConfiguration configuration)
+    {
+        if (
+            string.IsNullOrWhiteSpace(configuration.MainPdfDataTypeId)
+            || string.IsNullOrWhiteSpace(configuration.StructuredDataTypeId)
+        )
+        {
+            throw new ArgumentException(
+                "MainPdfDataTypeId and StructuredDataTypeId cannot be null, empty, or whitespace.",
+                nameof(configuration)
+            );
+        }
+
+        if (
+            string.Equals(
+                configuration.MainPdfDataTypeId,
+                configuration.StructuredDataTypeId,
+                StringComparison.OrdinalIgnoreCase
+            )
+        )
+        {
+            throw new ArgumentException(
+                "MainPdfDataTypeId and StructuredDataTypeId must be different.",
+                nameof(configuration)
+            );
+        }
     }
 
     /// <summary>

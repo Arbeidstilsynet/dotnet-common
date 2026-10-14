@@ -19,6 +19,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
 {
     internal const string StructuredDataTypeIdKey = "StructuredDataTypeId";
     internal const string MainPdfDataTypeId = "MainPdfDataTypeId";
+    internal const string ExcludedAttachmentDataTypeIdsKey = "ExcludedAttachmentDataTypeIds";
 
     internal record Config
     {
@@ -139,8 +140,8 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
 
         try
         {
-            await CreateStructuredData(instance);
-            await CreateAppSpecification(instance);
+            var dataModelDataTypeId = await CreateStructuredData(instance);
+            await CreateAppSpecification(instance, dataModelDataTypeId);
         }
         catch (Exception e)
         {
@@ -163,7 +164,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         }
     }
 
-    private async Task CreateStructuredData(Instance instance)
+    private async Task<string> CreateStructuredData(Instance instance)
     {
         var dataModelElement = await _applicationClient.GetRequiredDataModelElement<TDataModel>(
             instance
@@ -189,6 +190,8 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
             _config.StructuredDataConfiguration.StructuredDataTypeId,
             CancellationToken.None
         );
+
+        return dataModelElement.DataType;
     }
 
     private async Task DeleteExistingStructuredData(Instance instance)
@@ -209,19 +212,42 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         }
     }
 
-    private async Task CreateAppSpecification(Instance instance)
+    private async Task CreateAppSpecification(Instance instance, string dataModelDataTypeId)
     {
-        await _instanceClient.UpdateDataValues(
-            instance,
-            new Dictionary<string, string?>()
+        var configuration = _config.StructuredDataConfiguration;
+        if (
+            string.Equals(
+                dataModelDataTypeId,
+                configuration.MainPdfDataTypeId,
+                StringComparison.OrdinalIgnoreCase
+            )
+            || string.Equals(
+                dataModelDataTypeId,
+                configuration.StructuredDataTypeId,
+                StringComparison.OrdinalIgnoreCase
+            )
+        )
+        {
+            throw new InvalidOperationException(
+                $"The datamodel data type '{dataModelDataTypeId}' cannot be the same as MainPdfDataTypeId or StructuredDataTypeId."
+            );
+        }
+
+        var excludedAttachmentDataTypeIds = configuration
+            .ExcludedAttachmentDataTypeIds.Append(dataModelDataTypeId)
+            .Distinct(StringComparer.Ordinal);
+
+        var dataValues = new Dictionary<string, string?>()
+        {
+            { StructuredDataTypeIdKey, configuration.StructuredDataTypeId },
+            { MainPdfDataTypeId, configuration.MainPdfDataTypeId },
             {
-                {
-                    StructuredDataTypeIdKey,
-                    _config.StructuredDataConfiguration.StructuredDataTypeId
-                },
-                { MainPdfDataTypeId, _config.StructuredDataConfiguration.MainPdfDataTypeId },
-            }
-        );
+                ExcludedAttachmentDataTypeIdsKey,
+                JsonSerializer.Serialize(excludedAttachmentDataTypeIds)
+            },
+        };
+
+        await _instanceClient.UpdateDataValues(instance, dataValues);
     }
 }
 

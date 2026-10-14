@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added <!-- for new features. -->
 
+- Exclude declared data types from attachments while retaining legacy classification when the exclusion list is absent.
+
 ### Changed <!--  for changes in existing functionality. -->
 
 ### Deprecated <!--  for soon-to-be removed features. -->
@@ -18,6 +20,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed <!-- for any bug fixes. -->
 
 ### Security <!-- in case of vulnerabilities. -->
+
+## 4.2.0
+
+### Added
+
+- Exclude declared data types from attachments while retaining legacy classification when the exclusion list is absent.
 
 ## 4.1.0
 

@@ -133,7 +133,12 @@ public class DependencyInjectionExtensionsTests
         var services = CreateServicesWithAltinnSubstitutes();
         services.AddStructuredData<DiTestDataModel, DiTestStructuredData, DiTestMapper>(
             CreateEnvironment(Environments.Development),
-            c => c with { TaskIdFilter = ["Task_1"] }
+            c =>
+                c with
+                {
+                    TaskIdFilter = ["Task_1"],
+                    ExcludedAttachmentDataTypeIds = ["internal-data"],
+                }
         );
 
         using var provider = services.BuildServiceProvider();
@@ -146,7 +151,71 @@ public class DependencyInjectionExtensionsTests
 
         // Assert
         config.StructuredDataConfiguration.TaskIdFilter.ShouldBe(["Task_1"]);
+        config.StructuredDataConfiguration.ExcludedAttachmentDataTypeIds.ShouldBe([
+            "internal-data",
+        ]);
         config.StructuredDataConfiguration.IncludeErrorDetails.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void AddStructuredData_WithMapper_RejectsInvalidAttachmentExclusions()
+    {
+        string?[] invalidIds = [null, "", "  "];
+
+        foreach (var invalidId in invalidIds)
+        {
+            var services = CreateServicesWithAltinnSubstitutes();
+
+            Action act = () =>
+                services.AddStructuredData<DiTestDataModel, DiTestStructuredData, DiTestMapper>(
+                    CreateEnvironment(Environments.Development),
+                    c => c with { ExcludedAttachmentDataTypeIds = [invalidId!] }
+                );
+
+            act.ShouldThrow<ArgumentException>();
+        }
+
+        var nullListServices = CreateServicesWithAltinnSubstitutes();
+        Action nullListAct = () =>
+            nullListServices.AddStructuredData<DiTestDataModel, DiTestStructuredData, DiTestMapper>(
+                CreateEnvironment(Environments.Development),
+                c => c with { ExcludedAttachmentDataTypeIds = null! }
+            );
+
+        nullListAct.ShouldThrow<ArgumentException>();
+    }
+
+    public static TheoryData<StructuredDataConfiguration> InvalidSignificantDataTypeConfigurations =>
+        new()
+        {
+            new StructuredDataConfiguration { MainPdfDataTypeId = null! },
+            new StructuredDataConfiguration { MainPdfDataTypeId = " " },
+            new StructuredDataConfiguration { StructuredDataTypeId = null! },
+            new StructuredDataConfiguration { StructuredDataTypeId = "" },
+            new StructuredDataConfiguration
+            {
+                MainPdfDataTypeId = "same",
+                StructuredDataTypeId = "SAME",
+            },
+            new StructuredDataConfiguration { ExcludedAttachmentDataTypeIds = ["ref-data-as-pdf"] },
+            new StructuredDataConfiguration { ExcludedAttachmentDataTypeIds = ["Structured-Data"] },
+        };
+
+    [Theory]
+    [MemberData(nameof(InvalidSignificantDataTypeConfigurations))]
+    public void AddStructuredData_WithMapper_RejectsInvalidSignificantDataTypes(
+        StructuredDataConfiguration configuration
+    )
+    {
+        var services = CreateServicesWithAltinnSubstitutes();
+
+        Action act = () =>
+            services.AddStructuredData<DiTestDataModel, DiTestStructuredData, DiTestMapper>(
+                CreateEnvironment(Environments.Development),
+                _ => configuration
+            );
+
+        act.ShouldThrow<ArgumentException>();
     }
 
     [Fact]
