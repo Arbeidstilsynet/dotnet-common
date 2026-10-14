@@ -133,7 +133,12 @@ public class DependencyInjectionExtensionsTests
         var services = CreateServicesWithAltinnSubstitutes();
         services.AddStructuredData<DiTestDataModel, DiTestStructuredData, DiTestMapper>(
             CreateEnvironment(Environments.Development),
-            c => c with { TaskIdFilter = ["Task_1"] }
+            c =>
+                c with
+                {
+                    TaskIdFilter = ["Task_1"],
+                    ExcludedAttachmentDataTypeIds = ["internal-data"],
+                }
         );
 
         using var provider = services.BuildServiceProvider();
@@ -146,6 +151,9 @@ public class DependencyInjectionExtensionsTests
 
         // Assert
         config.StructuredDataConfiguration.TaskIdFilter.ShouldBe(["Task_1"]);
+        config.StructuredDataConfiguration.ExcludedAttachmentDataTypeIds.ShouldBe(
+            ["internal-data"]
+        );
         config.StructuredDataConfiguration.IncludeErrorDetails.ShouldBeTrue();
     }
 

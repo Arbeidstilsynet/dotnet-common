@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added <!-- for new features. -->
 
+- Add `StructuredDataConfiguration.ExcludedAttachmentDataTypeIds` to exclude additional data types from attachments; the datamodel type is included automatically.
+
 ### Changed <!--  for changes in existing functionality. -->
 
 ### Deprecated <!--  for soon-to-be removed features. -->

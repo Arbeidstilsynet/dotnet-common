@@ -19,6 +19,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
 {
     internal const string StructuredDataTypeIdKey = "StructuredDataTypeId";
     internal const string MainPdfDataTypeId = "MainPdfDataTypeId";
+    internal const string ExcludedAttachmentDataTypeIdsKey = "ExcludedAttachmentDataTypeIds";
 
     internal record Config
     {
@@ -139,8 +140,8 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
 
         try
         {
-            await CreateStructuredData(instance);
-            await CreateAppSpecification(instance);
+            var dataModelDataTypeId = await CreateStructuredData(instance);
+            await CreateAppSpecification(instance, dataModelDataTypeId);
         }
         catch (Exception e)
         {
@@ -163,7 +164,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         }
     }
 
-    private async Task CreateStructuredData(Instance instance)
+    private async Task<string> CreateStructuredData(Instance instance)
     {
         var dataModelElement = await _applicationClient.GetRequiredDataModelElement<TDataModel>(
             instance
@@ -189,6 +190,8 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
             _config.StructuredDataConfiguration.StructuredDataTypeId,
             CancellationToken.None
         );
+
+        return dataModelElement.DataType;
     }
 
     private async Task DeleteExistingStructuredData(Instance instance)
@@ -209,19 +212,26 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         }
     }
 
-    private async Task CreateAppSpecification(Instance instance)
+    private async Task CreateAppSpecification(Instance instance, string dataModelDataTypeId)
     {
-        await _instanceClient.UpdateDataValues(
-            instance,
-            new Dictionary<string, string?>()
+        var excludedAttachmentDataTypeIds = _config
+            .StructuredDataConfiguration.ExcludedAttachmentDataTypeIds.Append(dataModelDataTypeId)
+            .Distinct(StringComparer.Ordinal);
+
+        var dataValues = new Dictionary<string, string?>()
+        {
             {
-                {
-                    StructuredDataTypeIdKey,
-                    _config.StructuredDataConfiguration.StructuredDataTypeId
-                },
-                { MainPdfDataTypeId, _config.StructuredDataConfiguration.MainPdfDataTypeId },
-            }
-        );
+                StructuredDataTypeIdKey,
+                _config.StructuredDataConfiguration.StructuredDataTypeId
+            },
+            { MainPdfDataTypeId, _config.StructuredDataConfiguration.MainPdfDataTypeId },
+            {
+                ExcludedAttachmentDataTypeIdsKey,
+                JsonSerializer.Serialize(excludedAttachmentDataTypeIds)
+            },
+        };
+
+        await _instanceClient.UpdateDataValues(instance, dataValues);
     }
 }
 

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Arbeidstilsynet.Common.Altinn.Implementation.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Adapter;
 using Arbeidstilsynet.Common.Altinn.Model.Api.Response;
@@ -9,6 +10,7 @@ internal static class AltinnSpecificationExtensions
 {
     internal const string StructuredDataTypeIdKey = "StructuredDataTypeId";
     internal const string MainPdfDataTypeId = "MainPdfDataTypeId";
+    internal const string ExcludedAttachmentDataTypeIdsKey = "ExcludedAttachmentDataTypeIds";
 
     /// <summary>
     /// Gets the <see cref="AltinnAppSpecification"/> for the given <see cref="AltinnInstance"/>.
@@ -44,7 +46,55 @@ internal static class AltinnSpecificationExtensions
             resolvedSpec = resolvedSpec with { MainPdfDataTypeId = mainPdfDataTypeId };
         }
 
+        if (dataValues.TryGetValue(ExcludedAttachmentDataTypeIdsKey, out val))
+        {
+            resolvedSpec = resolvedSpec with
+            {
+                ExcludedAttachmentDataTypeIds = ParseExcludedAttachmentDataTypeIds(val),
+            };
+        }
+
         return resolvedSpec;
+    }
+
+    private static string[] ParseExcludedAttachmentDataTypeIds(string? serializedDataTypeIds)
+    {
+        string?[]? dataTypeIds;
+        try
+        {
+            dataTypeIds = JsonSerializer.Deserialize<string?[]>(serializedDataTypeIds ?? "");
+        }
+        catch (JsonException exception)
+        {
+            throw new InvalidOperationException(
+                $"Instance.DataValues['{ExcludedAttachmentDataTypeIdsKey}'] must be a valid JSON array of data type IDs.",
+                exception
+            );
+        }
+
+        if (dataTypeIds is null)
+        {
+            throw new InvalidOperationException(
+                $"Instance.DataValues['{ExcludedAttachmentDataTypeIdsKey}'] must be a JSON array of data type IDs."
+            );
+        }
+
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        var parsedDataTypeIds = new string[dataTypeIds.Length];
+        for (var index = 0; index < dataTypeIds.Length; index++)
+        {
+            var dataTypeId = dataTypeIds[index];
+            if (string.IsNullOrWhiteSpace(dataTypeId) || !seen.Add(dataTypeId))
+            {
+                throw new InvalidOperationException(
+                    $"Instance.DataValues['{ExcludedAttachmentDataTypeIdsKey}'] cannot contain blank or duplicate data type IDs."
+                );
+            }
+
+            parsedDataTypeIds[index] = dataTypeId;
+        }
+
+        return parsedDataTypeIds;
     }
 
     public static string? SanitizeAppId(this string? appId)
@@ -99,7 +149,13 @@ internal static class AltinnSpecificationExtensions
             {
                 structuredData = dataElement;
             }
-            else
+            else if (
+                appSpec.ExcludedAttachmentDataTypeIds is null
+                || !appSpec.ExcludedAttachmentDataTypeIds.Contains(
+                    dataElement.DataType,
+                    StringComparer.Ordinal
+                )
+            )
             {
                 attachmentData.Add(dataElement);
             }
