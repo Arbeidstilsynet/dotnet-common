@@ -216,6 +216,12 @@ Altinn-specific `Code`, `ErrorCode`, `StatusDescription`, `TraceId`, `Validation
 `Errors`, each populated by the APIs that return them. Altinn Correspondence sends `errorCode` as a
 JSON number (for example `1030`); `ErrorCode` then holds it as text (`"1030"`).
 
+Maskinporten token rejections throw `MaskinportenTokenException` from `Model.Exceptions`,
+an `HttpRequestException` exposing `StatusCode`, the OAuth `ErrorCode` (for example
+`invalid_scope`), `ErrorDescription`, the bounded raw `ResponseBody` and a read-only
+snapshot of `RequestedScopes`. Unavailable parsed fields are `null`; the raw body is retained.
+Consumers choose what to log, since response details can contain sensitive data.
+
 Generation is scoped to the functional area each client serves — instances for storage and
 apps, subscriptions for events, and dialogs for Dialogporten. To reach an endpoint outside
 those areas, widen the relevant `--include-path` filter in `GenerateClients.targets`,

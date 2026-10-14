@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 4.1.0
+
+### Added
+
+- Rejected Maskinporten token requests now throw `MaskinportenTokenException`, an `HttpRequestException` subclass exposing the OAuth `ErrorCode`, `ErrorDescription`, bounded raw `ResponseBody` and a read-only snapshot of `RequestedScopes`. The inherited HTTP status and response-body message are preserved. Malformed or truncated OAuth bodies leave parsed fields unset while retaining the raw body. Consumers can inspect provider details without parsing the exception message, and select safe fields for their own logging policy. Response details can contain sensitive data; the error code is also untrusted provider text. Token caching, cancellation and successful responses are unchanged.
+
 ## 4.0.7
 
 ### Deprecated
