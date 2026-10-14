@@ -220,10 +220,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
 
         var dataValues = new Dictionary<string, string?>()
         {
-            {
-                StructuredDataTypeIdKey,
-                _config.StructuredDataConfiguration.StructuredDataTypeId
-            },
+            { StructuredDataTypeIdKey, _config.StructuredDataConfiguration.StructuredDataTypeId },
             { MainPdfDataTypeId, _config.StructuredDataConfiguration.MainPdfDataTypeId },
             {
                 ExcludedAttachmentDataTypeIdsKey,

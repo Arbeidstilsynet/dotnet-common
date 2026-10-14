@@ -132,8 +132,9 @@ public class AltinnAppSpecificationTests
                 CreateDataElement("unexpected-upload", "application/pdf"),
             ]
         );
-        compliantInstance.DataValues[AltinnSpecificationExtensions.ExcludedAttachmentDataTypeIdsKey] =
-            """["datamodel-xml","internal-data"]""";
+        compliantInstance.DataValues[
+            AltinnSpecificationExtensions.ExcludedAttachmentDataTypeIdsKey
+        ] = """["datamodel-xml","internal-data"]""";
 
         var (mainData, structuredData, attachmentData) =
             compliantInstance.GetDataElementsBySignificance();
@@ -150,9 +151,7 @@ public class AltinnAppSpecificationTests
     [InlineData("[null]")]
     [InlineData("[\" \"]")]
     [InlineData("[\"duplicate\",\"duplicate\"]")]
-    public void GetSpecification_WhenExcludedAttachmentTypesAreMalformed_Throws(
-        string declaration
-    )
+    public void GetSpecification_WhenExcludedAttachmentTypesAreMalformed_Throws(string declaration)
     {
         var compliantInstance = CreateCompliantInstance(_defaultSpec);
         compliantInstance.DataValues[

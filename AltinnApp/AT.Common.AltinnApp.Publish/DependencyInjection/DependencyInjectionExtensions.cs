@@ -290,7 +290,10 @@ public static class DependencyInjectionExtensions
         where TDataModel : class
         where TStructuredData : class
     {
-        if (configuration.ExcludedAttachmentDataTypeIds.Any(string.IsNullOrWhiteSpace))
+        if (
+            configuration.ExcludedAttachmentDataTypeIds is null
+            || configuration.ExcludedAttachmentDataTypeIds.Any(string.IsNullOrWhiteSpace)
+        )
         {
             throw new ArgumentException(
                 "ExcludedAttachmentDataTypeIds cannot contain null, empty, or whitespace entries.",

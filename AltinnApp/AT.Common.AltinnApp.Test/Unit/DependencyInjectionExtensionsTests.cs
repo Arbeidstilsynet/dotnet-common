@@ -151,10 +151,38 @@ public class DependencyInjectionExtensionsTests
 
         // Assert
         config.StructuredDataConfiguration.TaskIdFilter.ShouldBe(["Task_1"]);
-        config.StructuredDataConfiguration.ExcludedAttachmentDataTypeIds.ShouldBe(
-            ["internal-data"]
-        );
+        config.StructuredDataConfiguration.ExcludedAttachmentDataTypeIds.ShouldBe([
+            "internal-data",
+        ]);
         config.StructuredDataConfiguration.IncludeErrorDetails.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void AddStructuredData_WithMapper_RejectsInvalidAttachmentExclusions()
+    {
+        string?[] invalidIds = [null, "", "  "];
+
+        foreach (var invalidId in invalidIds)
+        {
+            var services = CreateServicesWithAltinnSubstitutes();
+
+            Action act = () =>
+                services.AddStructuredData<DiTestDataModel, DiTestStructuredData, DiTestMapper>(
+                    CreateEnvironment(Environments.Development),
+                    c => c with { ExcludedAttachmentDataTypeIds = [invalidId!] }
+                );
+
+            act.ShouldThrow<ArgumentException>();
+        }
+
+        var nullListServices = CreateServicesWithAltinnSubstitutes();
+        Action nullListAct = () =>
+            nullListServices.AddStructuredData<DiTestDataModel, DiTestStructuredData, DiTestMapper>(
+                CreateEnvironment(Environments.Development),
+                c => c with { ExcludedAttachmentDataTypeIds = null! }
+            );
+
+        nullListAct.ShouldThrow<ArgumentException>();
     }
 
     [Fact]
