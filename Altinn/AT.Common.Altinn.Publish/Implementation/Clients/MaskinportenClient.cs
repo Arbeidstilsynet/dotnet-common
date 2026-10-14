@@ -5,6 +5,7 @@ using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Implementation.ErrorReporting;
 using Arbeidstilsynet.Common.Altinn.Implementation.Extensions;
 using Arbeidstilsynet.Common.Altinn.Model.Api;
+using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 using Arbeidstilsynet.Common.Altinn.Ports.Clients;
 using Microsoft.Extensions.Options;
 using static Arbeidstilsynet.Common.Altinn.DependencyInjection.DependencyInjectionExtensions;
@@ -95,11 +96,7 @@ internal class MaskinportenClient : IMaskinportenClient
                 response.Content,
                 cancellationToken
             );
-            throw new HttpRequestException(
-                $"Maskinporten token request failed with {(int)response.StatusCode} ({response.StatusCode}): {errorBody}",
-                inner: null,
-                statusCode: response.StatusCode
-            );
+            throw new MaskinportenTokenException(response.StatusCode, scopes, errorBody);
         }
 
         var tokenResponse =
