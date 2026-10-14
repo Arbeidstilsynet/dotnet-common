@@ -185,6 +185,39 @@ public class DependencyInjectionExtensionsTests
         nullListAct.ShouldThrow<ArgumentException>();
     }
 
+    public static TheoryData<StructuredDataConfiguration> InvalidSignificantDataTypeConfigurations =>
+        new()
+        {
+            new StructuredDataConfiguration { MainPdfDataTypeId = null! },
+            new StructuredDataConfiguration { MainPdfDataTypeId = " " },
+            new StructuredDataConfiguration { StructuredDataTypeId = null! },
+            new StructuredDataConfiguration { StructuredDataTypeId = "" },
+            new StructuredDataConfiguration
+            {
+                MainPdfDataTypeId = "same",
+                StructuredDataTypeId = "SAME",
+            },
+            new StructuredDataConfiguration { ExcludedAttachmentDataTypeIds = ["ref-data-as-pdf"] },
+            new StructuredDataConfiguration { ExcludedAttachmentDataTypeIds = ["Structured-Data"] },
+        };
+
+    [Theory]
+    [MemberData(nameof(InvalidSignificantDataTypeConfigurations))]
+    public void AddStructuredData_WithMapper_RejectsInvalidSignificantDataTypes(
+        StructuredDataConfiguration configuration
+    )
+    {
+        var services = CreateServicesWithAltinnSubstitutes();
+
+        Action act = () =>
+            services.AddStructuredData<DiTestDataModel, DiTestStructuredData, DiTestMapper>(
+                CreateEnvironment(Environments.Development),
+                _ => configuration
+            );
+
+        act.ShouldThrow<ArgumentException>();
+    }
+
     [Fact]
     public async Task AddStructuredData_WithObsoleteMapFunc_RegistersDelegateMapper()
     {

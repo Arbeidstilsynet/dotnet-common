@@ -214,14 +214,33 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
 
     private async Task CreateAppSpecification(Instance instance, string dataModelDataTypeId)
     {
-        var excludedAttachmentDataTypeIds = _config
-            .StructuredDataConfiguration.ExcludedAttachmentDataTypeIds.Append(dataModelDataTypeId)
+        var configuration = _config.StructuredDataConfiguration;
+        if (
+            string.Equals(
+                dataModelDataTypeId,
+                configuration.MainPdfDataTypeId,
+                StringComparison.OrdinalIgnoreCase
+            )
+            || string.Equals(
+                dataModelDataTypeId,
+                configuration.StructuredDataTypeId,
+                StringComparison.OrdinalIgnoreCase
+            )
+        )
+        {
+            throw new InvalidOperationException(
+                $"The datamodel data type '{dataModelDataTypeId}' cannot be the same as MainPdfDataTypeId or StructuredDataTypeId."
+            );
+        }
+
+        var excludedAttachmentDataTypeIds = configuration
+            .ExcludedAttachmentDataTypeIds.Append(dataModelDataTypeId)
             .Distinct(StringComparer.Ordinal);
 
         var dataValues = new Dictionary<string, string?>()
         {
-            { StructuredDataTypeIdKey, _config.StructuredDataConfiguration.StructuredDataTypeId },
-            { MainPdfDataTypeId, _config.StructuredDataConfiguration.MainPdfDataTypeId },
+            { StructuredDataTypeIdKey, configuration.StructuredDataTypeId },
+            { MainPdfDataTypeId, configuration.MainPdfDataTypeId },
             {
                 ExcludedAttachmentDataTypeIdsKey,
                 JsonSerializer.Serialize(excludedAttachmentDataTypeIds)

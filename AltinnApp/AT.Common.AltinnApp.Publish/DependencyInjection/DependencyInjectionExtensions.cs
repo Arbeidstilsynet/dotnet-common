@@ -290,6 +290,8 @@ public static class DependencyInjectionExtensions
         where TDataModel : class
         where TStructuredData : class
     {
+        ValidateSignificantDataTypes(configuration);
+
         if (
             configuration.ExcludedAttachmentDataTypeIds is null
             || configuration.ExcludedAttachmentDataTypeIds.Any(string.IsNullOrWhiteSpace)
@@ -297,6 +299,27 @@ public static class DependencyInjectionExtensions
         {
             throw new ArgumentException(
                 "ExcludedAttachmentDataTypeIds cannot contain null, empty, or whitespace entries.",
+                nameof(configuration)
+            );
+        }
+
+        if (
+            configuration.ExcludedAttachmentDataTypeIds.Any(id =>
+                string.Equals(
+                    id,
+                    configuration.MainPdfDataTypeId,
+                    StringComparison.OrdinalIgnoreCase
+                )
+                || string.Equals(
+                    id,
+                    configuration.StructuredDataTypeId,
+                    StringComparison.OrdinalIgnoreCase
+                )
+            )
+        )
+        {
+            throw new ArgumentException(
+                "ExcludedAttachmentDataTypeIds cannot contain MainPdfDataTypeId or StructuredDataTypeId.",
                 nameof(configuration)
             );
         }
@@ -320,6 +343,34 @@ public static class DependencyInjectionExtensions
         );
 
         return services;
+    }
+
+    private static void ValidateSignificantDataTypes(StructuredDataConfiguration configuration)
+    {
+        if (
+            string.IsNullOrWhiteSpace(configuration.MainPdfDataTypeId)
+            || string.IsNullOrWhiteSpace(configuration.StructuredDataTypeId)
+        )
+        {
+            throw new ArgumentException(
+                "MainPdfDataTypeId and StructuredDataTypeId cannot be null, empty, or whitespace.",
+                nameof(configuration)
+            );
+        }
+
+        if (
+            string.Equals(
+                configuration.MainPdfDataTypeId,
+                configuration.StructuredDataTypeId,
+                StringComparison.OrdinalIgnoreCase
+            )
+        )
+        {
+            throw new ArgumentException(
+                "MainPdfDataTypeId and StructuredDataTypeId must be different.",
+                nameof(configuration)
+            );
+        }
     }
 
     /// <summary>

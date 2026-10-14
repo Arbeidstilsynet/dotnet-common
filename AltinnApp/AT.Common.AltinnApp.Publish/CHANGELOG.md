@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added <!-- for new features. -->
 
 - Add `StructuredDataConfiguration.ExcludedAttachmentDataTypeIds` to exclude additional data types from attachments; the datamodel type is included automatically.
+- Validate that `MainPdfDataTypeId` and `StructuredDataTypeId` are non-blank, distinct, and never excluded from attachments (including via the datamodel type).
 
 ### Changed <!--  for changes in existing functionality. -->
 
@@ -26,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add `StructuredDataConfiguration.ExcludedAttachmentDataTypeIds` to exclude additional data types from attachments; the datamodel type is included automatically.
+- Validate that `MainPdfDataTypeId` and `StructuredDataTypeId` are non-blank, distinct, and never excluded from attachments (including via the datamodel type).
 
 ## 2.11.0
 

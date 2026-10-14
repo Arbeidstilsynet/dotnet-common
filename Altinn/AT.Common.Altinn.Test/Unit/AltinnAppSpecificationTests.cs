@@ -163,6 +163,46 @@ public class AltinnAppSpecificationTests
         act.ShouldThrow<InvalidOperationException>();
     }
 
+    [Fact]
+    public void GetDataElementsBySignificance_WhenSignificantTypesAreExcluded_IgnoresThoseExclusions()
+    {
+        var compliantInstance = CreateCompliantInstance(
+            _defaultSpec,
+            CreateDataElement(_defaultSpec.StructuredDataTypeId, "application/json"),
+            CreateDataElement("datamodel-xml", "application/xml"),
+            CreateDataElement("attachment", "application/pdf")
+        );
+        compliantInstance.DataValues[
+            AltinnSpecificationExtensions.ExcludedAttachmentDataTypeIdsKey
+        ] = """["ref-data-as-pdf","structured-data","datamodel-xml"]""";
+
+        var (mainData, structuredData, attachmentData) =
+            compliantInstance.GetDataElementsBySignificance();
+
+        mainData.DataType.ShouldBe(_defaultSpec.MainPdfDataTypeId);
+        structuredData.ShouldNotBeNull();
+        structuredData.DataType.ShouldBe(_defaultSpec.StructuredDataTypeId);
+        attachmentData.Select(element => element.DataType).ShouldBe(["attachment"]);
+    }
+
+    [Fact]
+    public void GetDataElementsBySignificance_WhenExclusionsDeclaredAndStructuredDataMissing_ReturnsNullStructuredData()
+    {
+        var compliantInstance = CreateCompliantInstance(
+            _defaultSpec,
+            CreateDataElement("datamodel-xml", "application/xml"),
+            CreateDataElement("attachment", "application/pdf")
+        );
+        compliantInstance.DataValues[
+            AltinnSpecificationExtensions.ExcludedAttachmentDataTypeIdsKey
+        ] = """["datamodel-xml"]""";
+
+        var (_, structuredData, attachmentData) = compliantInstance.GetDataElementsBySignificance();
+
+        structuredData.ShouldBeNull();
+        attachmentData.Select(element => element.DataType).ShouldBe(["attachment"]);
+    }
+
     [Theory]
     [InlineData("attachment-type-1", "application/pdf")]
     [InlineData("structured-data", "application/json")]
