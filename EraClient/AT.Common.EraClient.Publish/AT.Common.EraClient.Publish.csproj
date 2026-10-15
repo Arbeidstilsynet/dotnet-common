@@ -6,14 +6,18 @@
     <RootNamespace>Arbeidstilsynet.Common.EraClient</RootNamespace>
     <PackageId>Arbeidstilsynet.Common.EraClient</PackageId>
     <Product>Arbeidstilsynet.Common.EraClient</Product>
-    <Authors>Digital Samhandling</Authors>
+    <Authors>Arbeidstilsynet</Authors>
     <Company>Arbeidstilsynet</Company>
-    <Description></Description>
+    <Description>Client and dependency injection helpers for Arbeidstilsynet's OAuth-protected external ERA APIs.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.3.3</Version>
+    <Version>2.3.4</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/Arbeidstilsynet/dotnet-common</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Arbeidstilsynet/dotnet-common</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference
@@ -24,7 +28,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.13" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="README.md" />
     <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\shared\icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
   <Target
     Name="InjectPackageReleaseNotesFromFile"

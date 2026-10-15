@@ -6,14 +6,18 @@
     <RootNamespace>Arbeidstilsynet.Common.AspNetCore.Extensions</RootNamespace>
     <PackageId>Arbeidstilsynet.Common.AspNetCore.Extensions</PackageId>
     <Product>Arbeidstilsynet.Common.AspNetCore.Extensions</Product>
-    <Authors>Digital Samhandling</Authors>
+    <Authors>Arbeidstilsynet</Authors>
     <Company>Arbeidstilsynet</Company>
     <Description>Useful extensions for cross-cutting concerns at Arbeidstilsynet</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>3.0.2</Version>
+    <Version>3.0.3</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/Arbeidstilsynet/dotnet-common</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Arbeidstilsynet/dotnet-common</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.19.1" />
@@ -32,7 +36,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.12" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Update="README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\shared\icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\shared\src\UriExtensions.cs" Link="Shared\UriExtensions.cs" />

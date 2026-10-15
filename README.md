@@ -41,6 +41,38 @@ By convention you will get three new projects within this directory:
 
 `Test.ArchUnit` contains a preset of ArchUnit tests which check our common development conventions. This is useful to maintain a common (project) structure.
 
+### NuGet metadata
+
+All publishable packages use `Arbeidstilsynet` as author, `MIT` as their
+`PackageLicenseExpression` (see the root [LICENSE](LICENSE)), and
+`https://github.com/Arbeidstilsynet/dotnet-common` for both `PackageProjectUrl` and
+`RepositoryUrl`, with `RepositoryType` set to `git`.
+
+Set `PackageIcon` to `icon.png` and pack the shared [icon](shared/icon.png) at the
+package root alongside the package README. Projects two directories below this
+root use:
+
+```xml
+<None Update="README.md" Pack="true" PackagePath="\" />
+<None Include="..\..\shared\icon.png" Pack="true" PackagePath="\" />
+```
+
+Use `Update` for files already included by the SDK's default items and `Include`
+for shared files outside the project directory. Multi-targeted projects do not
+have default `None` items in their outer build; explicitly remove and include
+their package resources instead, so they are present during packing without
+duplicating default items in the inner builds:
+
+```xml
+<None Remove="README.md" />
+<None Include="README.md" Pack="true" PackagePath="\" />
+```
+
+Apply the same pattern to any other packed files in multi-targeted projects.
+Keep descriptions and tags specific to each package. These conventions support the
+[NuGet ID prefix reservation criteria](https://learn.microsoft.com/en-us/nuget/nuget-org/id-prefix-reservation);
+publishing compliant packages does not itself reserve the prefix.
+
 ## 🚧 Pre-Release
 
 If you want to test your changes by importing them into another project, you can use [Prerelease Packages](https://learn.microsoft.com/en-us/nuget/create-packages/prerelease-packages). To do this, simply update the version number with an `alpha`, `beta`, or `rc` suffix. For example, if you want to release a new version `0.0.2`, a valid prerelease version would be `0.0.2-alpha`. You can find the current version number in `AT.Common.NewFancyClient.Publish.csproj`.

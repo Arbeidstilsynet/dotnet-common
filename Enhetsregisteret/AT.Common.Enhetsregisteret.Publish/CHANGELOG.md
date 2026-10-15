@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 3.1.2
+
+### Fixed
+
+- Standardized NuGet metadata with Arbeidstilsynet as author, an MIT license expression, an embedded icon and Git repository details.
+
 ## 3.1.1
 
 ### Changed
