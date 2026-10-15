@@ -86,6 +86,17 @@ public record StructuredDataConfiguration
     /// <summary>
     /// Whether to keep the App data model after mapping. Default is false.
     /// </summary>
+    /// <remarks>
+    /// Set to true to disable package-managed deletion, and enable appLogic.autoDeleteOnProcessEnd
+    /// on the form-model data type to use Altinn-managed deletion. In Altinn 8.12.11 this deletes the
+    /// model before process-end post-processors, not after them. See the README for migration and retry implications.
+    /// This option and package-managed deletion will be removed in the next major release.
+    /// </remarks>
+    [Obsolete(
+        "Set KeepAppDataModelAfterMapping = true and enable appLogic.autoDeleteOnProcessEnd on the form-model data type. "
+            + "Altinn deletes before process-end post-processors; review ordering and retry implications in the README. "
+            + "This option and package-managed deletion will be removed in the next major release."
+    )]
     public bool KeepAppDataModelAfterMapping { get; init; } = false;
 
     /// <summary>
@@ -153,7 +164,7 @@ public static class DependencyInjectionExtensions
     /// <summary>
     /// Adds a mechanism to map the datamodel of type <typeparamref name="TDataModel"/> to structured data of type <typeparamref name="TStructuredData"/>
     ///
-    /// The data model is deleted right after PDF-generation so that it doesn't get transferred to storage (control this behavior with <see cref="StructuredDataConfiguration.KeepAppDataModelAfterMapping"/>). The structured data will be stored instead.
+    /// By default, the package deletes the data model after successful process-end validation and post-processing (control this behavior with <see cref="StructuredDataConfiguration.KeepAppDataModelAfterMapping"/>). The structured data is retained instead. See the README before migrating to Altinn-managed cleanup, which runs earlier.
     /// A structured data element is always expected to exist by process end, regardless of whether the data model is kept.
     /// </summary>
     /// <param name="services"></param>
@@ -185,7 +196,7 @@ public static class DependencyInjectionExtensions
     /// <br/>
     /// The mapper is resolved from the service provider (transient), so it can depend on other services through constructor injection.
     /// <br/>
-    /// The data model is deleted right after PDF-generation so that it doesn't get transferred to storage (control this behavior with <see cref="StructuredDataConfiguration.KeepAppDataModelAfterMapping"/>). The structured data will be stored instead.
+    /// By default, the package deletes the data model after successful process-end validation and post-processing (control this behavior with <see cref="StructuredDataConfiguration.KeepAppDataModelAfterMapping"/>). The structured data is retained instead. See the README before migrating to Altinn-managed cleanup, which runs earlier.
     /// <br/>
     /// A structured data element is always expected to exist by process end, regardless of whether the data model is kept.
     /// <br/>
@@ -238,7 +249,7 @@ public static class DependencyInjectionExtensions
     /// <summary>
     /// Adds a mechanism to map the datamodel of type <typeparamref name="TDataModel"/> to structured data of type <typeparamref name="TStructuredData"/>
     /// <br/>
-    /// The data model is deleted right after PDF-generation so that it doesn't get transferred to storage (control this behavior with <see cref="StructuredDataConfiguration.KeepAppDataModelAfterMapping"/>). The structured data will be stored instead.
+    /// By default, the package deletes the data model after successful process-end validation and post-processing (control this behavior with <see cref="StructuredDataConfiguration.KeepAppDataModelAfterMapping"/>). The structured data is retained instead. See the README before migrating to Altinn-managed cleanup, which runs earlier.
     /// <br/>
     /// A structured data element is always expected to exist by process end, regardless of whether the data model is kept.
     /// <br/>

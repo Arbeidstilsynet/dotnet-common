@@ -14,6 +14,7 @@ using Xunit;
 
 namespace Arbeidstilsynet.Common.AltinnApp.Test.Unit;
 
+#pragma warning disable CS0618 // Verify compatibility with deprecated package-managed cleanup.
 public class StructuredDataManagerTests
 {
     private readonly IApplicationClient _applicationClient;
@@ -31,6 +32,25 @@ public class StructuredDataManagerTests
         _applicationClient = Substitute.For<IApplicationClient>();
         _instanceClient = Substitute.For<IInstanceClient>();
         _dataClient = Substitute.For<IDataClient>();
+        _dataClient
+            .InsertBinaryData(
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<Stream>(),
+                cancellationToken: Arg.Any<CancellationToken>()
+            )
+            .Returns(_ => NewStructuredDataElement());
+        _dataClient
+            .DeleteData(
+                Arg.Any<int>(),
+                Arg.Any<Guid>(),
+                Arg.Any<Guid>(),
+                Arg.Any<bool>(),
+                cancellationToken: Arg.Any<CancellationToken>()
+            )
+            .Returns(true);
         _logger = Substitute.For<
             ILogger<StructuredDataManager<TestDataModel, TestStructuredData>>
         >();
@@ -148,6 +168,156 @@ public class StructuredDataManagerTests
                 Arg.Any<Stream>(),
                 cancellationToken: Arg.Any<CancellationToken>()
             );
+    }
+
+    [Fact]
+    public async Task End_TaskEnd_AwaitsInsertion_ThenProcessEndUsesSameInstanceWithoutRefresh()
+    {
+        var instance = AltinnData.CreateTestInstance();
+        var modelElement = instance.Data.Single();
+        var attachment = new DataElement
+        {
+            Id = Guid.NewGuid().ToString(),
+            DataType = "attachment",
+        };
+        instance.Data.Add(attachment);
+        ConfigureMapping();
+        var createdElement = NewStructuredDataElement();
+        var insertion = new TaskCompletionSource<DataElement>(
+            TaskCreationOptions.RunContinuationsAsynchronously
+        );
+        _dataClient
+            .InsertBinaryData(
+                instance.Id,
+                "structured-data",
+                "application/json",
+                "structured-data.json",
+                Arg.Any<Stream>(),
+                cancellationToken: Arg.Any<CancellationToken>()
+            )
+            .Returns(insertion.Task);
+
+        var mapping = _sut.End("task1", instance);
+
+        mapping.IsCompleted.ShouldBeFalse();
+        instance.Data.ShouldBe([modelElement, attachment]);
+        await _instanceClient.DidNotReceiveWithAnyArgs().UpdateDataValues(default!, default!);
+
+        insertion.SetResult(createdElement);
+        await mapping;
+        instance.Data.ShouldBe([modelElement, attachment, createdElement]);
+
+        await _sut.End(instance, []);
+
+        instance.Data.ShouldBe([attachment, createdElement]);
+        await _instanceClient.DidNotReceiveWithAnyArgs().GetInstance(default!);
+    }
+
+    [Fact]
+    public async Task End_TaskEnd_DoesNotDuplicateReturnedElementAlreadyAddedByClient()
+    {
+        var instance = AltinnData.CreateTestInstance();
+        ConfigureMapping();
+        var createdElement = NewStructuredDataElement();
+        _dataClient
+            .InsertBinaryData(
+                instance.Id,
+                "structured-data",
+                "application/json",
+                "structured-data.json",
+                Arg.Any<Stream>(),
+                cancellationToken: Arg.Any<CancellationToken>()
+            )
+            .Returns(_ =>
+            {
+                instance.Data.Add(
+                    new DataElement { Id = createdElement.Id, DataType = createdElement.DataType }
+                );
+                return createdElement;
+            });
+
+        await _sut.End("task1", instance);
+
+        instance.Data.Count(d => d.Id == createdElement.Id).ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task End_TaskEnd_WhenInsertionFails_RecordsOnlySuccessfulDeletions()
+    {
+        var instance = AltinnData.CreateTestInstance();
+        var modelElement = instance.Data.Single();
+        instance.Data.Add(NewStructuredDataElement());
+        ConfigureMapping();
+        var storageError = new HttpRequestException("Insertion failed");
+        _dataClient
+            .InsertBinaryData(
+                instance.Id,
+                "structured-data",
+                "application/json",
+                "structured-data.json",
+                Arg.Any<Stream>(),
+                cancellationToken: Arg.Any<CancellationToken>()
+            )
+            .Returns(Task.FromException<DataElement>(storageError));
+
+        var exception = await Should.ThrowAsync<InvalidOperationException>(() =>
+            _sut.End("task1", instance)
+        );
+
+        exception.InnerException.ShouldBeSameAs(storageError);
+        instance.Data.ShouldBe([modelElement]);
+        await _instanceClient.DidNotReceiveWithAnyArgs().UpdateDataValues(default!, default!);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task End_TaskEnd_WhenDeletionFails_DoesNotRemoveFailedElementOrInsert(bool throws)
+    {
+        var instance = AltinnData.CreateTestInstance();
+        var modelElement = instance.Data.Single();
+        var deletedElement = NewStructuredDataElement();
+        var failedElement = NewStructuredDataElement();
+        var unattemptedElement = NewStructuredDataElement();
+        instance.Data.AddRange([deletedElement, failedElement, unattemptedElement]);
+        ConfigureMapping();
+        var storageError = new HttpRequestException("Deletion failed");
+        _dataClient
+            .DeleteData(
+                instance.GetInstanceOwnerPartyId(),
+                instance.GetInstanceGuid(),
+                Guid.Parse(failedElement.Id),
+                false,
+                cancellationToken: Arg.Any<CancellationToken>()
+            )
+            .Returns(throws ? Task.FromException<bool>(storageError) : Task.FromResult(false));
+
+        var exception = await Should.ThrowAsync<InvalidOperationException>(() =>
+            _sut.End("task1", instance)
+        );
+
+        if (throws)
+        {
+            exception.InnerException.ShouldBeSameAs(storageError);
+        }
+        else
+        {
+            exception
+                .InnerException.ShouldBeOfType<InvalidOperationException>()
+                .Message.ShouldContain(failedElement.Id);
+        }
+        instance.Data.ShouldBe([modelElement, failedElement, unattemptedElement]);
+        await _dataClient
+            .DidNotReceiveWithAnyArgs()
+            .InsertBinaryData(
+                default!,
+                default!,
+                default!,
+                default!,
+                default!,
+                cancellationToken: Arg.Any<CancellationToken>()
+            );
+        await _instanceClient.DidNotReceiveWithAnyArgs().UpdateDataValues(default!, default!);
     }
 
     [Fact]
@@ -453,11 +623,18 @@ public class StructuredDataManagerTests
             .GetApplication(Arg.Any<string>(), Arg.Any<string>())
             .Returns(application);
 
+        _instanceClient.GetInstance(instance).Returns(AltinnData.CreateTestInstance());
+        var postProcessor = Substitute.For<IStructuredDataPostProcessor>();
+        var sut = CreateSut([postProcessor]);
+
         // Act
-        var act = () => _sut.End(instance, new List<InstanceEvent>());
+        var act = () => sut.End(instance, new List<InstanceEvent>());
 
         // Assert
-        await act.ShouldThrowAsync<InvalidOperationException>();
+        var exception = await act.ShouldThrowAsync<InvalidOperationException>();
+        exception.Message.ShouldContain("No structured data element");
+        await _instanceClient.Received(1).GetInstance(instance);
+        await postProcessor.DidNotReceiveWithAnyArgs().Process(default!);
         await _dataClient
             .DidNotReceiveWithAnyArgs()
             .DeleteData(
@@ -499,6 +676,8 @@ public class StructuredDataManagerTests
             []
         );
 
+        _instanceClient.GetInstance(instance).Returns(AltinnData.CreateTestInstance());
+
         // Act
         var act = () => sut.End(instance, new List<InstanceEvent>());
 
@@ -520,6 +699,7 @@ public class StructuredDataManagerTests
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
+        var unrelatedElements = instance.Data.ToList();
         var existingStructuredDataId = Guid.NewGuid();
         instance.Data.Add(
             new DataElement
@@ -579,6 +759,8 @@ public class StructuredDataManagerTests
         });
 
         instance.Data.ShouldNotContain(d => d.Id == existingStructuredDataId.ToString());
+        instance.Data.Count(d => d.DataType == "structured-data").ShouldBe(1);
+        instance.Data.Where(d => d.DataType != "structured-data").ShouldBe(unrelatedElements);
     }
 
     [Fact]
@@ -692,25 +874,6 @@ public class StructuredDataManagerTests
             )
             .Returns(dataModel);
 
-        // Simulate that the first call resulted in a structured-data element being persisted on the instance.
-        _dataClient
-            .When(c =>
-                c.InsertBinaryData(
-                    Arg.Any<string>(),
-                    "structured-data",
-                    Arg.Any<string>(),
-                    Arg.Any<string>(),
-                    Arg.Any<Stream>(),
-                    cancellationToken: Arg.Any<CancellationToken>()
-                )
-            )
-            .Do(_ =>
-            {
-                instance.Data.Add(
-                    new DataElement { Id = Guid.NewGuid().ToString(), DataType = "structured-data" }
-                );
-            });
-
         // Act
         await _sut.End("task1", instance);
         await _sut.End("task1", instance);
@@ -784,6 +947,22 @@ public class StructuredDataManagerTests
             );
         await _instanceClient.DidNotReceiveWithAnyArgs().UpdateDataValues(default!, default!);
         await _structuredDataValidator.DidNotReceiveWithAnyArgs().ValidateAndThrow(default!);
+
+        _instanceClient.GetInstance(instance).Returns(AltinnData.CreateTestInstance());
+        var exception = await Should.ThrowAsync<InvalidOperationException>(() =>
+            sut.End(instance, [])
+        );
+        exception.Message.ShouldContain("No structured data element");
+        await _instanceClient.Received(1).GetInstance(instance);
+        await _dataClient
+            .DidNotReceiveWithAnyArgs()
+            .DeleteData(
+                default,
+                default,
+                default,
+                default,
+                cancellationToken: Arg.Any<CancellationToken>()
+            );
     }
 
     [Fact]
@@ -861,6 +1040,144 @@ public class StructuredDataManagerTests
         await _instanceClient.DidNotReceiveWithAnyArgs().GetInstance(default(Instance)!);
     }
 
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public async Task End_ProcessEnd_WhenMissingLocally_RefreshesAndReusesFreshState(
+        bool keepModel,
+        bool hasPostProcessors
+    )
+    {
+        var instance = AltinnData.CreateTestInstance();
+        var staleElement = new DataElement { Id = Guid.NewGuid().ToString(), DataType = "stale" };
+        instance.Data.Add(staleElement);
+        var freshInstance = CreateInstanceWithRequiredElements();
+        if (keepModel)
+        {
+            // Altinn's automatic deletion can remove the model before IProcessEnd.
+            freshInstance.Data.RemoveAll(d => d.DataType == "testDataType");
+        }
+        freshInstance.Data.Single(d => d.DataType == "structured-data").DataType =
+            "STRUCTURED-DATA";
+        _instanceClient.GetInstance(instance).Returns(freshInstance);
+        ConfigureMapping();
+        var postProcessor = Substitute.For<IStructuredDataPostProcessor>();
+        var sut = CreateSut(
+            hasPostProcessors ? [postProcessor] : [],
+            _config with
+            {
+                StructuredDataConfiguration = _config.StructuredDataConfiguration with
+                {
+                    KeepAppDataModelAfterMapping = keepModel,
+                },
+            }
+        );
+
+        await sut.End(instance, []);
+
+        await _instanceClient.Received(1).GetInstance(instance);
+        instance.Data.ShouldBeSameAs(freshInstance.Data);
+        instance.Data.ShouldNotContain(staleElement);
+        instance.Data.ShouldNotContain(d => d.DataType == "testDataType");
+        if (hasPostProcessors)
+        {
+            await postProcessor
+                .Received(1)
+                .Process(
+                    Arg.Is<StructuredDataPostProcessingContext>(c =>
+                        c.Instance == freshInstance
+                        && c.StructuredDataElement
+                            == freshInstance.Data.Single(d => d.DataType == "STRUCTURED-DATA")
+                        && c.MainPdfElement
+                            == freshInstance.Data.Single(d => d.DataType == "ref-data-as-pdf")
+                    )
+                );
+        }
+        if (keepModel)
+        {
+            await _dataClient
+                .DidNotReceiveWithAnyArgs()
+                .DeleteData(
+                    default,
+                    default,
+                    default,
+                    default,
+                    cancellationToken: Arg.Any<CancellationToken>()
+                );
+        }
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task End_ProcessEnd_WhenRefreshFails_PropagatesStorageErrorWithoutDeleting(
+        bool structuredDataPresentLocally
+    )
+    {
+        var instance = AltinnData.CreateTestInstance();
+        if (structuredDataPresentLocally)
+        {
+            instance.Data.Add(NewStructuredDataElement());
+        }
+        var originalData = instance.Data.ToList();
+        var storageError = new HttpRequestException("Storage unavailable");
+        _instanceClient.GetInstance(instance).Returns(Task.FromException<Instance>(storageError));
+        var postProcessor = Substitute.For<IStructuredDataPostProcessor>();
+        var sut = CreateSut([postProcessor]);
+
+        var exception = await Should.ThrowAsync<HttpRequestException>(() => sut.End(instance, []));
+
+        exception.ShouldBeSameAs(storageError);
+        instance.Data.ShouldBe(originalData);
+        await _instanceClient.Received(1).GetInstance(instance);
+        await postProcessor.DidNotReceiveWithAnyArgs().Process(default!);
+        await _dataClient
+            .DidNotReceiveWithAnyArgs()
+            .DeleteData(
+                default,
+                default,
+                default,
+                default,
+                cancellationToken: Arg.Any<CancellationToken>()
+            );
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task End_ProcessEnd_WhenManualDeletionFails_PreservesModel(bool throws)
+    {
+        var instance = CreateInstanceWithRequiredElements();
+        var originalData = instance.Data.ToList();
+        ConfigureMapping();
+        var storageError = new HttpRequestException("Deletion failed");
+        _dataClient
+            .DeleteData(
+                instance.GetInstanceOwnerPartyId(),
+                instance.GetInstanceGuid(),
+                Guid.Parse(instance.Data.Single(d => d.DataType == "testDataType").Id),
+                false,
+                cancellationToken: Arg.Any<CancellationToken>()
+            )
+            .Returns(throws ? Task.FromException<bool>(storageError) : Task.FromResult(false));
+
+        var exception = await Should.ThrowAsync<Exception>(() => _sut.End(instance, []));
+
+        if (throws)
+        {
+            exception.ShouldBeSameAs(storageError);
+        }
+        else
+        {
+            exception
+                .ShouldBeOfType<InvalidOperationException>()
+                .Message.ShouldContain("Could not delete");
+        }
+        instance.Data.ShouldBe(originalData);
+    }
+
     [Fact]
     public async Task End_ProcessEnd_RunsPostProcessorsInOrder_WithFreshInstanceAndLatestElements()
     {
@@ -891,7 +1208,7 @@ public class StructuredDataManagerTests
             Created = DateTime.UtcNow,
         };
         var freshInstance = AltinnData.CreateTestInstance();
-        freshInstance.Data = [structuredDataElement, olderPdfElement, latestPdfElement];
+        freshInstance.Data.AddRange([structuredDataElement, olderPdfElement, latestPdfElement]);
         _instanceClient.GetInstance(instance).Returns(freshInstance);
 
         var first = Substitute.For<IStructuredDataPostProcessor>();
@@ -923,13 +1240,15 @@ public class StructuredDataManagerTests
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
+        instance.Data.Single().Id = Guid.NewGuid().ToString();
         instance.Data.Add(
             new DataElement { Id = Guid.NewGuid().ToString(), DataType = "structured-data" }
         );
         _applicationClient
             .GetApplication(Arg.Any<string>(), Arg.Any<string>())
             .Returns(AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName));
-        _instanceClient.GetInstance(instance).Returns(CreateInstanceWithRequiredElements());
+        var freshInstance = CreateInstanceWithRequiredElements();
+        _instanceClient.GetInstance(instance).Returns(freshInstance);
 
         var postProcessor = Substitute.For<IStructuredDataPostProcessor>();
         var sut = CreateSut(postProcessors: [postProcessor]);
@@ -950,6 +1269,17 @@ public class StructuredDataManagerTests
                 cancellationToken: Arg.Any<CancellationToken>()
             );
         });
+        await _dataClient
+            .Received(1)
+            .DeleteData(
+                instance.GetInstanceOwnerPartyId(),
+                instance.GetInstanceGuid(),
+                Guid.Parse("12345678-1234-1234-1234-123456789012"),
+                false,
+                cancellationToken: Arg.Any<CancellationToken>()
+            );
+        instance.Data.ShouldBeSameAs(freshInstance.Data);
+        instance.Data.ShouldNotContain(d => d.DataType == "testDataType");
     }
 
     [Fact]
@@ -970,8 +1300,6 @@ public class StructuredDataManagerTests
             .Process(Arg.Any<StructuredDataPostProcessingContext>())
             .Returns(Task.FromException(new InvalidOperationException("boom")));
         var sut = CreateSut(postProcessors: [postProcessor]);
-        var initialDataCount = instance.Data.Count;
-
         // Act
         var act = () => sut.End(instance, new List<InstanceEvent>());
 
@@ -986,7 +1314,7 @@ public class StructuredDataManagerTests
                 default,
                 cancellationToken: Arg.Any<CancellationToken>()
             );
-        instance.Data.Count.ShouldBe(initialDataCount);
+        instance.Data.ShouldContain(d => d.DataType == "testDataType");
     }
 
     [Theory]
@@ -1047,14 +1375,29 @@ public class StructuredDataManagerTests
         await postProcessor.DidNotReceiveWithAnyArgs().Process(default!);
     }
 
+    private void ConfigureMapping()
+    {
+        _applicationClient
+            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName));
+        _dataClient
+            .GetFormData(
+                Arg.Any<Instance>(),
+                Arg.Any<DataElement>(),
+                cancellationToken: Arg.Any<CancellationToken>()
+            )
+            .Returns(new TestDataModel { Name = "Test" });
+    }
+
     private StructuredDataManager<TestDataModel, TestStructuredData> CreateSut(
-        IEnumerable<IStructuredDataPostProcessor> postProcessors
+        IEnumerable<IStructuredDataPostProcessor> postProcessors,
+        StructuredDataManager<TestDataModel, TestStructuredData>.Config? config = null
     ) =>
         new(
             _applicationClient,
             _dataClient,
             _instanceClient,
-            _config,
+            config ?? _config,
             _logger,
             _structuredDataValidator,
             _mapper,
@@ -1064,18 +1407,21 @@ public class StructuredDataManagerTests
     private static Instance CreateInstanceWithRequiredElements()
     {
         var instance = AltinnData.CreateTestInstance();
-        instance.Data =
-        [
+        instance.Data.AddRange([
             new DataElement { Id = Guid.NewGuid().ToString(), DataType = "structured-data" },
             new DataElement { Id = Guid.NewGuid().ToString(), DataType = "ref-data-as-pdf" },
-        ];
+        ]);
         return instance;
     }
+
+    private static DataElement NewStructuredDataElement() =>
+        new() { Id = Guid.NewGuid().ToString(), DataType = "structured-data" };
 
     public class TestDataModel
     {
         public string? Name { get; set; }
     }
+#pragma warning restore CS0618
 
     public class TestStructuredData
     {

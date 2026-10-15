@@ -99,7 +99,7 @@ Alternatively, adjust the environment-based defaults (error details are included
 
 #### 3. (Optional) Post-process the instance and data elements
 
-Implement `IStructuredDataPostProcessor` to run logic from inside the structured data feature at process end. Unlike a plain `IProcessEnd`, a post-processor is guaranteed that both the structured data element and the main PDF element exist on the instance. The instance is freshly fetched from storage, and post-processors run before the App data model is deleted, so a failing post-processor can be retried. Post-processors should therefore be idempotent.
+Implement `IStructuredDataPostProcessor` to run logic from inside the structured data feature at process end. Unlike a plain `IProcessEnd`, a post-processor is guaranteed that both the structured data element and the main PDF element exist on the instance. The instance is freshly fetched from storage, including framework-created elements such as PDFs. Post-processors run before **package-managed** App data model deletion, so a failing post-processor leaves the model available for recovery. This ordering does not apply to Altinn-managed automatic deletion (see migration below). Post-processors should be idempotent.
 
 Post-processors are responsible for persisting their own changes (e.g. via `IDataClient.Update`).
 
@@ -119,6 +119,57 @@ services.AddStructuredDataPostProcessor<MyPostProcessor>();
 ```
 
 Multiple post-processors run in registration order.
+
+#### Instance synchronization and process-end validation
+
+Structured data is still mapped and its insertion awaited at **task end**. Successful package-owned insertions and deletions are reflected in the supplied `instance.Data` collection, preserving unrelated elements and avoiding duplicate entries. Failed operations propagate errors without recording a mutation that did not succeed; earlier successful deletions are not rolled back.
+
+At process end, the configured structured-data type must exist regardless of the task filter or cleanup setting. If it is missing locally, the package fetches the instance from storage once and replaces the supplied instance's data collection. It throws the missing-structured-data exception only if that authoritative recheck also lacks the element. Storage failures propagate instead. There are no delays, polling, or speculative retries.
+
+Post-processors always use fresh storage state, reusing the fallback refresh when one was needed. Without post-processors, an element already present locally requires no additional lookup. Manual cleanup resolves the form-model element from the current data collection after post-processing.
+
+Synchronization covers mutations made by this package, not elements created by other framework components. The identified issue is stale in-memory state, not a demonstrated unfinished-write race. In Altinn.App.Core 8.12.11, process-event registration is attempted before app-defined `IProcessEnd` handlers, so this process-end guard is **not** a pre-event write barrier. Keep structured-data mapping at task end.
+
+#### Migrating form-model cleanup ownership
+
+`KeepAppDataModelAfterMapping` is deprecated. Its default remains `false`: the package still deletes the form model after successful validation and post-processing. Setting it to `true` still disables package-managed deletion. The option and package-managed form-model deletion will be removed in the next major release.
+
+For framework-managed cleanup, coordinate **both** settings:
+
+1. Disable package-managed deletion in the `AddStructuredData` configuration callback:
+
+   ```csharp
+   configuration => configuration with
+   {
+       KeepAppDataModelAfterMapping = true
+   }
+   ```
+
+   This intentionally uses the deprecated compatibility option; applications treating warnings as errors need a targeted `CS0618` suppression during migration.
+
+2. Enable Altinn-managed deletion on the **form-model data type**, not the structured-data or PDF type:
+
+   ```json
+   {
+     "id": "skjema",
+     "appLogic": {
+       "autoDeleteOnProcessEnd": true
+     }
+   }
+   ```
+
+   This is a fragment to merge into the existing data-type configuration in `App/config/applicationmetadata.json`. Preserve the existing `classRef`, other `appLogic` properties, and data-type settings; use your actual form-model data-type ID.
+
+**Ordering and failure/retry implications verified against Altinn.App.Core 8.12.11:**
+
+- [`DefaultAppEvents.OnEndAppEvent`](https://github.com/Altinn/app-lib-dotnet/blob/v8.12.11/src/Altinn.App.Core/Implementation/DefaultAppEvents.cs) awaits automatic data-element deletion, using `DeleteData` with `delay: true` (marking elements as deleted). Package-managed cleanup uses `delay: false`.
+- [`EndEventEventHandler`](https://github.com/Altinn/app-lib-dotnet/blob/v8.12.11/src/Altinn.App.Core/Internal/Process/EventHandlers/EndEventEventHandler.cs) invokes this during process-event handling. [`ProcessEngine`](https://github.com/Altinn/app-lib-dotnet/blob/v8.12.11/src/Altinn.App.Core/Internal/Process/ProcessEngine.cs) handles these events, persists process state/events, and attempts event registration **before** invoking app-defined `IProcessEnd` handlers. Consequently, framework-managed model deletion occurs **before this package's guard and post-processors**.
+- Automatic deletion awaits all deletion tasks. A deletion failure propagates before the app-defined process-end handlers run; successful deletions may already have occurred. There is no transactional rollback. A later guard or post-processor failure cannot undo framework cleanup or the already-persisted process transition.
+- Do not assume a failing post-processor will be automatically retried by resubmission. Validate the application's explicit recovery/retry path, and keep post-processors idempotent. With automatic cleanup enabled, post-processors and recovery must not depend on the form model still being available.
+
+Use framework-managed cleanup when these ordering and recovery semantics are acceptable. Otherwise, retain package-managed cleanup during the compatibility period and adapt form-model-dependent post-processing/recovery before migrating. Reverify ordering when upgrading Altinn or overriding its app-event implementation.
+
+Release and validate the instance-state fix before removing app-local refresh workarounds that are no longer needed. Migrate cleanup ownership separately; enabling automatic cleanup is not required for this fix.
 
 ### Extension Methods
 

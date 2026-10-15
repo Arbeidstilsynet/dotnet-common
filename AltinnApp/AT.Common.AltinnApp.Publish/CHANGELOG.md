@@ -22,6 +22,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.12.1
+
+### Fixed
+
+- Synchronize the supplied instance's data collection after successful structured-data insertion and deletion, preserving unrelated elements and avoiding duplicates.
+- Verify locally missing structured data against storage once before failing at process end; propagate lookup errors and retain the guard regardless of task filtering or cleanup settings.
+- Reuse the fallback refresh for post-processors, preserve fresh framework-created elements, and resolve manual form-model cleanup from the current data collection.
+- Reject unsuccessful manual or structured-data deletions without removing their in-memory entries.
+
+### Deprecated
+
+- `KeepAppDataModelAfterMapping` and package-managed form-model deletion, to be removed in the next major release. The option, default, and existing cleanup behavior remain available. Document coordinated migration to Altinn's form-model `appLogic.autoDeleteOnProcessEnd`, including its earlier deletion ordering and recovery implications.
+
 ## 2.12.0
 
 ### Added
