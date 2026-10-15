@@ -19,6 +19,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 5.0.0
+
+### Added
+
+- Built-in offline Development stubs for `IAddressSearch`, `IFylkeKommuneApi` and `IPropertySearch`, with small deterministic sample responses.
+- Explicit `GeoNorgeEnvironment` selection and startup warnings for endpoint overrides in Staging.
+
+### Changed
+
+- **BREAKING**: `AddGeoNorge` now requires `IHostEnvironment`. Production and Staging default to the public APIs; Development defaults to stubs; other host environments require an explicit target.
+- **BREAKING**: Production rejects non-production targets and non-default endpoints. Generated clients are not registered for stubbed APIs.
+- `BaseUrl` and `PropertyBaseUrl` are now nullable overrides. An explicit URL activates the corresponding real adapters in Development.
+
 ## 4.1.0
 
 ### Added
