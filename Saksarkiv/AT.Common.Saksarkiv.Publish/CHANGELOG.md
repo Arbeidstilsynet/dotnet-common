@@ -22,6 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.0.0-beta5
+
+### Fixed
+
+- Applied main's NuGet metadata fixes to the 2.0 prerelease.
+
 ## 2.0.0
 
 ### Added
