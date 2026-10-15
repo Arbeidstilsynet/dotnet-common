@@ -35,6 +35,11 @@ internal record AltinnAppSpecification(string AppId)
     public string StructuredDataTypeId { get; init; } = "structured-data";
 
     /// <summary>
+    /// Data type IDs excluded from the consumer-facing attachment list, or null for legacy classification.
+    /// </summary>
+    public string[]? ExcludedAttachmentDataTypeIds { get; init; }
+
+    /// <summary>
     /// The <see cref="FileMetadata.Filename"/> of the structured data (if any). This will be used instead of <see cref="DataElement.Filename"/> in the <see cref="AltinnDocument"/>.
     /// </summary>
     public string StructuredDataFileName { get; init; } = "structured-data.json";

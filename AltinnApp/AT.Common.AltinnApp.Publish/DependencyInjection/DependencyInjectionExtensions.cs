@@ -68,6 +68,12 @@ public record StructuredDataConfiguration
     public string MainPdfDataTypeId { get; init; } = "ref-data-as-pdf";
 
     /// <summary>
+    /// Additional data type IDs to exclude from the consumer-facing attachment list. The datamodel
+    /// type is automatically added to this list.
+    /// </summary>
+    public string[] ExcludedAttachmentDataTypeIds { get; init; } = [];
+
+    /// <summary>
     /// Whether to include error details in the structured data in case of mapping errors. Default is false.
     /// </summary>
     public bool IncludeErrorDetails { get; init; } = false;
@@ -76,11 +82,6 @@ public record StructuredDataConfiguration
     /// Whether to disable validation of the structured data against the JSON schema during mapping. Default is false.
     /// </summary>
     public bool DisableValidation { get; init; } = false;
-
-    /// <summary>
-    /// Whether to keep the App data model after mapping. Default is false.
-    /// </summary>
-    public bool KeepAppDataModelAfterMapping { get; init; } = false;
 
     /// <summary>
     /// Optional filter for which task(s) the structured data mapping should run for. Default is empty, which means it will run for all tasks.
@@ -147,14 +148,18 @@ public static class DependencyInjectionExtensions
     /// <summary>
     /// Adds a mechanism to map the datamodel of type <typeparamref name="TDataModel"/> to structured data of type <typeparamref name="TStructuredData"/>
     ///
-    /// The data model is deleted right after PDF-generation so that it doesn't get transferred to storage (control this behavior with <see cref="StructuredDataConfiguration.KeepAppDataModelAfterMapping"/>). The structured data will be stored instead.
+    /// The package does not delete the form model. Enable appLogic.autoDeleteOnProcessEnd on its data type
+    /// for Altinn-managed cleanup before process-completed event registration. See the README for migration details.
     /// A structured data element is always expected to exist by process end, regardless of whether the data model is kept.
     /// </summary>
     /// <param name="services"></param>
     /// <param name="mapFunc">The function responsible for mapping from <typeparamref name="TDataModel"/> to <typeparamref name="TStructuredData"/>.</param>
     /// <param name="configuration">The structured data configuration.</param>
     /// <typeparam name="TStructuredData">The type of the structured data that the App data model will be mapped to and stored as.</typeparam>
-    /// <typeparam name="TDataModel">The type of the App data model. This is the type that will be mapped to structured data and then deleted before storage.</typeparam>
+    /// <typeparam name="TDataModel">The type of the App data model to map to structured data. Form-model cleanup is configured in application metadata.</typeparam>
+    [Obsolete(
+        "Implement IStructuredDataMapper<TDataModel, TStructuredData> and use AddStructuredData<TDataModel, TStructuredData, TMapper>(env, configure) instead."
+    )]
     public static IServiceCollection AddStructuredData<TDataModel, TStructuredData>(
         this IServiceCollection services,
         Func<TDataModel, TStructuredData> mapFunc,
@@ -163,18 +168,75 @@ public static class DependencyInjectionExtensions
         where TDataModel : class
         where TStructuredData : class
     {
-        var config = new StructuredDataManager<TDataModel, TStructuredData>.Config(mapFunc)
+        services.AddSingleton<IStructuredDataMapper<TDataModel, TStructuredData>>(
+            new DelegateStructuredDataMapper<TDataModel, TStructuredData>(mapFunc)
+        );
+
+        return services.AddStructuredDataInternal<TDataModel, TStructuredData>(configuration);
+    }
+
+    /// <summary>
+    /// Adds a mechanism to map the datamodel of type <typeparamref name="TDataModel"/> to structured data of type <typeparamref name="TStructuredData"/>,
+    /// using the mapper <typeparamref name="TMapper"/>.
+    /// <br/>
+    /// The mapper is resolved from the service provider (transient), so it can depend on other services through constructor injection.
+    /// <br/>
+    /// The package does not delete the form model. Enable appLogic.autoDeleteOnProcessEnd on its data type
+    /// for Altinn-managed cleanup before process-completed event registration. See the README for migration details.
+    /// <br/>
+    /// A structured data element is always expected to exist by process end, regardless of whether the data model is kept.
+    /// <br/>
+    /// The app instance will also declare the <see cref="DataElement.DataType"/> of the structured data and main content. This declaration is written to DataValues, based on the <see cref="StructuredDataConfiguration"/>
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="env">The hosting environment. Used to determine configuration defaults: error details are included in non-production environments and excluded in production.</param>
+    /// <param name="configure">Optional function to adjust the environment-based defaults, e.g. <c>c => c with { TaskIdFilter = ["Task_1"], ExcludedAttachmentDataTypeIds = ["internal-data"] }</c>.</param>
+    /// <typeparam name="TDataModel">The type of the App data model to map to structured data. Form-model cleanup is configured in application metadata.</typeparam>
+    /// <typeparam name="TStructuredData">The type of the structured data that the App data model will be mapped to and stored as.</typeparam>
+    /// <typeparam name="TMapper">The <see cref="IStructuredDataMapper{TDataModel, TStructuredData}"/> implementation.</typeparam>
+    /// <returns>Service collection for chaining</returns>
+    /// <remarks>
+    /// You need to add this to your App/config/applicationmetadata.json:
+    /// <br/>
+    /// {
+    /// <br/>    "id": "structured-data",
+    /// <br/>    "allowedContentTypes": [
+    /// <br/>    "application/json"
+    /// <br/>    ],
+    /// <br/>    "allowedContributors": [
+    /// <br/>    "app:owned"
+    /// <br/>    ]
+    /// <br/>},
+    /// </remarks>
+    public static IServiceCollection AddStructuredData<TDataModel, TStructuredData, TMapper>(
+        this IServiceCollection services,
+        IHostEnvironment env,
+        Func<StructuredDataConfiguration, StructuredDataConfiguration>? configure = null
+    )
+        where TDataModel : class
+        where TStructuredData : class
+        where TMapper : class, IStructuredDataMapper<TDataModel, TStructuredData>
+    {
+        var configuration = new StructuredDataConfiguration
         {
-            StructuredDataConfiguration = configuration,
+            IncludeErrorDetails = !env.IsProduction(),
         };
 
-        return services.AddStructuredDataInternal(config);
+        if (configure is not null)
+        {
+            configuration = configure(configuration);
+        }
+
+        services.AddTransient<IStructuredDataMapper<TDataModel, TStructuredData>, TMapper>();
+
+        return services.AddStructuredDataInternal<TDataModel, TStructuredData>(configuration);
     }
 
     /// <summary>
     /// Adds a mechanism to map the datamodel of type <typeparamref name="TDataModel"/> to structured data of type <typeparamref name="TStructuredData"/>
     /// <br/>
-    /// The data model is deleted right after PDF-generation so that it doesn't get transferred to storage (control this behavior with <see cref="StructuredDataConfiguration.KeepAppDataModelAfterMapping"/>). The structured data will be stored instead.
+    /// The package does not delete the form model. Enable appLogic.autoDeleteOnProcessEnd on its data type
+    /// for Altinn-managed cleanup before process-completed event registration. See the README for migration details.
     /// <br/>
     /// A structured data element is always expected to exist by process end, regardless of whether the data model is kept.
     /// <br/>
@@ -184,7 +246,7 @@ public static class DependencyInjectionExtensions
     /// <param name="mapFunc">The function responsible for mapping from <typeparamref name="TDataModel"/> to <typeparamref name="TStructuredData"/>.</param>
     /// <param name="env">The hosting environment. Used to determine which defaults to use in the configuration. In production, error details will be excluded from the structured data by default, while in non-production environments, error details will be included by default.</param>
     /// <typeparam name="TStructuredData">The type of the structured data that the App data model will be mapped to and stored as.</typeparam>
-    /// <typeparam name="TDataModel">The type of the App data model. This is the type that will be mapped to structured data and then deleted before storage.</typeparam>
+    /// <typeparam name="TDataModel">The type of the App data model to map to structured data. Form-model cleanup is configured in application metadata.</typeparam>
     /// <returns></returns>
     /// <remarks>
     /// You need to add this to your App/config/applicationmetadata.json:
@@ -199,6 +261,9 @@ public static class DependencyInjectionExtensions
     /// <br/>    ]
     /// <br/>},
     /// </remarks>
+    [Obsolete(
+        "Implement IStructuredDataMapper<TDataModel, TStructuredData> and use AddStructuredData<TDataModel, TStructuredData, TMapper>(env, configure) instead."
+    )]
     public static IServiceCollection AddStructuredData<TDataModel, TStructuredData>(
         this IServiceCollection services,
         Func<TDataModel, TStructuredData> mapFunc,
@@ -207,25 +272,62 @@ public static class DependencyInjectionExtensions
         where TDataModel : class
         where TStructuredData : class
     {
-        var config = new StructuredDataManager<TDataModel, TStructuredData>.Config(mapFunc)
-        {
-            StructuredDataConfiguration = new StructuredDataConfiguration()
-            {
-                IncludeErrorDetails = !env.IsProduction(),
-            },
-        };
+        services.AddSingleton<IStructuredDataMapper<TDataModel, TStructuredData>>(
+            new DelegateStructuredDataMapper<TDataModel, TStructuredData>(mapFunc)
+        );
 
-        return services.AddStructuredDataInternal(config);
+        return services.AddStructuredDataInternal<TDataModel, TStructuredData>(
+            new StructuredDataConfiguration { IncludeErrorDetails = !env.IsProduction() }
+        );
     }
 
     private static IServiceCollection AddStructuredDataInternal<TDataModel, TStructuredData>(
         this IServiceCollection services,
-        StructuredDataManager<TDataModel, TStructuredData>.Config config
+        StructuredDataConfiguration configuration
     )
         where TDataModel : class
         where TStructuredData : class
     {
-        services.AddSingleton(config);
+        ValidateSignificantDataTypes(configuration);
+
+        if (
+            configuration.ExcludedAttachmentDataTypeIds is null
+            || configuration.ExcludedAttachmentDataTypeIds.Any(string.IsNullOrWhiteSpace)
+        )
+        {
+            throw new ArgumentException(
+                "ExcludedAttachmentDataTypeIds cannot contain null, empty, or whitespace entries.",
+                nameof(configuration)
+            );
+        }
+
+        if (
+            configuration.ExcludedAttachmentDataTypeIds.Any(id =>
+                string.Equals(
+                    id,
+                    configuration.MainPdfDataTypeId,
+                    StringComparison.OrdinalIgnoreCase
+                )
+                || string.Equals(
+                    id,
+                    configuration.StructuredDataTypeId,
+                    StringComparison.OrdinalIgnoreCase
+                )
+            )
+        )
+        {
+            throw new ArgumentException(
+                "ExcludedAttachmentDataTypeIds cannot contain MainPdfDataTypeId or StructuredDataTypeId.",
+                nameof(configuration)
+            );
+        }
+
+        services.AddSingleton(
+            new StructuredDataManager<TDataModel, TStructuredData>.Config
+            {
+                StructuredDataConfiguration = configuration,
+            }
+        );
         services.AddTransient<StructuredDataManager<TDataModel, TStructuredData>>();
         services.AddTransient<
             IStructuredDataValidator<TStructuredData>,
@@ -238,6 +340,55 @@ public static class DependencyInjectionExtensions
             sp.GetRequiredService<StructuredDataManager<TDataModel, TStructuredData>>()
         );
 
+        return services;
+    }
+
+    private static void ValidateSignificantDataTypes(StructuredDataConfiguration configuration)
+    {
+        if (
+            string.IsNullOrWhiteSpace(configuration.MainPdfDataTypeId)
+            || string.IsNullOrWhiteSpace(configuration.StructuredDataTypeId)
+        )
+        {
+            throw new ArgumentException(
+                "MainPdfDataTypeId and StructuredDataTypeId cannot be null, empty, or whitespace.",
+                nameof(configuration)
+            );
+        }
+
+        if (
+            string.Equals(
+                configuration.MainPdfDataTypeId,
+                configuration.StructuredDataTypeId,
+                StringComparison.OrdinalIgnoreCase
+            )
+        )
+        {
+            throw new ArgumentException(
+                "MainPdfDataTypeId and StructuredDataTypeId must be different.",
+                nameof(configuration)
+            );
+        }
+    }
+
+    /// <summary>
+    /// Registers a <see cref="IStructuredDataPostProcessor"/> that runs at process end, from inside the structured data feature
+    /// (see <see cref="AddStructuredData{TDataModel, TStructuredData, TMapper}(IServiceCollection, IHostEnvironment, Func{StructuredDataConfiguration, StructuredDataConfiguration})"/>).
+    /// <br/>
+    /// Post-processors run after Altinn-managed automatic form-model deletion, and are guaranteed that the
+    /// structured data element and the main PDF element exist on the instance. They must not depend on the form model.
+    /// Multiple post-processors run in registration order,
+    /// and should be idempotent since process end may be retried.
+    /// </summary>
+    /// <typeparam name="T">The post-processor implementation.</typeparam>
+    /// <param name="services"></param>
+    /// <returns>Service collection for chaining</returns>
+    public static IServiceCollection AddStructuredDataPostProcessor<T>(
+        this IServiceCollection services
+    )
+        where T : class, IStructuredDataPostProcessor
+    {
+        services.TryAddEnumerable(ServiceDescriptor.Transient<IStructuredDataPostProcessor, T>());
         return services;
     }
 

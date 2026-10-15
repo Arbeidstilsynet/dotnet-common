@@ -6,6 +6,7 @@ using Arbeidstilsynet.Common.Altinn.DependencyInjection;
 using Arbeidstilsynet.Common.Altinn.Implementation.Clients;
 using Arbeidstilsynet.Common.Altinn.Implementation.ErrorReporting;
 using Arbeidstilsynet.Common.Altinn.Model.Api;
+using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using Shouldly;
@@ -151,6 +152,117 @@ public class MaskinportenClientTests
     }
 
     [Fact]
+    public async Task GetToken_ExposesStructuredRejectionWithoutParsingTheExceptionMessage()
+    {
+        _handler.RespondWith(
+            HttpStatusCode.BadRequest,
+            """{"error":"invalid_scope","error_description":"Scope not allowed"}"""
+        );
+
+        var exception = await Should.ThrowAsync<HttpRequestException>(() =>
+            _sut.GetToken(["altinn:events.subscribe"])
+        );
+
+        var structured = exception.ShouldBeOfType<MaskinportenTokenException>();
+        structured.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        structured.ErrorCode.ShouldBe("invalid_scope");
+        structured.ErrorDescription.ShouldBe("Scope not allowed");
+        structured.ResponseBody.ShouldBe(
+            """{"error":"invalid_scope","error_description":"Scope not allowed"}"""
+        );
+        structured.RequestedScopes.ShouldBe(["altinn:events.subscribe"]);
+        structured.Message.ShouldContain("Scope not allowed");
+    }
+
+    [Theory]
+    [InlineData("not JSON")]
+    [InlineData("""{"error":123}""")]
+    [InlineData("""{"error":null}""")]
+    [InlineData("""{"error_description":"invalid_scope"}""")]
+    [InlineData("""{"error":"invalid_scope" """)]
+    [InlineData("""["invalid_scope"]""")]
+    [InlineData("null")]
+    public async Task GetToken_MalformedOAuthBody_StillExposesStatusAndScopes(string body)
+    {
+        _handler.RespondWith(HttpStatusCode.Unauthorized, body);
+
+        var exception = await Should.ThrowAsync<MaskinportenTokenException>(() =>
+            _sut.GetToken(Scopes)
+        );
+
+        exception.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+        exception.ErrorCode.ShouldBeNull();
+        exception.ResponseBody.ShouldBe(body);
+        exception.RequestedScopes.ShouldBe(Scopes);
+        exception.Message.ShouldContain(body);
+    }
+
+    [Fact]
+    public async Task GetToken_PreservesProviderErrorWithoutSelectingTheLoggingPolicy()
+    {
+        _handler.RespondWith(
+            HttpStatusCode.BadRequest,
+            """{"error":"unrecognized-provider-code"}"""
+        );
+
+        var exception = await Should.ThrowAsync<MaskinportenTokenException>(() =>
+            _sut.GetToken(Scopes)
+        );
+
+        exception.ErrorCode.ShouldBe("unrecognized-provider-code");
+    }
+
+    [Theory]
+    [InlineData(
+        """{"error":"invalid_scope","error_description":123,"extra":"provider-detail"}""",
+        "invalid_scope",
+        null
+    )]
+    [InlineData(
+        """{"error":123,"error_description":"Detailed provider explanation"}""",
+        null,
+        "Detailed provider explanation"
+    )]
+    [InlineData(
+        """{"error_description":"synthetic-token synthetic-private-key 12345678901"}""",
+        null,
+        "synthetic-token synthetic-private-key 12345678901"
+    )]
+    public async Task GetToken_ExposesProviderDetails_WithoutApplyingALoggingPolicy(
+        string body,
+        string? expectedCode,
+        string? expectedDescription
+    )
+    {
+        _handler.RespondWith(HttpStatusCode.BadRequest, body);
+
+        var exception = await Should.ThrowAsync<MaskinportenTokenException>(() =>
+            _sut.GetToken(Scopes)
+        );
+
+        exception.ErrorCode.ShouldBe(expectedCode);
+        exception.ErrorDescription.ShouldBe(expectedDescription);
+        exception.ResponseBody.ShouldBe(body);
+    }
+
+    [Fact]
+    public async Task GetToken_FailureSnapshotsScopes_AndDoesNotCacheRejections()
+    {
+        string[] scopes = ["altinn:events.subscribe"];
+        _handler.RespondWith(HttpStatusCode.BadRequest, """{"error":"invalid_scope"}""");
+        var exception = await Should.ThrowAsync<MaskinportenTokenException>(() =>
+            _sut.GetToken(scopes)
+        );
+        scopes[0] = "changed:scope";
+
+        exception.RequestedScopes.ShouldBe(["altinn:events.subscribe"]);
+        exception.RequestedScopes.ShouldBeAssignableTo<IList<string>>().IsReadOnly.ShouldBeTrue();
+        _handler.RespondWith(NewToken(expiresIn: 120));
+        await _sut.GetToken(["altinn:events.subscribe"]);
+        _handler.Requests.Count.ShouldBe(2);
+    }
+
+    [Fact]
     public async Task GetToken_TruncatesLongMaskinportenErrorResponses()
     {
         _handler.RespondWith(
@@ -158,10 +270,18 @@ public class MaskinportenClientTests
             new string('x', ErrorResponseBodyCapture.MaxBodyLength * 10)
         );
 
-        var exception = await Should.ThrowAsync<HttpRequestException>(() => _sut.GetToken(Scopes));
+        var exception = await Should.ThrowAsync<MaskinportenTokenException>(() =>
+            _sut.GetToken(Scopes)
+        );
 
         exception.Message.ShouldContain("(truncated)");
         exception.Message.Length.ShouldBeLessThan(ErrorResponseBodyCapture.MaxBodyLength + 200);
+        exception.ErrorCode.ShouldBeNull();
+        exception.ErrorDescription.ShouldBeNull();
+        exception.ResponseBody.ShouldBe(
+            new string('x', ErrorResponseBodyCapture.MaxBodyLength) + "... (truncated)"
+        );
+        exception.RequestedScopes.ShouldBe(Scopes);
     }
 
     [Fact]

@@ -9,9 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added <!-- for new features. -->
 
-### Changed <!--  for changes in existing functionality. -->
+- Add `StructuredDataConfiguration.ExcludedAttachmentDataTypeIds` to exclude additional data types from attachments; the datamodel type is included automatically.
+- Validate that `MainPdfDataTypeId` and `StructuredDataTypeId` are non-blank, distinct, and never excluded from attachments (including via the datamodel type).
 
-- Allow publishing with Dialogporten's prerelease client dependency (NU5104).
+### Changed <!--  for changes in existing functionality. -->
 
 ### Deprecated <!--  for soon-to-be removed features. -->
 
@@ -20,6 +21,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed <!-- for any bug fixes. -->
 
 ### Security <!-- in case of vulnerabilities. -->
+
+## 2.12.2
+
+### Fixed
+
+- Standardized NuGet metadata with Arbeidstilsynet as author, an MIT license expression, an embedded icon and Git repository details.
+
+## 2.12.1
+
+### Fixed
+
+- Synchronize the supplied instance's data collection after successful structured-data insertion and deletion, preserving unrelated elements and avoiding duplicates.
+- Verify locally missing structured data against storage once before failing at process end; propagate lookup errors and retain the guard regardless of task filtering or cleanup settings.
+- Reuse the fallback refresh for post-processors and preserve fresh framework-created elements, without requiring the form model at process end.
+- Reject unsuccessful structured-data deletions without removing their in-memory entries.
+
+### Removed
+
+- **Breaking change:** Remove `KeepAppDataModelAfterMapping` and package-managed form-model deletion. Deletion in `IProcessEnd` could not guarantee cleanup before process-completed event registration. Enable `appLogic.autoDeleteOnProcessEnd` on the existing form-model data type for Altinn-managed cleanup; without it, the form model is retained. See the README migration guide for metadata, test-retention, post-processing, and recovery implications. Process-end validation and post-processors remain supported.
+
+## 2.12.0
+
+### Added
+
+- Add `StructuredDataConfiguration.ExcludedAttachmentDataTypeIds` to exclude additional data types from attachments; the datamodel type is included automatically.
+- Validate that `MainPdfDataTypeId` and `StructuredDataTypeId` are non-blank, distinct, and never excluded from attachments (including via the datamodel type).
+
+## 2.11.0
+
+### Added
+
+- feat: Adds `IStructuredDataPostProcessor` and `AddStructuredDataPostProcessor<T>()` for post-processing the instance, structured data element and main PDF element at process end, from inside the structured data feature.
+
+## 2.10.0
+
+### Added
+
+- feat: `IStructuredDataMapper<TDataModel, TStructuredData>` and `AddStructuredData<TDataModel, TStructuredData, TMapper>(env, configure)`. Mappers are resolved from DI (constructor injection, async mapping), and `configure` adjusts the environment-based default `StructuredDataConfiguration`.
+
+### Changed
+
+- Allow publishing with Dialogporten's prerelease client dependency (NU5104).
+
+### Deprecated
+
+- `AddStructuredData<TDataModel, TStructuredData>(Func<TDataModel, TStructuredData>, ...)` overloads. Implement `IStructuredDataMapper` and use the new overload instead.
 
 ## 2.9.1
 

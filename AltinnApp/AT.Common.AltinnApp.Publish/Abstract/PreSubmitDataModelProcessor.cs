@@ -7,10 +7,14 @@ using Arbeidstilsynet.Common.AltinnApp.Extensions;
 namespace Arbeidstilsynet.Common.AltinnApp.Abstract.Processing;
 
 /// <summary>
-/// Abstract processor for processing data model before submission
+/// Abstract processor for processing the data model at task end.
 /// </summary>
 /// <typeparam name="TDataModel"></typeparam>
-/// <remarks><typeparamref name="TDataModel"/> must be the data model for the application (i.e. must have a ClassRef)</remarks>
+/// <remarks>
+/// <typeparamref name="TDataModel"/> must be the data model for the application (i.e. must have a ClassRef).
+/// Runs before automatic process-end form-model deletion, but does not establish ordering relative to
+/// other task-end handlers or imply that the task is the final submission task.
+/// </remarks>
 public abstract class PreSubmitDataModelProcessor<TDataModel> : IProcessTaskEnd
     where TDataModel : class
 {
@@ -37,7 +41,7 @@ public abstract class PreSubmitDataModelProcessor<TDataModel> : IProcessTaskEnd
     }
 
     /// <summary>
-    /// Process the data model before submission. This is called by the Altinn App runtime.
+    /// Process the data model at task end. This is called by the Altinn App runtime.
     /// </summary>
     /// <param name="taskId"></param>
     /// <param name="instance"></param>
@@ -73,7 +77,7 @@ public abstract class PreSubmitDataModelProcessor<TDataModel> : IProcessTaskEnd
     }
 
     /// <summary>
-    /// Process the data model before submission. The result will be saved as the new data model.
+    /// Process the data model at task end. The result will be saved as the new data model.
     /// </summary>
     /// <param name="currentDataModel"></param>
     /// <param name="instance"></param>

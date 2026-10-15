@@ -1,4 +1,5 @@
 using Arbeidstilsynet.Common.Altinn.Model.Api;
+using Arbeidstilsynet.Common.Altinn.Model.Exceptions;
 
 namespace Arbeidstilsynet.Common.Altinn.Ports.Clients;
 
@@ -15,6 +16,11 @@ public interface IMaskinportenClient
     /// same scopes share a token.
     /// </param>
     /// <param name="cancellationToken">Cancels the token request.</param>
+    /// <exception cref="MaskinportenTokenException">
+    /// Maskinporten returned an unsuccessful HTTP response. Inspect its status, OAuth error code,
+    /// description, response body and requested scopes rather than parsing its message. Response
+    /// details are untrusted and can contain sensitive data; select log-safe fields explicitly.
+    /// </exception>
     Task<MaskinportenTokenResponse> GetToken(
         IReadOnlyList<string> scopes,
         CancellationToken cancellationToken = default

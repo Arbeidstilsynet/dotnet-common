@@ -7,6 +7,8 @@ using Altinn.App.Core.Internal.Instances;
 using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.AltinnApp.DependencyInjection;
 using Arbeidstilsynet.Common.AltinnApp.Extensions;
+using Arbeidstilsynet.Common.AltinnApp.Model;
+using Arbeidstilsynet.Common.AltinnApp.Ports;
 using Microsoft.Extensions.Logging;
 
 namespace Arbeidstilsynet.Common.AltinnApp.Implementation;
@@ -17,17 +19,12 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
 {
     internal const string StructuredDataTypeIdKey = "StructuredDataTypeId";
     internal const string MainPdfDataTypeId = "MainPdfDataTypeId";
+    internal const string ExcludedAttachmentDataTypeIdsKey = "ExcludedAttachmentDataTypeIds";
 
     internal record Config
     {
         public StructuredDataConfiguration StructuredDataConfiguration { get; init; } =
             new StructuredDataConfiguration();
-        public Func<TDataModel, TStructuredData> MapFunc { get; init; }
-
-        public Config(Func<TDataModel, TStructuredData> mapFunc)
-        {
-            MapFunc = mapFunc;
-        }
     }
 
     private readonly IApplicationClient _applicationClient;
@@ -36,6 +33,8 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
     private readonly Config _config;
     private readonly ILogger<StructuredDataManager<TDataModel, TStructuredData>> _logger;
     private readonly IStructuredDataValidator<TStructuredData> _structuredDataValidator;
+    private readonly IStructuredDataMapper<TDataModel, TStructuredData> _mapper;
+    private readonly IReadOnlyList<IStructuredDataPostProcessor> _postProcessors;
 
     public StructuredDataManager(
         IApplicationClient applicationClient,
@@ -43,7 +42,9 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         IInstanceClient instanceClient,
         Config config,
         ILogger<StructuredDataManager<TDataModel, TStructuredData>> logger,
-        IStructuredDataValidator<TStructuredData> structuredDataValidator
+        IStructuredDataValidator<TStructuredData> structuredDataValidator,
+        IStructuredDataMapper<TDataModel, TStructuredData> mapper,
+        IEnumerable<IStructuredDataPostProcessor> postProcessors
     )
     {
         _applicationClient = applicationClient;
@@ -52,25 +53,21 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         _config = config;
         _logger = logger;
         _structuredDataValidator = structuredDataValidator;
+        _mapper = mapper;
+        _postProcessors = postProcessors.ToList();
     }
 
     public async Task End(Instance instance, List<InstanceEvent>? events)
     {
         // Right after submission
 
-        var dataModelElement = await _applicationClient.GetRequiredDataModelElement<TDataModel>(
-            instance
-        );
+        Instance? freshInstance = null;
+        if (!HasStructuredData(instance))
+        {
+            freshInstance = await RefreshInstanceData(instance);
+        }
 
-        var structuredDataExists = instance.Data.Any(d =>
-            string.Equals(
-                d.DataType,
-                _config.StructuredDataConfiguration.StructuredDataTypeId,
-                StringComparison.OrdinalIgnoreCase
-            )
-        );
-
-        if (!structuredDataExists)
+        if (!HasStructuredData(instance))
         {
             throw new InvalidOperationException(
                 $"No structured data element of type '{_config.StructuredDataConfiguration.StructuredDataTypeId}' was found on the instance by process end. "
@@ -78,9 +75,45 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
             );
         }
 
-        if (!_config.StructuredDataConfiguration.KeepAppDataModelAfterMapping)
+        if (_postProcessors.Count > 0)
         {
-            await _dataClient.DeleteElement(instance, dataModelElement);
+            freshInstance ??= await RefreshInstanceData(instance);
+            await RunPostProcessors(freshInstance);
+        }
+    }
+
+    private bool HasStructuredData(Instance instance) =>
+        instance.Data.Any(d =>
+            string.Equals(
+                d.DataType,
+                _config.StructuredDataConfiguration.StructuredDataTypeId,
+                StringComparison.OrdinalIgnoreCase
+            )
+        );
+
+    private async Task<Instance> RefreshInstanceData(Instance instance)
+    {
+        var freshInstance = await _instanceClient.GetInstance(instance);
+        instance.Data = freshInstance.Data;
+        return freshInstance;
+    }
+
+    private async Task RunPostProcessors(Instance freshInstance)
+    {
+        var context = new StructuredDataPostProcessingContext
+        {
+            Instance = freshInstance,
+            StructuredDataElement = freshInstance.GetRequiredLatestDataElement(
+                _config.StructuredDataConfiguration.StructuredDataTypeId
+            ),
+            MainPdfElement = freshInstance.GetRequiredLatestDataElement(
+                _config.StructuredDataConfiguration.MainPdfDataTypeId
+            ),
+        };
+
+        foreach (var postProcessor in _postProcessors)
+        {
+            await postProcessor.Process(context);
         }
     }
 
@@ -106,8 +139,8 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
 
         try
         {
-            await CreateStructuredData(instance);
-            await CreateAppSpecification(instance);
+            var dataModelDataTypeId = await CreateStructuredData(instance);
+            await CreateAppSpecification(instance, dataModelDataTypeId);
         }
         catch (Exception e)
         {
@@ -130,7 +163,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         }
     }
 
-    private async Task CreateStructuredData(Instance instance)
+    private async Task<string> CreateStructuredData(Instance instance)
     {
         var dataModelElement = await _applicationClient.GetRequiredDataModelElement<TDataModel>(
             instance
@@ -141,7 +174,7 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
             CancellationToken.None
         );
 
-        var structuredData = _config.MapFunc.Invoke(dataModel);
+        var structuredData = await _mapper.Map(dataModel);
 
         if (!_config.StructuredDataConfiguration.DisableValidation)
         {
@@ -150,12 +183,19 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
 
         await DeleteExistingStructuredData(instance);
 
-        await _dataClient.InsertStructuredData(
+        var createdElement = await _dataClient.InsertStructuredData(
             instance,
             structuredData,
             _config.StructuredDataConfiguration.StructuredDataTypeId,
             CancellationToken.None
         );
+
+        if (!instance.Data.Any(d => d.Id == createdElement.Id))
+        {
+            instance.Data.Add(createdElement);
+        }
+
+        return dataModelElement.DataType;
     }
 
     private async Task DeleteExistingStructuredData(Instance instance)
@@ -176,24 +216,60 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
         }
     }
 
-    private async Task CreateAppSpecification(Instance instance)
+    private async Task CreateAppSpecification(Instance instance, string dataModelDataTypeId)
     {
-        await _instanceClient.UpdateDataValues(
-            instance,
-            new Dictionary<string, string?>()
+        var configuration = _config.StructuredDataConfiguration;
+        if (
+            string.Equals(
+                dataModelDataTypeId,
+                configuration.MainPdfDataTypeId,
+                StringComparison.OrdinalIgnoreCase
+            )
+            || string.Equals(
+                dataModelDataTypeId,
+                configuration.StructuredDataTypeId,
+                StringComparison.OrdinalIgnoreCase
+            )
+        )
+        {
+            throw new InvalidOperationException(
+                $"The datamodel data type '{dataModelDataTypeId}' cannot be the same as MainPdfDataTypeId or StructuredDataTypeId."
+            );
+        }
+
+        var excludedAttachmentDataTypeIds = configuration
+            .ExcludedAttachmentDataTypeIds.Append(dataModelDataTypeId)
+            .Distinct(StringComparer.Ordinal);
+
+        var dataValues = new Dictionary<string, string?>()
+        {
+            { StructuredDataTypeIdKey, configuration.StructuredDataTypeId },
+            { MainPdfDataTypeId, configuration.MainPdfDataTypeId },
             {
-                {
-                    StructuredDataTypeIdKey,
-                    _config.StructuredDataConfiguration.StructuredDataTypeId
-                },
-                { MainPdfDataTypeId, _config.StructuredDataConfiguration.MainPdfDataTypeId },
-            }
-        );
+                ExcludedAttachmentDataTypeIdsKey,
+                JsonSerializer.Serialize(excludedAttachmentDataTypeIds)
+            },
+        };
+
+        await _instanceClient.UpdateDataValues(instance, dataValues);
     }
 }
 
 file static class Extensions
 {
+    public static DataElement GetRequiredLatestDataElement(this Instance instance, string dataType)
+    {
+        return instance
+                .Data.Where(d =>
+                    string.Equals(d.DataType, dataType, StringComparison.OrdinalIgnoreCase)
+                )
+                .OrderByDescending(d => d.Created)
+                .FirstOrDefault()
+            ?? throw new InvalidOperationException(
+                $"No data element of type '{dataType}' was found on instance {instance.Id} before structured data post-processing."
+            );
+    }
+
     public static async Task<DataElement> GetRequiredDataModelElement<T>(
         this IApplicationClient applicationClient,
         Instance instance
@@ -259,7 +335,7 @@ file static class Extensions
         return data;
     }
 
-    public static async Task InsertStructuredData<T>(
+    public static async Task<DataElement> InsertStructuredData<T>(
         this IDataClient dataClient,
         Instance instance,
         T structuredData,
@@ -270,7 +346,7 @@ file static class Extensions
     {
         using var stream = structuredData.ToBinaryStream();
 
-        await dataClient.InsertBinaryData(
+        return await dataClient.InsertBinaryData(
             instance.Id,
             structuredDataTypeId,
             "application/json",
@@ -287,13 +363,19 @@ file static class Extensions
         CancellationToken? cancellationToken = null
     )
     {
-        await dataClient.DeleteData(
+        var deleted = await dataClient.DeleteData(
             instance.GetInstanceOwnerPartyId(),
             instance.GetInstanceGuid(),
             Guid.Parse(dataElement.Id),
             false,
             cancellationToken: cancellationToken ?? CancellationToken.None
         );
+        if (!deleted)
+        {
+            throw new InvalidOperationException(
+                $"Could not delete data element {dataElement.Id} from instance {instance.Id}."
+            );
+        }
         instance.Data.Remove(dataElement);
     }
 
