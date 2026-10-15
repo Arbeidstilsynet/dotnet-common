@@ -125,8 +125,23 @@ public class EnvironmentRegistrationTests
         foreach (var service in provider.GetServices<IHostedService>())
         {
             await service.StartAsync(TestContext.Current.CancellationToken);
+            await service.StopAsync(TestContext.Current.CancellationToken);
         }
         logger.Levels.Contains(LogLevel.Warning).ShouldBe(expectWarning);
+    }
+
+    [Fact]
+    public void OverrideWarningServiceHonorsCancellation()
+    {
+        using var provider = Register(
+                "Staging",
+                new() { BrregApiBaseUrlOverwrite = "http://mock/" }
+            )
+            .BuildServiceProvider();
+        var service = provider.GetServices<IHostedService>().ShouldHaveSingleItem();
+        var token = new CancellationToken(true);
+        Should.Throw<OperationCanceledException>(() => service.StartAsync(token));
+        Should.Throw<OperationCanceledException>(() => service.StopAsync(token));
     }
 
     [Fact]

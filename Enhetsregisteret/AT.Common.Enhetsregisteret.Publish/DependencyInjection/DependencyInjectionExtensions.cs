@@ -56,6 +56,11 @@ public static class DependencyInjectionExtensions
 {
     internal const string Clientkey = "EnhetsregisteretClient";
 
+#pragma warning disable S1075 // Canonical API defaults enforce the Production policy; non-production URLs are configurable.
+    private const string ProductionBaseUrl = "https://data.brreg.no/";
+    private const string PpeBaseUrl = "https://data.ppe.brreg.no/";
+#pragma warning restore S1075
+
     /// <summary>
     /// Registers an implementation of IEnhetsregisteret in the specified <see cref="IServiceCollection"/>.
     /// </summary>
@@ -120,9 +125,7 @@ public static class DependencyInjectionExtensions
             EnhetsregisteretEnvironment.Stub
         );
         var defaultUrl =
-            target == EnhetsregisteretEnvironment.Production
-                ? "https://data.brreg.no/"
-                : "https://data.ppe.brreg.no/";
+            target == EnhetsregisteretEnvironment.Production ? ProductionBaseUrl : PpeBaseUrl;
         var baseUrl = EnvironmentClientPolicy.ResolveUrl(
             hostEnvironment,
             config.BrregApiBaseUrlOverwrite,

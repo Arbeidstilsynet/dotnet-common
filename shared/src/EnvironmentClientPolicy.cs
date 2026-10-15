@@ -117,8 +117,9 @@ internal static class EnvironmentClientPolicy
         string[] urls
     ) : IHostedService
     {
-        public Task StartAsync(CancellationToken cancellationToken)
+        Task IHostedService.StartAsync(CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             logger.LogWarning(
                 "{Client} base URLs have been overridden in Staging: {Urls}",
                 client,
@@ -127,6 +128,10 @@ internal static class EnvironmentClientPolicy
             return Task.CompletedTask;
         }
 
-        public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+        Task IHostedService.StopAsync(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.CompletedTask;
+        }
     }
 }

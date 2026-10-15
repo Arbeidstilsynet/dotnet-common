@@ -70,8 +70,10 @@ public static class DependencyInjectionExtensions
     private const string AdresserBasePath = "adresser/v1";
     private const string KommuneInfoBasePath = "kommuneinfo/v1";
     private const string EiendomBasePath = "eiendom/v1";
+#pragma warning disable S1075 // Canonical API defaults enforce the Production policy; non-production URLs are configurable.
     private const string DefaultBaseUrl = "https://ws.geonorge.no/";
     private const string DefaultPropertyBaseUrl = "https://api.kartverket.no/";
+#pragma warning restore S1075
 
     /// <summary>
     /// Register GeoNorge services in the provided <see cref="IServiceCollection"/>.

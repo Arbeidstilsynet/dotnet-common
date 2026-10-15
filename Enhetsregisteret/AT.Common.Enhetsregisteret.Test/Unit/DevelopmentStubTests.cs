@@ -6,6 +6,40 @@ namespace Arbeidstilsynet.Common.Enhetsregisteret.Test.Unit;
 
 public class DevelopmentStubTests
 {
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(0.5)]
+    [InlineData(double.NaN)]
+    [InlineData(double.PositiveInfinity)]
+    [InlineData(double.NegativeInfinity)]
+    public void SearchesRejectNonIntegerOrNonFinitePagination(double value)
+    {
+        var stub = new EnhetsregisteretStub();
+        Should.Throw<ArgumentOutOfRangeException>(() =>
+            stub.SearchEnheter(q => q.Page = value, TestContext.Current.CancellationToken)
+        );
+        Should.Throw<ArgumentOutOfRangeException>(() =>
+            stub.SearchUnderenheter(q => q.Size = value, TestContext.Current.CancellationToken)
+        );
+    }
+
+    [Fact]
+    public async Task SearchesAcceptIntegerPagination()
+    {
+        var stub = new EnhetsregisteretStub();
+        var response = await stub.SearchEnheter(
+            q =>
+            {
+                q.Page = 0;
+                q.Size = 1;
+            },
+            TestContext.Current.CancellationToken
+        );
+        response!.Embedded!.Enheter.ShouldHaveSingleItem();
+        response.Page!.Number.ShouldBe(0);
+        response.Page.Size.ShouldBe(1);
+    }
+
     [Fact]
     public async Task LookupsReturnSamplesOrNullAndFreshModels()
     {

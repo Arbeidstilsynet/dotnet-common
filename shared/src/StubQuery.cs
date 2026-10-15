@@ -5,17 +5,17 @@ internal static class StubQuery
     public static void Validate(object query, params string[] supportedProperties)
     {
         ArgumentNullException.ThrowIfNull(query);
-        foreach (var property in query.GetType().GetProperties())
+        var unsupportedProperty = query
+            .GetType()
+            .GetProperties()
+            .FirstOrDefault(property =>
+                property.GetValue(query) is not null && !supportedProperties.Contains(property.Name)
+            );
+        if (unsupportedProperty is not null)
         {
-            if (
-                property.GetValue(query) is not null
-                && !supportedProperties.Contains(property.Name)
-            )
-            {
-                throw new NotSupportedException(
-                    $"The Development stub does not support '{property.Name}'. Configure an API endpoint or replace the interface implementation."
-                );
-            }
+            throw new NotSupportedException(
+                $"The Development stub does not support '{unsupportedProperty.Name}'. Configure an API endpoint or replace the interface implementation."
+            );
         }
     }
 
@@ -31,14 +31,14 @@ internal static class StubQuery
 
     public static void Page(double? page, double? size)
     {
-        if (page is { } p && (!double.IsFinite(p) || p < 0 || p != Math.Truncate(p)))
+        if (page is { } p && (!double.IsInteger(p) || p < 0))
         {
             throw new ArgumentOutOfRangeException(
                 nameof(page),
                 "Page must be a non-negative integer."
             );
         }
-        if (size is { } s && (!double.IsFinite(s) || s <= 0 || s != Math.Truncate(s)))
+        if (size is { } s && (!double.IsInteger(s) || s <= 0))
         {
             throw new ArgumentOutOfRangeException(
                 nameof(size),
