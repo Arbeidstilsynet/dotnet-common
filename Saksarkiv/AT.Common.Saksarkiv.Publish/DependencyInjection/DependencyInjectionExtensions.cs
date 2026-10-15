@@ -1,7 +1,9 @@
 using System.Net.Http;
 using Arbeidstilsynet.Common.Saksarkiv.DependencyInjection.Configuration;
 using Arbeidstilsynet.Common.Saksarkiv.Implementation;
+using Arbeidstilsynet.Common.Saksarkiv.V3;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Http.Resilience;
 
 namespace Arbeidstilsynet.Common.Saksarkiv.DependencyInjection;
@@ -12,22 +14,75 @@ namespace Arbeidstilsynet.Common.Saksarkiv.DependencyInjection;
 public static class DependencyInjectionExtensions
 {
     internal const string SaksarkivHttpClientName = "SaksarkivHttpClient";
+    internal const string HealthProbePath = "/api/health";
 
     /// <summary>
-    /// Registers Saksarkiv client services with explicit configuration.
+    /// Registers the Saksarkiv <b>v3</b> client (the default) with explicit configuration.
     /// </summary>
     /// <param name="services">The service collection to register with.</param>
     /// <param name="configuration">Base client configuration.</param>
     /// <param name="configureResilience">
     /// Optional callback for customizing the standard HTTP resilience handler after the default Saksarkiv settings are applied.
     /// </param>
+    /// <remarks>
+    /// Resolve <see cref="SaksarkivClientV3"/> to call the v3 API. To additionally use the legacy
+    /// v2 API, call <see cref="AddSaksarkivClientV2"/>. This registration also adds a health check
+    /// named <c>Saksarkiv</c> that probes the version-agnostic <c>GET /api/health/authPing</c>
+    /// endpoint.
+    /// </remarks>
     public static IServiceCollection AddSaksarkivClient(
         this IServiceCollection services,
         SaksarkivConfiguration configuration,
         Action<HttpStandardResilienceOptions>? configureResilience = null
     )
     {
-        services.AddSingleton(configuration);
+        AddSharedInfrastructure(services, configuration, configureResilience);
+
+        services.AddScoped<SaksarkivClientV3>(serviceProvider => new SaksarkivClientV3(
+            serviceProvider.GetRequiredService<SaksarkivRequestAdapter>()
+        ));
+
+        services.TryAddScoped<ISaksarkivHealthPinger, SaksarkivHealthPinger>();
+        services.AddHealthChecks().AddCheck<SaksarkivHealthCheck>("Saksarkiv");
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers the legacy Saksarkiv <b>v2</b> client on demand.
+    /// </summary>
+    /// <param name="services">The service collection to register with.</param>
+    /// <param name="configuration">Base client configuration.</param>
+    /// <param name="configureResilience">
+    /// Optional callback for customizing the standard HTTP resilience handler after the default Saksarkiv settings are applied.
+    /// </param>
+    /// <remarks>
+    /// Resolve <see cref="SaksarkivClient"/> to call the v2 API. The v2 registration does not add a
+    /// health check; the <c>Saksarkiv</c> health check is only registered by
+    /// <see cref="AddSaksarkivClient"/> (v3).
+    /// </remarks>
+    public static IServiceCollection AddSaksarkivClientV2(
+        this IServiceCollection services,
+        SaksarkivConfiguration configuration,
+        Action<HttpStandardResilienceOptions>? configureResilience = null
+    )
+    {
+        AddSharedInfrastructure(services, configuration, configureResilience);
+
+        services.AddScoped<SaksarkivClient>(serviceProvider => new SaksarkivClient(
+            serviceProvider.GetRequiredService<SaksarkivRequestAdapter>()
+        ));
+
+        return services;
+    }
+
+    private static void AddSharedInfrastructure(
+        IServiceCollection services,
+        SaksarkivConfiguration configuration,
+        Action<HttpStandardResilienceOptions>? configureResilience
+    )
+    {
+        services.TryAddSingleton(configuration);
 
         services
             .AddHttpClient(
@@ -43,15 +98,8 @@ public static class DependencyInjectionExtensions
                 configureResilience?.Invoke(options);
             });
 
-        services.AddHealthChecks().AddCheck<SaksarkivHealthCheck>("Saksarkiv");
-        services.AddScoped<ISaksarkivHealthPinger, SaksarkivHealthPinger>();
-        services.AddScoped<SaksarkivAuthAdapter>();
-        services.AddScoped<SaksarkivRequestAdapter>();
-        services.AddScoped<SaksarkivClient>(serviceProvider => new SaksarkivClient(
-            serviceProvider.GetRequiredService<SaksarkivRequestAdapter>()
-        ));
-
-        return services;
+        services.TryAddScoped<SaksarkivAuthAdapter>();
+        services.TryAddScoped<SaksarkivRequestAdapter>();
     }
 
     internal static bool ShouldSkipRetryForRequest(HttpMethod? method, string? requestPath)
@@ -66,7 +114,7 @@ public static class DependencyInjectionExtensions
             return false;
         }
 
-        return requestPath.StartsWith("/apiv2/health", StringComparison.OrdinalIgnoreCase);
+        return requestPath.StartsWith(HealthProbePath, StringComparison.OrdinalIgnoreCase);
     }
 
     private static void ConfigureDefaultResilience(HttpStandardResilienceOptions options)

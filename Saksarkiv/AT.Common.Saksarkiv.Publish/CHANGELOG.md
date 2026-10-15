@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added <!-- for new features. -->
 
-- Added `HealthCheckTimeout` (default 800 ms) to `SaksarkivConfiguration` to bound how long the
-  Saksarkiv health check waits for the upstream ping.
+- Added the v3 journal-post categories endpoint and `JournalpostKategori` model.
+- Added journal-post category fields to the v3 create and read models.
 
 ### Changed <!--  for changes in existing functionality. -->
 
@@ -21,6 +21,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed <!-- for any bug fixes. -->
 
 ### Security <!-- in case of vulnerabilities. -->
+
+## 2.0.0-beta5
+
+### Fixed
+
+- Applied main's NuGet metadata fixes to the 2.0 prerelease.
+
+## 2.0.0
+
+### Added
+
+- Added a generated client for the new Saksarkiv **API v3** (`SaksarkivClientV3`, namespace
+  `Arbeidstilsynet.Common.Saksarkiv.V3`), generated with Kiota from `openApiV3.json`.
+- Added `AddSaksarkivClientV2(...)` to register the legacy v2 client (`SaksarkivClient`) on demand.
+- Added a typed `SaksarkivClientV3.OpprettSakAsync(...)` extension (with a `SaksarkivFile` upload
+  type) that wraps the multipart plumbing for creating a case, since the v3 spec models the create
+  payload as an (untyped) query parameter.
+
+### Changed
+
+- **Breaking:** `AddSaksarkivClient(...)` now registers the **v3** client (`SaksarkivClientV3`) as
+  the default instead of the v2 client. Consumers that still need v2 must call
+  `AddSaksarkivClientV2(...)` and resolve `SaksarkivClient`.
+- The `Saksarkiv` health check now probes the version-agnostic endpoint
+  `GET /api/health/authPing` (shared across all API versions) instead of the v2 `/apiv2/health/pong`.
 
 ## 1.1.2
 
