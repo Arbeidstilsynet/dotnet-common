@@ -75,21 +75,10 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
             );
         }
 
-        // Preserve the model on post-processor failure when using package-managed cleanup.
         if (_postProcessors.Count > 0)
         {
             freshInstance ??= await RefreshInstanceData(instance);
             await RunPostProcessors(freshInstance);
-        }
-
-#pragma warning disable CS0618 // Preserve package-managed cleanup until the next major release.
-        if (!_config.StructuredDataConfiguration.KeepAppDataModelAfterMapping)
-#pragma warning restore CS0618
-        {
-            var dataModelElement = await _applicationClient.GetRequiredDataModelElement<TDataModel>(
-                instance
-            );
-            await _dataClient.DeleteElement(instance, dataModelElement);
         }
     }
 

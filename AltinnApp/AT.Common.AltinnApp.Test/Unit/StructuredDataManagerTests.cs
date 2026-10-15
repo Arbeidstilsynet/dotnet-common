@@ -14,7 +14,6 @@ using Xunit;
 
 namespace Arbeidstilsynet.Common.AltinnApp.Test.Unit;
 
-#pragma warning disable CS0618 // Verify compatibility with deprecated package-managed cleanup.
 public class StructuredDataManagerTests
 {
     private readonly IApplicationClient _applicationClient;
@@ -209,7 +208,7 @@ public class StructuredDataManagerTests
 
         await _sut.End(instance, []);
 
-        instance.Data.ShouldBe([attachment, createdElement]);
+        instance.Data.ShouldBe([modelElement, attachment, createdElement]);
         await _instanceClient.DidNotReceiveWithAnyArgs().GetInstance(default!);
     }
 
@@ -484,29 +483,35 @@ public class StructuredDataManagerTests
         await _instanceClient.DidNotReceiveWithAnyArgs().UpdateDataValues(default!, default!);
     }
 
-    [Fact]
-    public async Task End_ProcessEnd_UsesIApplicationClientToGetDataElement()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task End_ProcessEnd_DoesNotRequireApplicationMetadataOrFormModel(
+        bool modelAlreadyDeleted
+    )
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
         instance.Data.Add(
             new DataElement { Id = Guid.NewGuid().ToString(), DataType = "structured-data" }
         );
-        var application = AltinnData.CreateTestApplication(
-            classRef: typeof(TestDataModel).FullName
-        );
-
-        _applicationClient.GetApplication(instance.Org, "testApp").Returns(application);
+        if (modelAlreadyDeleted)
+        {
+            instance.Data.RemoveAll(d => d.DataType == "testDataType");
+        }
+        var originalData = instance.Data.ToList();
 
         // Act
         await _sut.End(instance, new List<InstanceEvent>());
 
         // Assert
-        await _applicationClient.Received(1).GetApplication(instance.Org, "testApp");
+        await _applicationClient.DidNotReceiveWithAnyArgs().GetApplication(default!, default!);
+        await _instanceClient.DidNotReceiveWithAnyArgs().GetInstance(default!);
+        instance.Data.ShouldBe(originalData);
     }
 
     [Fact]
-    public async Task End_ProcessEnd_UsesIDataClientToDeleteData()
+    public async Task End_ProcessEnd_DoesNotDeleteData()
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
@@ -528,7 +533,7 @@ public class StructuredDataManagerTests
 
         // Assert
         await _dataClient
-            .Received(1)
+            .DidNotReceiveWithAnyArgs()
             .DeleteData(
                 instance.GetInstanceOwnerPartyId(),
                 instance.GetInstanceGuid(),
@@ -539,55 +544,7 @@ public class StructuredDataManagerTests
     }
 
     [Fact]
-    public async Task End_ProcessEnd_When_KeepAppDataModelAfterMapping_IsTrue_ShouldNotDeleteData()
-    {
-        // Arrange
-        var instance = AltinnData.CreateTestInstance();
-        instance.Data.Add(
-            new DataElement { Id = Guid.NewGuid().ToString(), DataType = "structured-data" }
-        );
-        var application = AltinnData.CreateTestApplication(
-            classRef: typeof(TestDataModel).FullName
-        );
-
-        _applicationClient
-            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
-            .Returns(application);
-
-        var sut_withDeleteDisabled = new StructuredDataManager<TestDataModel, TestStructuredData>(
-            _applicationClient,
-            _dataClient,
-            _instanceClient,
-            _config with
-            {
-                StructuredDataConfiguration = _config.StructuredDataConfiguration with
-                {
-                    KeepAppDataModelAfterMapping = true,
-                },
-            },
-            _logger,
-            Substitute.For<IStructuredDataValidator<TestStructuredData>>(),
-            _mapper,
-            []
-        );
-
-        // Act
-        await sut_withDeleteDisabled.End(instance, new List<InstanceEvent>());
-
-        // Assert
-        await _dataClient
-            .DidNotReceiveWithAnyArgs()
-            .DeleteData(
-                default,
-                default,
-                default,
-                default,
-                cancellationToken: Arg.Any<CancellationToken>()
-            );
-    }
-
-    [Fact]
-    public async Task End_ProcessEnd_RemovesDataElementFromInstance()
+    public async Task End_ProcessEnd_PreservesDataElements()
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
@@ -607,7 +564,7 @@ public class StructuredDataManagerTests
         await _sut.End(instance, new List<InstanceEvent>());
 
         // Assert
-        instance.Data.Count.ShouldBe(initialDataCount - 1);
+        instance.Data.Count.ShouldBe(initialDataCount);
     }
 
     [Fact]
@@ -635,54 +592,6 @@ public class StructuredDataManagerTests
         exception.Message.ShouldContain("No structured data element");
         await _instanceClient.Received(1).GetInstance(instance);
         await postProcessor.DidNotReceiveWithAnyArgs().Process(default!);
-        await _dataClient
-            .DidNotReceiveWithAnyArgs()
-            .DeleteData(
-                default,
-                default,
-                default,
-                default,
-                cancellationToken: Arg.Any<CancellationToken>()
-            );
-    }
-
-    [Fact]
-    public async Task End_ProcessEnd_WhenNoStructuredDataExists_And_KeepAppDataModelIsTrue_ShouldThrow()
-    {
-        // Arrange
-        var instance = AltinnData.CreateTestInstance();
-        var application = AltinnData.CreateTestApplication(
-            classRef: typeof(TestDataModel).FullName
-        );
-
-        _applicationClient
-            .GetApplication(Arg.Any<string>(), Arg.Any<string>())
-            .Returns(application);
-
-        var sut = new StructuredDataManager<TestDataModel, TestStructuredData>(
-            _applicationClient,
-            _dataClient,
-            _instanceClient,
-            _config with
-            {
-                StructuredDataConfiguration = _config.StructuredDataConfiguration with
-                {
-                    KeepAppDataModelAfterMapping = true,
-                },
-            },
-            _logger,
-            _structuredDataValidator,
-            _mapper,
-            []
-        );
-
-        _instanceClient.GetInstance(instance).Returns(AltinnData.CreateTestInstance());
-
-        // Act
-        var act = () => sut.End(instance, new List<InstanceEvent>());
-
-        // Assert
-        await act.ShouldThrowAsync<InvalidOperationException>();
         await _dataClient
             .DidNotReceiveWithAnyArgs()
             .DeleteData(
@@ -1046,7 +955,7 @@ public class StructuredDataManagerTests
     [InlineData(true, false)]
     [InlineData(true, true)]
     public async Task End_ProcessEnd_WhenMissingLocally_RefreshesAndReusesFreshState(
-        bool keepModel,
+        bool modelAlreadyDeleted,
         bool hasPostProcessors
     )
     {
@@ -1054,7 +963,7 @@ public class StructuredDataManagerTests
         var staleElement = new DataElement { Id = Guid.NewGuid().ToString(), DataType = "stale" };
         instance.Data.Add(staleElement);
         var freshInstance = CreateInstanceWithRequiredElements();
-        if (keepModel)
+        if (modelAlreadyDeleted)
         {
             // Altinn's automatic deletion can remove the model before IProcessEnd.
             freshInstance.Data.RemoveAll(d => d.DataType == "testDataType");
@@ -1064,23 +973,14 @@ public class StructuredDataManagerTests
         _instanceClient.GetInstance(instance).Returns(freshInstance);
         ConfigureMapping();
         var postProcessor = Substitute.For<IStructuredDataPostProcessor>();
-        var sut = CreateSut(
-            hasPostProcessors ? [postProcessor] : [],
-            _config with
-            {
-                StructuredDataConfiguration = _config.StructuredDataConfiguration with
-                {
-                    KeepAppDataModelAfterMapping = keepModel,
-                },
-            }
-        );
+        var sut = CreateSut(hasPostProcessors ? [postProcessor] : []);
 
         await sut.End(instance, []);
 
         await _instanceClient.Received(1).GetInstance(instance);
         instance.Data.ShouldBeSameAs(freshInstance.Data);
         instance.Data.ShouldNotContain(staleElement);
-        instance.Data.ShouldNotContain(d => d.DataType == "testDataType");
+        instance.Data.Any(d => d.DataType == "testDataType").ShouldBe(!modelAlreadyDeleted);
         if (hasPostProcessors)
         {
             await postProcessor
@@ -1095,18 +995,15 @@ public class StructuredDataManagerTests
                     )
                 );
         }
-        if (keepModel)
-        {
-            await _dataClient
-                .DidNotReceiveWithAnyArgs()
-                .DeleteData(
-                    default,
-                    default,
-                    default,
-                    default,
-                    cancellationToken: Arg.Any<CancellationToken>()
-                );
-        }
+        await _dataClient
+            .DidNotReceiveWithAnyArgs()
+            .DeleteData(
+                default,
+                default,
+                default,
+                default,
+                cancellationToken: Arg.Any<CancellationToken>()
+            );
     }
 
     [Theory]
@@ -1142,40 +1039,6 @@ public class StructuredDataManagerTests
                 default,
                 cancellationToken: Arg.Any<CancellationToken>()
             );
-    }
-
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task End_ProcessEnd_WhenManualDeletionFails_PreservesModel(bool throws)
-    {
-        var instance = CreateInstanceWithRequiredElements();
-        var originalData = instance.Data.ToList();
-        ConfigureMapping();
-        var storageError = new HttpRequestException("Deletion failed");
-        _dataClient
-            .DeleteData(
-                instance.GetInstanceOwnerPartyId(),
-                instance.GetInstanceGuid(),
-                Guid.Parse(instance.Data.Single(d => d.DataType == "testDataType").Id),
-                false,
-                cancellationToken: Arg.Any<CancellationToken>()
-            )
-            .Returns(throws ? Task.FromException<bool>(storageError) : Task.FromResult(false));
-
-        var exception = await Should.ThrowAsync<Exception>(() => _sut.End(instance, []));
-
-        if (throws)
-        {
-            exception.ShouldBeSameAs(storageError);
-        }
-        else
-        {
-            exception
-                .ShouldBeOfType<InvalidOperationException>()
-                .Message.ShouldContain("Could not delete");
-        }
-        instance.Data.ShouldBe(originalData);
     }
 
     [Fact]
@@ -1236,7 +1099,7 @@ public class StructuredDataManagerTests
     }
 
     [Fact]
-    public async Task End_ProcessEnd_RunsPostProcessorsBeforeDeletingDataModel()
+    public async Task End_ProcessEnd_RunsPostProcessorsWithoutDeletingDataModel()
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
@@ -1261,16 +1124,9 @@ public class StructuredDataManagerTests
         {
             _instanceClient.GetInstance(instance);
             postProcessor.Process(Arg.Any<StructuredDataPostProcessingContext>());
-            _dataClient.DeleteData(
-                Arg.Any<int>(),
-                Arg.Any<Guid>(),
-                Arg.Any<Guid>(),
-                false,
-                cancellationToken: Arg.Any<CancellationToken>()
-            );
         });
         await _dataClient
-            .Received(1)
+            .DidNotReceiveWithAnyArgs()
             .DeleteData(
                 instance.GetInstanceOwnerPartyId(),
                 instance.GetInstanceGuid(),
@@ -1279,11 +1135,15 @@ public class StructuredDataManagerTests
                 cancellationToken: Arg.Any<CancellationToken>()
             );
         instance.Data.ShouldBeSameAs(freshInstance.Data);
-        instance.Data.ShouldNotContain(d => d.DataType == "testDataType");
+        instance.Data.ShouldContain(d => d.DataType == "testDataType");
     }
 
-    [Fact]
-    public async Task End_ProcessEnd_WhenPostProcessorThrows_ShouldNotDeleteDataModel()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task End_ProcessEnd_WhenPostProcessorThrows_PropagatesErrorWithoutCleanup(
+        bool modelAlreadyDeleted
+    )
     {
         // Arrange
         var instance = AltinnData.CreateTestInstance();
@@ -1293,18 +1153,26 @@ public class StructuredDataManagerTests
         _applicationClient
             .GetApplication(Arg.Any<string>(), Arg.Any<string>())
             .Returns(AltinnData.CreateTestApplication(classRef: typeof(TestDataModel).FullName));
-        _instanceClient.GetInstance(instance).Returns(CreateInstanceWithRequiredElements());
+        var freshInstance = CreateInstanceWithRequiredElements();
+        if (modelAlreadyDeleted)
+        {
+            freshInstance.Data.RemoveAll(d => d.DataType == "testDataType");
+        }
+        _instanceClient.GetInstance(instance).Returns(freshInstance);
+        var originalData = freshInstance.Data.ToList();
 
         var postProcessor = Substitute.For<IStructuredDataPostProcessor>();
+        var error = new InvalidOperationException("boom");
         postProcessor
             .Process(Arg.Any<StructuredDataPostProcessingContext>())
-            .Returns(Task.FromException(new InvalidOperationException("boom")));
+            .Returns(Task.FromException(error));
         var sut = CreateSut(postProcessors: [postProcessor]);
         // Act
         var act = () => sut.End(instance, new List<InstanceEvent>());
 
         // Assert
-        await act.ShouldThrowAsync<InvalidOperationException>();
+        var exception = await act.ShouldThrowAsync<InvalidOperationException>();
+        exception.ShouldBeSameAs(error);
         await _dataClient
             .DidNotReceiveWithAnyArgs()
             .DeleteData(
@@ -1314,7 +1182,7 @@ public class StructuredDataManagerTests
                 default,
                 cancellationToken: Arg.Any<CancellationToken>()
             );
-        instance.Data.ShouldContain(d => d.DataType == "testDataType");
+        instance.Data.ShouldBe(originalData);
     }
 
     [Theory]
@@ -1390,14 +1258,13 @@ public class StructuredDataManagerTests
     }
 
     private StructuredDataManager<TestDataModel, TestStructuredData> CreateSut(
-        IEnumerable<IStructuredDataPostProcessor> postProcessors,
-        StructuredDataManager<TestDataModel, TestStructuredData>.Config? config = null
+        IEnumerable<IStructuredDataPostProcessor> postProcessors
     ) =>
         new(
             _applicationClient,
             _dataClient,
             _instanceClient,
-            config ?? _config,
+            _config,
             _logger,
             _structuredDataValidator,
             _mapper,
@@ -1421,7 +1288,6 @@ public class StructuredDataManagerTests
     {
         public string? Name { get; set; }
     }
-#pragma warning restore CS0618
 
     public class TestStructuredData
     {

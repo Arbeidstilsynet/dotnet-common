@@ -4,7 +4,7 @@ namespace Arbeidstilsynet.Common.AltinnApp.Ports;
 
 /// <summary>
 /// Post-processing hook for the structured data feature. It runs at process end, after the structured data
-/// has been verified and before package-managed App data model deletion (unless kept by configuration).
+/// has been verified. The package does not delete the App data model.
 /// </summary>
 /// <remarks>
 /// Unlike a plain <see cref="Altinn.App.Core.Features.IProcessEnd"/>, a post-processor is guaranteed that both
