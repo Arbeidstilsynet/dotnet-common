@@ -21,37 +21,14 @@ dotnet add package Arbeidstilsynet.Common.Enhetsregisteret
 ## 🛠️ Configuration & Setup
 
 
-### 1. Automatic URL selection based on environment
-
-The client will use the correct Brreg API base URL depending on your ASP.NET Core environment:
-
-- **Production** (`IWebHostEnvironment.IsProduction()`):  
-  Uses `https://data.brreg.no/`
-- **Non-production** (Development, Staging, etc.):  
-  Uses `https://data.ppe.brreg.no/`
-
-### 2. Overriding the API URL
-
-You can override the base URL by setting `BrregApiBaseUrlOverwrite` in the configuration.
-
-You can add the Enhetsregisteret client to your service collection in two ways:
-
-### 3. Example: Registering the client in `Program.cs` (.NET 6+)
+### Environment-based registration
 
 ```csharp
 using Arbeidstilsynet.Common.Enhetsregisteret.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddEnhetsregisteret(
-    builder.Environment,
-    config => {
-        // Optional: override the API base URL
-        // config.BrregApiBaseUrlOverwrite = "https://custom-url/";
-        // Optional: disable caching
-        // config.CacheOptions = new CacheOptions { Disabled = true };
-    }
-);
+builder.Services.AddEnhetsregisteret(builder.Environment);
 
 var app = builder.Build();
 
@@ -60,32 +37,56 @@ var app = builder.Build();
 app.Run();
 ```
 
-### 4. Example: Registering in `Startup.cs` (older ASP.NET Core)
+| Host environment | Default target | Endpoint configuration |
+| --- | --- | --- |
+| Production | `https://data.brreg.no/` | Other targets and non-default URLs are rejected at registration |
+| Staging | `https://data.ppe.brreg.no/` | Overrides are allowed, with a startup warning |
+| Development | Offline `IEnhetsregisteret` stub | An explicit URL activates the real adapter and generated client |
+| Other names (Test, QA, etc.) | No default | Set `EnhetsregisteretConfig.Environment` explicitly |
+
+Available targets are `EnhetsregisteretEnvironment.Production`, `.Ppe` and `.Stub`. Set `Environment` to use a real API explicitly in Development, or to select a target for a custom host environment.
+
+Both the configuration object and callback overloads are supported. Real clients use in-memory caching by default; disable it with `config.CacheOptions = new CacheOptions { Disabled = true };`.
+
+### Development and docker-compose e2e tests
+
+The Development stub runs in-process and makes no network requests. It registers `IEnhetsregisteret`, **not** the generated `EnhetsregisteretClient`. Direct injection of the generated client therefore fails at DI resolution unless you select a real target or supply an endpoint.
+
+Current sample data:
+
+- Enhet `974761211`, named `Eksempel AS`.
+- Underenhet `974761076`, named `Eksempel AS`.
+- Lookups of other valid nine-digit organisation numbers return null; malformed numbers throw.
+- Searches support `Organisasjonsnummer`, case-insensitive substring `Navn`, and `Page`/`Size`. Underenhet searches also support `OverordnetEnhet` (`974761211` for the current sample). Non-matches and later pages return empty lists.
+- Update history is empty; `Page`, `Size`, `Dato` and `Oppdateringsid` are accepted. Pagination helpers terminate normally.
+
+Other search filters throw `NotSupportedException`. Cancellation is honoured, and returned models are fresh per call. These are **simple samples, not a realistic dataset**: no coherence is guaranteed between responses or with GeoNorge. Consumers needing particular relationships or behaviours must replace the interface or configure their own endpoint.
+
+To point Development at a mock server, with no custom adapter needed:
 
 ```csharp
-public void ConfigureServices(IServiceCollection services)
-{
-    services.AddEnhetsregisteret(
-        Environment, // IWebHostEnvironment
-        config => {
-            // config.BrregApiBaseUrlOverwrite = "https://custom-url/";
-        }
-    );
-}
+builder.Services.AddEnhetsregisteret(
+    builder.Environment,
+    config => config.BrregApiBaseUrlOverwrite = "http://brreg-mock:8080/"
+);
 ```
 
-**Note:**  
-- The client uses in-memory caching by default. You can disable it via `config.CacheOptions = new CacheOptions { Disabled = true };`.
-- If you do not provide a configuration, the defaults (production or PPE URL, caching enabled)
+Overrides must be absolute HTTP(S) URLs without credentials, query strings or fragments. An explicit canonical URL also activates the real client in Development. Alternatively, register your own implementation after the package registration: `builder.Services.AddScoped<IEnhetsregisteret, MyEnhetsregisteret>()`.
+
+### Migrating from 3.x
+
+Development no longer contacts PPE by default. Set `Environment = EnhetsregisteretEnvironment.Ppe` to retain that behaviour, or supply a mock endpoint. Production no longer permits endpoint overrides, and custom host environment names require an explicit target.
 
 ---
 
 ## 🧑‍💻 Usage
 
-`AddEnhetsregisteret(...)` registers two things you can inject:
+When configured for a real API, `AddEnhetsregisteret(...)` registers two things you can inject:
 
 - The generated `EnhetsregisteretClient` — the full Brreg API surface, exposed as fluent request builders.
 - `Ports.IEnhetsregisteret` — a ready-made adapter over the client covering the most common operations (get/search enheter and underenheter, plus oppdateringshistorikk), returning the generated models. Pair it with the `EnhetsregisteretExtensions` helpers (e.g. `GetUnderenheterByHovedenhet`, `EnumerateEnheter`) for pagination-aware enumeration.
+
+In default Development mode only `Ports.IEnhetsregisteret` is registered, backed by the built-in stub described above. Custom adapters over the generated client require a real target or explicit URL in Development.
 
 ### Recommended: wrap the client in your own adapter interface
 

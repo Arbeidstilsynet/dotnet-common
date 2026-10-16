@@ -44,9 +44,15 @@ builder.Services.AddEnhetsregisteret(
 | Environment | API URL used |
 |-------------|-------------|
 | Production | `https://data.brreg.no/` |
-| Non-production (dev, staging, …) | `https://data.ppe.brreg.no/` |
+| Staging | `https://data.ppe.brreg.no/` |
+| Development | Offline `IEnhetsregisteret` stub; no generated client registration |
+| Other host environment names | Explicit `EnhetsregisteretConfig.Environment` required |
 
 Caching is enabled by default. Override with `config.BrregApiBaseUrlOverwrite` or disable with `config.CacheOptions = new CacheOptions { Disabled = true }`.
+
+Production rejects non-production targets and non-default URLs. Staging logs URL overrides at startup. Targets are `EnhetsregisteretEnvironment.Production`, `.Ppe` and `.Stub`. An explicit URL activates the real adapter and generated client in Development; consumers can instead replace `IEnhetsregisteret` after the package registration.
+
+Development sample responses have no guaranteed coherence. See the [package README](../../Enhetsregisteret/AT.Common.Enhetsregisteret.Publish/README.md) for supported stub queries and current generated-client usage.
 
 ---
 

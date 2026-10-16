@@ -14,7 +14,6 @@ namespace Arbeidstilsynet.Common.Enhetsregisteret.Test.Unit;
 public class DependencyInjectionTests
 {
     [Theory]
-    [InlineData("Development", "https://data.ppe.brreg.no/")]
     [InlineData("Staging", "https://data.ppe.brreg.no/")]
     [InlineData("Production", "https://data.brreg.no/")]
     public void AddEnhetsregisteret_SetsCorrectBaseUrlBasedOnEnvironment(
@@ -40,7 +39,6 @@ public class DependencyInjectionTests
     }
 
     [Theory]
-    [InlineData("Development", "https://data.ppe.brreg.no/")]
     [InlineData("Staging", "https://data.ppe.brreg.no/")]
     [InlineData("Production", "https://data.brreg.no/")]
     public void AddEnhetsregisteret_Overload_SetsCorrectBaseUrlBasedOnEnvironment(
@@ -76,7 +74,7 @@ public class DependencyInjectionTests
             .ToList();
 
         // Act
-        services.AddEnhetsregisteret(Substitute.For<IWebHostEnvironment>());
+        services.AddEnhetsregisteret(StagingEnvironment());
 
         var serviceProvider = services.BuildServiceProvider();
         var validators = serviceProvider.GetServices<IValidator>();
@@ -96,7 +94,7 @@ public class DependencyInjectionTests
             .ToList();
 
         // Act
-        services.AddEnhetsregisteret(Substitute.For<IWebHostEnvironment>(), _ => { });
+        services.AddEnhetsregisteret(StagingEnvironment(), _ => { });
 
         var serviceProvider = services.BuildServiceProvider();
         var validators = serviceProvider.GetServices<IValidator>();
@@ -106,7 +104,7 @@ public class DependencyInjectionTests
     }
 
     [Theory]
-    [InlineData("Development", "https://data.ppe.brreg.no")]
+    [InlineData("Staging", "https://data.ppe.brreg.no")]
     [InlineData("Production", "https://data.brreg.no")]
     public void AddEnhetsregisteret_RegistersEnhetsregisteretClient_WithBaseUrlWithoutTrailingSlash(
         string envName,
@@ -144,7 +142,7 @@ public class DependencyInjectionTests
         var services = new ServiceCollection();
 
         // Act
-        services.AddEnhetsregisteret(Substitute.For<IWebHostEnvironment>());
+        services.AddEnhetsregisteret(StagingEnvironment());
 
         using var serviceProvider = services.BuildServiceProvider();
         var enhetsregisteret = serviceProvider
@@ -162,7 +160,7 @@ public class DependencyInjectionTests
         var services = new ServiceCollection();
 
         // Act
-        services.AddEnhetsregisteret(Substitute.For<IWebHostEnvironment>(), _ => { });
+        services.AddEnhetsregisteret(StagingEnvironment(), _ => { });
 
         using var serviceProvider = services.BuildServiceProvider();
         var enhetsregisteret = serviceProvider
@@ -180,7 +178,7 @@ public class DependencyInjectionTests
         const string overrideUrl = "https://custom-brreg.example.com/";
         var services = new ServiceCollection();
         var environment = Substitute.For<IWebHostEnvironment>();
-        environment.EnvironmentName.Returns("Production");
+        environment.EnvironmentName.Returns("Development");
 
         // Act
         services.AddEnhetsregisteret(
@@ -207,7 +205,7 @@ public class DependencyInjectionTests
         };
 
         // Act
-        services.AddEnhetsregisteret(Substitute.For<IWebHostEnvironment>(), config);
+        services.AddEnhetsregisteret(StagingEnvironment(), config);
 
         using var serviceProvider = services.BuildServiceProvider();
 
@@ -238,5 +236,12 @@ public class DependencyInjectionTests
 
         // Assert
         client.ShouldNotBeNull();
+    }
+
+    private static IWebHostEnvironment StagingEnvironment()
+    {
+        var environment = Substitute.For<IWebHostEnvironment>();
+        environment.EnvironmentName.Returns("Staging");
+        return environment;
     }
 }

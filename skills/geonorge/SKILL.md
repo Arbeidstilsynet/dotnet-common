@@ -24,19 +24,23 @@ dotnet add package Arbeidstilsynet.Common.GeoNorge
 ## Dependency Injection Setup
 
 ```csharp
-builder.Services.AddGeoNorge();
+builder.Services.AddGeoNorge(builder.Environment);
 ```
 
 An optional `GeoNorgeConfig` can be passed to override the base URL (default `https://ws.geonorge.no/`):
 
 ```csharp
-builder.Services.AddGeoNorge(new GeoNorgeConfig
+builder.Services.AddGeoNorge(builder.Environment, new GeoNorgeConfig
 {
     BaseUrl = "https://custom-geonorge-proxy.example.com/"
 });
 ```
 
-This registers `IAddressSearch` and `IFylkeKommuneApi`.
+This registers `IAddressSearch`, `IFylkeKommuneApi` and `IPropertySearch`.
+
+Production and Staging default to the public APIs. Production rejects non-production targets and non-default URLs; Staging logs URL overrides at startup. Development defaults to offline interface stubs with small sample responses and no guaranteed coherence. Generated clients are not registered for stubbed APIs.
+
+Explicit `BaseUrl` activates the real address and municipality adapters in Development; independent `PropertyBaseUrl` activates the property adapter. Consumers can instead replace the interface registrations after `AddGeoNorge`. Other host environment names require `GeoNorgeConfig.Environment` (`Production` or `Stub`). See the [package README](../../GeoNorge/AT.Common.GeoNorge.Publish/README.md) for supported stub queries and current generated-client usage.
 
 ---
 
@@ -168,7 +172,7 @@ Returns `null` if no address is found.
 ## Adding GeoNorge — Checklist
 
 1. `dotnet add package Arbeidstilsynet.Common.GeoNorge`
-2. Register with `services.AddGeoNorge()`
+2. Register with `services.AddGeoNorge(environment)`
 3. Inject `IAddressSearch` for address/geocoding operations
 4. Inject `IFylkeKommuneApi` for county/municipality operations
 5. Handle `null` returns (network errors or no results)

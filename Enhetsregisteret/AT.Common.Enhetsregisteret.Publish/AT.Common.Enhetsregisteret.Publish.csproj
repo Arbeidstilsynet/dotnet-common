@@ -10,7 +10,7 @@
     <Company>Arbeidstilsynet</Company>
     <Description>A http client which interfaces with enhetsregisteret (Brønnøysundregistrene)</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>3.1.2</Version>
+    <Version>4.0.0-alpha2</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/Arbeidstilsynet/dotnet-common</PackageProjectUrl>
@@ -38,6 +38,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\shared\src\UriExtensions.cs" Link="Shared\UriExtensions.cs" />
+    <Compile
+      Include="..\..\shared\src\EnvironmentClientPolicy.cs"
+      Link="Shared\EnvironmentClientPolicy.cs"
+    />
+    <Compile Include="..\..\shared\src\StubQuery.cs" Link="Shared\StubQuery.cs" />
     <Compile
       Include="..\..\shared\src\MemoryCachedHttpClient.cs"
       Link="Shared\MemoryCachedHttpClient.cs"

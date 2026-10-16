@@ -25,19 +25,29 @@ Add to your service collection:
 ```csharp
 using Arbeidstilsynet.Common.GeoNorge.DependencyInjection;
 
-builder.Services.AddGeoNorge();
+builder.Services.AddGeoNorge(builder.Environment);
 ```
 
-This registers the ports (`IAddressSearch`, `IFylkeKommuneApi`, `IPropertySearch`) as well as the generated clients (`AdresserClient`, `KommuneInfoClient`, `EiendomClient`).
+This registers the ports (`IAddressSearch`, `IFylkeKommuneApi`, `IPropertySearch`). Generated clients (`AdresserClient`, `KommuneInfoClient`, `EiendomClient`) are registered only for APIs using real adapters, not for stubbed APIs.
 
-By default Adresser and Kommuneinfo target `https://ws.geonorge.no/` (under `/adresser/v1` and `/kommuneinfo/v1`). Eiendom independently targets `https://api.kartverket.no/eiendom/v1` and requires no authentication. `BaseUrl` controls only the first two clients; `PropertyBaseUrl` controls Eiendom. Both settings take a host/base URL, with the API-specific path appended automatically. You can override them and opt into approximate Svalbard/Jan Mayen data:
+| Host environment | Default target | Endpoint configuration |
+| --- | --- | --- |
+| Production | Public APIs | Non-production targets and non-default URLs are rejected at registration |
+| Staging | Public APIs | Overrides are allowed, with a startup warning |
+| Development | Offline interface stubs | Explicit URLs activate real adapters for the corresponding APIs |
+| Other names (Test, QA, etc.) | No default | Set `GeoNorgeConfig.Environment` explicitly |
+
+The available targets are `GeoNorgeEnvironment.Production` (public APIs; there is no separate public test target) and `GeoNorgeEnvironment.Stub`.
+
+For real adapters, Adresser and Kommuneinfo target `https://ws.geonorge.no/` (under `/adresser/v1` and `/kommuneinfo/v1`). Eiendom independently targets `https://api.kartverket.no/eiendom/v1` and requires no authentication. `BaseUrl` controls only the first two clients; `PropertyBaseUrl` controls Eiendom. Both nullable settings take an absolute HTTP(S) host/base URL, with the API-specific path appended automatically. URLs containing credentials, query strings or fragments are rejected.
+
+You can opt into approximate Svalbard/Jan Mayen data in both real and stub mode:
 
 ```csharp
 builder.Services.AddGeoNorge(
+    builder.Environment,
     new GeoNorgeConfig
     {
-        BaseUrl = "https://ws.geonorge.no/",
-        PropertyBaseUrl = "https://api.kartverket.no/",
         // Svalbard and Jan Mayen are not part of the GeoNorge dataset.
         // When enabled, IFylkeKommuneApi is decorated to supplement responses
         // with synthetic entries for Svalbard (fylke 21, kommune 2100) and
@@ -51,8 +61,8 @@ If you need to customize the retry/timeouts/circuit-breaker behavior, use the re
 
 ```csharp
 builder.Services.AddGeoNorge(
-    new GeoNorgeConfig { BaseUrl = "https://ws.geonorge.no/" },
-    options =>
+    builder.Environment,
+    configureResilience: options =>
     {
         options.Retry.MaxRetryAttempts = 2;
         options.AttemptTimeout.Timeout = TimeSpan.FromSeconds(15);
@@ -60,6 +70,38 @@ builder.Services.AddGeoNorge(
     }
 );
 ```
+
+### Development and docker-compose e2e tests
+
+Default Development registration is entirely in-process and offline, with no external service or Docker image required. Only the convenience interfaces are stubbed; injecting a generated client for a stubbed API fails at DI resolution rather than contacting an external API.
+
+The small sample responses are **not a realistic dataset and have no guaranteed coherence**, either between operations or with Enhetsregisteret. Do not build assertions around cross-response relationships. The current samples are:
+
+- Address: `Eksempelveien 1`, with a WGS84 point. Text searches support case-insensitive substring matching via `Sok` and `Adressetekst`, and `Side`/`TreffPerSide` pagination. Point searches accept `Lat`, `Lon`, `Radius` and pagination, but return the sample without calculating distance or spatial matches.
+- County/municipality: Oslo (`03`/`0301`). Unknown numbers return null; point lookups return the sample without checking containment.
+- Property: `0301-1/1`, with a GeoJSON point in longitude/latitude order. Searches support `Matrikkelnummer` or `Kommunenummer`/`Gardsnummer`/`Bruksnummer`; other values return an empty feature collection.
+
+Coordinates support only EPSG:4326 (or unset). Area geometries and other query filters throw `NotSupportedException`; the stubs never fall back to a real API. Returned models are fresh per call.
+
+When a test needs specific data or behaviour, replace the interface registration after `AddGeoNorge`, or configure a mock-server endpoint:
+
+```csharp
+builder.Services.AddGeoNorge(
+    builder.Environment,
+    new GeoNorgeConfig
+    {
+        BaseUrl = "http://geonorge-mock:8080/",
+        // Property remains stubbed unless this URL is also set.
+        // PropertyBaseUrl = "http://kartverket-mock:8080/",
+    }
+);
+```
+
+An explicitly supplied canonical URL also activates its real adapters in Development. To use all public APIs explicitly, set `Environment = GeoNorgeEnvironment.Production`. To replace an in-process stub, register your implementation afterwards, for example `builder.Services.AddScoped<IAddressSearch, MyAddressSearch>()`.
+
+### Migrating from 4.x
+
+Pass the host environment as the first argument to `AddGeoNorge`. Remove explicit canonical URLs if you want offline Development defaults. Set the target explicitly for custom host environment names.
 
 ## Usage
 
@@ -202,7 +244,7 @@ public class LocationService
 
 ## Advanced: using the generated clients directly
 
-`AddGeoNorge(...)` also exposes the Kiota-generated `AdresserClient`, `KommuneInfoClient` and `EiendomClient`. Use them when you need fields or request configuration that the ports do not surface. Eiendom is restricted to `/geokoding`. It is recommended that you wrap them in your own narrow interface that matches the intended use in that service or bounded context. That keeps tests simpler, avoids coupling every consumer to the full GeoNorge API surface, and gives you a stable seam if the generated fluent API changes later.
+When configured for real APIs, `AddGeoNorge(...)` also exposes the Kiota-generated `AdresserClient`, `KommuneInfoClient` and `EiendomClient`. Use them when you need fields or request configuration that the ports do not surface. Eiendom is restricted to `/geokoding`. It is recommended that you wrap them in your own narrow interface that matches the intended use in that service or bounded context. That keeps tests simpler, avoids coupling every consumer to the full GeoNorge API surface, and gives you a stable seam if the generated fluent API changes later.
 
 ```csharp
 using Arbeidstilsynet.Common.GeoNorge.Adresser;
@@ -244,7 +286,10 @@ public sealed class GeoNorgeAddressLookup(AdresserClient adresserClient) : IAddr
 Register the adapter alongside the clients:
 
 ```csharp
-builder.Services.AddGeoNorge();
+builder.Services.AddGeoNorge(
+    builder.Environment,
+    new GeoNorgeConfig { Environment = GeoNorgeEnvironment.Production }
+);
 builder.Services.AddScoped<IAddressLookup, GeoNorgeAddressLookup>();
 ```
 

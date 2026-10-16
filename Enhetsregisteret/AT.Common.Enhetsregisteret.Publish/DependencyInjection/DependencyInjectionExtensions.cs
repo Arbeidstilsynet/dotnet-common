@@ -6,13 +6,34 @@ using Microsoft.Extensions.Hosting;
 
 namespace Arbeidstilsynet.Common.Enhetsregisteret.DependencyInjection;
 
+/// <summary>The implementation or API instance to use.</summary>
+public enum EnhetsregisteretEnvironment
+{
+    /// <summary>The production Brreg API.</summary>
+    Production,
+
+    /// <summary>The Brreg pre-production API.</summary>
+    Ppe,
+
+    /// <summary>Offline convenience-interface stubs; the generated client is not registered.</summary>
+    Stub,
+}
+
 /// <summary>
 /// Configures the <see cref="HttpClient"/> for the Enhetsregisteret API.
 /// </summary>
 public class EnhetsregisteretConfig
 {
     /// <summary>
-    /// Overwrites the baseUrl for Enhetsregisteret API. If not set, the BaseUrl is determined by the host environment.
+    /// Defaults to Production in Production, Ppe in Staging, and Stub in Development.
+    /// Required for other host environments. Production only permits the Production target.
+    /// </summary>
+    public EnhetsregisteretEnvironment? Environment { get; set; }
+
+    /// <summary>
+    /// Overrides the API base URL and selects the real adapter even when the target is Stub.
+    /// If unset, the URL follows the resolved target. Non-default URLs are rejected in Production
+    /// and logged at startup in Staging.
     /// </summary>
     public string? BrregApiBaseUrlOverwrite { get; set; }
 
@@ -35,6 +56,11 @@ public static class DependencyInjectionExtensions
 {
     internal const string Clientkey = "EnhetsregisteretClient";
 
+#pragma warning disable S1075 // Canonical API defaults enforce the Production policy; non-production URLs are configurable.
+    private const string ProductionBaseUrl = "https://data.brreg.no/";
+    private const string PpeBaseUrl = "https://data.ppe.brreg.no/";
+#pragma warning restore S1075
+
     /// <summary>
     /// Registers an implementation of IEnhetsregisteret in the specified <see cref="IServiceCollection"/>.
     /// </summary>
@@ -48,6 +74,7 @@ public static class DependencyInjectionExtensions
         Action<EnhetsregisteretConfig> configure
     )
     {
+        ArgumentNullException.ThrowIfNull(configure);
         var config = new EnhetsregisteretConfig()
         {
             CacheOptions = new CacheOptions { Disabled = false },
@@ -83,29 +110,45 @@ public static class DependencyInjectionExtensions
         return services;
     }
 
-    private static string GetBrregUrlBasedOnEnvironment(IHostEnvironment hostEnvironment)
-    {
-        return hostEnvironment.IsProduction()
-            ? "https://data.brreg.no/"
-            : "https://data.ppe.brreg.no/";
-    }
-
     private static void AddServices(
         this IServiceCollection services,
         IHostEnvironment hostEnvironment,
         EnhetsregisteretConfig config
     )
     {
+        ArgumentNullException.ThrowIfNull(services);
+        var target = EnvironmentClientPolicy.ResolveTarget(
+            hostEnvironment,
+            config.Environment,
+            EnhetsregisteretEnvironment.Production,
+            EnhetsregisteretEnvironment.Ppe,
+            EnhetsregisteretEnvironment.Stub
+        );
+        var defaultUrl =
+            target == EnhetsregisteretEnvironment.Production ? ProductionBaseUrl : PpeBaseUrl;
+        var baseUrl = EnvironmentClientPolicy.ResolveUrl(
+            hostEnvironment,
+            config.BrregApiBaseUrlOverwrite,
+            defaultUrl
+        );
+        EnvironmentClientPolicy.WarnOnStagingOverrides(
+            services,
+            hostEnvironment,
+            "Enhetsregisteret",
+            (baseUrl, defaultUrl)
+        );
         services.AddValidatorsFromAssemblyContaining<IAssemblyInfo>();
-        services.AddSingleton(config!);
+        services.AddSingleton(config);
+
+        if (target == EnhetsregisteretEnvironment.Stub && config.BrregApiBaseUrlOverwrite is null)
+        {
+            services.AddScoped<Ports.IEnhetsregisteret, EnhetsregisteretStub>();
+            return;
+        }
 
         Action<HttpClient> configureClient = (httpClient) =>
         {
-            httpClient.BaseAddress = new Uri(
-                string.IsNullOrEmpty(config.BrregApiBaseUrlOverwrite)
-                    ? GetBrregUrlBasedOnEnvironment(hostEnvironment)
-                    : config.BrregApiBaseUrlOverwrite
-            );
+            httpClient.BaseAddress = baseUrl;
         };
 
         var clientBuilder = config.CacheOptions.Disabled

@@ -5,6 +5,8 @@ using Arbeidstilsynet.Common.GeoNorge.Implementation;
 using Arbeidstilsynet.Common.GeoNorge.KommuneInfo;
 using Arbeidstilsynet.Common.GeoNorge.Ports;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using NSubstitute;
 using Shouldly;
 
 namespace Arbeidstilsynet.Common.GeoNorge.Test.Unit;
@@ -163,7 +165,9 @@ public class DependencyInjectionExtensionsTests
     {
         var services = new ServiceCollection();
         services.AddLogging();
-        services.AddGeoNorge(config);
+        var environment = Substitute.For<IHostEnvironment>();
+        environment.EnvironmentName.Returns(Environments.Staging);
+        services.AddGeoNorge(environment, config);
 
         var serviceProvider = services.BuildServiceProvider();
 
