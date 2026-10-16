@@ -84,11 +84,6 @@ public record StructuredDataConfiguration
     public bool DisableValidation { get; init; } = false;
 
     /// <summary>
-    /// Whether to keep the App data model after mapping. Default is false.
-    /// </summary>
-    public bool KeepAppDataModelAfterMapping { get; init; } = false;
-
-    /// <summary>
     /// Optional filter for which task(s) the structured data mapping should run for. Default is empty, which means it will run for all tasks.
     /// </summary>
     /// <remarks>
@@ -153,14 +148,15 @@ public static class DependencyInjectionExtensions
     /// <summary>
     /// Adds a mechanism to map the datamodel of type <typeparamref name="TDataModel"/> to structured data of type <typeparamref name="TStructuredData"/>
     ///
-    /// The data model is deleted right after PDF-generation so that it doesn't get transferred to storage (control this behavior with <see cref="StructuredDataConfiguration.KeepAppDataModelAfterMapping"/>). The structured data will be stored instead.
+    /// The package does not delete the form model. Enable appLogic.autoDeleteOnProcessEnd on its data type
+    /// for Altinn-managed cleanup before process-completed event registration. See the README for migration details.
     /// A structured data element is always expected to exist by process end, regardless of whether the data model is kept.
     /// </summary>
     /// <param name="services"></param>
     /// <param name="mapFunc">The function responsible for mapping from <typeparamref name="TDataModel"/> to <typeparamref name="TStructuredData"/>.</param>
     /// <param name="configuration">The structured data configuration.</param>
     /// <typeparam name="TStructuredData">The type of the structured data that the App data model will be mapped to and stored as.</typeparam>
-    /// <typeparam name="TDataModel">The type of the App data model. This is the type that will be mapped to structured data and then deleted before storage.</typeparam>
+    /// <typeparam name="TDataModel">The type of the App data model to map to structured data. Form-model cleanup is configured in application metadata.</typeparam>
     [Obsolete(
         "Implement IStructuredDataMapper<TDataModel, TStructuredData> and use AddStructuredData<TDataModel, TStructuredData, TMapper>(env, configure) instead."
     )]
@@ -185,7 +181,8 @@ public static class DependencyInjectionExtensions
     /// <br/>
     /// The mapper is resolved from the service provider (transient), so it can depend on other services through constructor injection.
     /// <br/>
-    /// The data model is deleted right after PDF-generation so that it doesn't get transferred to storage (control this behavior with <see cref="StructuredDataConfiguration.KeepAppDataModelAfterMapping"/>). The structured data will be stored instead.
+    /// The package does not delete the form model. Enable appLogic.autoDeleteOnProcessEnd on its data type
+    /// for Altinn-managed cleanup before process-completed event registration. See the README for migration details.
     /// <br/>
     /// A structured data element is always expected to exist by process end, regardless of whether the data model is kept.
     /// <br/>
@@ -194,7 +191,7 @@ public static class DependencyInjectionExtensions
     /// <param name="services"></param>
     /// <param name="env">The hosting environment. Used to determine configuration defaults: error details are included in non-production environments and excluded in production.</param>
     /// <param name="configure">Optional function to adjust the environment-based defaults, e.g. <c>c => c with { TaskIdFilter = ["Task_1"], ExcludedAttachmentDataTypeIds = ["internal-data"] }</c>.</param>
-    /// <typeparam name="TDataModel">The type of the App data model. This is the type that will be mapped to structured data and then deleted before storage.</typeparam>
+    /// <typeparam name="TDataModel">The type of the App data model to map to structured data. Form-model cleanup is configured in application metadata.</typeparam>
     /// <typeparam name="TStructuredData">The type of the structured data that the App data model will be mapped to and stored as.</typeparam>
     /// <typeparam name="TMapper">The <see cref="IStructuredDataMapper{TDataModel, TStructuredData}"/> implementation.</typeparam>
     /// <returns>Service collection for chaining</returns>
@@ -238,7 +235,8 @@ public static class DependencyInjectionExtensions
     /// <summary>
     /// Adds a mechanism to map the datamodel of type <typeparamref name="TDataModel"/> to structured data of type <typeparamref name="TStructuredData"/>
     /// <br/>
-    /// The data model is deleted right after PDF-generation so that it doesn't get transferred to storage (control this behavior with <see cref="StructuredDataConfiguration.KeepAppDataModelAfterMapping"/>). The structured data will be stored instead.
+    /// The package does not delete the form model. Enable appLogic.autoDeleteOnProcessEnd on its data type
+    /// for Altinn-managed cleanup before process-completed event registration. See the README for migration details.
     /// <br/>
     /// A structured data element is always expected to exist by process end, regardless of whether the data model is kept.
     /// <br/>
@@ -248,7 +246,7 @@ public static class DependencyInjectionExtensions
     /// <param name="mapFunc">The function responsible for mapping from <typeparamref name="TDataModel"/> to <typeparamref name="TStructuredData"/>.</param>
     /// <param name="env">The hosting environment. Used to determine which defaults to use in the configuration. In production, error details will be excluded from the structured data by default, while in non-production environments, error details will be included by default.</param>
     /// <typeparam name="TStructuredData">The type of the structured data that the App data model will be mapped to and stored as.</typeparam>
-    /// <typeparam name="TDataModel">The type of the App data model. This is the type that will be mapped to structured data and then deleted before storage.</typeparam>
+    /// <typeparam name="TDataModel">The type of the App data model to map to structured data. Form-model cleanup is configured in application metadata.</typeparam>
     /// <returns></returns>
     /// <remarks>
     /// You need to add this to your App/config/applicationmetadata.json:
@@ -377,8 +375,9 @@ public static class DependencyInjectionExtensions
     /// Registers a <see cref="IStructuredDataPostProcessor"/> that runs at process end, from inside the structured data feature
     /// (see <see cref="AddStructuredData{TDataModel, TStructuredData, TMapper}(IServiceCollection, IHostEnvironment, Func{StructuredDataConfiguration, StructuredDataConfiguration})"/>).
     /// <br/>
-    /// Post-processors run before the App data model is deleted (unless kept by configuration), and are guaranteed that the
-    /// structured data element and the main PDF element exist on the instance. Multiple post-processors run in registration order,
+    /// Post-processors run after Altinn-managed automatic form-model deletion, and are guaranteed that the
+    /// structured data element and the main PDF element exist on the instance. They must not depend on the form model.
+    /// Multiple post-processors run in registration order,
     /// and should be idempotent since process end may be retried.
     /// </summary>
     /// <typeparam name="T">The post-processor implementation.</typeparam>

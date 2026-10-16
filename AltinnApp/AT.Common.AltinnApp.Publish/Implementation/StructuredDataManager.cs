@@ -61,19 +61,13 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
     {
         // Right after submission
 
-        var dataModelElement = await _applicationClient.GetRequiredDataModelElement<TDataModel>(
-            instance
-        );
+        Instance? freshInstance = null;
+        if (!HasStructuredData(instance))
+        {
+            freshInstance = await RefreshInstanceData(instance);
+        }
 
-        var structuredDataExists = instance.Data.Any(d =>
-            string.Equals(
-                d.DataType,
-                _config.StructuredDataConfiguration.StructuredDataTypeId,
-                StringComparison.OrdinalIgnoreCase
-            )
-        );
-
-        if (!structuredDataExists)
+        if (!HasStructuredData(instance))
         {
             throw new InvalidOperationException(
                 $"No structured data element of type '{_config.StructuredDataConfiguration.StructuredDataTypeId}' was found on the instance by process end. "
@@ -81,26 +75,31 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
             );
         }
 
-        // Run before the destructive deletion so a failing post-processor can be retried.
-        await RunPostProcessors(instance);
-
-        if (!_config.StructuredDataConfiguration.KeepAppDataModelAfterMapping)
+        if (_postProcessors.Count > 0)
         {
-            await _dataClient.DeleteElement(instance, dataModelElement);
+            freshInstance ??= await RefreshInstanceData(instance);
+            await RunPostProcessors(freshInstance);
         }
     }
 
-    private async Task RunPostProcessors(Instance instance)
+    private bool HasStructuredData(Instance instance) =>
+        instance.Data.Any(d =>
+            string.Equals(
+                d.DataType,
+                _config.StructuredDataConfiguration.StructuredDataTypeId,
+                StringComparison.OrdinalIgnoreCase
+            )
+        );
+
+    private async Task<Instance> RefreshInstanceData(Instance instance)
     {
-        if (_postProcessors.Count == 0)
-        {
-            return;
-        }
-
-        // The instance passed to IProcessEnd is not updated with data elements created during the
-        // request (e.g. the PDF generated at task end), so fetch a fresh copy from storage.
         var freshInstance = await _instanceClient.GetInstance(instance);
+        instance.Data = freshInstance.Data;
+        return freshInstance;
+    }
 
+    private async Task RunPostProcessors(Instance freshInstance)
+    {
         var context = new StructuredDataPostProcessingContext
         {
             Instance = freshInstance,
@@ -184,12 +183,17 @@ internal class StructuredDataManager<TDataModel, TStructuredData> : IProcessTask
 
         await DeleteExistingStructuredData(instance);
 
-        await _dataClient.InsertStructuredData(
+        var createdElement = await _dataClient.InsertStructuredData(
             instance,
             structuredData,
             _config.StructuredDataConfiguration.StructuredDataTypeId,
             CancellationToken.None
         );
+
+        if (!instance.Data.Any(d => d.Id == createdElement.Id))
+        {
+            instance.Data.Add(createdElement);
+        }
 
         return dataModelElement.DataType;
     }
@@ -331,7 +335,7 @@ file static class Extensions
         return data;
     }
 
-    public static async Task InsertStructuredData<T>(
+    public static async Task<DataElement> InsertStructuredData<T>(
         this IDataClient dataClient,
         Instance instance,
         T structuredData,
@@ -342,7 +346,7 @@ file static class Extensions
     {
         using var stream = structuredData.ToBinaryStream();
 
-        await dataClient.InsertBinaryData(
+        return await dataClient.InsertBinaryData(
             instance.Id,
             structuredDataTypeId,
             "application/json",
@@ -359,13 +363,19 @@ file static class Extensions
         CancellationToken? cancellationToken = null
     )
     {
-        await dataClient.DeleteData(
+        var deleted = await dataClient.DeleteData(
             instance.GetInstanceOwnerPartyId(),
             instance.GetInstanceGuid(),
             Guid.Parse(dataElement.Id),
             false,
             cancellationToken: cancellationToken ?? CancellationToken.None
         );
+        if (!deleted)
+        {
+            throw new InvalidOperationException(
+                $"Could not delete data element {dataElement.Id} from instance {instance.Id}."
+            );
+        }
         instance.Data.Remove(dataElement);
     }
 

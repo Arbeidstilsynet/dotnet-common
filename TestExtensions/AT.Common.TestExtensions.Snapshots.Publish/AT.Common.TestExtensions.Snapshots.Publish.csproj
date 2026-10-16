@@ -7,23 +7,27 @@
     <AssemblyName>Arbeidstilsynet.Common.TestExtensions.Snapshots</AssemblyName>
     <PackageId>Arbeidstilsynet.Common.TestExtensions.Snapshots</PackageId>
     <Product>Arbeidstilsynet.Common.TestExtensions.Snapshots</Product>
-    <Authors>Digital Samhandling</Authors>
+    <Authors>Arbeidstilsynet</Authors>
     <Company>Arbeidstilsynet</Company>
     <Description>Minimal snapshot testing for .NET with received/verified files, deterministic GUID and date scrubbing, and a snapshot format compatible with Verify.</Description>
     <PackageTags>snapshot;testing;approval;xunit</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>0.2.0</Version>
+    <Version>0.2.1</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/Arbeidstilsynet/dotnet-common</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Arbeidstilsynet/dotnet-common</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="AT.Common.TestExtensions.Snapshots.Test" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="README.md" Pack="true" PackagePath="\" />
-    <None Include="SPEC.md" Pack="true" PackagePath="\" />
+    <None Update="README.md" Pack="true" PackagePath="\" />
+    <None Update="SPEC.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\shared\icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
   <Target
     Name="InjectPackageReleaseNotesFromFile"

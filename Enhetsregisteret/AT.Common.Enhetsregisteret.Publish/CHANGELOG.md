@@ -32,6 +32,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Production rejects non-production targets and non-default endpoints. Other host environments besides Production, Staging and Development require an explicit target.
 - Production continues to default to the production API, and Staging to PPE.
 
+## 3.1.2
+
+### Fixed
+
+- Standardized NuGet metadata with Arbeidstilsynet as author, an MIT license expression, an embedded icon and Git repository details.
+
 ## 3.1.1
 
 ### Changed

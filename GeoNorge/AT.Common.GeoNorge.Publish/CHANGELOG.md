@@ -32,6 +32,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Production rejects non-production targets and non-default endpoints. Generated clients are not registered for stubbed APIs.
 - `BaseUrl` and `PropertyBaseUrl` are now nullable overrides. An explicit URL activates the corresponding real adapters in Development.
 
+## 4.1.1
+
+### Fixed
+
+- Standardized NuGet metadata with Arbeidstilsynet as author, an MIT license expression, an embedded icon and Git repository details.
+
 ## 4.1.0
 
 ### Added

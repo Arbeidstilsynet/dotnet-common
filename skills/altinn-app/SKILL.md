@@ -69,7 +69,6 @@ services.AddStructuredData<TDataModel, TStructuredData>(
         StructuredDataTypeId = "structured-data",       // default
         MainPdfDataTypeId = "ref-data-as-pdf",          // default
         IncludeErrorDetails = false,                    // default
-        KeepAppDataModelAfterMapping = false,            // default
     });
 
 // Option B: Environment-based (IncludeErrorDetails = true in non-production)
@@ -85,7 +84,6 @@ services.AddStructuredData<TDataModel, TStructuredData>(
 | `StructuredDataTypeId` | `string` | `"structured-data"` | The `DataElement.DataType` id for the structured data element. |
 | `MainPdfDataTypeId` | `string` | `"ref-data-as-pdf"` | The `DataElement.DataType` id for the main PDF document. |
 | `IncludeErrorDetails` | `bool` | `false` | Whether to include error details in the structured data on mapping errors. |
-| `KeepAppDataModelAfterMapping` | `bool` | `false` | Whether to keep the App data model after mapping (otherwise it is deleted before storage). |
 
 ### 2. Declare the data type in `App/config/applicationmetadata.json`
 
@@ -100,6 +98,25 @@ services.AddStructuredData<TDataModel, TStructuredData>(
   ]
 }
 ```
+
+### 3. Configure form-model cleanup in application metadata
+
+The package no longer deletes the form model; `KeepAppDataModelAfterMapping` was removed in 2.12.1. Merge this fragment into the existing **form-model** data type, preserving `classRef` and other properties:
+
+```json
+{
+  "id": "skjema",
+  "appLogic": {
+    "autoDeleteOnProcessEnd": true
+  }
+}
+```
+
+Leave automatic deletion disabled for tests or applications that intentionally retain the model.
+
+### Learnings
+
+In Altinn.App.Core 8.12.11's default lifecycle, automatic data-type deletion runs before process-completed event registration, while app-defined `IProcessEnd` handlers run after registration. This ordering existed when `IProcessEnd` was introduced; it was not a change in 8.12.11. Never use `IProcessEnd` cleanup, validation, or post-processing as a pre-event barrier: post-processors and explicit recovery must tolerate an already-deleted model, and retries are not guaranteed. Keep structured-data insertion awaited at task end, synchronize successful package mutations into `instance.Data`, and refresh storage once when process-end structured data is missing locally; post-processors must use fresh state including framework-generated PDFs.
 
 ---
 
@@ -165,9 +182,9 @@ public class AttachmentListProcessor : ListProcessor<MyDataModel, AttachmentInfo
 }
 ```
 
-### `PreSubmitDataModelProcessor<TDataModel>` — Process data before submission
+### `PreSubmitDataModelProcessor<TDataModel>` - Task-end model processing
 
-Runs at process task end (`IProcessTaskEnd`) to modify the data model before it is finalised. Retrieves the form data, calls your `ProcessDataModel` method, and saves the result back.
+Implements `IProcessTaskEnd`, which runs before automatic form-model deletion. Retrieves the form model, calls `ProcessDataModel`, and saves the result. Use `TaskIdFilter` to restrict execution to specific tasks. Task end does not necessarily mean final submission, and this base class does not establish ordering relative to other task-end handlers.
 
 ```csharp
 public class MyPreSubmitProcessor : PreSubmitDataModelProcessor<MyDataModel>
@@ -175,16 +192,17 @@ public class MyPreSubmitProcessor : PreSubmitDataModelProcessor<MyDataModel>
     public MyPreSubmitProcessor(IDataClient dataClient, IApplicationClient applicationClient)
         : base(dataClient, applicationClient) { }
 
-    protected override async Task<MyDataModel> ProcessDataModel(
+    protected override Task<MyDataModel> ProcessDataModel(
         MyDataModel currentDataModel,
         Instance instance)
     {
-        // Modify the data model before submission
         currentDataModel.SubmittedAt = DateTime.UtcNow;
-        return currentDataModel;
+        return Task.FromResult(currentDataModel);
     }
 }
 ```
+
+For explicit ordering before dependent mapping or PDF generation, consider a BPMN service task. Structured-data post-processors run after event registration and automatic model deletion and are not equivalent to task-end form-model processing.
 
 ### Registration
 
