@@ -54,8 +54,8 @@ The Development stub runs in-process and makes no network requests. It registers
 
 Current sample data:
 
-- Enhet `974761211`, named `Eksempel AS`.
-- Underenhet `974761076`, named `Eksempel AS`.
+- Enhet `974761211`, named `Eksempel AS`, with the Oslo business address `Eksempelveien 1`, municipality `0301`, postcode `0001` (Oslo).
+- Underenhet `974761076`, named `Eksempel AS`, with the same sample location address.
 - Lookups of other valid nine-digit organisation numbers return null; malformed numbers throw.
 - Searches support `Organisasjonsnummer`, case-insensitive substring `Navn`, and `Page`/`Size`. Underenhet searches also support `OverordnetEnhet` (`974761211` for the current sample). Non-matches and later pages return empty lists.
 - Update history is empty; `Page`, `Size`, `Dato` and `Oppdateringsid` are accepted. Pagination helpers terminate normally.

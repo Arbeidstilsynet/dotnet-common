@@ -77,11 +77,11 @@ Default Development registration is entirely in-process and offline, with no ext
 
 The small sample responses are **not a realistic dataset and have no guaranteed coherence**, either between operations or with Enhetsregisteret. Do not build assertions around cross-response relationships. The current samples are:
 
-- Address: `Eksempelveien 1`, with a WGS84 point. Text searches support case-insensitive substring matching via `Sok` and `Adressetekst`, and `Side`/`TreffPerSide` pagination. Point searches accept `Lat`, `Lon`, `Radius` and pagination, but return the sample without calculating distance or spatial matches.
+- Address: `Eksempelveien 1`, Oslo (`0301`), postcode `0001`, farm/use numbers `1/1`, with a WGS84 point. Text searches support case-insensitive substring matching via `Sok` and `Adressetekst`, exact matching via `Kommunenummer`, `Postnummer`, `Gardsnummer` and `Bruksnummer`, and `Side`/`TreffPerSide` pagination. Point searches accept `Lat`, `Lon`, `Radius` and pagination, but return the sample without calculating distance or spatial matches.
 - County/municipality: Oslo (`03`/`0301`). Unknown numbers return null; point lookups return the sample without checking containment.
 - Property: `0301-1/1`, with a GeoJSON point in longitude/latitude order. Searches support `Matrikkelnummer` or `Kommunenummer`/`Gardsnummer`/`Bruksnummer`; other values return an empty feature collection.
 
-Coordinates support only EPSG:4326 (or unset). Area geometries and other query filters throw `NotSupportedException`; the stubs never fall back to a real API. Returned models are fresh per call.
+Coordinates support only EPSG:4326 (or unset). Area geometries and other unsupported query filters throw `NotSupportedException`; the stubs never fall back to a real API. Returned models are fresh per call.
 
 When a test needs specific data or behaviour, replace the interface registration after `AddGeoNorge`, or configure a mock-server endpoint:
 

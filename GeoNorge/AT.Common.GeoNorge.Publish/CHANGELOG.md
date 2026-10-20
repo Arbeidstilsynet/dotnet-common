@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 5.0.0-alpha3
+
+### Added
+
+- Development address-search stubs support municipality, postcode, farm-number and use-number filters for the fixed sample address, including combined filters and consistent pagination metadata for empty results.
+
 ## 5.0.0
 
 ### Added

@@ -16,13 +16,23 @@ internal sealed class AddressSearchStub : IAddressSearch
             queryParameters,
             "Sok",
             "Adressetekst",
+            "Kommunenummer",
+            "Postnummer",
+            "Gardsnummer",
+            "Bruksnummer",
             "Side",
             "TreffPerSide",
             "Utkoordsys"
         );
         StubQuery.GeographicCoordinates(queryParameters.Utkoordsys);
         StubQuery.Page(queryParameters.Side, queryParameters.TreffPerSide);
-        var matches = Matches(queryParameters.Sok) && Matches(queryParameters.Adressetekst);
+        var matches =
+            Matches(queryParameters.Sok)
+            && Matches(queryParameters.Adressetekst)
+            && Matches(queryParameters.Kommunenummer, "0301")
+            && Matches(queryParameters.Postnummer, "0001")
+            && Matches(queryParameters.Gardsnummer, 1)
+            && Matches(queryParameters.Bruksnummer, 1);
         var hasResult = matches && (queryParameters.Side ?? 0) == 0;
         return Task.FromResult<OutputAdresseList?>(
             new()
@@ -39,6 +49,8 @@ internal sealed class AddressSearchStub : IAddressSearch
                             Kommunenavn = "Oslo",
                             Postnummer = "0001",
                             Poststed = "Oslo",
+                            Gardsnummer = 1,
+                            Bruksnummer = 1,
                             Representasjonspunkt = NewPoint(),
                         },
                     ]
@@ -100,6 +112,10 @@ internal sealed class AddressSearchStub : IAddressSearch
     private static bool Matches(string? search) =>
         string.IsNullOrEmpty(search)
         || Address.Contains(search, StringComparison.OrdinalIgnoreCase);
+
+    private static bool Matches(string? filter, string value) => filter is null || filter == value;
+
+    private static bool Matches(int? filter, int value) => filter is null || filter == value;
 
     private static GeomPoint NewPoint() =>
         new()

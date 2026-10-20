@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 4.0.0-alpha3
+
+### Added
+
+- Complete, freshly constructed Oslo addresses for the built-in Development enhet and underenhet samples, including street, postcode, postal town, municipality and country.
+
 ## 4.0.0
 
 ### Added

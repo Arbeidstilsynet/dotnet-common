@@ -12,7 +12,7 @@ namespace Arbeidstilsynet.Common.Enhetsregisteret.Test.Unit;
 public class EnvironmentRegistrationTests
 {
     [Fact]
-    public void DevelopmentRegistersOnlyOfflinePort()
+    public async Task DevelopmentRegistersOnlyOfflinePort()
     {
         using var provider = Register("Development").BuildServiceProvider();
         using var scope = provider.CreateScope();
@@ -21,6 +21,22 @@ public class EnvironmentRegistrationTests
             .ShouldBeOfType<EnhetsregisteretStub>();
         scope.ServiceProvider.GetService<EnhetsregisteretClient>().ShouldBeNull();
         scope.ServiceProvider.GetService<IHttpClientFactory>().ShouldBeNull();
+        var stub = scope.ServiceProvider.GetRequiredService<IEnhetsregisteret>();
+        var token = TestContext.Current.CancellationToken;
+        (await stub.GetEnhet("974761211", token))!.Forretningsadresse.ShouldNotBeNull();
+        (await stub.GetUnderenhet("974761076", token))!.Beliggenhetsadresse.ShouldNotBeNull();
+        (
+            await stub.SearchEnheter(cancellationToken: token)
+        )!.Embedded!.Enheter.ShouldHaveSingleItem();
+        (
+            await stub.SearchUnderenheter(cancellationToken: token)
+        )!.Embedded!.Underenheter.ShouldHaveSingleItem();
+        (
+            await stub.GetOppdateringerEnheter(cancellationToken: token)
+        )!.Embedded!.OppdaterteEnheter.ShouldBeEmpty();
+        (
+            await stub.GetOppdateringerUnderenheter(cancellationToken: token)
+        )!.Embedded!.OppdaterteUnderenheter.ShouldBeEmpty();
     }
 
     [Fact]

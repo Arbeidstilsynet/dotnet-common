@@ -47,9 +47,48 @@ public class DevelopmentStubTests
         var token = TestContext.Current.CancellationToken;
         var enhet = await stub.GetEnhet("974761211", token);
         enhet!.Navn.ShouldBe("Eksempel AS");
+        Assert.NotNull(enhet.Forretningsadresse?.Adresse);
+        enhet.Forretningsadresse.Adresse.ShouldContain("Eksempelveien 1");
+        enhet.Forretningsadresse.Kommune.ShouldBe("Oslo");
+        enhet.Forretningsadresse.Kommunenummer.ShouldBe("0301");
+        enhet.Forretningsadresse.Postnummer.ShouldBe("0001");
+        enhet.Forretningsadresse.Poststed.ShouldBe("Oslo");
+        enhet.Forretningsadresse.Land.ShouldBe("Norge");
+        enhet.Forretningsadresse.Landkode.ShouldBe("NO");
+        enhet.Forretningsadresse.Adresse[0] = "modified";
+        enhet.Forretningsadresse.Kommune = "modified";
         enhet.Navn = "modified";
-        (await stub.GetEnhet("974761211", token))!.Navn.ShouldBe("Eksempel AS");
-        (await stub.GetUnderenhet("974761076", token))!.Navn.ShouldBe("Eksempel AS");
+        var freshEnhet = await stub.GetEnhet("974761211", token);
+        freshEnhet!.Navn.ShouldBe("Eksempel AS");
+        freshEnhet.Forretningsadresse.ShouldNotBeSameAs(enhet.Forretningsadresse);
+        freshEnhet.Forretningsadresse!.Adresse.ShouldNotBeSameAs(enhet.Forretningsadresse.Adresse);
+        freshEnhet.Forretningsadresse.Adresse.ShouldBe(["Eksempelveien 1"]);
+        freshEnhet.Forretningsadresse.Kommune.ShouldBe("Oslo");
+        var underenhet = await stub.GetUnderenhet("974761076", token);
+        underenhet!.Navn.ShouldBe("Eksempel AS");
+        Assert.NotNull(underenhet.Beliggenhetsadresse?.Adresse);
+        underenhet.Beliggenhetsadresse.Adresse.ShouldContain("Eksempelveien 1");
+        underenhet.Beliggenhetsadresse.Kommune.ShouldBe("Oslo");
+        underenhet.Beliggenhetsadresse.Kommunenummer.ShouldBe("0301");
+        underenhet.Beliggenhetsadresse.Postnummer.ShouldBe("0001");
+        underenhet.Beliggenhetsadresse.Poststed.ShouldBe("Oslo");
+        underenhet.Beliggenhetsadresse.Land.ShouldBe("Norge");
+        underenhet.Beliggenhetsadresse.Landkode.ShouldBe("NO");
+        underenhet.Beliggenhetsadresse.Adresse[0] = "modified";
+        underenhet.Beliggenhetsadresse.Kommune = "modified";
+        var freshUnderenhet = await stub.GetUnderenhet("974761076", token);
+        freshUnderenhet!.Beliggenhetsadresse.ShouldNotBeSameAs(underenhet.Beliggenhetsadresse);
+        freshUnderenhet.Beliggenhetsadresse!.Adresse.ShouldNotBeSameAs(
+            underenhet.Beliggenhetsadresse.Adresse
+        );
+        freshUnderenhet.Beliggenhetsadresse.Adresse.ShouldBe(["Eksempelveien 1"]);
+        freshUnderenhet.Beliggenhetsadresse.Kommune.ShouldBe("Oslo");
+        (await stub.SearchEnheter(cancellationToken: token))!
+            .Embedded!.Enheter!.ShouldHaveSingleItem()
+            .Forretningsadresse!.Adresse.ShouldBe(["Eksempelveien 1"]);
+        (await stub.SearchUnderenheter(cancellationToken: token))!
+            .Embedded!.Underenheter!.ShouldHaveSingleItem()
+            .Beliggenhetsadresse!.Adresse.ShouldBe(["Eksempelveien 1"]);
         (await stub.GetEnhet("999999999", token)).ShouldBeNull();
         (await stub.GetUnderenhet("999999999", token)).ShouldBeNull();
         Should.Throw<ArgumentException>(() => stub.GetEnhet("invalid", token));

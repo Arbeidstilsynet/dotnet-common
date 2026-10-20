@@ -36,7 +36,7 @@ public class EnvironmentRegistrationTests
     }
 
     [Fact]
-    public void DevelopmentRegistersOnlyOfflinePorts()
+    public async Task DevelopmentRegistersOnlyOfflinePorts()
     {
         using var provider = Register("Development").BuildServiceProvider();
         using var scope = provider.CreateScope();
@@ -53,6 +53,33 @@ public class EnvironmentRegistrationTests
         scope.ServiceProvider.GetService<KommuneInfoClient>().ShouldBeNull();
         scope.ServiceProvider.GetService<EiendomClient>().ShouldBeNull();
         scope.ServiceProvider.GetService<IHttpClientFactory>().ShouldBeNull();
+        var addresses = scope.ServiceProvider.GetRequiredService<IAddressSearch>();
+        (
+            await addresses.SearchAddresses(new() { Sok = "Eksempelveien", Postnummer = "0001" })
+        )!.Adresser.ShouldHaveSingleItem();
+        (
+            await addresses.SearchAddresses(
+                new()
+                {
+                    Kommunenummer = "0301",
+                    Gardsnummer = 1,
+                    Bruksnummer = 1,
+                }
+            )
+        )!.Adresser.ShouldHaveSingleItem();
+        (await addresses.SearchAddressesByPoint(new()))!.Adresser.ShouldHaveSingleItem();
+        var municipalities = scope.ServiceProvider.GetRequiredService<IFylkeKommuneApi>();
+        (await municipalities.GetFylker()).ShouldHaveSingleItem();
+        (await municipalities.GetKommuner()).ShouldHaveSingleItem();
+        (await municipalities.GetFylkerFullInfo()).ShouldHaveSingleItem();
+        (await municipalities.GetFylkeByNumber("03")).ShouldNotBeNull();
+        (await municipalities.GetKommuneByNumber("0301")).ShouldNotBeNull();
+        (await municipalities.GetKommuneByPoint(new())).ShouldNotBeNull();
+        (
+            await scope
+                .ServiceProvider.GetRequiredService<IPropertySearch>()
+                .SearchProperties(new())
+        )!.Features.ShouldHaveSingleItem();
     }
 
     [Theory]

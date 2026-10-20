@@ -173,7 +173,22 @@ internal sealed class EnhetsregisteretStub : IEnhetsregisteret
             TotalPages = matches ? 1 : 0,
         };
 
-    private static Enhet NewEnhet() => new() { Organisasjonsnummer = EnhetNumber, Navn = Name };
+    private static Enhet NewEnhet() =>
+        new()
+        {
+            Organisasjonsnummer = EnhetNumber,
+            Navn = Name,
+            Forretningsadresse = new()
+            {
+                Adresse = ["Eksempelveien 1"],
+                Kommune = "Oslo",
+                Kommunenummer = "0301",
+                Postnummer = "0001",
+                Poststed = "Oslo",
+                Land = "Norge",
+                Landkode = "NO",
+            },
+        };
 
     private static Underenhet NewUnderenhet() =>
         new()
@@ -181,5 +196,15 @@ internal sealed class EnhetsregisteretStub : IEnhetsregisteret
             Organisasjonsnummer = UnderenhetNumber,
             Navn = Name,
             OverordnetEnhet = EnhetNumber,
+            Beliggenhetsadresse = new()
+            {
+                Adresse = ["Eksempelveien 1"],
+                Kommune = "Oslo",
+                Kommunenummer = "0301",
+                Postnummer = "0001",
+                Poststed = "Oslo",
+                Land = "Norge",
+                Landkode = "NO",
+            },
         };
 }
