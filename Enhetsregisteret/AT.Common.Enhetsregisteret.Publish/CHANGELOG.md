@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 4.0.0-alpha4
+
+### Changed
+
+- Simplified the Development sample organisation numbers to `111111111` and `111111110`.
+
 ## 4.0.0-alpha3
 
 ### Added
