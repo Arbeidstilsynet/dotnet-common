@@ -54,10 +54,10 @@ The Development stub runs in-process and makes no network requests. It registers
 
 Current sample data:
 
-- Enhet `974761211`, named `Eksempel AS`, with the Oslo business address `Eksempelveien 1`, municipality `0301`, postcode `0001` (Oslo).
-- Underenhet `974761076`, named `Eksempel AS`, with the same sample location address.
+- Enhet `111111111`, named `Eksempel AS`, with the Oslo business address `Eksempelveien 1`, municipality `0301`, postcode `0001` (Oslo).
+- Underenhet `111111110`, named `Eksempel AS`, with the same sample location address.
 - Lookups of other valid nine-digit organisation numbers return null; malformed numbers throw.
-- Searches support `Organisasjonsnummer`, case-insensitive substring `Navn`, and `Page`/`Size`. Underenhet searches also support `OverordnetEnhet` (`974761211` for the current sample). Non-matches and later pages return empty lists.
+- Searches support `Organisasjonsnummer`, case-insensitive substring `Navn`, and `Page`/`Size`. Underenhet searches also support `OverordnetEnhet` (`111111111` for the current sample). Non-matches and later pages return empty lists.
 - Update history is empty; `Page`, `Size`, `Dato` and `Oppdateringsid` are accepted. Pagination helpers terminate normally.
 
 Other search filters throw `NotSupportedException`. Cancellation is honoured, and returned models are fresh per call. These are **simple samples, not a realistic dataset**: no coherence is guaranteed between responses or with GeoNorge. Consumers needing particular relationships or behaviours must replace the interface or configure their own endpoint.

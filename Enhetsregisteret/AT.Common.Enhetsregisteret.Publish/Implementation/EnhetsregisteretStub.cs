@@ -12,8 +12,8 @@ namespace Arbeidstilsynet.Common.Enhetsregisteret.Implementation;
 
 internal sealed class EnhetsregisteretStub : IEnhetsregisteret
 {
-    private const string EnhetNumber = "974761211";
-    private const string UnderenhetNumber = "974761076";
+    private const string EnhetNumber = "111111111";
+    private const string UnderenhetNumber = "111111110";
     private const string Name = "Eksempel AS";
 
     public Task<Enhet?> GetEnhet(

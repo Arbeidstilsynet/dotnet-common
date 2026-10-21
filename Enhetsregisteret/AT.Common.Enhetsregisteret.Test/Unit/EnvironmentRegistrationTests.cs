@@ -23,8 +23,8 @@ public class EnvironmentRegistrationTests
         scope.ServiceProvider.GetService<IHttpClientFactory>().ShouldBeNull();
         var stub = scope.ServiceProvider.GetRequiredService<IEnhetsregisteret>();
         var token = TestContext.Current.CancellationToken;
-        (await stub.GetEnhet("974761211", token))!.Forretningsadresse.ShouldNotBeNull();
-        (await stub.GetUnderenhet("974761076", token))!.Beliggenhetsadresse.ShouldNotBeNull();
+        (await stub.GetEnhet("111111111", token))!.Forretningsadresse.ShouldNotBeNull();
+        (await stub.GetUnderenhet("111111110", token))!.Beliggenhetsadresse.ShouldNotBeNull();
         (
             await stub.SearchEnheter(cancellationToken: token)
         )!.Embedded!.Enheter.ShouldHaveSingleItem();

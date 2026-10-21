@@ -45,7 +45,7 @@ public class DevelopmentStubTests
     {
         var stub = new EnhetsregisteretStub();
         var token = TestContext.Current.CancellationToken;
-        var enhet = await stub.GetEnhet("974761211", token);
+        var enhet = await stub.GetEnhet("111111111", token);
         enhet!.Navn.ShouldBe("Eksempel AS");
         Assert.NotNull(enhet.Forretningsadresse?.Adresse);
         enhet.Forretningsadresse.Adresse.ShouldContain("Eksempelveien 1");
@@ -58,13 +58,13 @@ public class DevelopmentStubTests
         enhet.Forretningsadresse.Adresse[0] = "modified";
         enhet.Forretningsadresse.Kommune = "modified";
         enhet.Navn = "modified";
-        var freshEnhet = await stub.GetEnhet("974761211", token);
+        var freshEnhet = await stub.GetEnhet("111111111", token);
         freshEnhet!.Navn.ShouldBe("Eksempel AS");
         freshEnhet.Forretningsadresse.ShouldNotBeSameAs(enhet.Forretningsadresse);
         freshEnhet.Forretningsadresse!.Adresse.ShouldNotBeSameAs(enhet.Forretningsadresse.Adresse);
         freshEnhet.Forretningsadresse.Adresse.ShouldBe(["Eksempelveien 1"]);
         freshEnhet.Forretningsadresse.Kommune.ShouldBe("Oslo");
-        var underenhet = await stub.GetUnderenhet("974761076", token);
+        var underenhet = await stub.GetUnderenhet("111111110", token);
         underenhet!.Navn.ShouldBe("Eksempel AS");
         Assert.NotNull(underenhet.Beliggenhetsadresse?.Adresse);
         underenhet.Beliggenhetsadresse.Adresse.ShouldContain("Eksempelveien 1");
@@ -76,7 +76,7 @@ public class DevelopmentStubTests
         underenhet.Beliggenhetsadresse.Landkode.ShouldBe("NO");
         underenhet.Beliggenhetsadresse.Adresse[0] = "modified";
         underenhet.Beliggenhetsadresse.Kommune = "modified";
-        var freshUnderenhet = await stub.GetUnderenhet("974761076", token);
+        var freshUnderenhet = await stub.GetUnderenhet("111111110", token);
         freshUnderenhet!.Beliggenhetsadresse.ShouldNotBeSameAs(underenhet.Beliggenhetsadresse);
         freshUnderenhet.Beliggenhetsadresse!.Adresse.ShouldNotBeSameAs(
             underenhet.Beliggenhetsadresse.Adresse
@@ -111,9 +111,9 @@ public class DevelopmentStubTests
         (
             await stub.SearchUnderenheter(q => q.OverordnetEnhet = "999999999", token)
         )!.Embedded!.Underenheter.ShouldBeEmpty();
-        (await stub.GetEnheter(["974761211"])).ShouldHaveSingleItem();
-        (await stub.GetUnderenheter(["974761076"])).ShouldHaveSingleItem();
-        (await stub.GetUnderenheterByHovedenhet("974761211")).ShouldHaveSingleItem();
+        (await stub.GetEnheter(["111111111"])).ShouldHaveSingleItem();
+        (await stub.GetUnderenheter(["111111110"])).ShouldHaveSingleItem();
+        (await stub.GetUnderenheterByHovedenhet("111111111")).ShouldHaveSingleItem();
     }
 
     [Fact]
@@ -147,8 +147,8 @@ public class DevelopmentStubTests
     {
         var stub = new EnhetsregisteretStub();
         var token = new CancellationToken(true);
-        Should.Throw<OperationCanceledException>(() => stub.GetEnhet("974761211", token));
-        Should.Throw<OperationCanceledException>(() => stub.GetUnderenhet("974761076", token));
+        Should.Throw<OperationCanceledException>(() => stub.GetEnhet("111111111", token));
+        Should.Throw<OperationCanceledException>(() => stub.GetUnderenhet("111111110", token));
         Should.Throw<OperationCanceledException>(() =>
             stub.SearchEnheter(cancellationToken: token)
         );
@@ -163,7 +163,7 @@ public class DevelopmentStubTests
         );
         Should.Throw<NotSupportedException>(() =>
             stub.SearchEnheter(
-                q => q.OverordnetEnhet = "974761211",
+                q => q.OverordnetEnhet = "111111111",
                 TestContext.Current.CancellationToken
             )
         );
