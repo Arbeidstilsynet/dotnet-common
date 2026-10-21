@@ -19,6 +19,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 4.0.0-alpha4
+
+### Changed
+
+- Simplified the Development sample organisation numbers to `111111111` and `111111110`.
+
+## 4.0.0-alpha3
+
+### Added
+
+- Complete, freshly constructed Oslo addresses for the built-in Development enhet and underenhet samples, including street, postcode, postal town, municipality and country.
+
+## 4.0.0
+
+### Added
+
+- Built-in offline Development implementation of `IEnhetsregisteret`, with simple sample entities and empty update history.
+- Explicit `EnhetsregisteretEnvironment` selection and startup warnings for endpoint overrides in Staging.
+
+### Changed
+
+- **BREAKING**: Development defaults to interface stubs rather than the PPE API; the generated client is not registered in stub mode. An explicit base URL selects the real adapter.
+- **BREAKING**: Production rejects non-production targets and non-default endpoints. Other host environments besides Production, Staging and Development require an explicit target.
+- Production continues to default to the production API, and Staging to PPE.
+
 ## 3.1.2
 
 ### Fixed
