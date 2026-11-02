@@ -21,6 +21,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 4.3.0
+
+### Added
+
+- `AltinnConfiguration.LocalAuthenticationLevel` configures the authentication level of local organization test tokens, defaulting to 4. Values from 1 through 4 are accepted; invalid values are rejected during registration when targeting Local. Production and TT02 ignore this setting.
+
+### Fixed
+
+- Local organization test tokens no longer use a hard-coded authentication level of 2, allowing all local clients to access instances requiring higher levels. Organization, scopes, HTTP error and cancellation handling, and production/TT02 authentication are unchanged.
+
 ## 4.2.1
 
 ### Fixed

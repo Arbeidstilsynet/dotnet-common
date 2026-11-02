@@ -260,6 +260,59 @@ public class DependencyInjectionExtensionTests
         tokenProvider.GetType().Name.ShouldBe("AltinnTokenProvider");
     }
 
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(0)]
+    [InlineData(5)]
+    public void TargetingLocal_RejectsInvalidAuthenticationLevel(int authenticationLevel)
+    {
+        var services = new ServiceCollection();
+
+        var exception = Should.Throw<InvalidOperationException>(() =>
+            services.AddAltinn(
+                _development,
+                _maskinportenConfiguration,
+                new AltinnConfiguration
+                {
+                    Environment = AltinnEnvironment.Local,
+                    LocalAuthenticationLevel = authenticationLevel,
+                }
+            )
+        );
+
+        exception.Message.ShouldContain(nameof(AltinnConfiguration.LocalAuthenticationLevel));
+        exception.Message.ShouldContain("between 1 and 4");
+    }
+
+    [Theory]
+    [InlineData(AltinnEnvironment.Production, 0)]
+    [InlineData(AltinnEnvironment.Production, 5)]
+    [InlineData(AltinnEnvironment.Tt02, 0)]
+    [InlineData(AltinnEnvironment.Tt02, 5)]
+    public void NonLocalTarget_IgnoresLocalAuthenticationLevel(
+        AltinnEnvironment target,
+        int authenticationLevel
+    )
+    {
+        var services = new ServiceCollection();
+        services.AddAltinn(
+            target == AltinnEnvironment.Production ? _production : _staging,
+            _maskinportenConfiguration,
+            new AltinnConfiguration
+            {
+                Environment = target,
+                LocalAuthenticationLevel = authenticationLevel,
+            }
+        );
+        using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+
+        scope
+            .ServiceProvider.GetRequiredService<IAltinnTokenProvider>()
+            .GetType()
+            .Name.ShouldBe("AltinnTokenProvider");
+    }
+
     [Fact]
     public void RegistrationGraph_PassesScopeValidation()
     {
