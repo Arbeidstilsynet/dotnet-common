@@ -13,7 +13,7 @@
     <NoWarn>$(NoWarn);NU5104</NoWarn>
     <Description>Provides common functionality for usage in Altinn Apps</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.12.2</Version>
+    <Version>2.12.3</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/Arbeidstilsynet/dotnet-common</PackageProjectUrl>
@@ -23,12 +23,12 @@
     <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="12.1.1" />
-    <PackageReference Include="Altinn.App.Api" Version="8.12.11">
+    <PackageReference Include="FluentValidation" Version="12.2.0" />
+    <PackageReference Include="Altinn.App.Api" Version="8.12.15">
       <CopyToOutputDirectory>lib\$(TargetFramework)\*.xml</CopyToOutputDirectory>
     </PackageReference>
-    <PackageReference Include="Altinn.App.Core" Version="8.12.11" />
-    <PackageReference Include="OpenTelemetry.Api" Version="1.19.1" />
+    <PackageReference Include="Altinn.App.Core" Version="8.12.15" />
+    <PackageReference Include="OpenTelemetry.Api" Version="1.20.1" />
     <PackageReference
       Include="Altinn.ApiClients.Dialogporten.ServiceOwner"
       Version="1.118.10-alpha.1786357013"

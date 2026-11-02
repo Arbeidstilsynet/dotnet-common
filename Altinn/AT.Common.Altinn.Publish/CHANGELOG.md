@@ -31,6 +31,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Local organization test tokens no longer use a hard-coded authentication level of 2, allowing all local clients to access instances requiring higher levels. Organization, scopes, HTTP error and cancellation handling, and production/TT02 authentication are unchanged.
 
+## 4.2.2
+
+### Changed
+
+- changed(deps): Applied minor and patch updates to dependencies
+
 ## 4.2.1
 
 ### Fixed
