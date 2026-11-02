@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 namespace Arbeidstilsynet.Common.Altinn.Implementation.Token;
 
 /// <summary>
-/// Obtains a test token from a locally running Altinn instance.
+/// Obtains an organization test token at the configured authentication level from a locally running Altinn instance.
 /// </summary>
 /// <remarks>
 /// Only registered when the resolved target is <see cref="AltinnEnvironment.Local"/>: the tokens
@@ -27,7 +27,7 @@ internal class LocalAltinnTokenProvider(
     {
         var tokenUrl = new Uri(
             urls.AppBaseUrl,
-            $"Home/GetTestOrgToken?org={configuration.Value.OrgId}&authenticationLevel=2&orgNumber=&scopes={Uri.EscapeDataString(string.Join(' ', scopes))}"
+            $"Home/GetTestOrgToken?org={configuration.Value.OrgId}&authenticationLevel={configuration.Value.LocalAuthenticationLevel}&orgNumber=&scopes={Uri.EscapeDataString(string.Join(' ', scopes))}"
         );
 
         return await _httpClient.GetStringAsync(tokenUrl, cancellationToken);

@@ -118,7 +118,24 @@ services.AddAltinn(
 
 Use `AltinnEnvironment.Local` to target a locally running Altinn on
 `local.altinn.cloud:8000`. This also selects the local test-token provider, so the
-tokens in use always match the instance being called.
+tokens in use always match the instance being called. All local clients use organization
+test tokens at authentication level 4 by default, with the configured `OrgId` and each client's
+requested scopes. Production and TT02 continue to use Maskinporten authentication.
+
+To test a lower authentication level, set `LocalAuthenticationLevel` to a value from 1
+through 4. Invalid values are rejected during registration when targeting Local; this
+setting is ignored for Production and TT02.
+
+```csharp
+new AltinnConfiguration
+{
+    Environment = AltinnEnvironment.Local,
+    LocalAuthenticationLevel = 3,
+}
+```
+
+Using the default level 4 can hide insufficient-authentication behavior. Override it
+when testing an application's minimum authentication requirement.
 
 To point every platform client at a mock server, override the platform URL. The
 API-specific base paths are appended automatically:
