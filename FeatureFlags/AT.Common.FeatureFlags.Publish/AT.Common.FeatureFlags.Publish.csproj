@@ -10,7 +10,7 @@
     <Company>Arbeidstilsynet</Company>
     <Description>Feature flag evaluation for .NET applications using Unleash, with support for context-based evaluation.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.0.3</Version>
+    <Version>2.0.4</Version>
     <IsPublishable>true</IsPublishable>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
