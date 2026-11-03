@@ -22,6 +22,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.0.0-beta6
+
+### Added
+
+- Added the v3 case migration endpoint (`PATCH /api/v3/saker/migrer/{saksId}`) and `MigrerSakRequest` / `MigrerJournalposterPayload` models.
+- Added `ErEnk` to the v3 person info models (`OpprettJournalpostRequestPersonInfo` and `HentSakResponsePersonInfo`).
+
 ## 2.0.0-beta5
 
 ### Fixed

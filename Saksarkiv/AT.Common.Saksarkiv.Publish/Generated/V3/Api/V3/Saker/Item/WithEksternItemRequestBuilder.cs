@@ -177,6 +177,9 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Saker.Item
             requestInfo.SetContentFromParsable(RequestAdapter, "application/json", body);
             return requestInfo;
         }
+        /// <summary>
+        /// Avslutt en sak (asynkron) (roller: ReadWrite)
+        /// </summary>
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -208,8 +211,10 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Saker.Item
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
         public partial class WithEksternItemRequestBuilderGetQueryParameters 
         {
+            #pragma warning disable CS1591
             [QueryParameter("includeJournalposter")]
             public bool? IncludeJournalposter { get; set; }
+            #pragma warning restore CS1591
         }
     }
 }

@@ -8,7 +8,7 @@
       "url": "https://arbeidstilsynet-group.slack.com/archives/C09TZT2R6FM"
     },
     "version": "v3",
-    "summary": "Build: v1.1+2870b240"
+    "summary": "Build: v1.1+89a5ef38"
   },
   "paths": {
     "/api/v3/dokumenter/{dokumentId}": {
@@ -1207,7 +1207,6 @@
           "Saker"
         ],
         "summary": "Avslutt en sak (asynkron) (roller: ReadWrite)",
-        "description": "",
         "parameters": [
           {
             "name": "eksternId",
@@ -1371,7 +1370,6 @@
           "Saker"
         ],
         "summary": "Åpne en lukket sak (asynkron) (roller: ReadWrite)",
-        "description": "",
         "parameters": [
           {
             "name": "eksternId",
@@ -1442,7 +1440,6 @@
           "Saker"
         ],
         "summary": "Legg til en journalpost på en sak (asynkron) (roller: ReadWrite)",
-        "description": "",
         "parameters": [
           {
             "name": "eksternId",
@@ -1496,6 +1493,89 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Ugyldig forespørsel",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressurs ikke funnet",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Konflikt med ressursens nåværende tilstand",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Intern tjenestefeil",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Domain.V3.ArkivProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/saker/migrer/{saksId}": {
+      "patch": {
+        "tags": [
+          "Saker"
+        ],
+        "summary": "Legger til en eksternId på en eksisterende sak via saksId. Kan brukes til å 'migrere' en sak opprettet i v1/v2 til v3. (roller: ReadWrite)",
+        "description": "Migreringen kjøres som arkivbrukeren som utledes fra tokenet. Elements avgjør tilgangen til endringene; det stilles ikke et ekstra krav om medlemskap i sakens administrative enhet.",
+        "parameters": [
+          {
+            "name": "saksId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.MigrerSakRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.MigrerSakRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.MigrerSakRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Ugyldig forespørsel",
@@ -1757,6 +1837,12 @@
               "string"
             ]
           },
+          "erEnk": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
           "organisasjonsnummer": {
             "type": [
               "null",
@@ -1906,6 +1992,48 @@
               "null",
               "string"
             ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V3.MigrerJournalposterPayload": {
+        "type": "object",
+        "properties": {
+          "journalpostId": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "eksternId": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "AT.eArkiv.Entiteter.API.V3.MigrerSakRequest": {
+        "required": [
+          "eksternId"
+        ],
+        "type": "object",
+        "properties": {
+          "eksternId": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9_\\-\\:]+$",
+            "type": "string"
+          },
+          "journalposter": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/AT.eArkiv.Entiteter.API.V3.MigrerJournalposterPayload"
+            }
           }
         },
         "additionalProperties": false
@@ -2093,6 +2221,13 @@
           "navn": {
             "minLength": 1,
             "type": "string"
+          },
+          "erEnk": {
+            "type": [
+              "null",
+              "boolean"
+            ],
+            "description": "Angir om virksomheten er et enkeltpersonforetak."
           },
           "organisasjonsnummer": {
             "type": [
@@ -2416,9 +2551,11 @@
       "Domain.V3.Queue.MeldingStatus": {
         "required": [
           "arkivBrukernavn",
+          "eksternId",
           "meldingId",
           "operasjon",
           "opprettet",
+          "sekvensnummer",
           "status"
         ],
         "type": "object",
@@ -2445,6 +2582,16 @@
               "string"
             ]
           },
+          "sekvensnummer": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eksternId": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
           "resultat": {
             "type": [
               "null",
@@ -2464,19 +2611,6 @@
           "attempts": {
             "type": "integer",
             "format": "int32"
-          },
-          "sekvensnummer": {
-            "type": [
-              "null",
-              "integer"
-            ],
-            "format": "int32"
-          },
-          "eksternId": {
-            "type": [
-              "null",
-              "string"
-            ]
           },
           "slettingBegrunnelse": {
             "type": [

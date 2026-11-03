@@ -63,6 +63,9 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Saker.Item.Gjenoppta
             };
             return await RequestAdapter.SendAsync<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.Queue.MeldingStatus>(requestInfo, global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.Queue.MeldingStatus.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }
+        /// <summary>
+        /// Åpne en lukket sak (asynkron) (roller: ReadWrite)
+        /// </summary>
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

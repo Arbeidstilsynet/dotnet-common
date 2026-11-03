@@ -28,6 +28,8 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
 #else
         public string Epost { get; set; }
 #endif
+        /// <summary>The erEnk property</summary>
+        public bool? ErEnk { get; set; }
         /// <summary>The navn property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -96,6 +98,7 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
             {
                 { "adresse", n => { Adresse = n.GetStringValue(); } },
                 { "epost", n => { Epost = n.GetStringValue(); } },
+                { "erEnk", n => { ErEnk = n.GetBoolValue(); } },
                 { "navn", n => { Navn = n.GetStringValue(); } },
                 { "organisasjonsnummer", n => { Organisasjonsnummer = n.GetStringValue(); } },
                 { "personnummer", n => { Personnummer = n.GetStringValue(); } },
@@ -113,6 +116,7 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("adresse", Adresse);
             writer.WriteStringValue("epost", Epost);
+            writer.WriteBoolValue("erEnk", ErEnk);
             writer.WriteStringValue("navn", Navn);
             writer.WriteStringValue("organisasjonsnummer", Organisasjonsnummer);
             writer.WriteStringValue("personnummer", Personnummer);

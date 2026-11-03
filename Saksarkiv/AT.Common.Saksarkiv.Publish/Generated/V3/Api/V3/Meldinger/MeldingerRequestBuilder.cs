@@ -118,23 +118,37 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Meldinger
         {
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
+            #pragma warning disable CS1591
             [QueryParameter("cursor")]
             public string? Cursor { get; set; }
+            #pragma warning restore CS1591
 #nullable restore
 #else
+            #pragma warning disable CS1591
             [QueryParameter("cursor")]
             public string Cursor { get; set; }
+            #pragma warning restore CS1591
 #endif
+            #pragma warning disable CS1591
             [QueryParameter("operasjon")]
             public global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.Queue.MeldingOperasjon? Operasjon { get; set; }
+            #pragma warning restore CS1591
+            #pragma warning disable CS1591
             [QueryParameter("opprettetFra")]
             public DateTimeOffset? OpprettetFra { get; set; }
+            #pragma warning restore CS1591
+            #pragma warning disable CS1591
             [QueryParameter("opprettetTil")]
             public DateTimeOffset? OpprettetTil { get; set; }
+            #pragma warning restore CS1591
+            #pragma warning disable CS1591
             [QueryParameter("pageSize")]
             public int? PageSize { get; set; }
+            #pragma warning restore CS1591
+            #pragma warning disable CS1591
             [QueryParameter("status")]
             public global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.Queue.MeldingStatusType? Status { get; set; }
+            #pragma warning restore CS1591
         }
     }
 }

@@ -65,6 +65,9 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Saker.Item.Journalpost
             };
             return await RequestAdapter.SendAsync<global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.Queue.MeldingStatus>(requestInfo, global::Arbeidstilsynet.Common.Saksarkiv.V3.Models.Domain.V3.Queue.MeldingStatus.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }
+        /// <summary>
+        /// Legg til en journalpost på en sak (asynkron) (roller: ReadWrite)
+        /// </summary>
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="body">The request body</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>

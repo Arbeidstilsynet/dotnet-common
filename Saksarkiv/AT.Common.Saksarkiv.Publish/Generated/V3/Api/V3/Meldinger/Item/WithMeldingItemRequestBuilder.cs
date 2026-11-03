@@ -152,12 +152,16 @@ namespace Arbeidstilsynet.Common.Saksarkiv.V3.Api.V3.Meldinger.Item
         {
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
+            #pragma warning disable CS1591
             [QueryParameter("reason")]
             public string? Reason { get; set; }
+            #pragma warning restore CS1591
 #nullable restore
 #else
+            #pragma warning disable CS1591
             [QueryParameter("reason")]
             public string Reason { get; set; }
+            #pragma warning restore CS1591
 #endif
         }
     }

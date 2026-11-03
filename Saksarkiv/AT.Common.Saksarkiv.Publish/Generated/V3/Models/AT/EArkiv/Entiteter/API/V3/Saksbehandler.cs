@@ -7,11 +7,10 @@ using System.IO;
 using System;
 namespace Arbeidstilsynet.Common.Saksarkiv.V3.Models.AT.EArkiv.Entiteter.API.V3
 {
-    /// <summary>
-    /// Saksbehandler av saken (Også referert til som &apos;Saksansvarlig&apos;).
-    /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
+    #pragma warning disable CS1591
     public partial class Saksbehandler : IParsable
+    #pragma warning restore CS1591
     {
         /// <summary>Avdelingskode for saksbehandler (administrativ inndeling). F.eks: &apos;UAT&apos;. Kan listes ut ved &apos;/api/v3/metadata/administrativenheter/{arkivbruker}&apos; </summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
