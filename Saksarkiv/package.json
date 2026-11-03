@@ -1,6 +1,8 @@
 {
   "private": true,
   "scripts": {
-    "generate:client": "dotnet kiota generate -l CSharp -c SaksarkivClient -n Arbeidstilsynet.Common.Saksarkiv -d AT.Common.Saksarkiv.Publish/openApi.json -o AT.Common.Saksarkiv.Publish/Generated --exclude-backward-compatible --clean-output"
+    "generate:client": "pnpm run generate:client:v2 && pnpm run generate:client:v3",
+    "generate:client:v2": "dotnet kiota generate -l CSharp -c SaksarkivClient -n Arbeidstilsynet.Common.Saksarkiv -d AT.Common.Saksarkiv.Publish/openApi.json -o AT.Common.Saksarkiv.Publish/Generated --exclude-backward-compatible --clean-output",
+    "generate:client:v3": "dotnet kiota generate -l CSharp -c SaksarkivClientV3 -n Arbeidstilsynet.Common.Saksarkiv.V3 -d AT.Common.Saksarkiv.Publish/openApiV3.json -o AT.Common.Saksarkiv.Publish/Generated/V3 --exclude-backward-compatible --clean-output"
   }
 }
