@@ -53,6 +53,12 @@ public record AltinnConfiguration
     public AltinnEnvironment? Environment { get; init; }
 
     /// <summary>
+    /// Authentication level for local organization test tokens. Defaults to 4; valid values are 1 through 4.
+    /// Only used when targeting <see cref="AltinnEnvironment.Local"/>; ignored for Production and TT02.
+    /// </summary>
+    public int LocalAuthenticationLevel { get; init; } = 4;
+
+    /// <summary>
     /// Overrides for the base URLs that would otherwise be derived from <see cref="Environment"/>.
     /// <br/>
     /// Intended for testing against a mock server. In Production any override that differs from the

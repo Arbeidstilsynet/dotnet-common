@@ -54,6 +54,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The `Saksarkiv` health check now probes the version-agnostic endpoint
   `GET /api/health/authPing` (shared across all API versions) instead of the v2 `/apiv2/health/pong`.
 
+## 1.1.3
+
+### Changed
+
+- changed(deps): Applied minor and patch updates to dependencies
+
 ## 1.1.2
 
 ### Fixed

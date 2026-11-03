@@ -58,7 +58,8 @@ public static class DependencyInjectionExtensions
     /// </param>
     /// <exception cref="InvalidOperationException">
     /// If the host environment is neither Production nor Staging and no <see cref="AltinnConfiguration.Environment"/>
-    /// was supplied, or if base URLs are overridden while running in Production.
+    /// was supplied, if base URLs are overridden while running in Production, or if the local
+    /// authentication level is outside 1 through 4 when targeting Local.
     /// </exception>
     public static IAltinnBuilder AddAltinn(
         this IServiceCollection services,
@@ -74,6 +75,17 @@ public static class DependencyInjectionExtensions
         altinnConfiguration ??= new AltinnConfiguration();
 
         var resolution = AltinnUrlResolver.Resolve(hostEnvironment, altinnConfiguration);
+        if (
+            resolution.Target == AltinnEnvironment.Local
+            && altinnConfiguration.LocalAuthenticationLevel is < 1 or > 4
+        )
+        {
+            throw new InvalidOperationException(
+                $"{nameof(AltinnConfiguration.LocalAuthenticationLevel)} must be between 1 and 4 "
+                    + $"when targeting {nameof(AltinnEnvironment.Local)}."
+            );
+        }
+
         var overrides = new AltinnOverrideRegistry(resolution.EffectiveOverrides);
 
         services.AddSingleton(Options.Create(altinnConfiguration));

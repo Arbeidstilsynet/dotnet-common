@@ -51,7 +51,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Build and Test .NET solution
-        uses: Arbeidstilsynet/action-dotnet-build@7a8017a28895fec85a232656a367960109b42977 # v4
+        uses: Arbeidstilsynet/action-dotnet-build@a8f60cf0938ecf372e55bb14d7644b422c23c9f4 # v4
         with:
           working-directory: ${{ needs.check-and-prepare.outputs.parent_dir }}
 
@@ -72,7 +72,7 @@ jobs:
           fi
       - name: Setup .NET SDK
         if: steps.enabled.outputs.enabled == 'true'
-        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6
         with:
           global-json-file: global.json
       - name: Check dependency licenses against allowed-licenses.json
