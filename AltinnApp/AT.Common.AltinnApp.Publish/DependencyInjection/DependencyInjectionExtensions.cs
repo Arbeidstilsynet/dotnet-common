@@ -95,6 +95,66 @@ public record StructuredDataConfiguration
 }
 
 /// <summary>
+/// Configuration options for privacy-safe Umami analytics tracking in an Altinn application.
+/// </summary>
+public sealed record UmamiConfiguration
+{
+    /// <summary>
+    /// The configuration section name in <c>appsettings.json</c> (<c>"Umami"</c>).
+    /// </summary>
+    public const string SectionName = "Umami";
+
+    /// <summary>
+    /// The default HTTPS origin for the Arbeidstilsynet Umami collection gateway.
+    /// </summary>
+    public const string DefaultCollectorOrigin = "https://meldinger-umami-collect.arbeidstilsynet.no";
+
+    /// <summary>
+    /// The default HTTPS origin for Altinn Studio applications in TT02 (<c>Staging</c>).
+    /// </summary>
+    public const string DefaultStagingAppOrigin = "https://dat.apps.tt02.altinn.no";
+
+    /// <summary>
+    /// The default HTTPS origin for Altinn Studio applications in <c>Production</c>.
+    /// </summary>
+    public const string DefaultProductionAppOrigin = "https://dat.apps.altinn.no";
+
+    /// <summary>
+    /// Optional fallback Umami website UUID when <c>Umami:WebsiteId</c> is not set in <see cref="Microsoft.Extensions.Configuration.IConfiguration"/>.
+    /// </summary>
+    public string? WebsiteId { get; init; }
+
+    /// <summary>
+    /// Optional override for the HTTPS origin of the Umami collection gateway. Defaults to <see cref="DefaultCollectorOrigin"/>.
+    /// </summary>
+    public string? CollectorOrigin { get; init; }
+
+    /// <summary>
+    /// Optional override for the HTTPS origin where the Altinn application is hosted.
+    /// Defaults to <see cref="DefaultProductionAppOrigin"/> in <c>Production</c> and <see cref="DefaultStagingAppOrigin"/> otherwise.
+    /// </summary>
+    public string? AppOrigin { get; init; }
+
+    /// <summary>
+    /// Optional override for the Altinn application path (for example <c>"/dat/forhandsmelding"</c>).
+    /// When omitted, discovered automatically from <c>config/applicationmetadata.json</c> (<c>id</c>).
+    /// </summary>
+    public string? AppPath { get; init; }
+
+    /// <summary>
+    /// Optional override for the application title sent in Umami page views.
+    /// When omitted, derived from the application name segment of <see cref="AppPath"/>.
+    /// </summary>
+    public string? AppTitle { get; init; }
+
+    /// <summary>
+    /// Optional override for the allowlist of form layout steps.
+    /// When omitted, discovered automatically from <c>ui/**/Settings.json</c> (<c>pages.order</c>).
+    /// </summary>
+    public IReadOnlyList<string>? AllowedSteps { get; init; }
+}
+
+/// <summary>
 /// Extensions for Dependency Injection.
 /// </summary>
 public static class DependencyInjectionExtensions
@@ -453,6 +513,29 @@ public static class DependencyInjectionExtensions
             .AddTransient<IPatchOperationsProvider, TPatchOperationsProvider>()
             .AddTransient<IUpdateDialogProvider<TDataModel>, TUpdateDialogProvider>()
             .AddTransient<IServiceTask, UpdateDialogTask<TDataModel>>();
+    }
+
+    /// <summary>
+    /// Registers <see cref="IUmamiConnector"/> for privacy-safe browser-side Umami analytics in an Altinn application.
+    /// </summary>
+    /// <remarks>
+    /// Tracking is automatically disabled in <c>Development</c> or when <c>Umami:WebsiteId</c> is empty.
+    /// Inject <see cref="IUmamiConnector"/> in <c>App/views/Home/Index.cshtml</c> and call <see cref="IUmamiConnector.RenderScriptTag"/>.
+    /// </remarks>
+    /// <param name="services">The service collection to add registrations to.</param>
+    /// <param name="configure">Optional callback to configure fallback options when not specified in <c>appsettings</c>.</param>
+    /// <returns>The same <see cref="IServiceCollection"/> instance so that calls can be chained.</returns>
+    public static IServiceCollection AddUmamiTracking(
+        this IServiceCollection services,
+        Func<UmamiConfiguration, UmamiConfiguration>? configure = null
+    )
+    {
+        var config = configure is not null
+            ? configure(new UmamiConfiguration())
+            : new UmamiConfiguration();
+        services.AddSingleton(config);
+        services.TryAddSingleton<IUmamiConnector, UmamiConnector>();
+        return services;
     }
 
     private static IServiceCollection AddDialogportenClientForEnvironment(
