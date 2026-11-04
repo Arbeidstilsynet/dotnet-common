@@ -58,7 +58,7 @@ public class UmamiConnectorTests
 
         result.ShouldNotBeNull();
         result.WebsiteId.ShouldBe(PocWebsiteId);
-        result.AltinnScriptUrl.ShouldBe("http://localhost:3003/altinn.js");
+        result.ScriptUrl.ShouldBe("http://localhost:3003/script.js");
         result.AppOrigin.ShouldBe(new Uri("http://local.altinn.cloud:8000"));
         result.AppHostname.ShouldBe("local.altinn.cloud");
         result.AppPath.ShouldBe("/dat/forhandsmelding");
@@ -187,9 +187,6 @@ public class UmamiConnectorTests
 
             result.ShouldNotBeNull();
             result.WebsiteId.ShouldBe(PocWebsiteId);
-            result.AltinnScriptUrl.ShouldBe(
-                "https://meldinger-umami-collect.arbeidstilsynet.no/altinn.js"
-            );
             result.ScriptUrl.ShouldBe(
                 "https://meldinger-umami-collect.arbeidstilsynet.no/script.js"
             );
@@ -289,13 +286,16 @@ public class UmamiConnectorTests
         var html = writer.ToString();
 
         html.ShouldContain(
-            "src=\"https://meldinger-umami-collect.arbeidstilsynet.no/altinn.js\""
+            "https://meldinger-umami-collect.arbeidstilsynet.no/script.js"
         );
         html.ShouldContain($"data-website-id=\"{PocWebsiteId}\"");
         html.ShouldContain("data-allowed-origin=\"https://dat.apps.tt02.altinn.no\"");
         html.ShouldContain("data-app-path=\"/dat/forhandsmelding\"");
         html.ShouldContain("data-title=\"Forhandsmelding\"");
         html.ShouldContain("data-steps=\"0-startside,5-Byggherre,8-bekreftelse\"");
+        html.ShouldContain("skjema-innsendt");
+        html.ShouldContain("skjema-feil");
+        html.ShouldContain("isProcessEnded");
     }
 
     private static IConfiguration CreateConfiguration(IDictionary<string, string?> values) =>

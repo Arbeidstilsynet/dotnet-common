@@ -28,11 +28,6 @@ public sealed record UmamiTrackingConfig(
 )
 {
     /// <summary>
-    /// Gets the full URL of the collector-hosted Altinn browser integration script (<c>/altinn.js</c>).
-    /// </summary>
-    public string AltinnScriptUrl => new Uri(CollectorOrigin, "/altinn.js").ToString();
-
-    /// <summary>
     /// Gets the full URL of the upstream Umami tracker script (<c>/script.js</c>).
     /// </summary>
     public string ScriptUrl => new Uri(CollectorOrigin, "/script.js").ToString();

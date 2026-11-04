@@ -54,15 +54,218 @@ internal sealed partial class UmamiConnector : IUmamiConnector
             var steps = string.Join(",", config.AllowedSteps);
             var allowedOrigin = config.AppOrigin.GetLeftPart(UriPartial.Authority);
 
-            return new HtmlString(
-                $"<script async crossorigin=\"anonymous\" referrerpolicy=\"no-referrer\" "
-                    + $"src=\"{encoder.Encode(config.AltinnScriptUrl)}\" "
-                    + $"data-website-id=\"{encoder.Encode(config.WebsiteId)}\" "
-                    + $"data-allowed-origin=\"{encoder.Encode(allowedOrigin)}\" "
-                    + $"data-app-path=\"{encoder.Encode(config.AppPath)}\" "
-                    + $"data-title=\"{encoder.Encode(config.AppTitle)}\" "
-                    + $"data-steps=\"{encoder.Encode(steps)}\"></script>"
-            );
+            var websiteIdJson = SerializeForInlineScript(config.WebsiteId);
+            var scriptUrlJson = SerializeForInlineScript(config.ScriptUrl);
+            var allowedOriginJson = SerializeForInlineScript(allowedOrigin);
+            var hostnameJson = SerializeForInlineScript(config.AppHostname);
+            var appPathJson = SerializeForInlineScript(config.AppPath);
+            var appTitleJson = SerializeForInlineScript(config.AppTitle);
+            var allowedStepsJson = SerializeForInlineScript(config.AllowedSteps);
+
+            var script = $$"""
+<script data-website-id="{{encoder.Encode(config.WebsiteId)}}" data-allowed-origin="{{encoder.Encode(allowedOrigin)}}" data-app-path="{{encoder.Encode(config.AppPath)}}" data-title="{{encoder.Encode(config.AppTitle)}}" data-steps="{{encoder.Encode(steps)}}">
+(() => {
+  try {
+    const websiteId = {{websiteIdJson}};
+    const scriptUrl = {{scriptUrlJson}};
+    const allowedOrigin = {{allowedOriginJson}};
+    const hostname = {{hostnameJson}};
+    const appPath = {{appPathJson}};
+    const pageTitle = {{appTitleJson}};
+    const allowedSteps = {{allowedStepsJson}};
+
+    if (window.location.origin !== allowedOrigin) return;
+
+    const stepLookup = new Map(allowedSteps.map((step) => [step.toLowerCase(), step]));
+
+    function resolvePage(pathname, hash) {
+      if (pathname !== appPath && !pathname.startsWith(`${appPath}/`)) return null;
+      const subPath = pathname.slice(appPath.length);
+      const hashPath = (hash || "").replace(/^#/, "").split("?")[0];
+      const segments = `${subPath}/${hashPath}`.split("/").filter(Boolean);
+      for (let i = segments.length - 1; i >= 0; i--) {
+        const matchedStep = stepLookup.get(segments[i].toLowerCase());
+        if (matchedStep) {
+          return { url: `${appPath}/${matchedStep}`, title: `${pageTitle} - ${matchedStep}` };
+        }
+      }
+      return { url: appPath, title: pageTitle };
+    }
+
+    let trackerPromise;
+    function loadTracker() {
+      if (trackerPromise) return trackerPromise;
+      trackerPromise = new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = scriptUrl;
+        script.async = true;
+        script.crossOrigin = "anonymous";
+        script.dataset.websiteId = websiteId;
+        script.dataset.autoTrack = "false";
+        script.dataset.doNotTrack = "true";
+        script.dataset.excludeSearch = "true";
+        script.dataset.excludeHash = "true";
+        script.dataset.domains = hostname;
+        script.referrerPolicy = "no-referrer";
+        script.addEventListener(
+          "load",
+          () => {
+            if (window.umami && typeof window.umami.track === "function") resolve(window.umami);
+            else reject(new Error("Umami script did not initialize its tracking API"));
+          },
+          { once: true }
+        );
+        script.addEventListener(
+          "error",
+          () => {
+            script.remove();
+            trackerPromise = undefined;
+            reject(new Error("Unable to load the Umami collection script"));
+          },
+          { once: true }
+        );
+        document.head.append(script);
+      });
+      return trackerPromise;
+    }
+
+    function sendEvent(page, eventName) {
+      const payload = {
+        website: websiteId,
+        hostname,
+        url: page.url,
+        title: page.title,
+        referrer: "",
+        screen: `${window.screen?.width ?? 0}x${window.screen?.height ?? 0}`,
+        language: window.navigator?.language ?? "",
+        ...(eventName ? { name: eventName } : {}),
+      };
+      void loadTracker()
+        .then((tracker) => Promise.resolve().then(() => tracker.track(payload)))
+        .catch(() => {});
+    }
+
+    function currentSanitizedPage() {
+      return resolvePage(window.location?.pathname ?? "", window.location?.hash ?? "") ?? {
+        url: appPath,
+        title: pageTitle,
+      };
+    }
+
+    let lastTrackedUrl = null;
+    function trackCurrentPage() {
+      try {
+        const page = resolvePage(window.location?.pathname ?? "", window.location?.hash ?? "");
+        if (!page || page.url === lastTrackedUrl) return;
+        lastTrackedUrl = page.url;
+        sendEvent(page);
+      } catch {}
+    }
+
+    if (window.history) {
+      for (const method of ["pushState", "replaceState"]) {
+        const original = window.history[method];
+        if (typeof original === "function") {
+          window.history[method] = function (...args) {
+            const result = original.apply(this, args);
+            trackCurrentPage();
+            return result;
+          };
+        }
+      }
+    }
+
+    window.addEventListener("popstate", trackCurrentPage);
+    window.addEventListener("hashchange", trackCurrentPage);
+
+    const Xhr = window.XMLHttpRequest;
+    if (typeof Xhr === "function" && Xhr.prototype) {
+      const requests = new WeakMap();
+      const submittedInstances = new Set();
+      const processPattern = new RegExp(
+        `^${appPath.replaceAll("/", "\\/")}\\/instances\\/([^/]+\\/[^/]+)\\/process(?:\\/next)?$`,
+        "i"
+      );
+      const originalOpen = Xhr.prototype.open;
+      const originalSend = Xhr.prototype.send;
+
+      function isProcessEnded(xhr) {
+        try {
+          const body =
+            xhr.response && typeof xhr.response === "object"
+              ? xhr.response
+              : typeof xhr.responseText === "string" && xhr.responseText.trim().startsWith("{")
+                ? JSON.parse(xhr.responseText)
+                : null;
+          return typeof body?.ended === "string" && body.ended.trim().length > 0;
+        } catch {
+          return false;
+        }
+      }
+
+      if (typeof originalOpen === "function" && typeof originalSend === "function") {
+        Xhr.prototype.open = function (method, url, ...rest) {
+          try {
+            requests.set(this, {
+              method: String(method ?? "GET").toUpperCase(),
+              url: String(url ?? ""),
+            });
+          } catch {}
+          return originalOpen.call(this, method, url, ...rest);
+        };
+
+        Xhr.prototype.send = function (...args) {
+          try {
+            const info = requests.get(this);
+            if (info && typeof this.addEventListener === "function") {
+              this.addEventListener(
+                "loadend",
+                () => {
+                  try {
+                    const target = new URL(info.url, allowedOrigin);
+                    if (
+                      target.origin !== allowedOrigin ||
+                      (target.pathname !== appPath && !target.pathname.startsWith(`${appPath}/`))
+                    ) {
+                      return;
+                    }
+                    const status = Number(this.status ?? 0);
+                    if (status >= 500) {
+                      sendEvent(currentSanitizedPage(), "skjema-feil");
+                      return;
+                    }
+                    const match = target.pathname.match(processPattern);
+                    if (
+                      match &&
+                      ["GET", "PUT", "POST"].includes(info.method) &&
+                      status >= 200 &&
+                      status < 300 &&
+                      isProcessEnded(this)
+                    ) {
+                      const instanceKey = match[1].toLowerCase();
+                      if (!submittedInstances.has(instanceKey)) {
+                        submittedInstances.add(instanceKey);
+                        sendEvent(currentSanitizedPage(), "skjema-innsendt");
+                      }
+                    }
+                  } catch {}
+                },
+                { once: true }
+              );
+            }
+          } catch {}
+          return originalSend.apply(this, args);
+        };
+      }
+    }
+
+    trackCurrentPage();
+  } catch {}
+})();
+</script>
+""";
+
+            return new HtmlString(script);
         }
         catch (Exception ex)
         {
@@ -70,6 +273,9 @@ internal sealed partial class UmamiConnector : IUmamiConnector
             return HtmlString.Empty;
         }
     }
+
+    private static string SerializeForInlineScript<T>(T value) =>
+        JsonSerializer.Serialize(value).Replace("</", "<\\/", StringComparison.Ordinal);
 
     internal static UmamiTrackingConfig? ResolveConfig(
         IHostEnvironment environment,

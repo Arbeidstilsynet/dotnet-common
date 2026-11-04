@@ -15,8 +15,9 @@ public interface IUmamiConnector
     UmamiTrackingConfig? Config { get; }
 
     /// <summary>
-    /// Renders the <c>&lt;script&gt;</c> element for the collector-hosted Altinn tracker (<c>/altinn.js</c>)
-    /// when tracking is active, or <see cref="HtmlString.Empty"/> when tracking is disabled.
+    /// Renders the self-contained <c>&lt;script&gt;</c> element that loads the Umami collector script (<c>/script.js</c>)
+    /// and tracks sanitized page views, form steps, completed submissions (<c>skjema-innsendt</c>), and 5xx errors (<c>skjema-feil</c>),
+    /// or <see cref="HtmlString.Empty"/> when tracking is disabled.
     /// </summary>
     /// <returns>An <see cref="IHtmlContent"/> representing the script tag or empty content.</returns>
     IHtmlContent RenderScriptTag();
