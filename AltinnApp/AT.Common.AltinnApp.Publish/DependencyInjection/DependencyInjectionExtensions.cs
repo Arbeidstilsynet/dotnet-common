@@ -110,6 +110,11 @@ public sealed record UmamiConfiguration
     public const string DefaultCollectorOrigin = "https://meldinger-umami-collect.arbeidstilsynet.no";
 
     /// <summary>
+    /// The default HTTP origin for Altinn Studio applications in local <c>Development</c> (<c>localtest</c>).
+    /// </summary>
+    public const string DefaultDevelopmentAppOrigin = "http://local.altinn.cloud:8000";
+
+    /// <summary>
     /// The default HTTPS origin for Altinn Studio applications in TT02 (<c>Staging</c>).
     /// </summary>
     public const string DefaultStagingAppOrigin = "https://dat.apps.tt02.altinn.no";
@@ -118,6 +123,13 @@ public sealed record UmamiConfiguration
     /// The default HTTPS origin for Altinn Studio applications in <c>Production</c>.
     /// </summary>
     public const string DefaultProductionAppOrigin = "https://dat.apps.altinn.no";
+
+    /// <summary>
+    /// Whether to enable Umami tracking in <c>Development</c> when <c>Umami:WebsiteId</c> is configured (for example in E2E tests).
+    /// Defaults to <see langword="false"/> so <c>Development</c> short-circuits by default.
+    /// Can also be set via <c>Umami:EnableInDevelopment</c> in <see cref="Microsoft.Extensions.Configuration.IConfiguration"/>.
+    /// </summary>
+    public bool EnableInDevelopment { get; init; } = false;
 
     /// <summary>
     /// Optional fallback Umami website UUID when <c>Umami:WebsiteId</c> is not set in <see cref="Microsoft.Extensions.Configuration.IConfiguration"/>.
@@ -517,10 +529,14 @@ public static class DependencyInjectionExtensions
 
     /// <summary>
     /// Registers <see cref="IUmamiConnector"/> for privacy-safe browser-side Umami analytics in an Altinn application.
+    /// <br/>
+    /// To complete the integration, you must also update <c>App/views/Home/Index.cshtml</c> to inject
+    /// <c>@inject Arbeidstilsynet.Common.AltinnApp.Ports.IUmamiConnector UmamiConnector</c> and render
+    /// <c>@UmamiConnector.RenderScriptTag()</c> inside <c>&lt;body&gt;</c>.
     /// </summary>
     /// <remarks>
-    /// Tracking is automatically disabled in <c>Development</c> or when <c>Umami:WebsiteId</c> is empty.
-    /// Inject <see cref="IUmamiConnector"/> in <c>App/views/Home/Index.cshtml</c> and call <see cref="IUmamiConnector.RenderScriptTag"/>.
+    /// Tracking short-circuits by default in <c>Development</c> (unless <see cref="UmamiConfiguration.EnableInDevelopment"/> or
+    /// <c>Umami:EnableInDevelopment=true</c> is set) or when <c>Umami:WebsiteId</c> is empty.
     /// </remarks>
     /// <param name="services">The service collection to add registrations to.</param>
     /// <param name="configure">Optional callback to configure fallback options when not specified in <c>appsettings</c>.</param>

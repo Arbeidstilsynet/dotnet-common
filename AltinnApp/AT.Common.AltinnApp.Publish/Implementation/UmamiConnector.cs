@@ -8,17 +8,38 @@ using Arbeidstilsynet.Common.AltinnApp.Ports;
 using Microsoft.AspNetCore.Html;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Arbeidstilsynet.Common.AltinnApp.Implementation;
 
-internal sealed partial class UmamiConnector(
-    IHostEnvironment environment,
-    IConfiguration configuration,
-    UmamiConfiguration? options = null
-) : IUmamiConnector
+internal sealed partial class UmamiConnector : IUmamiConnector
 {
-    public UmamiTrackingConfig? Config { get; } =
-        ResolveConfig(environment, configuration, options);
+    private readonly ILogger<UmamiConnector> _logger;
+
+    public UmamiTrackingConfig? Config { get; }
+
+    public UmamiConnector(
+        IHostEnvironment environment,
+        IConfiguration configuration,
+        UmamiConfiguration? options = null,
+        ILogger<UmamiConnector>? logger = null
+    )
+    {
+        _logger = logger ?? NullLogger<UmamiConnector>.Instance;
+        try
+        {
+            Config = ResolveConfig(environment, configuration, options);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(
+                ex,
+                "Umami tracking is disabled because configuration could not be resolved"
+            );
+            Config = null;
+        }
+    }
 
     public IHtmlContent RenderScriptTag()
     {
@@ -27,19 +48,27 @@ internal sealed partial class UmamiConnector(
             return HtmlString.Empty;
         }
 
-        var encoder = HtmlEncoder.Default;
-        var steps = string.Join(",", config.AllowedSteps);
-        var allowedOrigin = config.AppOrigin.GetLeftPart(UriPartial.Authority);
+        try
+        {
+            var encoder = HtmlEncoder.Default;
+            var steps = string.Join(",", config.AllowedSteps);
+            var allowedOrigin = config.AppOrigin.GetLeftPart(UriPartial.Authority);
 
-        return new HtmlString(
-            $"<script async crossorigin=\"anonymous\" referrerpolicy=\"no-referrer\" "
-                + $"src=\"{encoder.Encode(config.AltinnScriptUrl)}\" "
-                + $"data-website-id=\"{encoder.Encode(config.WebsiteId)}\" "
-                + $"data-allowed-origin=\"{encoder.Encode(allowedOrigin)}\" "
-                + $"data-app-path=\"{encoder.Encode(config.AppPath)}\" "
-                + $"data-title=\"{encoder.Encode(config.AppTitle)}\" "
-                + $"data-steps=\"{encoder.Encode(steps)}\"></script>"
-        );
+            return new HtmlString(
+                $"<script async crossorigin=\"anonymous\" referrerpolicy=\"no-referrer\" "
+                    + $"src=\"{encoder.Encode(config.AltinnScriptUrl)}\" "
+                    + $"data-website-id=\"{encoder.Encode(config.WebsiteId)}\" "
+                    + $"data-allowed-origin=\"{encoder.Encode(allowedOrigin)}\" "
+                    + $"data-app-path=\"{encoder.Encode(config.AppPath)}\" "
+                    + $"data-title=\"{encoder.Encode(config.AppTitle)}\" "
+                    + $"data-steps=\"{encoder.Encode(steps)}\"></script>"
+            );
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to render Umami script tag");
+            return HtmlString.Empty;
+        }
     }
 
     internal static UmamiTrackingConfig? ResolveConfig(
@@ -48,7 +77,21 @@ internal sealed partial class UmamiConnector(
         UmamiConfiguration? options = null
     )
     {
-        if (environment.IsDevelopment() || string.IsNullOrWhiteSpace(environment.EnvironmentName))
+        if (string.IsNullOrWhiteSpace(environment.EnvironmentName))
+        {
+            return null;
+        }
+
+        var isDevelopment = environment.IsDevelopment();
+        var enableInDevelopment =
+            bool.TryParse(
+                configuration[$"{UmamiConfiguration.SectionName}:EnableInDevelopment"],
+                out var parsedEnable
+            )
+                ? parsedEnable
+                : options?.EnableInDevelopment ?? false;
+
+        if (isDevelopment && !enableInDevelopment)
         {
             return null;
         }
@@ -83,18 +126,25 @@ internal sealed partial class UmamiConnector(
         )!;
         var collectorOrigin = ValidateOrigin(
             rawCollectorOrigin,
-            $"{UmamiConfiguration.SectionName}:CollectorOrigin"
+            $"{UmamiConfiguration.SectionName}:CollectorOrigin",
+            allowHttp: isDevelopment
         );
 
-        var defaultAppOrigin = environment.IsProduction()
-            ? UmamiConfiguration.DefaultProductionAppOrigin
-            : UmamiConfiguration.DefaultStagingAppOrigin;
+        var defaultAppOrigin = isDevelopment
+            ? UmamiConfiguration.DefaultDevelopmentAppOrigin
+            : environment.IsProduction()
+                ? UmamiConfiguration.DefaultProductionAppOrigin
+                : UmamiConfiguration.DefaultStagingAppOrigin;
         var rawAppOrigin = FirstNonBlank(
             configuration[$"{UmamiConfiguration.SectionName}:AppOrigin"],
             options?.AppOrigin,
             defaultAppOrigin
         )!;
-        var appOrigin = ValidateOrigin(rawAppOrigin, $"{UmamiConfiguration.SectionName}:AppOrigin");
+        var appOrigin = ValidateOrigin(
+            rawAppOrigin,
+            $"{UmamiConfiguration.SectionName}:AppOrigin",
+            allowHttp: isDevelopment
+        );
 
         var appPath = ResolveAppPath(environment.ContentRootPath, configuration, options);
         var appTitle = ResolveAppTitle(appPath, configuration, options);
@@ -275,11 +325,14 @@ internal sealed partial class UmamiConnector(
     private static string? FirstNonBlank(params string?[] candidates) =>
         candidates.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value))?.Trim();
 
-    private static Uri ValidateOrigin(string origin, string settingName)
+    private static Uri ValidateOrigin(string origin, string settingName, bool allowHttp = false)
     {
         if (
             !Uri.TryCreate(origin, UriKind.Absolute, out var uri)
-            || uri.Scheme != Uri.UriSchemeHttps
+            || (
+                uri.Scheme != Uri.UriSchemeHttps
+                && (!allowHttp || uri.Scheme != Uri.UriSchemeHttp)
+            )
             || !string.IsNullOrEmpty(uri.UserInfo)
             || !string.IsNullOrEmpty(uri.Query)
             || !string.IsNullOrEmpty(uri.Fragment)

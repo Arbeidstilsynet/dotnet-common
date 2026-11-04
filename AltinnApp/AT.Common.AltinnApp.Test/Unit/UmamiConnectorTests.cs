@@ -38,6 +38,54 @@ public class UmamiConnectorTests
         result.ShouldBeNull();
     }
 
+    [Fact]
+    public void ResolveConfig_WhenEnableInDevelopmentIsTrue_EnablesTrackingWithLocalDefaults()
+    {
+        var config = CreateConfiguration(
+            new Dictionary<string, string?>
+            {
+                ["Umami:WebsiteId"] = PocWebsiteId,
+                ["Umami:EnableInDevelopment"] = "true",
+                ["Umami:CollectorOrigin"] = "http://localhost:3003",
+                ["Umami:AppPath"] = "/dat/forhandsmelding",
+            }
+        );
+
+        var result = UmamiConnector.ResolveConfig(
+            new FakeHostEnvironment(Environments.Development),
+            config
+        );
+
+        result.ShouldNotBeNull();
+        result.WebsiteId.ShouldBe(PocWebsiteId);
+        result.AltinnScriptUrl.ShouldBe("http://localhost:3003/altinn.js");
+        result.AppOrigin.ShouldBe(new Uri("http://local.altinn.cloud:8000"));
+        result.AppHostname.ShouldBe("local.altinn.cloud");
+        result.AppPath.ShouldBe("/dat/forhandsmelding");
+    }
+
+    [Fact]
+    public void UmamiConnector_WhenConfigurationIsInvalid_DoesNotThrowAndRendersEmptyScriptTag()
+    {
+        var config = CreateConfiguration(
+            new Dictionary<string, string?>
+            {
+                ["Umami:WebsiteId"] = "not-a-valid-uuid",
+                ["Umami:CollectorOrigin"] = "not-a-valid-origin",
+            }
+        );
+
+        var connector = new UmamiConnector(
+            new FakeHostEnvironment(Environments.Staging),
+            config
+        );
+
+        connector.Config.ShouldBeNull();
+        using var writer = new StringWriter();
+        connector.RenderScriptTag().WriteTo(writer, HtmlEncoder.Default);
+        writer.ToString().ShouldBeEmpty();
+    }
+
     [Theory]
     [InlineData(null)]
     [InlineData("")]

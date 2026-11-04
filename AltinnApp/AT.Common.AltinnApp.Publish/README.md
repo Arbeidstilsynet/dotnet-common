@@ -406,5 +406,5 @@ Configure `Umami:WebsiteId` in `App/appsettings.Staging.json` or `App/appsetting
 }
 ```
 
-Application path (`/dat/<app>`) and allowlisted layout steps (`pages.order`) are discovered automatically from `config/applicationmetadata.json` and `ui/**/Settings.json`, and tracking is disabled automatically in `Development` or when `Umami:WebsiteId` is empty.
+Application path (`/dat/<app>`) and allowlisted layout steps (`pages.order`) are discovered automatically from `config/applicationmetadata.json` and `ui/**/Settings.json`. Tracking short-circuits by default in `Development` (unless `Umami:EnableInDevelopment=true` or `EnableInDevelopment = true` is configured, e.g. for E2E tests) or when `Umami:WebsiteId` is empty.
 
