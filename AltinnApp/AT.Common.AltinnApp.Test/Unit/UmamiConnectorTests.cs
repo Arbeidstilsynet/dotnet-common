@@ -30,10 +30,7 @@ public class UmamiConnectorTests
             }
         );
 
-        var result = UmamiConnector.ResolveConfig(
-            new FakeHostEnvironment(environmentName),
-            config
-        );
+        var result = UmamiConnector.ResolveConfig(new FakeHostEnvironment(environmentName), config);
 
         result.ShouldBeNull();
     }
@@ -75,10 +72,7 @@ public class UmamiConnectorTests
             }
         );
 
-        var connector = new UmamiConnector(
-            new FakeHostEnvironment(Environments.Staging),
-            config
-        );
+        var connector = new UmamiConnector(new FakeHostEnvironment(Environments.Staging), config);
 
         connector.Config.ShouldBeNull();
         using var writer = new StringWriter();
@@ -156,10 +150,7 @@ public class UmamiConnectorTests
     [Fact]
     public void ResolveConfig_AutoDiscoversAppPathAndStepsFromAppDirectory()
     {
-        var tempRoot = Path.Combine(
-            Path.GetTempPath(),
-            $"altinn-umami-test-{Guid.NewGuid():N}"
-        );
+        var tempRoot = Path.Combine(Path.GetTempPath(), $"altinn-umami-test-{Guid.NewGuid():N}");
         try
         {
             Directory.CreateDirectory(Path.Combine(tempRoot, "config"));
@@ -205,12 +196,7 @@ public class UmamiConnectorTests
     }
 
     [Theory]
-    [InlineData(
-        "/dat/forhandsmelding",
-        null,
-        "/dat/forhandsmelding",
-        "Forhandsmelding"
-    )]
+    [InlineData("/dat/forhandsmelding", null, "/dat/forhandsmelding", "Forhandsmelding")]
     [InlineData(
         "/dat/forhandsmelding/",
         "#/instance/500002/f1111111-2222-3333-4444-555555555555",
@@ -285,9 +271,7 @@ public class UmamiConnectorTests
         connector.RenderScriptTag().WriteTo(writer, HtmlEncoder.Default);
         var html = writer.ToString();
 
-        html.ShouldContain(
-            "https://meldinger-umami-collect.arbeidstilsynet.no/script.js"
-        );
+        html.ShouldContain("https://meldinger-umami-collect.arbeidstilsynet.no/script.js");
         html.ShouldContain($"data-website-id=\"{PocWebsiteId}\"");
         html.ShouldContain("data-allowed-origin=\"https://dat.apps.tt02.altinn.no\"");
         html.ShouldContain("data-app-path=\"/dat/forhandsmelding\"");
@@ -301,10 +285,8 @@ public class UmamiConnectorTests
     private static IConfiguration CreateConfiguration(IDictionary<string, string?> values) =>
         new ConfigurationBuilder().AddInMemoryCollection(values).Build();
 
-    private sealed class FakeHostEnvironment(
-        string environmentName,
-        string? contentRootPath = null
-    ) : IHostEnvironment
+    private sealed class FakeHostEnvironment(string environmentName, string? contentRootPath = null)
+        : IHostEnvironment
     {
         public string EnvironmentName { get; set; } = environmentName;
         public string ApplicationName { get; set; } = "Altinn.Application";

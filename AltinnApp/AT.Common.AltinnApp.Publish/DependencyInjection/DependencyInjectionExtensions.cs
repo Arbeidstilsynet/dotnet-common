@@ -107,7 +107,8 @@ public sealed record UmamiConfiguration
     /// <summary>
     /// The default HTTPS origin for the Arbeidstilsynet Umami collection gateway.
     /// </summary>
-    public const string DefaultCollectorOrigin = "https://meldinger-umami-collect.arbeidstilsynet.no";
+    public const string DefaultCollectorOrigin =
+        "https://meldinger-umami-collect.arbeidstilsynet.no";
 
     /// <summary>
     /// The default HTTP origin for Altinn Studio applications in local <c>Development</c> (<c>localtest</c>).

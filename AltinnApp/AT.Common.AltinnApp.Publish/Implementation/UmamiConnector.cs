@@ -63,7 +63,15 @@ internal sealed partial class UmamiConnector : IUmamiConnector
             var allowedStepsJson = SerializeForInlineScript(config.AllowedSteps);
 
             var script = $$"""
-<script data-website-id="{{encoder.Encode(config.WebsiteId)}}" data-allowed-origin="{{encoder.Encode(allowedOrigin)}}" data-app-path="{{encoder.Encode(config.AppPath)}}" data-title="{{encoder.Encode(config.AppTitle)}}" data-steps="{{encoder.Encode(steps)}}">
+<script data-website-id="{{encoder.Encode(
+                    config.WebsiteId
+                )}}" data-allowed-origin="{{encoder.Encode(
+                    allowedOrigin
+                )}}" data-app-path="{{encoder.Encode(
+                    config.AppPath
+                )}}" data-title="{{encoder.Encode(config.AppTitle)}}" data-steps="{{encoder.Encode(
+                    steps
+                )}}">
 (() => {
   try {
     const websiteId = {{websiteIdJson}};
@@ -289,13 +297,12 @@ internal sealed partial class UmamiConnector : IUmamiConnector
         }
 
         var isDevelopment = environment.IsDevelopment();
-        var enableInDevelopment =
-            bool.TryParse(
-                configuration[$"{UmamiConfiguration.SectionName}:EnableInDevelopment"],
-                out var parsedEnable
-            )
-                ? parsedEnable
-                : options?.EnableInDevelopment ?? false;
+        var enableInDevelopment = bool.TryParse(
+            configuration[$"{UmamiConfiguration.SectionName}:EnableInDevelopment"],
+            out var parsedEnable
+        )
+            ? parsedEnable
+            : options?.EnableInDevelopment ?? false;
 
         if (isDevelopment && !enableInDevelopment)
         {
@@ -336,11 +343,10 @@ internal sealed partial class UmamiConnector : IUmamiConnector
             allowHttp: isDevelopment
         );
 
-        var defaultAppOrigin = isDevelopment
-            ? UmamiConfiguration.DefaultDevelopmentAppOrigin
-            : environment.IsProduction()
-                ? UmamiConfiguration.DefaultProductionAppOrigin
-                : UmamiConfiguration.DefaultStagingAppOrigin;
+        var defaultAppOrigin =
+            isDevelopment ? UmamiConfiguration.DefaultDevelopmentAppOrigin
+            : environment.IsProduction() ? UmamiConfiguration.DefaultProductionAppOrigin
+            : UmamiConfiguration.DefaultStagingAppOrigin;
         var rawAppOrigin = FirstNonBlank(
             configuration[$"{UmamiConfiguration.SectionName}:AppOrigin"],
             options?.AppOrigin,
@@ -535,10 +541,7 @@ internal sealed partial class UmamiConnector : IUmamiConnector
     {
         if (
             !Uri.TryCreate(origin, UriKind.Absolute, out var uri)
-            || (
-                uri.Scheme != Uri.UriSchemeHttps
-                && (!allowHttp || uri.Scheme != Uri.UriSchemeHttp)
-            )
+            || (uri.Scheme != Uri.UriSchemeHttps && (!allowHttp || uri.Scheme != Uri.UriSchemeHttp))
             || !string.IsNullOrEmpty(uri.UserInfo)
             || !string.IsNullOrEmpty(uri.Query)
             || !string.IsNullOrEmpty(uri.Fragment)
