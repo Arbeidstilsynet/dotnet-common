@@ -282,8 +282,10 @@ public class UmamiConnectorTests
         html.ShouldContain("data-app-path=\"/dat/forhandsmelding\"");
         html.ShouldContain("data-title=\"Forhandsmelding\"");
         html.ShouldContain("data-steps=\"0-startside,5-Byggherre,8-bekreftelse\"");
+        html.ShouldContain("skjema-start");
         html.ShouldContain("skjema-innsendt");
         html.ShouldContain("skjema-feil");
+        html.ShouldContain("classifyEndpoint");
         html.ShouldContain("isProcessEnded");
     }
 

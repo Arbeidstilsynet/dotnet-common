@@ -85,6 +85,13 @@ internal sealed partial class UmamiConnector : IUmamiConnector
     if (window.location.origin !== allowedOrigin) return;
 
     const stepLookup = new Map(allowedSteps.map((step) => [step.toLowerCase(), step]));
+    const instanceRoutePattern = /\/instance\/([^/]+\/[^/?#]+)/i;
+
+    function resolveInstanceKey(pathname, hash) {
+      const combined = `${pathname || ""}/${(hash || "").replace(/^#/, "")}`;
+      const match = combined.match(instanceRoutePattern);
+      return match ? match[1].toLowerCase() : null;
+    }
 
     function resolvePage(pathname, hash) {
       if (pathname !== appPath && !pathname.startsWith(`${appPath}/`)) return null;
@@ -94,10 +101,25 @@ internal sealed partial class UmamiConnector : IUmamiConnector
       for (let i = segments.length - 1; i >= 0; i--) {
         const matchedStep = stepLookup.get(segments[i].toLowerCase());
         if (matchedStep) {
-          return { url: `${appPath}/${matchedStep}`, title: `${pageTitle} - ${matchedStep}` };
+          return {
+            url: `${appPath}/${matchedStep}`,
+            title: `${pageTitle} - ${matchedStep}`,
+            step: matchedStep,
+          };
         }
       }
-      return { url: appPath, title: pageTitle };
+      return { url: appPath, title: pageTitle, step: "root" };
+    }
+
+    function classifyEndpoint(pathname) {
+      const subPath = pathname.slice(appPath.length);
+      if (/\/process(?:\/next)?$/i.test(subPath)) return "process";
+      if (/\/validate$/i.test(subPath)) return "validate";
+      if (/\/data(?:\/|$)/i.test(subPath)) return "data";
+      if (/\/options\//i.test(subPath)) return "options";
+      if (/\/datalist\//i.test(subPath)) return "datalist";
+      if (/\/instances\/?$/i.test(subPath)) return "instantiation";
+      return "other";
     }
 
     let trackerPromise;
@@ -137,7 +159,7 @@ internal sealed partial class UmamiConnector : IUmamiConnector
       return trackerPromise;
     }
 
-    function sendEvent(page, eventName) {
+    function sendEvent(page, eventName, eventData) {
       const payload = {
         website: websiteId,
         hostname,
@@ -147,6 +169,7 @@ internal sealed partial class UmamiConnector : IUmamiConnector
         screen: `${window.screen?.width ?? 0}x${window.screen?.height ?? 0}`,
         language: window.navigator?.language ?? "",
         ...(eventName ? { name: eventName } : {}),
+        ...(eventData ? { data: eventData } : {}),
       };
       void loadTracker()
         .then((tracker) => Promise.resolve().then(() => tracker.track(payload)))
@@ -157,16 +180,27 @@ internal sealed partial class UmamiConnector : IUmamiConnector
       return resolvePage(window.location?.pathname ?? "", window.location?.hash ?? "") ?? {
         url: appPath,
         title: pageTitle,
+        step: "root",
       };
     }
 
     let lastTrackedUrl = null;
+    const startedInstances = new Set();
     function trackCurrentPage() {
       try {
-        const page = resolvePage(window.location?.pathname ?? "", window.location?.hash ?? "");
+        const pathname = window.location?.pathname ?? "";
+        const hash = window.location?.hash ?? "";
+        const page = resolvePage(pathname, hash);
         if (!page || page.url === lastTrackedUrl) return;
         lastTrackedUrl = page.url;
         sendEvent(page);
+        if (page.step !== "root") {
+          const instanceKey = resolveInstanceKey(pathname, hash) ?? "stateless";
+          if (!startedInstances.has(instanceKey)) {
+            startedInstances.add(instanceKey);
+            sendEvent(page, "skjema-start", { status: "started", step: page.step });
+          }
+        }
       } catch {}
     }
 
@@ -239,7 +273,13 @@ internal sealed partial class UmamiConnector : IUmamiConnector
                     }
                     const status = Number(this.status ?? 0);
                     if (status >= 500) {
-                      sendEvent(currentSanitizedPage(), "skjema-feil");
+                      const page = currentSanitizedPage();
+                      sendEvent(page, "skjema-feil", {
+                        status: "error",
+                        step: page.step,
+                        httpStatus: status,
+                        endpoint: classifyEndpoint(target.pathname),
+                      });
                       return;
                     }
                     const match = target.pathname.match(processPattern);
@@ -253,7 +293,11 @@ internal sealed partial class UmamiConnector : IUmamiConnector
                       const instanceKey = match[1].toLowerCase();
                       if (!submittedInstances.has(instanceKey)) {
                         submittedInstances.add(instanceKey);
-                        sendEvent(currentSanitizedPage(), "skjema-innsendt");
+                        const page = currentSanitizedPage();
+                        sendEvent(page, "skjema-innsendt", {
+                          status: "success",
+                          step: page.step,
+                        });
                       }
                     }
                   } catch {}
