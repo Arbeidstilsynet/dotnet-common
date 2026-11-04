@@ -334,9 +334,16 @@ internal sealed partial class UmamiConnector : IUmamiConnector
 
         var rawCollectorOrigin = FirstNonBlank(
             configuration[$"{UmamiConfiguration.SectionName}:CollectorOrigin"],
-            options?.CollectorOrigin,
-            UmamiConfiguration.DefaultCollectorOrigin
-        )!;
+            configuration["UMAMI_COLLECTOR_ORIGIN"],
+            options?.CollectorOrigin
+        );
+        if (string.IsNullOrWhiteSpace(rawCollectorOrigin))
+        {
+            throw new InvalidOperationException(
+                "Umami:CollectorOrigin must be configured when Umami:WebsiteId is set"
+            );
+        }
+
         var collectorOrigin = ValidateOrigin(
             rawCollectorOrigin,
             $"{UmamiConfiguration.SectionName}:CollectorOrigin",

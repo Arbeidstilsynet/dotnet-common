@@ -14,6 +14,7 @@ namespace Arbeidstilsynet.Common.AltinnApp.Test.Unit;
 public class UmamiConnectorTests
 {
     private const string PocWebsiteId = "86065263-1955-4c5e-8fa9-8ff7ddb1b349";
+    private const string TestCollectorOrigin = "https://umami.example.com";
 
     [Theory]
     [InlineData("Development")]
@@ -114,6 +115,7 @@ public class UmamiConnectorTests
             new Dictionary<string, string?>
             {
                 ["Umami:WebsiteId"] = websiteId,
+                ["Umami:CollectorOrigin"] = TestCollectorOrigin,
                 ["Umami:AppPath"] = "/dat/forhandsmelding",
             }
         );
@@ -124,13 +126,15 @@ public class UmamiConnectorTests
     }
 
     [Theory]
-    [InlineData("http://meldinger-umami-collect.arbeidstilsynet.no")]
-    [InlineData("https://meldinger-umami-collect.arbeidstilsynet.no/path")]
-    [InlineData("https://meldinger-umami-collect.arbeidstilsynet.no?query=1")]
-    [InlineData("https://meldinger-umami-collect.arbeidstilsynet.no#hash")]
-    [InlineData("https://user:pass@meldinger-umami-collect.arbeidstilsynet.no")]
-    public void ResolveConfig_WhenCollectorOriginIsInvalid_ThrowsInvalidOperationException(
-        string collectorOrigin
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("http://umami.example.com")]
+    [InlineData("https://umami.example.com/path")]
+    [InlineData("https://umami.example.com?query=1")]
+    [InlineData("https://umami.example.com#hash")]
+    [InlineData("https://user:pass@umami.example.com")]
+    public void ResolveConfig_WhenCollectorOriginIsMissingOrInvalid_ThrowsInvalidOperationException(
+        string? collectorOrigin
     )
     {
         var config = CreateConfiguration(
@@ -168,6 +172,7 @@ public class UmamiConnectorTests
                 new Dictionary<string, string?>
                 {
                     ["Umami:WebsiteId"] = PocWebsiteId.ToUpperInvariant(),
+                    ["Umami:CollectorOrigin"] = TestCollectorOrigin,
                 }
             );
 
@@ -178,9 +183,7 @@ public class UmamiConnectorTests
 
             result.ShouldNotBeNull();
             result.WebsiteId.ShouldBe(PocWebsiteId);
-            result.ScriptUrl.ShouldBe(
-                "https://meldinger-umami-collect.arbeidstilsynet.no/script.js"
-            );
+            result.ScriptUrl.ShouldBe("https://umami.example.com/script.js");
             result.AppHostname.ShouldBe("dat.apps.tt02.altinn.no");
             result.AppPath.ShouldBe("/dat/forhandsmelding");
             result.AppTitle.ShouldBe("Forhandsmelding");
@@ -229,6 +232,7 @@ public class UmamiConnectorTests
             ),
             new UmamiConfiguration
             {
+                CollectorOrigin = TestCollectorOrigin,
                 AppPath = "/dat/forhandsmelding",
                 AppTitle = "Forhandsmelding",
                 AllowedSteps = ["0-startside", "5-Byggherre", "8-bekreftelse"],
@@ -258,6 +262,7 @@ public class UmamiConnectorTests
         services.AddUmamiTracking(options =>
             options with
             {
+                CollectorOrigin = TestCollectorOrigin,
                 AppPath = "/dat/forhandsmelding",
                 AppTitle = "Forhandsmelding",
                 AllowedSteps = ["0-startside", "5-Byggherre", "8-bekreftelse"],
@@ -271,7 +276,7 @@ public class UmamiConnectorTests
         connector.RenderScriptTag().WriteTo(writer, HtmlEncoder.Default);
         var html = writer.ToString();
 
-        html.ShouldContain("https://meldinger-umami-collect.arbeidstilsynet.no/script.js");
+        html.ShouldContain("https://umami.example.com/script.js");
         html.ShouldContain($"data-website-id=\"{PocWebsiteId}\"");
         html.ShouldContain("data-allowed-origin=\"https://dat.apps.tt02.altinn.no\"");
         html.ShouldContain("data-app-path=\"/dat/forhandsmelding\"");

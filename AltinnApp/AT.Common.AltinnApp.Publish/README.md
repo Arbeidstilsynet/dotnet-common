@@ -396,11 +396,12 @@ In `App/views/Home/Index.cshtml`, inject `IUmamiConnector` and render the script
 @UmamiConnector.RenderScriptTag()
 ```
 
-Configure `Umami:WebsiteId` in `App/appsettings.Staging.json` or `App/appsettings.Production.json`:
+Configure `Umami:CollectorOrigin` and `Umami:WebsiteId` in `App/appsettings.Staging.json` or `App/appsettings.Production.json`:
 
 ```json
 {
   "Umami": {
+    "CollectorOrigin": "https://umami.example.com",
     "WebsiteId": "86065263-1955-4c5e-8fa9-8ff7ddb1b349"
   }
 }

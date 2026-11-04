@@ -105,12 +105,6 @@ public sealed record UmamiConfiguration
     public const string SectionName = "Umami";
 
     /// <summary>
-    /// The default HTTPS origin for the Arbeidstilsynet Umami collection gateway.
-    /// </summary>
-    public const string DefaultCollectorOrigin =
-        "https://meldinger-umami-collect.arbeidstilsynet.no";
-
-    /// <summary>
     /// The default HTTP origin for Altinn Studio applications in local <c>Development</c> (<c>localtest</c>).
     /// </summary>
     public const string DefaultDevelopmentAppOrigin = "http://local.altinn.cloud:8000";
@@ -138,7 +132,8 @@ public sealed record UmamiConfiguration
     public string? WebsiteId { get; init; }
 
     /// <summary>
-    /// Optional override for the HTTPS origin of the Umami collection gateway. Defaults to <see cref="DefaultCollectorOrigin"/>.
+    /// The origin of the Umami instance or collection gateway (for example <c>"https://umami.example.com"</c>)
+    /// when <c>Umami:CollectorOrigin</c> is not set in <see cref="Microsoft.Extensions.Configuration.IConfiguration"/>.
     /// </summary>
     public string? CollectorOrigin { get; init; }
 
