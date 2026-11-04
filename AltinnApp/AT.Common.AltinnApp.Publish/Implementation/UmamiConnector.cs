@@ -341,14 +341,7 @@ internal sealed partial class UmamiConnector : IUmamiConnector
         }
 
         var isDevelopment = environment.IsDevelopment();
-        var enableInDevelopment = bool.TryParse(
-            configuration[$"{UmamiConfiguration.SectionName}:EnableInDevelopment"],
-            out var parsedEnable
-        )
-            ? parsedEnable
-            : options?.EnableInDevelopment ?? false;
-
-        if (isDevelopment && !enableInDevelopment)
+        if (isDevelopment && !IsEnabledInDevelopment(configuration, options))
         {
             return null;
         }
@@ -394,10 +387,7 @@ internal sealed partial class UmamiConnector : IUmamiConnector
             allowHttp: isDevelopment
         );
 
-        var defaultAppOrigin =
-            isDevelopment ? UmamiConfiguration.DefaultDevelopmentAppOrigin
-            : environment.IsProduction() ? UmamiConfiguration.DefaultProductionAppOrigin
-            : UmamiConfiguration.DefaultStagingAppOrigin;
+        var defaultAppOrigin = GetDefaultAppOrigin(environment);
         var rawAppOrigin = FirstNonBlank(
             configuration[$"{UmamiConfiguration.SectionName}:AppOrigin"],
             options?.AppOrigin,
@@ -422,6 +412,41 @@ internal sealed partial class UmamiConnector : IUmamiConnector
             AppTitle: appTitle,
             AllowedSteps: allowedSteps
         );
+    }
+
+    private static bool IsEnabledInDevelopment(
+        IConfiguration configuration,
+        UmamiConfiguration? options
+    )
+    {
+        if (
+            bool.TryParse(
+                configuration[$"{UmamiConfiguration.SectionName}:EnableInDevelopment"],
+                out var parsedEnable
+            )
+        )
+        {
+            return parsedEnable;
+        }
+
+        return options?.EnableInDevelopment ?? false;
+    }
+
+    private static string GetDefaultAppOrigin(IHostEnvironment environment)
+    {
+        if (environment.IsDevelopment())
+        {
+            return new UriBuilder(Uri.UriSchemeHttp, "local.altinn.cloud", 8000).Uri.GetLeftPart(
+                UriPartial.Authority
+            );
+        }
+
+        if (environment.IsProduction())
+        {
+            return UmamiConfiguration.DefaultProductionAppOrigin;
+        }
+
+        return UmamiConfiguration.DefaultStagingAppOrigin;
     }
 
     private static string ResolveAppPath(
@@ -536,53 +561,57 @@ internal sealed partial class UmamiConnector : IUmamiConnector
                 .ToList();
         }
 
-        if (!string.IsNullOrWhiteSpace(contentRootPath))
-        {
-            var uiDir = Path.Combine(contentRootPath, "ui");
-            if (Directory.Exists(uiDir))
-            {
-                try
-                {
-                    var discovered = new List<string>();
-                    foreach (
-                        var settingsFile in Directory
-                            .EnumerateFiles(uiDir, "Settings.json", SearchOption.AllDirectories)
-                            .OrderBy(path => path, StringComparer.Ordinal)
-                    )
-                    {
-                        using var doc = JsonDocument.Parse(File.ReadAllText(settingsFile));
-                        if (
-                            doc.RootElement.TryGetProperty("pages", out var pages)
-                            && pages.TryGetProperty("order", out var order)
-                            && order.ValueKind == JsonValueKind.Array
-                        )
-                        {
-                            foreach (var item in order.EnumerateArray())
-                            {
-                                if (
-                                    item.GetString() is { Length: > 0 } step
-                                    && !discovered.Contains(step, StringComparer.OrdinalIgnoreCase)
-                                )
-                                {
-                                    discovered.Add(step);
-                                }
-                            }
-                        }
-                    }
+        return DiscoverStepsFromUiDirectory(contentRootPath);
+    }
 
-                    if (discovered.Count > 0)
-                    {
-                        return discovered;
-                    }
-                }
-                catch
-                {
-                    // Fall back to empty list if Settings.json cannot be parsed.
-                }
-            }
+    private static IReadOnlyList<string> DiscoverStepsFromUiDirectory(string? contentRootPath)
+    {
+        if (string.IsNullOrWhiteSpace(contentRootPath))
+        {
+            return [];
         }
 
-        return [];
+        var uiDir = Path.Combine(contentRootPath, "ui");
+        if (!Directory.Exists(uiDir))
+        {
+            return [];
+        }
+
+        try
+        {
+            var settingsFiles = Directory
+                .EnumerateFiles(uiDir, "Settings.json", SearchOption.AllDirectories)
+                .OrderBy(path => path, StringComparer.Ordinal);
+
+            return settingsFiles
+                .SelectMany(ReadStepsFromSettingsFile)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    private static IEnumerable<string> ReadStepsFromSettingsFile(string settingsFile)
+    {
+        using var doc = JsonDocument.Parse(File.ReadAllText(settingsFile));
+        if (
+            !doc.RootElement.TryGetProperty("pages", out var pages)
+            || !pages.TryGetProperty("order", out var order)
+            || order.ValueKind != JsonValueKind.Array
+        )
+        {
+            return [];
+        }
+
+        return order
+            .EnumerateArray()
+            .Select(item => item.GetString())
+            .Where(step => !string.IsNullOrWhiteSpace(step))
+            .Select(step => step!)
+            .ToList();
     }
 
     private static string? FirstNonBlank(params string?[] candidates) =>

@@ -105,11 +105,6 @@ public sealed record UmamiConfiguration
     public const string SectionName = "Umami";
 
     /// <summary>
-    /// The default HTTP origin for Altinn Studio applications in local <c>Development</c> (<c>localtest</c>).
-    /// </summary>
-    public const string DefaultDevelopmentAppOrigin = "http://local.altinn.cloud:8000";
-
-    /// <summary>
     /// The default HTTPS origin for Altinn Studio applications in TT02 (<c>Staging</c>).
     /// </summary>
     public const string DefaultStagingAppOrigin = "https://dat.apps.tt02.altinn.no";
