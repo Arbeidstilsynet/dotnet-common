@@ -379,3 +379,33 @@ public void ConfigureServices(IServiceCollection services)
     services.AddTransient<IDataProcessor, AttachmentListProcessor>();
 }
 ```
+
+### Umami Browser Analytics
+
+Register `IUmamiConnector` in `Program.cs`:
+
+```csharp
+services.AddUmamiTracking();
+```
+
+In `App/views/Home/Index.cshtml`, inject `IUmamiConnector` and render the script tag:
+
+```razor
+@inject Arbeidstilsynet.Common.AltinnApp.Ports.IUmamiConnector UmamiConnector
+...
+@UmamiConnector.RenderScriptTag()
+```
+
+Configure `Umami:CollectorOrigin` and `Umami:WebsiteId` in `App/appsettings.Staging.json` or `App/appsettings.Production.json`:
+
+```json
+{
+  "Umami": {
+    "CollectorOrigin": "https://umami.example.com",
+    "WebsiteId": "86065263-1955-4c5e-8fa9-8ff7ddb1b349"
+  }
+}
+```
+
+Application path (`/dat/<app>`) and allowlisted layout steps (`pages.order`) are discovered automatically from `config/applicationmetadata.json` and `ui/**/Settings.json`. Tracking short-circuits by default in `Development` (unless `Umami:EnableInDevelopment=true` or `EnableInDevelopment = true` is configured, e.g. for E2E tests) or when `Umami:WebsiteId` is empty.
+

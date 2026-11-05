@@ -6,6 +6,7 @@ using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.AltinnApp.Implementation;
 using Arbeidstilsynet.Common.AltinnApp.Model;
 using Arbeidstilsynet.Common.AltinnApp.Ports;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -92,6 +93,69 @@ public record StructuredDataConfiguration
     /// Ensure the submission task (usually Task_1) is included in this filter.
     /// </remarks>
     public string[] TaskIdFilter { get; init; } = [];
+}
+
+/// <summary>
+/// Configuration options for privacy-safe Umami analytics tracking in an Altinn application.
+/// </summary>
+public sealed record UmamiConfiguration
+{
+    /// <summary>
+    /// The configuration section name in <c>appsettings.json</c> (<c>"Umami"</c>).
+    /// </summary>
+    public const string SectionName = "Umami";
+
+    /// <summary>
+    /// The default HTTPS origin for Altinn Studio applications in TT02 (<c>Staging</c>).
+    /// </summary>
+    public const string DefaultStagingAppOrigin = "https://dat.apps.tt02.altinn.no";
+
+    /// <summary>
+    /// The default HTTPS origin for Altinn Studio applications in <c>Production</c>.
+    /// </summary>
+    public const string DefaultProductionAppOrigin = "https://dat.apps.altinn.no";
+
+    /// <summary>
+    /// Whether to enable Umami tracking in <c>Development</c> when <c>Umami:WebsiteId</c> is configured (for example in E2E tests).
+    /// Defaults to <see langword="false"/> so <c>Development</c> short-circuits by default.
+    /// Can also be set via <c>Umami:EnableInDevelopment</c> in <see cref="Microsoft.Extensions.Configuration.IConfiguration"/>.
+    /// </summary>
+    public bool EnableInDevelopment { get; init; } = false;
+
+    /// <summary>
+    /// Optional fallback Umami website UUID when <c>Umami:WebsiteId</c> is not set in <see cref="Microsoft.Extensions.Configuration.IConfiguration"/>.
+    /// </summary>
+    public string? WebsiteId { get; init; }
+
+    /// <summary>
+    /// The origin of the Umami instance or collection gateway (for example <c>"https://umami.example.com"</c>)
+    /// when <c>Umami:CollectorOrigin</c> is not set in <see cref="Microsoft.Extensions.Configuration.IConfiguration"/>.
+    /// </summary>
+    public string? CollectorOrigin { get; init; }
+
+    /// <summary>
+    /// Optional override for the HTTPS origin where the Altinn application is hosted.
+    /// Defaults to <see cref="DefaultProductionAppOrigin"/> in <c>Production</c> and <see cref="DefaultStagingAppOrigin"/> otherwise.
+    /// </summary>
+    public string? AppOrigin { get; init; }
+
+    /// <summary>
+    /// Optional override for the Altinn application path (for example <c>"/dat/forhandsmelding"</c>).
+    /// When omitted, discovered automatically from <c>config/applicationmetadata.json</c> (<c>id</c>).
+    /// </summary>
+    public string? AppPath { get; init; }
+
+    /// <summary>
+    /// Optional override for the application title sent in Umami page views.
+    /// When omitted, derived from the application name segment of <see cref="AppPath"/>.
+    /// </summary>
+    public string? AppTitle { get; init; }
+
+    /// <summary>
+    /// Optional override for the allowlist of form layout steps.
+    /// When omitted, discovered automatically from <c>ui/**/Settings.json</c> (<c>pages.order</c>).
+    /// </summary>
+    public IReadOnlyList<string>? AllowedSteps { get; init; }
 }
 
 /// <summary>
@@ -453,6 +517,36 @@ public static class DependencyInjectionExtensions
             .AddTransient<IPatchOperationsProvider, TPatchOperationsProvider>()
             .AddTransient<IUpdateDialogProvider<TDataModel>, TUpdateDialogProvider>()
             .AddTransient<IServiceTask, UpdateDialogTask<TDataModel>>();
+    }
+
+    /// <summary>
+    /// Registers <see cref="IUmamiConnector"/> for privacy-safe browser-side Umami analytics in an Altinn application.
+    /// <br/>
+    /// To complete the integration, you must also update <c>App/views/Home/Index.cshtml</c> to inject
+    /// <c>@inject Arbeidstilsynet.Common.AltinnApp.Ports.IUmamiConnector UmamiConnector</c> and render
+    /// <c>@UmamiConnector.RenderScriptTag()</c> inside <c>&lt;body&gt;</c>.
+    /// </summary>
+    /// <remarks>
+    /// Tracking short-circuits by default in <c>Development</c> (unless <see cref="UmamiConfiguration.EnableInDevelopment"/> or
+    /// <c>Umami:EnableInDevelopment=true</c> is set) or when <c>Umami:WebsiteId</c> is empty.
+    /// </remarks>
+    /// <param name="services">The service collection to add registrations to.</param>
+    /// <param name="configure">Optional callback to configure fallback options when not specified in <c>appsettings</c>.</param>
+    /// <returns>The same <see cref="IServiceCollection"/> instance so that calls can be chained.</returns>
+    public static IServiceCollection AddUmamiTracking(
+        this IServiceCollection services,
+        Func<UmamiConfiguration, UmamiConfiguration>? configure = null
+    )
+    {
+        var config = configure is not null
+            ? configure(new UmamiConfiguration())
+            : new UmamiConfiguration();
+        services.AddSingleton(config);
+        services.TryAddSingleton<IUmamiConnector, UmamiConnector>();
+        services.TryAddEnumerable(
+            ServiceDescriptor.Transient<IStartupFilter, UmamiDiagnosticsStartupFilter>()
+        );
+        return services;
     }
 
     private static IServiceCollection AddDialogportenClientForEnvironment(
