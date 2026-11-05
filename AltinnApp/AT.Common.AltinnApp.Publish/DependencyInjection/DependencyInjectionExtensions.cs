@@ -6,6 +6,7 @@ using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.AltinnApp.Implementation;
 using Arbeidstilsynet.Common.AltinnApp.Model;
 using Arbeidstilsynet.Common.AltinnApp.Ports;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -542,6 +543,9 @@ public static class DependencyInjectionExtensions
             : new UmamiConfiguration();
         services.AddSingleton(config);
         services.TryAddSingleton<IUmamiConnector, UmamiConnector>();
+        services.TryAddEnumerable(
+            ServiceDescriptor.Transient<IStartupFilter, UmamiDiagnosticsStartupFilter>()
+        );
         return services;
     }
 

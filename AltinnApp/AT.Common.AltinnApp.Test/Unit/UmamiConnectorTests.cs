@@ -2,6 +2,9 @@ using System.Text.Encodings.Web;
 using Arbeidstilsynet.Common.AltinnApp.DependencyInjection;
 using Arbeidstilsynet.Common.AltinnApp.Implementation;
 using Arbeidstilsynet.Common.AltinnApp.Ports;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -288,9 +291,35 @@ public class UmamiConnectorTests
         html.ShouldContain("classifyEndpoint");
         html.ShouldContain("extractChangedFields");
         html.ShouldContain("extractTraceId");
+        html.ShouldContain("x-error-location");
         html.ShouldContain("activeElement");
         html.ShouldContain("httpStatus: String(status)");
         html.ShouldContain("isProcessEnded");
+    }
+
+    [Fact]
+    public async Task UmamiDiagnosticsStartupFilter_WhenMiddlewareThrows_SetsTraceIdErrorTypeAndLocationHeaders()
+    {
+        var filter = new UmamiDiagnosticsStartupFilter();
+        var services = new ServiceCollection().BuildServiceProvider();
+        var appBuilder = new ApplicationBuilder(services);
+
+        var configure = filter.Configure(app =>
+        {
+            app.Run(_ => throw new InvalidOperationException("Simulated processor failure"));
+        });
+        configure(appBuilder);
+        var pipeline = appBuilder.Build();
+
+        var context = new DefaultHttpContext { TraceIdentifier = "trace-12345" };
+
+        await Should.ThrowAsync<InvalidOperationException>(() => pipeline(context));
+
+        context.Response.Headers["x-trace-id"].ToString().ShouldBe("trace-12345");
+        context.Response.Headers["x-error-type"].ToString().ShouldBe("InvalidOperationException");
+        var location = context.Response.Headers["x-error-location"].ToString();
+        location.ShouldContain(nameof(UmamiConnectorTests));
+        location.ShouldContain("UmamiConnectorTests.cs:");
     }
 
     private static IConfiguration CreateConfiguration(IDictionary<string, string?> values) =>

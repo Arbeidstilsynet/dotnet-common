@@ -258,7 +258,7 @@ internal sealed partial class UmamiConnector : IUmamiConnector
 
     function extractChangedFields(requestBody) {
       try {
-        if (typeof requestBody !== "string" || !requestBody.trim().startsWith("{") && !requestBody.trim().startsWith("[")) {
+        if (typeof requestBody !== "string" || (!requestBody.trim().startsWith("{") && !requestBody.trim().startsWith("["))) {
           return null;
         }
         const parsed = JSON.parse(requestBody);
@@ -266,7 +266,9 @@ internal sealed partial class UmamiConnector : IUmamiConnector
           ? parsed
           : Array.isArray(parsed?.patches)
             ? parsed.patches
-            : null;
+            : Array.isArray(parsed?.patch)
+              ? parsed.patch
+              : null;
         if (!patches) return null;
         const paths = [];
         for (const entry of patches) {
@@ -283,7 +285,7 @@ internal sealed partial class UmamiConnector : IUmamiConnector
             }
           }
         }
-        return paths.length > 0 ? paths.slice(0, 10).join(", ").slice(0, 256) : null;
+        return paths.length > 0 ? paths.slice(0, 10) : null;
       } catch {
         return null;
       }
@@ -301,11 +303,23 @@ internal sealed partial class UmamiConnector : IUmamiConnector
           return body.traceId.trim().slice(0, 128);
         }
         if (typeof xhr.getResponseHeader === "function") {
-          for (const header of ["traceparent", "x-correlation-id", "request-id"]) {
+          for (const header of ["x-trace-id", "traceparent", "x-correlation-id", "request-id"]) {
             const value = xhr.getResponseHeader(header);
             if (typeof value === "string" && value.trim().length > 0) {
               return value.trim().slice(0, 128);
             }
+          }
+        }
+      } catch {}
+      return null;
+    }
+
+    function extractErrorHeader(xhr, headerName) {
+      try {
+        if (typeof xhr.getResponseHeader === "function") {
+          const header = xhr.getResponseHeader(headerName);
+          if (typeof header === "string" && header.trim().length > 0) {
+            return header.trim().slice(0, 160);
           }
         }
       } catch {}
@@ -370,6 +384,8 @@ internal sealed partial class UmamiConnector : IUmamiConnector
                       const page = currentSanitizedPage();
                       const activeElement = info.activeElement ?? currentActiveElementId();
                       const traceId = extractTraceId(this);
+                      const errorType = extractErrorHeader(this, "x-error-type");
+                      const errorLocation = extractErrorHeader(this, "x-error-location");
                       sendEvent(page, "skjema-feil", {
                         status: "error",
                         step: page.step,
@@ -378,6 +394,8 @@ internal sealed partial class UmamiConnector : IUmamiConnector
                         endpoint: classifyEndpoint(target.pathname),
                         ...(activeElement ? { activeElement } : {}),
                         ...(info.changedFields ? { changedFields: info.changedFields } : {}),
+                        ...(errorType ? { errorType } : {}),
+                        ...(errorLocation ? { errorLocation } : {}),
                         ...(traceId ? { traceId } : {}),
                       });
                       return;
