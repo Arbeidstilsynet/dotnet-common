@@ -286,6 +286,10 @@ public class UmamiConnectorTests
         html.ShouldContain("skjema-innsendt");
         html.ShouldContain("skjema-feil");
         html.ShouldContain("classifyEndpoint");
+        html.ShouldContain("extractChangedFields");
+        html.ShouldContain("extractTraceId");
+        html.ShouldContain("activeElement");
+        html.ShouldContain("httpStatus: String(status)");
         html.ShouldContain("isProcessEnded");
     }
 

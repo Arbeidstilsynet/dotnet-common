@@ -220,6 +220,98 @@ internal sealed partial class UmamiConnector : IUmamiConnector
     window.addEventListener("popstate", trackCurrentPage);
     window.addEventListener("hashchange", trackCurrentPage);
 
+    let lastFocusedElementId = null;
+    function captureElementId(element) {
+      try {
+        if (!element || typeof element !== "object") return null;
+        if (typeof element.id === "string" && element.id.trim().length > 0) {
+          return element.id.trim().slice(0, 128);
+        }
+        const closestWithId =
+          typeof element.closest === "function" ? element.closest("[id]") : null;
+        if (
+          closestWithId &&
+          typeof closestWithId.id === "string" &&
+          closestWithId.id.trim().length > 0 &&
+          closestWithId.id !== "root"
+        ) {
+          return closestWithId.id.trim().slice(0, 128);
+        }
+      } catch {}
+      return null;
+    }
+
+    document.addEventListener(
+      "focusin",
+      (event) => {
+        const id = captureElementId(event?.target);
+        if (id) lastFocusedElementId = id;
+      },
+      true
+    );
+
+    function currentActiveElementId() {
+      const current = captureElementId(document.activeElement);
+      if (current && current !== "root") return current;
+      return lastFocusedElementId;
+    }
+
+    function extractChangedFields(requestBody) {
+      try {
+        if (typeof requestBody !== "string" || !requestBody.trim().startsWith("{") && !requestBody.trim().startsWith("[")) {
+          return null;
+        }
+        const parsed = JSON.parse(requestBody);
+        const patches = Array.isArray(parsed)
+          ? parsed
+          : Array.isArray(parsed?.patches)
+            ? parsed.patches
+            : null;
+        if (!patches) return null;
+        const paths = [];
+        for (const entry of patches) {
+          const opList = Array.isArray(entry?.patch) ? entry.patch : [entry];
+          for (const op of opList) {
+            if (typeof op?.path === "string" && op.path.startsWith("/")) {
+              const sanitizedPath = op.path
+                .slice(1)
+                .replace(/\/\d+(?=\/|$)/g, "[]")
+                .replaceAll("/", ".");
+              if (sanitizedPath && !paths.includes(sanitizedPath)) {
+                paths.push(sanitizedPath);
+              }
+            }
+          }
+        }
+        return paths.length > 0 ? paths.slice(0, 10).join(", ").slice(0, 256) : null;
+      } catch {
+        return null;
+      }
+    }
+
+    function extractTraceId(xhr) {
+      try {
+        const body =
+          xhr.response && typeof xhr.response === "object"
+            ? xhr.response
+            : typeof xhr.responseText === "string" && xhr.responseText.trim().startsWith("{")
+              ? JSON.parse(xhr.responseText)
+              : null;
+        if (typeof body?.traceId === "string" && body.traceId.trim().length > 0) {
+          return body.traceId.trim().slice(0, 128);
+        }
+        if (typeof xhr.getResponseHeader === "function") {
+          for (const header of ["traceparent", "x-correlation-id", "request-id"]) {
+            const value = xhr.getResponseHeader(header);
+            if (typeof value === "string" && value.trim().length > 0) {
+              return value.trim().slice(0, 128);
+            }
+          }
+        }
+      } catch {}
+      return null;
+    }
+
     const Xhr = window.XMLHttpRequest;
     if (typeof Xhr === "function" && Xhr.prototype) {
       const requests = new WeakMap();
@@ -260,6 +352,8 @@ internal sealed partial class UmamiConnector : IUmamiConnector
           try {
             const info = requests.get(this);
             if (info && typeof this.addEventListener === "function") {
+              info.activeElement = currentActiveElementId();
+              info.changedFields = extractChangedFields(args[0]);
               this.addEventListener(
                 "loadend",
                 () => {
@@ -274,11 +368,17 @@ internal sealed partial class UmamiConnector : IUmamiConnector
                     const status = Number(this.status ?? 0);
                     if (status >= 500) {
                       const page = currentSanitizedPage();
+                      const activeElement = info.activeElement ?? currentActiveElementId();
+                      const traceId = extractTraceId(this);
                       sendEvent(page, "skjema-feil", {
                         status: "error",
                         step: page.step,
-                        httpStatus: status,
+                        httpMethod: info.method,
+                        httpStatus: String(status),
                         endpoint: classifyEndpoint(target.pathname),
+                        ...(activeElement ? { activeElement } : {}),
+                        ...(info.changedFields ? { changedFields: info.changedFields } : {}),
+                        ...(traceId ? { traceId } : {}),
                       });
                       return;
                     }
