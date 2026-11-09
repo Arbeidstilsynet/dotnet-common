@@ -98,11 +98,11 @@ Renovate is configured to group all non-major versions together. Check Renovate'
 
 Some packages ship a [Kiota](https://learn.microsoft.com/openapi/kiota/)-generated client produced from an OpenAPI specification. When the upstream API publishes a new spec, the generated code needs to be regenerated.
 
-Kiota is installed as a **local dotnet tool** (pinned in [`.config/dotnet-tools.json`](.config/dotnet-tools.json)), so every contributor regenerates with the exact same version and there is no global install to manage. Each package with a generated client exposes a `generate:client` npm script that wraps the correct Kiota command.
+Kiota is installed as a **local dotnet tool** (pinned in [`.config/dotnet-tools.json`](.config/dotnet-tools.json)), so every contributor regenerates with the exact same version and there is no global install to manage. Each package with a generated client exposes a `generate:client` pnpm script that wraps the correct Kiota command.
 
 Packages that use this workflow:
 
-| Package | Spec file | npm script |
+| Package | Spec file | pnpm script |
 | --- | --- | --- |
 | `Enhetsregisteret` | `AT.Common.Enhetsregisteret.Publish/openapi.json` | `generate:client` |
 | `GeoNorge` | `AT.Common.GeoNorge.Publish/openapi-adresser.json`, `AT.Common.GeoNorge.Publish/openapi-kommuneinfo.json` | `generate:client` |
@@ -121,7 +121,7 @@ Packages that use this workflow:
 
    ```bash
    cd Enhetsregisteret   # or: cd GeoNorge / cd Saksarkiv
-   npm run generate:client
+   pnpm run generate:client
    ```
 
    Packages with multiple specs regenerate every client from the single `generate:client` script (`GeoNorge` also exposes `generate:client:adresser` and `generate:client:kommuneinfo` if you need to regenerate just one).
