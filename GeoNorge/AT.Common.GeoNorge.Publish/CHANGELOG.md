@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 4.1.3
+
+- chore: update readme to reference `pnpm` for scripts
+
 ## 4.1.2
 
 ### Changed
