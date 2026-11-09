@@ -165,3 +165,11 @@ settings:
 importers:
 
   .: {}
+
+  Altinn: {}
+
+  Enhetsregisteret: {}
+
+  GeoNorge: {}
+
+  Saksarkiv: {}
