@@ -121,7 +121,7 @@ Packages that use this workflow:
 
    ```bash
    cd Enhetsregisteret   # or: cd GeoNorge / cd Saksarkiv
-   npm run generate:client
+   pnpm run generate:client
    ```
 
    Packages with multiple specs regenerate every client from the single `generate:client` script (`GeoNorge` also exposes `generate:client:adresser` and `generate:client:kommuneinfo` if you need to regenerate just one).

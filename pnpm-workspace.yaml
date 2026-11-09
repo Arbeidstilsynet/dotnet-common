@@ -1,0 +1,5 @@
+autoDedupe: true
+
+minimumReleaseAge: 4320 # 3 days in minutes
+
+trustPolicy: no-downgrade
