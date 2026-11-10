@@ -637,12 +637,12 @@ internal sealed partial class UmamiConnector : IUmamiConnector
             var child in configuration
                 .GetSection($"{UmamiConfiguration.SectionName}:AdditionalProperties")
                 .GetChildren()
+                .Where(child =>
+                    !string.IsNullOrWhiteSpace(child.Key) && !string.IsNullOrWhiteSpace(child.Value)
+                )
         )
         {
-            if (!string.IsNullOrWhiteSpace(child.Key) && !string.IsNullOrWhiteSpace(child.Value))
-            {
-                merged[child.Key.Trim()] = child.Value.Trim();
-            }
+            merged[child.Key.Trim()] = child.Value!.Trim();
         }
 
         return merged.Count > 0 ? merged : null;
