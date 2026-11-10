@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 4.1.4
+
+### Fixed
+
+- `GeokodingProperties.Lokalid` is now `long?` instead of `int?`. Kartverket matrikkel identifiers exceed `Int32.MaxValue` (e.g. Vestvågøy 40/506 has `lokalid` 6416745304), which made `IPropertySearch.SearchProperties` throw a `JsonException` while deserializing the response.
+
 ## 4.1.3
 
 - chore: update readme to reference `pnpm` for scripts

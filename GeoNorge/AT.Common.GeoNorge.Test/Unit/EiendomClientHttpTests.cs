@@ -140,6 +140,47 @@ public class EiendomClientHttpTests
         AssertPoint(parcels[1], 16.82759, 68.68239);
     }
 
+    // Kartverket lokalid values exceed Int32.MaxValue (Vestvågøy 40/506 has 6416745304).
+    [Fact]
+    public async Task SearchProperties_LokalidAboveInt32RangeIsDeserialized()
+    {
+        using var fixture = new HttpFixture(
+            """
+            {
+              "type": "FeatureCollection",
+              "features": [
+                {
+                  "type": "Feature",
+                  "geometry": { "type": "Point", "coordinates": [13.63813, 68.15091] },
+                  "properties": {
+                    "kommunenummer": "1860", "gardsnummer": 40, "bruksnummer": 506,
+                    "hovedomr\u00e5de": true, "lokalid": 6416745304
+                  }
+                }
+              ]
+            }
+            """
+        );
+
+        var result = await fixture.Client.SearchProperties(
+            new GeokodingQueryParameters
+            {
+                Kommunenummer = "1860",
+                Gardsnummer = 40,
+                Bruksnummer = 506,
+            }
+        );
+
+        var properties = result
+            .ShouldNotBeNull()
+            .Features.ShouldNotBeNull()
+            .ShouldHaveSingleItem()
+            .Properties.ShouldNotBeNull();
+        properties.Lokalid.ShouldBe(6416745304L);
+        properties.Gardsnummer.ShouldBe(40);
+        properties.Bruksnummer.ShouldBe(506);
+    }
+
     [Fact]
     public async Task SearchProperties_AreaRequestPreservesNestedGeometryAndExplicitCrs()
     {
