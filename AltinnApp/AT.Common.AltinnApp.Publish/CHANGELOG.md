@@ -22,6 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.13.0-alpha9
+
+### Added
+
+- Add `Umami:ScriptPath` / `UmamiConfiguration.ScriptPath` (default `/script.js`) to load the tracker from a custom path such as `/public/tracker.js`.
+
 ## 2.13.0-alpha8
 
 ### Added

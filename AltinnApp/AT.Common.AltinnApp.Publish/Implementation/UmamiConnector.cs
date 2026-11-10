@@ -548,6 +548,13 @@ internal sealed partial class UmamiConnector : IUmamiConnector
             allowHttp: isDevelopment
         );
 
+        var scriptPath = ValidateScriptPath(
+            FirstNonBlank(
+                configuration[$"{UmamiConfiguration.SectionName}:ScriptPath"],
+                options?.ScriptPath
+            ) ?? UmamiConfiguration.DefaultScriptPath
+        );
+
         var defaultAppOrigin = GetDefaultAppOrigin(environment);
         var rawAppOrigin = FirstNonBlank(
             configuration[$"{UmamiConfiguration.SectionName}:AppOrigin"],
@@ -590,6 +597,7 @@ internal sealed partial class UmamiConnector : IUmamiConnector
             AllowedSteps: allowedSteps
         )
         {
+            ScriptPath = scriptPath,
             StartEventName = startEventName,
             SubmissionEventName = submissionEventName,
             ErrorEventName = errorEventName,
@@ -874,6 +882,21 @@ internal sealed partial class UmamiConnector : IUmamiConnector
 
         return new Uri(uri.GetLeftPart(UriPartial.Authority));
     }
+
+    private static string ValidateScriptPath(string scriptPath)
+    {
+        if (!ScriptPathPattern().IsMatch(scriptPath))
+        {
+            throw new InvalidOperationException(
+                $"{UmamiConfiguration.SectionName}:ScriptPath must be an absolute path such as /script.js, without query, fragment or dot segments"
+            );
+        }
+
+        return scriptPath;
+    }
+
+    [GeneratedRegex("^(?:/[A-Za-z0-9_~-][A-Za-z0-9._~-]*)+$")]
+    private static partial Regex ScriptPathPattern();
 
     [GeneratedRegex("^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$", RegexOptions.IgnoreCase)]
     private static partial Regex UuidPattern();

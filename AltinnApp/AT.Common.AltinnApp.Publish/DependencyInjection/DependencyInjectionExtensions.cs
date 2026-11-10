@@ -134,6 +134,18 @@ public sealed record UmamiConfiguration
     public string? CollectorOrigin { get; init; }
 
     /// <summary>
+    /// The default path of the Umami tracker script.
+    /// </summary>
+    public const string DefaultScriptPath = "/script.js";
+
+    /// <summary>
+    /// Optional absolute path of the tracker script on <see cref="CollectorOrigin"/> when <c>Umami:ScriptPath</c> is not set
+    /// in <see cref="Microsoft.Extensions.Configuration.IConfiguration"/>. Defaults to <see cref="DefaultScriptPath"/>.
+    /// Use this when Umami runs with a custom <c>TRACKER_SCRIPT_NAME</c> or <c>BASE_PATH</c>, for example <c>"/public/tracker.js"</c>.
+    /// </summary>
+    public string? ScriptPath { get; init; }
+
+    /// <summary>
     /// Optional override for the HTTPS origin where the Altinn application is hosted.
     /// Defaults to <see cref="DefaultProductionAppOrigin"/> in <c>Production</c> and <see cref="DefaultStagingAppOrigin"/> otherwise.
     /// </summary>

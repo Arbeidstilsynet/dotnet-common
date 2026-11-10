@@ -407,6 +407,8 @@ Configure `Umami:CollectorOrigin` and `Umami:WebsiteId` in `App/appsettings.Stag
 }
 ```
 
+The tracker is loaded from `<CollectorOrigin>/script.js` by default. If Umami runs with a custom `TRACKER_SCRIPT_NAME` or `BASE_PATH`, set `Umami:ScriptPath` to the absolute script path, for example `"/public/tracker.js"`; the tracker then sends events to `/public/api/send`.
+
 Application path (`/dat/<app>`) and allowlisted layout steps (`pages.order`) are discovered automatically from `config/applicationmetadata.json` and `ui/**/Settings.json`. Tracking short-circuits by default in `Development` (unless `Umami:EnableInDevelopment=true` or `EnableInDevelopment = true` is configured, e.g. for E2E tests) or when `Umami:WebsiteId` is empty.
 
 #### Custom Event Names, Static Properties, and Request Enrichers

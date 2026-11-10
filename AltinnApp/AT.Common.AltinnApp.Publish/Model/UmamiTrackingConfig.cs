@@ -11,7 +11,7 @@ public sealed record UmamiSanitizedPage(string Url, string Title);
 /// Resolved configuration for privacy-safe Umami browser tracking in an Altinn application.
 /// </summary>
 /// <param name="WebsiteId">The lowercase hyphenated Umami website UUID.</param>
-/// <param name="CollectorOrigin">The HTTPS origin of the Umami collection gateway.</param>
+/// <param name="CollectorOrigin">The HTTPS origin of the Umami instance or collection gateway.</param>
 /// <param name="AppOrigin">The expected HTTPS origin where the Altinn application is hosted.</param>
 /// <param name="AppHostname">The hostname of <paramref name="AppOrigin"/>.</param>
 /// <param name="AppPath">The application base path, such as <c>/dat/forhandsmelding</c>.</param>
@@ -51,9 +51,16 @@ public sealed record UmamiTrackingConfig(
     public IReadOnlyDictionary<string, string>? AdditionalProperties { get; init; }
 
     /// <summary>
-    /// Gets the full URL of the upstream Umami tracker script (<c>/script.js</c>).
+    /// Gets the absolute path of the Umami tracker script on <see cref="CollectorOrigin"/>. Defaults to <c>/script.js</c>.
+    /// The tracker sends events to <c>api/send</c> relative to this path, for example <c>/public/api/send</c> for
+    /// <c>/public/tracker.js</c>.
     /// </summary>
-    public string ScriptUrl => new Uri(CollectorOrigin, "/script.js").ToString();
+    public string ScriptPath { get; init; } = "/script.js";
+
+    /// <summary>
+    /// Gets the full URL of the Umami tracker script (<see cref="CollectorOrigin"/> + <see cref="ScriptPath"/>).
+    /// </summary>
+    public string ScriptUrl => new Uri(CollectorOrigin, ScriptPath).ToString();
 
     /// <summary>
     /// Maps a raw Altinn browser pathname and optional hash to a sanitized page URL and title,

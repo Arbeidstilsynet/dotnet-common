@@ -48,6 +48,7 @@ public class UmamiConnectorTests
                 ["Umami:WebsiteId"] = PocWebsiteId,
                 ["Umami:EnableInDevelopment"] = "true",
                 ["Umami:CollectorOrigin"] = "http://localhost:3003",
+                ["Umami:ScriptPath"] = "/public/tracker.js",
                 ["Umami:AppPath"] = "/dat/forhandsmelding",
             }
         );
@@ -59,10 +60,40 @@ public class UmamiConnectorTests
 
         result.ShouldNotBeNull();
         result.WebsiteId.ShouldBe(PocWebsiteId);
-        result.ScriptUrl.ShouldBe("http://localhost:3003/script.js");
+        result.ScriptUrl.ShouldBe("http://localhost:3003/public/tracker.js");
         result.AppOrigin.ShouldBe(new Uri("http://local.altinn.cloud:8000"));
         result.AppHostname.ShouldBe("local.altinn.cloud");
         result.AppPath.ShouldBe("/dat/forhandsmelding");
+    }
+
+    [Theory]
+    [InlineData("script.js")]
+    [InlineData("//evil.example/script.js")]
+    [InlineData("/public/../script.js")]
+    [InlineData("/public/./tracker.js")]
+    [InlineData("/tracker.js?v=1")]
+    [InlineData("/tracker.js#hash")]
+    [InlineData("/public/")]
+    [InlineData("https://evil.example/script.js")]
+    public void ResolveConfig_WhenScriptPathIsInvalid_ThrowsInvalidOperationException(
+        string scriptPath
+    )
+    {
+        var config = CreateConfiguration(
+            new Dictionary<string, string?>
+            {
+                ["Umami:WebsiteId"] = PocWebsiteId,
+                ["Umami:CollectorOrigin"] = TestCollectorOrigin,
+                ["Umami:ScriptPath"] = scriptPath,
+                ["Umami:AppPath"] = "/dat/forhandsmelding",
+            }
+        );
+
+        Should
+            .Throw<InvalidOperationException>(() =>
+                UmamiConnector.ResolveConfig(new FakeHostEnvironment(Environments.Staging), config)
+            )
+            .Message.ShouldContain("Umami:ScriptPath");
     }
 
     [Fact]
@@ -266,6 +297,7 @@ public class UmamiConnectorTests
             options with
             {
                 CollectorOrigin = TestCollectorOrigin,
+                ScriptPath = "/public/tracker.js",
                 AppPath = "/dat/forhandsmelding",
                 AppTitle = "Forhandsmelding",
                 AllowedSteps = ["0-startside", "5-Byggherre", "8-bekreftelse"],
@@ -279,7 +311,7 @@ public class UmamiConnectorTests
         connector.RenderScriptTag().WriteTo(writer, HtmlEncoder.Default);
         var html = writer.ToString();
 
-        html.ShouldContain("https://umami.example.com/script.js");
+        html.ShouldContain("https://umami.example.com/public/tracker.js");
         html.ShouldContain($"data-website-id=\"{PocWebsiteId}\"");
         html.ShouldContain("data-allowed-origin=\"https://dat.apps.tt02.altinn.no\"");
         html.ShouldContain("data-app-path=\"/dat/forhandsmelding\"");
