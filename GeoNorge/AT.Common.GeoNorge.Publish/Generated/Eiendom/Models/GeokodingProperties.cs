@@ -29,7 +29,7 @@ namespace Arbeidstilsynet.Common.GeoNorge.Eiendom.Models
         public string Kommunenummer { get; set; }
 #endif
         /// <summary>Lokal identifikator, tildelt av dataleverandør/dataforvalter (her matrikkelsystemet, Kartverket).</summary>
-        public int? Lokalid { get; set; }
+        public long? Lokalid { get; set; }
         /// <summary>Generert tekst ut fra hvilken matrikkelenhet teigen tilhører. Eventuelt flere matrikkelnummere skyldes manglende, uavklarte grenser eller uregistrert jordsameie.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -93,7 +93,7 @@ namespace Arbeidstilsynet.Common.GeoNorge.Eiendom.Models
                 { "gardsnummer", n => { Gardsnummer = n.GetIntValue(); } },
                 { "hovedområde", n => { Hovedområde = n.GetBoolValue(); } },
                 { "kommunenummer", n => { Kommunenummer = n.GetStringValue(); } },
-                { "lokalid", n => { Lokalid = n.GetIntValue(); } },
+                { "lokalid", n => { Lokalid = n.GetLongValue(); } },
                 { "matrikkelnummertekst", n => { Matrikkelnummertekst = n.GetStringValue(); } },
                 { "meterFraPunkt", n => { MeterFraPunkt = n.GetIntValue(); } },
                 { "nøyaktighetsklasseteig", n => { Nøyaktighetsklasseteig = n.GetStringValue(); } },
@@ -116,7 +116,7 @@ namespace Arbeidstilsynet.Common.GeoNorge.Eiendom.Models
             writer.WriteIntValue("gardsnummer", Gardsnummer);
             writer.WriteBoolValue("hovedområde", Hovedområde);
             writer.WriteStringValue("kommunenummer", Kommunenummer);
-            writer.WriteIntValue("lokalid", Lokalid);
+            writer.WriteLongValue("lokalid", Lokalid);
             writer.WriteStringValue("matrikkelnummertekst", Matrikkelnummertekst);
             writer.WriteIntValue("meterFraPunkt", MeterFraPunkt);
             writer.WriteStringValue("nøyaktighetsklasseteig", Nøyaktighetsklasseteig);
