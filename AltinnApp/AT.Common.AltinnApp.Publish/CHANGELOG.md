@@ -22,15 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
-## 2.13.0-alpha9
+## 2.13.0-beta
 
 ### Added
 
 - Add `Umami:ScriptPath` / `UmamiConfiguration.ScriptPath` (default `/script.js`) to load the tracker from a custom path such as `/public/tracker.js`.
-
-## 2.13.0-alpha8
-
-### Added
 
 - Add `AddUmamiTracking`, `AddUmamiEventEnricher<T>`, `IUmamiConnector`, `IUmamiEventRecorder`, `IUmamiEventEnricher`, and `UmamiTrackingConfig` for privacy-safe, auto-discovered Umami browser analytics, custom events, and request enrichments in Altinn applications.
 
