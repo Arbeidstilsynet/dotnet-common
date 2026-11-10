@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - `GeokodingProperties.Lokalid` is now `long?` instead of `int?`. Kartverket matrikkel identifiers exceed `Int32.MaxValue` (e.g. Vestvågøy 40/506 has `lokalid` 6416745304), which made `IPropertySearch.SearchProperties` throw a `JsonException` while deserializing the response.
+  - This is released as a patch because the previous `int?` type could not represent real Kartverket data. Code that reads `Lokalid` into an `int` must be updated and recompiled.
 
 ## 4.1.3
 
