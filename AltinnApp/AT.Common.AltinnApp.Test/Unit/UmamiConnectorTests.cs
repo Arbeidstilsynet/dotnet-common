@@ -322,6 +322,90 @@ public class UmamiConnectorTests
         location.ShouldContain("UmamiConnectorTests.cs:");
     }
 
+    [Fact]
+    public async Task AddUmamiEventEnricher_WritesCustomEventsAndPropertiesToResponseHeaders()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<IHostEnvironment>(new FakeHostEnvironment(Environments.Staging));
+        services.AddSingleton(
+            CreateConfiguration(
+                new Dictionary<string, string?>
+                {
+                    ["Umami:WebsiteId"] = PocWebsiteId,
+                    ["Umami:CollectorOrigin"] = TestCollectorOrigin,
+                }
+            )
+        );
+        services.AddUmamiTracking(options =>
+            options with
+            {
+                AppPath = "/dat/forhandsmelding",
+                StartEventName = "custom-start",
+                SubmissionEventName = "custom-submit",
+                ErrorEventName = "custom-error",
+                AdditionalProperties = new Dictionary<string, string> { ["variant"] = "endring" },
+            }
+        );
+        services.AddUmamiEventEnricher<TestEventEnricher>();
+
+        using var provider = services.BuildServiceProvider();
+        var connector = provider.GetRequiredService<IUmamiConnector>();
+        connector.Config.ShouldNotBeNull();
+        connector.Config.StartEventName.ShouldBe("custom-start");
+        connector.Config.SubmissionEventName.ShouldBe("custom-submit");
+        connector.Config.ErrorEventName.ShouldBe("custom-error");
+        connector.Config.AdditionalProperties.ShouldNotBeNull();
+        connector.Config.AdditionalProperties["variant"].ShouldBe("endring");
+
+        using var scope = provider.CreateScope();
+        var recorder = scope.ServiceProvider.GetRequiredService<IUmamiEventRecorder>();
+        recorder.RecordEvent(
+            "adresse-ikke-funnet",
+            new Dictionary<string, object?> { ["status"] = "warning", ["step"] = "4-Arbeidssted" }
+        );
+
+        var filter = new UmamiDiagnosticsStartupFilter();
+        var appBuilder = new ApplicationBuilder(provider);
+        var configure = filter.Configure(app => app.Run(_ => Task.CompletedTask));
+        configure(appBuilder);
+        var pipeline = appBuilder.Build();
+
+        var context = new DefaultHttpContext
+        {
+            TraceIdentifier = "trace-custom-1",
+            RequestServices = scope.ServiceProvider,
+        };
+
+        await pipeline(context);
+
+        context
+            .Response.Headers["x-umami-props"]
+            .ToString()
+            .ShouldContain("\"enrichedBy\":\"test\"");
+        var eventsHeader = context.Response.Headers["x-umami-events"].ToString();
+        eventsHeader.ShouldContain("\"name\":\"adresse-ikke-funnet\"");
+        eventsHeader.ShouldContain("\"name\":\"enricher-event\"");
+    }
+
+    private sealed class TestEventEnricher : IUmamiEventEnricher
+    {
+        public ValueTask EnrichAsync(
+            HttpContext context,
+            IUmamiEventRecorder recorder,
+            Exception? exception = null
+        )
+        {
+            recorder.EnrichCurrentRequest(
+                new Dictionary<string, object?> { ["enrichedBy"] = "test" }
+            );
+            recorder.RecordEvent(
+                "enricher-event",
+                new Dictionary<string, object?> { ["fromEnricher"] = true }
+            );
+            return ValueTask.CompletedTask;
+        }
+    }
+
     private static IConfiguration CreateConfiguration(IDictionary<string, string?> values) =>
         new ConfigurationBuilder().AddInMemoryCollection(values).Build();
 

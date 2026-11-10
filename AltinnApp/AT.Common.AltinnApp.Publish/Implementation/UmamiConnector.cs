@@ -61,6 +61,12 @@ internal sealed partial class UmamiConnector : IUmamiConnector
             var appPathJson = SerializeForInlineScript(config.AppPath);
             var appTitleJson = SerializeForInlineScript(config.AppTitle);
             var allowedStepsJson = SerializeForInlineScript(config.AllowedSteps);
+            var startEventNameJson = SerializeForInlineScript(config.StartEventName);
+            var submissionEventNameJson = SerializeForInlineScript(config.SubmissionEventName);
+            var errorEventNameJson = SerializeForInlineScript(config.ErrorEventName);
+            var additionalPropsJson = SerializeForInlineScript(
+                config.AdditionalProperties ?? new Dictionary<string, string>()
+            );
 
             var script = $$"""
 <script data-website-id="{{encoder.Encode(
@@ -81,6 +87,10 @@ internal sealed partial class UmamiConnector : IUmamiConnector
     const appPath = {{appPathJson}};
     const pageTitle = {{appTitleJson}};
     const allowedSteps = {{allowedStepsJson}};
+    const startEventName = {{startEventNameJson}};
+    const submissionEventName = {{submissionEventNameJson}};
+    const errorEventName = {{errorEventNameJson}};
+    const staticProps = {{additionalPropsJson}};
 
     if (window.location.origin !== allowedOrigin) return;
 
@@ -160,6 +170,10 @@ internal sealed partial class UmamiConnector : IUmamiConnector
     }
 
     function sendEvent(page, eventName, eventData) {
+      const mergedData = eventName
+        ? { ...staticProps, ...(eventData || {}) }
+        : eventData;
+      const hasData = mergedData && Object.keys(mergedData).length > 0;
       const payload = {
         website: websiteId,
         hostname,
@@ -169,7 +183,7 @@ internal sealed partial class UmamiConnector : IUmamiConnector
         screen: `${window.screen?.width ?? 0}x${window.screen?.height ?? 0}`,
         language: window.navigator?.language ?? "",
         ...(eventName ? { name: eventName } : {}),
-        ...(eventData ? { data: eventData } : {}),
+        ...(hasData ? { data: mergedData } : {}),
       };
       void loadTracker()
         .then((tracker) => Promise.resolve().then(() => tracker.track(payload)))
@@ -194,11 +208,11 @@ internal sealed partial class UmamiConnector : IUmamiConnector
         if (!page || page.url === lastTrackedUrl) return;
         lastTrackedUrl = page.url;
         sendEvent(page);
-        if (page.step !== "root") {
+        if (page.step !== "root" && startEventName) {
           const instanceKey = resolveInstanceKey(pathname, hash) ?? "stateless";
           if (!startedInstances.has(instanceKey)) {
             startedInstances.add(instanceKey);
-            sendEvent(page, "skjema-start", { status: "started", step: page.step });
+            sendEvent(page, startEventName, { status: "started", step: page.step });
           }
         }
       } catch {}
@@ -326,6 +340,18 @@ internal sealed partial class UmamiConnector : IUmamiConnector
       return null;
     }
 
+    function extractJsonHeader(xhr, headerName) {
+      try {
+        if (typeof xhr.getResponseHeader === "function") {
+          const header = xhr.getResponseHeader(headerName);
+          if (typeof header === "string" && header.trim().length > 0) {
+            return JSON.parse(header);
+          }
+        }
+      } catch {}
+      return null;
+    }
+
     const Xhr = window.XMLHttpRequest;
     if (typeof Xhr === "function" && Xhr.prototype) {
       const requests = new WeakMap();
@@ -380,29 +406,46 @@ internal sealed partial class UmamiConnector : IUmamiConnector
                       return;
                     }
                     const status = Number(this.status ?? 0);
+                    const page = currentSanitizedPage();
+                    const customProps = extractJsonHeader(this, "x-umami-props");
+                    const customEvents = extractJsonHeader(this, "x-umami-events");
+                    if (Array.isArray(customEvents)) {
+                      for (const evt of customEvents) {
+                        if (typeof evt?.name === "string" && evt.name.trim().length > 0) {
+                          sendEvent(page, evt.name.trim(), {
+                            step: page.step,
+                            ...(customProps && typeof customProps === "object" ? customProps : {}),
+                            ...(evt.data && typeof evt.data === "object" ? evt.data : {}),
+                          });
+                        }
+                      }
+                    }
                     if (status >= 500) {
-                      const page = currentSanitizedPage();
-                      const activeElement = info.activeElement ?? currentActiveElementId();
-                      const traceId = extractTraceId(this);
-                      const errorType = extractErrorHeader(this, "x-error-type");
-                      const errorLocation = extractErrorHeader(this, "x-error-location");
-                      sendEvent(page, "skjema-feil", {
-                        status: "error",
-                        step: page.step,
-                        httpMethod: info.method,
-                        httpStatus: String(status),
-                        endpoint: classifyEndpoint(target.pathname),
-                        ...(activeElement ? { activeElement } : {}),
-                        ...(info.changedFields ? { changedFields: info.changedFields } : {}),
-                        ...(errorType ? { errorType } : {}),
-                        ...(errorLocation ? { errorLocation } : {}),
-                        ...(traceId ? { traceId } : {}),
-                      });
+                      if (errorEventName) {
+                        const activeElement = info.activeElement ?? currentActiveElementId();
+                        const traceId = extractTraceId(this);
+                        const errorType = extractErrorHeader(this, "x-error-type");
+                        const errorLocation = extractErrorHeader(this, "x-error-location");
+                        sendEvent(page, errorEventName, {
+                          status: "error",
+                          step: page.step,
+                          httpMethod: info.method,
+                          httpStatus: String(status),
+                          endpoint: classifyEndpoint(target.pathname),
+                          ...(activeElement ? { activeElement } : {}),
+                          ...(info.changedFields ? { changedFields: info.changedFields } : {}),
+                          ...(errorType ? { errorType } : {}),
+                          ...(errorLocation ? { errorLocation } : {}),
+                          ...(traceId ? { traceId } : {}),
+                          ...(customProps && typeof customProps === "object" ? customProps : {}),
+                        });
+                      }
                       return;
                     }
                     const match = target.pathname.match(processPattern);
                     if (
                       match &&
+                      submissionEventName &&
                       ["GET", "PUT", "POST"].includes(info.method) &&
                       status >= 200 &&
                       status < 300 &&
@@ -411,10 +454,10 @@ internal sealed partial class UmamiConnector : IUmamiConnector
                       const instanceKey = match[1].toLowerCase();
                       if (!submittedInstances.has(instanceKey)) {
                         submittedInstances.add(instanceKey);
-                        const page = currentSanitizedPage();
-                        sendEvent(page, "skjema-innsendt", {
+                        sendEvent(page, submissionEventName, {
                           status: "success",
                           step: page.step,
+                          ...(customProps && typeof customProps === "object" ? customProps : {}),
                         });
                       }
                     }
@@ -520,6 +563,22 @@ internal sealed partial class UmamiConnector : IUmamiConnector
         var appPath = ResolveAppPath(environment.ContentRootPath, configuration, options);
         var appTitle = ResolveAppTitle(appPath, configuration, options);
         var allowedSteps = ResolveAllowedSteps(environment.ContentRootPath, configuration, options);
+        var startEventName = ResolveEventName(
+            configuration[$"{UmamiConfiguration.SectionName}:StartEventName"],
+            options?.StartEventName,
+            "skjema-start"
+        );
+        var submissionEventName = ResolveEventName(
+            configuration[$"{UmamiConfiguration.SectionName}:SubmissionEventName"],
+            options?.SubmissionEventName,
+            "skjema-innsendt"
+        );
+        var errorEventName = ResolveEventName(
+            configuration[$"{UmamiConfiguration.SectionName}:ErrorEventName"],
+            options?.ErrorEventName,
+            "skjema-feil"
+        );
+        var additionalProperties = ResolveAdditionalProperties(configuration, options);
 
         return new UmamiTrackingConfig(
             WebsiteId: websiteId.ToLowerInvariant(),
@@ -529,7 +588,64 @@ internal sealed partial class UmamiConnector : IUmamiConnector
             AppPath: appPath,
             AppTitle: appTitle,
             AllowedSteps: allowedSteps
-        );
+        )
+        {
+            StartEventName = startEventName,
+            SubmissionEventName = submissionEventName,
+            ErrorEventName = errorEventName,
+            AdditionalProperties = additionalProperties,
+        };
+    }
+
+    private static string ResolveEventName(
+        string? configuredValue,
+        string? optionValue,
+        string defaultName
+    )
+    {
+        if (configuredValue is not null)
+        {
+            return configuredValue.Trim();
+        }
+
+        if (optionValue is not null)
+        {
+            return optionValue.Trim();
+        }
+
+        return defaultName;
+    }
+
+    private static IReadOnlyDictionary<string, string>? ResolveAdditionalProperties(
+        IConfiguration configuration,
+        UmamiConfiguration? options
+    )
+    {
+        var merged = new Dictionary<string, string>(StringComparer.Ordinal);
+        if (options?.AdditionalProperties is not null)
+        {
+            foreach (var (key, value) in options.AdditionalProperties)
+            {
+                if (!string.IsNullOrWhiteSpace(key) && !string.IsNullOrWhiteSpace(value))
+                {
+                    merged[key.Trim()] = value.Trim();
+                }
+            }
+        }
+
+        foreach (
+            var child in configuration
+                .GetSection($"{UmamiConfiguration.SectionName}:AdditionalProperties")
+                .GetChildren()
+        )
+        {
+            if (!string.IsNullOrWhiteSpace(child.Key) && !string.IsNullOrWhiteSpace(child.Value))
+            {
+                merged[child.Key.Trim()] = child.Value.Trim();
+            }
+        }
+
+        return merged.Count > 0 ? merged : null;
     }
 
     private static bool IsEnabledInDevelopment(

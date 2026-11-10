@@ -22,11 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
-## 2.13.0-alpha6
+## 2.13.0-alpha7
 
 ### Added
 
-- Add `AddUmamiTracking`, `IUmamiConnector`, and `UmamiTrackingConfig` for privacy-safe, auto-discovered Umami browser analytics in Altinn applications.
+- Add `AddUmamiTracking`, `AddUmamiEventEnricher<T>`, `IUmamiConnector`, `IUmamiEventRecorder`, `IUmamiEventEnricher`, and `UmamiTrackingConfig` for privacy-safe, auto-discovered Umami browser analytics, custom events, and request enrichments in Altinn applications.
 
 ## 2.12.3
 

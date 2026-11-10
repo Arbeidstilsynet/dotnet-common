@@ -409,3 +409,45 @@ Configure `Umami:CollectorOrigin` and `Umami:WebsiteId` in `App/appsettings.Stag
 
 Application path (`/dat/<app>`) and allowlisted layout steps (`pages.order`) are discovered automatically from `config/applicationmetadata.json` and `ui/**/Settings.json`. Tracking short-circuits by default in `Development` (unless `Umami:EnableInDevelopment=true` or `EnableInDevelopment = true` is configured, e.g. for E2E tests) or when `Umami:WebsiteId` is empty.
 
+#### Custom Event Names, Static Properties, and Request Enrichers
+
+You can customize the built-in event names (`StartEventName`, `SubmissionEventName`, `ErrorEventName`) or attach static metadata properties in `AddUmamiTracking`:
+
+```csharp
+services.AddUmamiTracking(c => c with
+{
+    ErrorEventName = "custom-feil",
+    AdditionalProperties = new Dictionary<string, string>
+    {
+        ["appVariant"] = "endring"
+    }
+});
+```
+
+To emit custom events or enrich events from C# processors, validators, or services during an HTTP request while keeping them correlated with the user's browser session, inject `IUmamiEventRecorder` or register an `IUmamiEventEnricher`:
+
+```csharp
+internal class CustomEnricher : IUmamiEventEnricher
+{
+    public ValueTask EnrichAsync(HttpContext context, IUmamiEventRecorder recorder, Exception? exception = null)
+    {
+        recorder.EnrichCurrentRequest(new Dictionary<string, object?>
+        {
+            ["customTag"] = "example"
+        });
+
+        if (exception is MyDomainException)
+        {
+            recorder.RecordEvent("domene-advarsel", new Dictionary<string, object?>
+            {
+                ["status"] = "warning"
+            });
+        }
+
+        return ValueTask.CompletedTask;
+    }
+}
+
+services.AddUmamiEventEnricher<CustomEnricher>();
+```
+

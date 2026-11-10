@@ -156,6 +156,29 @@ public sealed record UmamiConfiguration
     /// When omitted, discovered automatically from <c>ui/**/Settings.json</c> (<c>pages.order</c>).
     /// </summary>
     public IReadOnlyList<string>? AllowedSteps { get; init; }
+
+    /// <summary>
+    /// The event name emitted once per form instance when the user enters the first form step.
+    /// Defaults to <c>"skjema-start"</c>. Set to <c>""</c> to disable.
+    /// </summary>
+    public string StartEventName { get; init; } = "skjema-start";
+
+    /// <summary>
+    /// The event name emitted when the Altinn process completes (<c>ProcessState.ended</c>).
+    /// Defaults to <c>"skjema-innsendt"</c>. Set to <c>""</c> to disable.
+    /// </summary>
+    public string SubmissionEventName { get; init; } = "skjema-innsendt";
+
+    /// <summary>
+    /// The event name emitted when an Altinn API request returns HTTP 5xx.
+    /// Defaults to <c>"skjema-feil"</c>. Set to <c>""</c> to disable.
+    /// </summary>
+    public string ErrorEventName { get; init; } = "skjema-feil";
+
+    /// <summary>
+    /// Optional static metadata properties merged into the <c>data</c> payload of every custom event emitted by this application.
+    /// </summary>
+    public IReadOnlyDictionary<string, string>? AdditionalProperties { get; init; }
 }
 
 /// <summary>
@@ -543,9 +566,29 @@ public static class DependencyInjectionExtensions
             : new UmamiConfiguration();
         services.AddSingleton(config);
         services.TryAddSingleton<IUmamiConnector, UmamiConnector>();
+        services.TryAddScoped<UmamiEventRecorder>();
+        services.TryAddScoped<IUmamiEventRecorder>(sp =>
+            sp.GetRequiredService<UmamiEventRecorder>()
+        );
         services.TryAddEnumerable(
             ServiceDescriptor.Transient<IStartupFilter, UmamiDiagnosticsStartupFilter>()
         );
+        return services;
+    }
+
+    /// <summary>
+    /// Registers a custom <see cref="IUmamiEventEnricher"/> that can attach request-specific metadata properties
+    /// or queue custom Umami events via <see cref="IUmamiEventRecorder"/> during HTTP requests.
+    /// </summary>
+    /// <typeparam name="TEnricher">The enricher implementation type.</typeparam>
+    /// <param name="services">The service collection to add registrations to.</param>
+    /// <returns>The same <see cref="IServiceCollection"/> instance so that calls can be chained.</returns>
+    public static IServiceCollection AddUmamiEventEnricher<TEnricher>(
+        this IServiceCollection services
+    )
+        where TEnricher : class, IUmamiEventEnricher
+    {
+        services.TryAddEnumerable(ServiceDescriptor.Scoped<IUmamiEventEnricher, TEnricher>());
         return services;
     }
 

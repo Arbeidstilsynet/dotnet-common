@@ -28,6 +28,29 @@ public sealed record UmamiTrackingConfig(
 )
 {
     /// <summary>
+    /// Gets the event name emitted when a form instance enters its first step. Defaults to <c>"skjema-start"</c>.
+    /// Set to <c>""</c> to disable the start event.
+    /// </summary>
+    public string StartEventName { get; init; } = "skjema-start";
+
+    /// <summary>
+    /// Gets the event name emitted when the Altinn process completes (<c>ProcessState.ended</c>). Defaults to <c>"skjema-innsendt"</c>.
+    /// Set to <c>""</c> to disable the submission event.
+    /// </summary>
+    public string SubmissionEventName { get; init; } = "skjema-innsendt";
+
+    /// <summary>
+    /// Gets the event name emitted when an Altinn API request returns HTTP 5xx. Defaults to <c>"skjema-feil"</c>.
+    /// Set to <c>""</c> to disable the error event.
+    /// </summary>
+    public string ErrorEventName { get; init; } = "skjema-feil";
+
+    /// <summary>
+    /// Gets static metadata properties merged into the <c>data</c> payload of every custom event emitted by this application.
+    /// </summary>
+    public IReadOnlyDictionary<string, string>? AdditionalProperties { get; init; }
+
+    /// <summary>
     /// Gets the full URL of the upstream Umami tracker script (<c>/script.js</c>).
     /// </summary>
     public string ScriptUrl => new Uri(CollectorOrigin, "/script.js").ToString();
