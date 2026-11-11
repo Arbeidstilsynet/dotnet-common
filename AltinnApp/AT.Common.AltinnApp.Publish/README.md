@@ -380,7 +380,7 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
-### Umami Browser Analytics
+### Umami Analytics
 
 Register `IUmamiConnector` in `Program.cs`:
 
@@ -388,7 +388,7 @@ Register `IUmamiConnector` in `Program.cs`:
 services.AddUmamiTracking();
 ```
 
-In `App/views/Home/Index.cshtml`, inject `IUmamiConnector` and render the script tag:
+In `App/views/Home/Index.cshtml`, inject `IUmamiConnector` and render the script tag inside `<head>`:
 
 ```razor
 @inject Arbeidstilsynet.Common.AltinnApp.Ports.IUmamiConnector UmamiConnector
@@ -407,49 +407,20 @@ Configure `Umami:CollectorOrigin` and `Umami:WebsiteId` in `App/appsettings.Stag
 }
 ```
 
-The tracker is loaded from `<CollectorOrigin>/script.js` by default. If Umami runs with a custom `TRACKER_SCRIPT_NAME` or `BASE_PATH`, set `Umami:ScriptPath` to the absolute script path, for example `"/public/tracker.js"`; the tracker then sends events to `/public/api/send`.
+`RenderScriptTag()` renders the standard Umami tracker script. It only tracks on the app hostname, and it excludes query strings and URL hashes (which contain Altinn party and instance IDs), so page views are reported as the app path, such as `/dat/forhandsmelding/`.
 
-Application path (`/dat/<app>`) and allowlisted layout steps (`pages.order`) are discovered automatically from `config/applicationmetadata.json` and `ui/**/Settings.json`. Tracking short-circuits by default in `Development` (unless `Umami:EnableInDevelopment=true` or `EnableInDevelopment = true` is configured, e.g. for E2E tests) or when `Umami:WebsiteId` is empty.
+The tracker is loaded from `<CollectorOrigin>/script.js` by default. If Umami runs with a custom `TRACKER_SCRIPT_NAME` or `BASE_PATH`, set `Umami:ScriptPath` to the absolute script path, for example `"/public/tracker.js"`; events are then sent to `/public/api/send`.
 
-#### Custom Event Names, Static Properties, and Request Enrichers
+#### Error Events
 
-You can customize the built-in event names (`StartEventName`, `SubmissionEventName`, `ErrorEventName`) or attach static metadata properties in `AddUmamiTracking`:
+`AddUmamiTracking` also reports exceptions logged at `Error` level or higher from the backend to Umami as `altinn-error` events. This includes exceptions that Altinn controllers catch and return as HTTP 500 responses. These events aren't tied to a user session. Each event contains only:
 
-```csharp
-services.AddUmamiTracking(c => c with
-{
-    ErrorEventName = "custom-feil",
-    AdditionalProperties = new Dictionary<string, string>
-    {
-        ["appVariant"] = "endring"
-    }
-});
-```
+| Property        | Example                                                     |
+| --------------- | ----------------------------------------------------------- |
+| `errorType`     | `NullReferenceException`                                    |
+| `errorLocation` | `MyDataProcessor.ProcessDataWrite (MyDataProcessor.cs:42)`  |
+| `traceId`       | `4bf92f3577b34da6a3ce929d0e0e4736` (when a trace is active) |
 
-To emit custom events or enrich events from C# processors, validators, or services during an HTTP request while keeping them correlated with the user's browser session, inject `IUmamiEventRecorder` or register an `IUmamiEventEnricher`:
+`errorLocation` points to the first stack frame in the app's own code. File and line number are only included when PDB symbols are available at runtime. To always include them, set `<DebugType>embedded</DebugType>` in `App.csproj`.
 
-```csharp
-internal class CustomEnricher : IUmamiEventEnricher
-{
-    public ValueTask EnrichAsync(HttpContext context, IUmamiEventRecorder recorder, Exception? exception = null)
-    {
-        recorder.EnrichCurrentRequest(new Dictionary<string, object?>
-        {
-            ["customTag"] = "example"
-        });
-
-        if (exception is MyDomainException)
-        {
-            recorder.RecordEvent("domene-advarsel", new Dictionary<string, object?>
-            {
-                ["status"] = "warning"
-            });
-        }
-
-        return ValueTask.CompletedTask;
-    }
-}
-
-services.AddUmamiEventEnricher<CustomEnricher>();
-```
-
+The application path is discovered automatically from `config/applicationmetadata.json`. Tracking and error reporting short-circuit by default in `Development` (unless `Umami:EnableInDevelopment=true` or `EnableInDevelopment = true` is configured, e.g. for E2E tests) or when `Umami:WebsiteId` is empty.

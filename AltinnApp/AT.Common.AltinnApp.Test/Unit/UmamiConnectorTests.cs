@@ -1,14 +1,15 @@
+using System.Diagnostics;
 using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Threading.Channels;
 using Arbeidstilsynet.Common.AltinnApp.DependencyInjection;
 using Arbeidstilsynet.Common.AltinnApp.Implementation;
 using Arbeidstilsynet.Common.AltinnApp.Ports;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Shouldly;
 using Xunit;
 
@@ -61,6 +62,7 @@ public class UmamiConnectorTests
         result.ShouldNotBeNull();
         result.WebsiteId.ShouldBe(PocWebsiteId);
         result.ScriptUrl.ShouldBe("http://localhost:3003/public/tracker.js");
+        result.SendUrl.ShouldBe(new Uri("http://localhost:3003/public/api/send"));
         result.AppOrigin.ShouldBe(new Uri("http://local.altinn.cloud:8000"));
         result.AppHostname.ShouldBe("local.altinn.cloud");
         result.AppPath.ShouldBe("/dat/forhandsmelding");
@@ -186,20 +188,15 @@ public class UmamiConnectorTests
     }
 
     [Fact]
-    public void ResolveConfig_AutoDiscoversAppPathAndStepsFromAppDirectory()
+    public void ResolveConfig_AutoDiscoversAppPathFromAppDirectory()
     {
         var tempRoot = Path.Combine(Path.GetTempPath(), $"altinn-umami-test-{Guid.NewGuid():N}");
         try
         {
             Directory.CreateDirectory(Path.Combine(tempRoot, "config"));
-            Directory.CreateDirectory(Path.Combine(tempRoot, "ui", "form"));
             File.WriteAllText(
                 Path.Combine(tempRoot, "config", "applicationmetadata.json"),
                 """{"id":"dat/forhandsmelding"}"""
-            );
-            File.WriteAllText(
-                Path.Combine(tempRoot, "ui", "form", "Settings.json"),
-                """{"pages":{"order":["0-startside","5-Byggherre","8-bekreftelse"]}}"""
             );
 
             var config = CreateConfiguration(
@@ -221,7 +218,7 @@ public class UmamiConnectorTests
             result.AppHostname.ShouldBe("dat.apps.tt02.altinn.no");
             result.AppPath.ShouldBe("/dat/forhandsmelding");
             result.AppTitle.ShouldBe("Forhandsmelding");
-            result.AllowedSteps.ShouldBe(["0-startside", "5-Byggherre", "8-bekreftelse"]);
+            result.SendUrl.ShouldBe(new Uri("https://umami.example.com/api/send"));
         }
         finally
         {
@@ -232,61 +229,114 @@ public class UmamiConnectorTests
         }
     }
 
-    [Theory]
-    [InlineData("/dat/forhandsmelding", null, "/dat/forhandsmelding", "Forhandsmelding")]
-    [InlineData(
-        "/dat/forhandsmelding/",
-        "#/instance/500002/f1111111-2222-3333-4444-555555555555",
-        "/dat/forhandsmelding",
-        "Forhandsmelding"
-    )]
-    [InlineData(
-        "/dat/forhandsmelding/instance/500002/f1111111-2222-3333-4444-555555555555/Task_1/5-Byggherre",
-        null,
-        "/dat/forhandsmelding/5-Byggherre",
-        "Forhandsmelding - 5-Byggherre"
-    )]
-    [InlineData(
-        "/dat/forhandsmelding/",
-        "#/instance/500002/f1111111-2222-3333-4444-555555555555/Task_1/8-bekreftelse?foo=secret",
-        "/dat/forhandsmelding/8-bekreftelse",
-        "Forhandsmelding - 8-bekreftelse"
-    )]
-    public void ResolveSanitizedPage_WhenPathIsInsideApp_StripsInstanceIdAndMapsAllowedStep(
-        string pathname,
-        string? hash,
-        string expectedUrl,
-        string expectedTitle
-    )
+    [Fact]
+    public void AddUmamiTracking_RegistersConnectorAndRendersUmamiScriptTag()
     {
-        var config = UmamiConnector.ResolveConfig(
-            new FakeHostEnvironment(Environments.Staging),
-            CreateConfiguration(
-                new Dictionary<string, string?> { ["Umami:WebsiteId"] = PocWebsiteId }
-            ),
-            new UmamiConfiguration
-            {
-                CollectorOrigin = TestCollectorOrigin,
-                AppPath = "/dat/forhandsmelding",
-                AppTitle = "Forhandsmelding",
-                AllowedSteps = ["0-startside", "5-Byggherre", "8-bekreftelse"],
-            }
-        );
+        using var provider = CreateTrackingServices().BuildServiceProvider();
+        var connector = provider.GetRequiredService<IUmamiConnector>();
 
-        config.ShouldNotBeNull();
-        var page = config.ResolveSanitizedPage(pathname, hash);
+        using var writer = new StringWriter();
+        connector.RenderScriptTag().WriteTo(writer, HtmlEncoder.Default);
 
-        page.ShouldNotBeNull();
-        page.Url.ShouldBe(expectedUrl);
-        page.Title.ShouldBe(expectedTitle);
-        page.Url.ShouldNotContain("500002");
-        page.Url.ShouldNotContain("f1111111-2222-3333-4444-555555555555");
+        writer
+            .ToString()
+            .ShouldBe(
+                $"<script defer src=\"https://umami.example.com/public/tracker.js\" data-website-id=\"{PocWebsiteId}\" "
+                    + "data-domains=\"dat.apps.tt02.altinn.no\" data-exclude-search=\"true\" data-exclude-hash=\"true\" "
+                    + "data-do-not-track=\"true\"></script>"
+            );
     }
 
     [Fact]
-    public void AddUmamiTracking_RegistersConnectorAndRendersScriptTag()
+    public void UmamiErrorLoggerProvider_QueuesOnlyErrorsWithExceptionsAndOnlyOncePerException()
+    {
+        var queue = new UmamiErrorQueue();
+        using var loggerProvider = new UmamiErrorLoggerProvider(queue);
+        var logger = loggerProvider.CreateLogger("Altinn.App.Api.Controllers.ProcessController");
+        using var activity = new Activity("test-request").Start();
+        var exception = Should.Throw<InvalidOperationException>(ThrowFromAsyncMethod);
+
+        logger.LogError(exception, "Process next failed.");
+        logger.LogCritical(exception, "Logged again further up the stack.");
+        logger.LogWarning(new TimeoutException(), "Not an error.");
+        logger.LogError("Error without exception.");
+
+        queue.TryDequeue(out var errorEvent).ShouldBeTrue();
+        errorEvent.ErrorType.ShouldBe(nameof(InvalidOperationException));
+        errorEvent.ErrorLocation.ShouldNotBeNull();
+        errorEvent.ErrorLocation.ShouldStartWith(
+            $"{nameof(UmamiConnectorTests)}.{nameof(ThrowFromAsyncMethod)}"
+        );
+        errorEvent.TraceId.ShouldBe(activity.TraceId.ToHexString());
+        queue.TryDequeue(out _).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void UmamiErrorLocation_UnwrapsLambdasToDeclaringMember()
+    {
+        Action throwFromLambda = () => throw new InvalidOperationException("Simulated failure");
+        var exception = Should.Throw<InvalidOperationException>(throwFromLambda);
+
+        UmamiErrorLocation
+            .Resolve(exception)
+            .ShouldStartWith(
+                $"{nameof(UmamiConnectorTests)}.{nameof(UmamiErrorLocation_UnwrapsLambdasToDeclaringMember)}"
+            );
+    }
+
+    [Fact]
+    public async Task AddUmamiTracking_WhenErrorIsLogged_SendsAltinnErrorEventToUmami()
+    {
+        var handler = new CapturingHandler();
+        var services = CreateTrackingServices();
+        services
+            .AddHttpClient(UmamiErrorReporter.HttpClientName)
+            .ConfigurePrimaryHttpMessageHandler(() => handler);
+        await using var provider = services.BuildServiceProvider();
+        var reporter = provider.GetServices<IHostedService>().OfType<UmamiErrorReporter>().Single();
+        await reporter.StartAsync(CancellationToken.None);
+
+        var exception = Should.Throw<InvalidOperationException>(ThrowFromAsyncMethod);
+        provider
+            .GetRequiredService<ILoggerFactory>()
+            .CreateLogger("Altinn.App.Api.Controllers.ProcessController")
+            .LogError(exception, "Process next failed.");
+
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        var (request, body) = await handler.Requests.Reader.ReadAsync(timeout.Token);
+        await reporter.StopAsync(CancellationToken.None);
+
+        request.Method.ShouldBe(HttpMethod.Post);
+        request.RequestUri.ShouldBe(new Uri("https://umami.example.com/public/api/send"));
+        request
+            .Headers.UserAgent.ToString()
+            .ShouldStartWith("Mozilla/5.0 (compatible; Arbeidstilsynet.Common.AltinnApp/");
+        using var json = JsonDocument.Parse(body);
+        json.RootElement.GetProperty("type").GetString().ShouldBe("event");
+        var payload = json.RootElement.GetProperty("payload");
+        payload.GetProperty("website").GetString().ShouldBe(PocWebsiteId);
+        payload.GetProperty("hostname").GetString().ShouldBe("dat.apps.tt02.altinn.no");
+        payload.GetProperty("url").GetString().ShouldBe("/dat/forhandsmelding");
+        payload.GetProperty("title").GetString().ShouldBe("Forhandsmelding");
+        payload.GetProperty("name").GetString().ShouldBe("altinn-error");
+        var data = payload.GetProperty("data");
+        data.EnumerateObject().Select(p => p.Name).ShouldBe(["errorType", "errorLocation"]);
+        data.GetProperty("errorType").GetString().ShouldBe(nameof(InvalidOperationException));
+        data.GetProperty("errorLocation")
+            .GetString()
+            .ShouldStartWith($"{nameof(UmamiConnectorTests)}.{nameof(ThrowFromAsyncMethod)}");
+    }
+
+    private static async Task ThrowFromAsyncMethod()
+    {
+        await Task.Yield();
+        throw new InvalidOperationException("Simulated processor failure");
+    }
+
+    private static ServiceCollection CreateTrackingServices()
     {
         var services = new ServiceCollection();
+        services.AddLogging();
         services.AddSingleton<IHostEnvironment>(new FakeHostEnvironment(Environments.Staging));
         services.AddSingleton(
             CreateConfiguration(
@@ -300,141 +350,24 @@ public class UmamiConnectorTests
                 ScriptPath = "/public/tracker.js",
                 AppPath = "/dat/forhandsmelding",
                 AppTitle = "Forhandsmelding",
-                AllowedSteps = ["0-startside", "5-Byggherre", "8-bekreftelse"],
             }
         );
-
-        using var provider = services.BuildServiceProvider();
-        var connector = provider.GetRequiredService<IUmamiConnector>();
-
-        using var writer = new StringWriter();
-        connector.RenderScriptTag().WriteTo(writer, HtmlEncoder.Default);
-        var html = writer.ToString();
-
-        html.ShouldContain("https://umami.example.com/public/tracker.js");
-        html.ShouldContain($"data-website-id=\"{PocWebsiteId}\"");
-        html.ShouldContain("data-allowed-origin=\"https://dat.apps.tt02.altinn.no\"");
-        html.ShouldContain("data-app-path=\"/dat/forhandsmelding\"");
-        html.ShouldContain("data-title=\"Forhandsmelding\"");
-        html.ShouldContain("data-steps=\"0-startside,5-Byggherre,8-bekreftelse\"");
-        html.ShouldContain("skjema-start");
-        html.ShouldContain("skjema-innsendt");
-        html.ShouldContain("skjema-feil");
-        html.ShouldContain("classifyEndpoint");
-        html.ShouldContain("extractChangedFields");
-        html.ShouldContain("extractTraceId");
-        html.ShouldContain("x-error-location");
-        html.ShouldContain("activeElement");
-        html.ShouldContain("httpStatus: String(status)");
-        html.ShouldContain("isProcessEnded");
+        return services;
     }
 
-    [Fact]
-    public async Task UmamiDiagnosticsStartupFilter_WhenMiddlewareThrows_SetsTraceIdErrorTypeAndLocationHeaders()
+    private sealed class CapturingHandler : HttpMessageHandler
     {
-        var filter = new UmamiDiagnosticsStartupFilter();
-        var services = new ServiceCollection().BuildServiceProvider();
-        var appBuilder = new ApplicationBuilder(services);
+        public Channel<(HttpRequestMessage Request, string Body)> Requests { get; } =
+            Channel.CreateUnbounded<(HttpRequestMessage, string)>();
 
-        var configure = filter.Configure(app =>
-        {
-            app.Run(_ => throw new InvalidOperationException("Simulated processor failure"));
-        });
-        configure(appBuilder);
-        var pipeline = appBuilder.Build();
-
-        var context = new DefaultHttpContext { TraceIdentifier = "trace-12345" };
-
-        await Should.ThrowAsync<InvalidOperationException>(() => pipeline(context));
-
-        context.Response.Headers["x-trace-id"].ToString().ShouldBe("trace-12345");
-        context.Response.Headers["x-error-type"].ToString().ShouldBe("InvalidOperationException");
-        var location = context.Response.Headers["x-error-location"].ToString();
-        location.ShouldContain(nameof(UmamiConnectorTests));
-        location.ShouldContain("UmamiConnectorTests.cs:");
-    }
-
-    [Fact]
-    public async Task AddUmamiEventEnricher_WritesCustomEventsAndPropertiesToResponseHeaders()
-    {
-        var services = new ServiceCollection();
-        services.AddSingleton<IHostEnvironment>(new FakeHostEnvironment(Environments.Staging));
-        services.AddSingleton(
-            CreateConfiguration(
-                new Dictionary<string, string?>
-                {
-                    ["Umami:WebsiteId"] = PocWebsiteId,
-                    ["Umami:CollectorOrigin"] = TestCollectorOrigin,
-                }
-            )
-        );
-        services.AddUmamiTracking(options =>
-            options with
-            {
-                AppPath = "/dat/forhandsmelding",
-                StartEventName = "custom-start",
-                SubmissionEventName = "custom-submit",
-                ErrorEventName = "custom-error",
-                AdditionalProperties = new Dictionary<string, string> { ["variant"] = "endring" },
-            }
-        );
-        services.AddUmamiEventEnricher<TestEventEnricher>();
-
-        using var provider = services.BuildServiceProvider();
-        var connector = provider.GetRequiredService<IUmamiConnector>();
-        connector.Config.ShouldNotBeNull();
-        connector.Config.StartEventName.ShouldBe("custom-start");
-        connector.Config.SubmissionEventName.ShouldBe("custom-submit");
-        connector.Config.ErrorEventName.ShouldBe("custom-error");
-        connector.Config.AdditionalProperties.ShouldNotBeNull();
-        connector.Config.AdditionalProperties["variant"].ShouldBe("endring");
-
-        using var scope = provider.CreateScope();
-        var recorder = scope.ServiceProvider.GetRequiredService<IUmamiEventRecorder>();
-        recorder.RecordEvent(
-            "adresse-ikke-funnet",
-            new Dictionary<string, object?> { ["status"] = "warning", ["step"] = "4-Arbeidssted" }
-        );
-
-        var filter = new UmamiDiagnosticsStartupFilter();
-        var appBuilder = new ApplicationBuilder(provider);
-        var configure = filter.Configure(app => app.Run(_ => Task.CompletedTask));
-        configure(appBuilder);
-        var pipeline = appBuilder.Build();
-
-        var context = new DefaultHttpContext
-        {
-            TraceIdentifier = "trace-custom-1",
-            RequestServices = scope.ServiceProvider,
-        };
-
-        await pipeline(context);
-
-        context
-            .Response.Headers["x-umami-props"]
-            .ToString()
-            .ShouldContain("\"enrichedBy\":\"test\"");
-        var eventsHeader = context.Response.Headers["x-umami-events"].ToString();
-        eventsHeader.ShouldContain("\"name\":\"adresse-ikke-funnet\"");
-        eventsHeader.ShouldContain("\"name\":\"enricher-event\"");
-    }
-
-    private sealed class TestEventEnricher : IUmamiEventEnricher
-    {
-        public ValueTask EnrichAsync(
-            HttpContext context,
-            IUmamiEventRecorder recorder,
-            Exception? exception = null
+        protected override async Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken
         )
         {
-            recorder.EnrichCurrentRequest(
-                new Dictionary<string, object?> { ["enrichedBy"] = "test" }
-            );
-            recorder.RecordEvent(
-                "enricher-event",
-                new Dictionary<string, object?> { ["fromEnricher"] = true }
-            );
-            return ValueTask.CompletedTask;
+            var body = await request.Content!.ReadAsStringAsync(cancellationToken);
+            await Requests.Writer.WriteAsync((request, body), cancellationToken);
+            return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
         }
     }
 

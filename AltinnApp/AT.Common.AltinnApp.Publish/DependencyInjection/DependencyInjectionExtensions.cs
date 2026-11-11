@@ -6,10 +6,10 @@ using Altinn.Platform.Storage.Interface.Models;
 using Arbeidstilsynet.Common.AltinnApp.Implementation;
 using Arbeidstilsynet.Common.AltinnApp.Model;
 using Arbeidstilsynet.Common.AltinnApp.Ports;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Arbeidstilsynet.Common.AltinnApp.DependencyInjection;
@@ -158,39 +158,10 @@ public sealed record UmamiConfiguration
     public string? AppPath { get; init; }
 
     /// <summary>
-    /// Optional override for the application title sent in Umami page views.
+    /// Optional override for the application title sent with server-side error events.
     /// When omitted, derived from the application name segment of <see cref="AppPath"/>.
     /// </summary>
     public string? AppTitle { get; init; }
-
-    /// <summary>
-    /// Optional override for the allowlist of form layout steps.
-    /// When omitted, discovered automatically from <c>ui/**/Settings.json</c> (<c>pages.order</c>).
-    /// </summary>
-    public IReadOnlyList<string>? AllowedSteps { get; init; }
-
-    /// <summary>
-    /// The event name emitted once per form instance when the user enters the first form step.
-    /// Defaults to <c>"skjema-start"</c>. Set to <c>""</c> to disable.
-    /// </summary>
-    public string StartEventName { get; init; } = "skjema-start";
-
-    /// <summary>
-    /// The event name emitted when the Altinn process completes (<c>ProcessState.ended</c>).
-    /// Defaults to <c>"skjema-innsendt"</c>. Set to <c>""</c> to disable.
-    /// </summary>
-    public string SubmissionEventName { get; init; } = "skjema-innsendt";
-
-    /// <summary>
-    /// The event name emitted when an Altinn API request returns HTTP 5xx.
-    /// Defaults to <c>"skjema-feil"</c>. Set to <c>""</c> to disable.
-    /// </summary>
-    public string ErrorEventName { get; init; } = "skjema-feil";
-
-    /// <summary>
-    /// Optional static metadata properties merged into the <c>data</c> payload of every custom event emitted by this application.
-    /// </summary>
-    public IReadOnlyDictionary<string, string>? AdditionalProperties { get; init; }
 }
 
 /// <summary>
@@ -555,11 +526,12 @@ public static class DependencyInjectionExtensions
     }
 
     /// <summary>
-    /// Registers <see cref="IUmamiConnector"/> for privacy-safe browser-side Umami analytics in an Altinn application.
+    /// Registers <see cref="IUmamiConnector"/> for Umami analytics in an Altinn application, and reports exceptions
+    /// logged at <see cref="LogLevel.Error"/> or higher to Umami as <c>altinn-error</c> events.
     /// <br/>
     /// To complete the integration, you must also update <c>App/views/Home/Index.cshtml</c> to inject
     /// <c>@inject Arbeidstilsynet.Common.AltinnApp.Ports.IUmamiConnector UmamiConnector</c> and render
-    /// <c>@UmamiConnector.RenderScriptTag()</c> inside <c>&lt;body&gt;</c>.
+    /// <c>@UmamiConnector.RenderScriptTag()</c> inside <c>&lt;head&gt;</c>.
     /// </summary>
     /// <remarks>
     /// Tracking short-circuits by default in <c>Development</c> (unless <see cref="UmamiConfiguration.EnableInDevelopment"/> or
@@ -578,29 +550,19 @@ public static class DependencyInjectionExtensions
             : new UmamiConfiguration();
         services.AddSingleton(config);
         services.TryAddSingleton<IUmamiConnector, UmamiConnector>();
-        services.TryAddScoped<UmamiEventRecorder>();
-        services.TryAddScoped<IUmamiEventRecorder>(sp =>
-            sp.GetRequiredService<UmamiEventRecorder>()
-        );
+        services.TryAddSingleton<UmamiErrorQueue>();
         services.TryAddEnumerable(
-            ServiceDescriptor.Transient<IStartupFilter, UmamiDiagnosticsStartupFilter>()
+            ServiceDescriptor.Singleton<ILoggerProvider, UmamiErrorLoggerProvider>()
         );
-        return services;
-    }
-
-    /// <summary>
-    /// Registers a custom <see cref="IUmamiEventEnricher"/> that can attach request-specific metadata properties
-    /// or queue custom Umami events via <see cref="IUmamiEventRecorder"/> during HTTP requests.
-    /// </summary>
-    /// <typeparam name="TEnricher">The enricher implementation type.</typeparam>
-    /// <param name="services">The service collection to add registrations to.</param>
-    /// <returns>The same <see cref="IServiceCollection"/> instance so that calls can be chained.</returns>
-    public static IServiceCollection AddUmamiEventEnricher<TEnricher>(
-        this IServiceCollection services
-    )
-        where TEnricher : class, IUmamiEventEnricher
-    {
-        services.TryAddEnumerable(ServiceDescriptor.Scoped<IUmamiEventEnricher, TEnricher>());
+        services.AddHostedService<UmamiErrorReporter>();
+        services.AddHttpClient(
+            UmamiErrorReporter.HttpClientName,
+            client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(5);
+                client.DefaultRequestHeaders.UserAgent.ParseAdd(UmamiErrorReporter.UserAgent);
+            }
+        );
         return services;
     }
 

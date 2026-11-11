@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Html;
 namespace Arbeidstilsynet.Common.AltinnApp.Ports;
 
 /// <summary>
-/// Provides sanitized Umami analytics configuration and renders the browser tracking script tag for an Altinn application.
+/// Provides Umami analytics configuration and renders the Umami tracker script tag for an Altinn application.
 /// </summary>
 public interface IUmamiConnector
 {
@@ -15,9 +15,9 @@ public interface IUmamiConnector
     UmamiTrackingConfig? Config { get; }
 
     /// <summary>
-    /// Renders the self-contained <c>&lt;script&gt;</c> element that loads the Umami tracker script (<see cref="UmamiTrackingConfig.ScriptUrl"/>)
-    /// and tracks sanitized page views, form steps, form starts (<c>skjema-start</c>), completed submissions (<c>skjema-innsendt</c>),
-    /// and 5xx errors (<c>skjema-feil</c>) with structured event metadata, or <see cref="HtmlString.Empty"/> when tracking is disabled.
+    /// Renders the standard Umami tracker <c>&lt;script&gt;</c> element (<see cref="UmamiTrackingConfig.ScriptUrl"/>),
+    /// restricted to the application hostname and excluding query strings and URL hashes,
+    /// or <see cref="HtmlString.Empty"/> when tracking is disabled.
     /// </summary>
     /// <returns>An <see cref="IHtmlContent"/> representing the script tag or empty content.</returns>
     IHtmlContent RenderScriptTag();
