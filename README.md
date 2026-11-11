@@ -92,7 +92,7 @@ Packages that contain an `allowed-licenses.json` (an array of SPDX identifiers) 
 
 ## 🛠️ Update Dependencies
 
-Renovate is configured to group all non-major versions together. Check Renovate's PR, update the version and changelog for the affected packages according to the updates, then commit & merge.
+Renovate is configured to group all non-major versions together. Check Renovate's PR, update the version and changelog for the affected packages according to the updates, then commit & merge. The [`bump-renovate-deps`](.github/skills/bump-renovate-deps/SKILL.md) agent skill automates the version and changelog bump (run `/bump-renovate-deps` in Copilot Chat on the Renovate branch).
 
 ## 🔄 Refreshing generated clients
 

@@ -1,8 +1,8 @@
 ---
-mode: agent
+name: bump-renovate-deps
 description: Bump versions and update changelogs for packages affected by Renovate dependency updates
+disable-model-invocation: true
 ---
-
 # Bump Versions for Renovate Dependency Updates
 
 You are working in a .NET monorepo containing multiple NuGet packages. Renovate has updated dependencies in one or more packages. Your job is to bump the patch version and update the changelog for each affected package.
