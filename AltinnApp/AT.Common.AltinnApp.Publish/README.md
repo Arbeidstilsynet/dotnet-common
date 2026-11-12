@@ -407,7 +407,9 @@ Configure `Umami:CollectorOrigin` and `Umami:WebsiteId` in `App/appsettings.Stag
 }
 ```
 
-`RenderScriptTag()` renders the standard Umami tracker script. It only tracks on the app hostname, and it excludes query strings and URL hashes (which contain Altinn party and instance IDs), so page views are reported as the app path, such as `/dat/forhandsmelding/`.
+`RenderScriptTag()` renders the standard Umami tracker script. It only tracks on the app hostname, and it excludes query strings and URL hashes (which contain Altinn party and instance IDs), so page views are reported as the app path, such as `/dat/forhandsmelding/`. It also enables Umami's browser error tracking (`data-errors`), which reports uncaught JavaScript errors in the **Errors** tab and requires Umami 3.5.0 or later.
+
+The hostname defaults to `dat.apps.altinn.no` in `Production` and `dat.apps.tt02.altinn.no` in other environments. Apps hosted elsewhere must set `Umami:AppOrigin`, for example `"https://myorg.apps.altinn.no"`; otherwise the tracker sends nothing.
 
 The tracker is loaded from `<CollectorOrigin>/script.js` by default. If Umami runs with a custom `TRACKER_SCRIPT_NAME` or `BASE_PATH`, set `Umami:ScriptPath` to the absolute script path, for example `"/public/tracker.js"`; `data-host-url` is set to the script directory, so events are then sent to `/public/api/send`. `CollectorOrigin` must stay a bare origin (no path).
 
