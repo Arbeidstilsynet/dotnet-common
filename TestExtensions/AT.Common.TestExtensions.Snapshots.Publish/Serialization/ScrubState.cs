@@ -142,16 +142,11 @@ internal sealed partial class ScrubState(SnapshotSettings settings)
         }
 
         return InlineGuid()
-            .Replace(
-                value,
-                match =>
-                {
-                    var guid = System.Guid.Parse(match.Value);
-                    return guid == System.Guid.Empty
-                        ? "Guid_Empty"
-                        : "Guid_" + Number(_guids, guid);
-                }
-            );
+            .Replace(value, match =>
+            {
+                var guid = System.Guid.Parse(match.Value);
+                return guid == System.Guid.Empty ? "Guid_Empty" : "Guid_" + Number(_guids, guid);
+            });
     }
 
     /// <summary>Whole-value GUIDs in any standard format; surrounding whitespace is ignored.</summary>

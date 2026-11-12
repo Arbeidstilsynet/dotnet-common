@@ -98,19 +98,16 @@ public static class DependencyInjectionExtensions
         // registered, so an effective base URL and scope set can always be read back.
         foreach (var (clientName, defaultUrl) in DefaultUrls(resolution.Urls))
         {
-            services.PostConfigure<AltinnClientOptions>(
-                clientName,
-                options =>
-                {
-                    options.BaseUrl ??= defaultUrl;
+            services.PostConfigure<AltinnClientOptions>(clientName, options =>
+            {
+                options.BaseUrl ??= defaultUrl;
 
-                    // An empty scope set is as unusable as an absent one, so both fall back.
-                    if (options.Scopes is null or { Length: 0 })
-                    {
-                        options.Scopes = maskinportenConfiguration.Scopes;
-                    }
+                // An empty scope set is as unusable as an absent one, so both fall back.
+                if (options.Scopes is null or { Length: 0 })
+                {
+                    options.Scopes = maskinportenConfiguration.Scopes;
                 }
-            );
+            });
         }
 
         // The token provider follows the resolved Altinn target rather than the host environment:
@@ -451,16 +448,14 @@ public static class DependencyInjectionExtensions
         services.TryAddTransient<AltinnErrorResponseCaptureHandler>();
 
         services
-            .AddHttpClient(
-                AltinnAuthenticationApiClientKey,
-                client => client.BaseAddress = builder.Resolution.Urls.AuthenticationUrl
+            .AddHttpClient(AltinnAuthenticationApiClientKey, client =>
+                client.BaseAddress = builder.Resolution.Urls.AuthenticationUrl
             )
             .AddHttpMessageHandler<AltinnErrorResponseCaptureHandler>()
             .AddStandardResilienceHandler();
         services
-            .AddHttpClient(
-                MaskinportenApiClientKey,
-                client => client.BaseAddress = builder.Resolution.Urls.MaskinportenUrl
+            .AddHttpClient(MaskinportenApiClientKey, client =>
+                client.BaseAddress = builder.Resolution.Urls.MaskinportenUrl
             )
             .AddStandardResilienceHandler();
 
@@ -580,10 +575,8 @@ public static class DependencyInjectionExtensions
     )
     {
         builder
-            .Services.AddHttpClient(
-                httpClientKey,
-                (serviceProvider, client) =>
-                    client.BaseAddress = serviceProvider.EffectiveBaseUrl(clientName)
+            .Services.AddHttpClient(httpClientKey, (serviceProvider, client) =>
+                client.BaseAddress = serviceProvider.EffectiveBaseUrl(clientName)
             )
             .AddHttpMessageHandler<AltinnErrorResponseCaptureHandler>()
             .AddStandardResilienceHandler();

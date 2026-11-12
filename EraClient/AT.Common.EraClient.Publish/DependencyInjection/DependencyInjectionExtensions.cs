@@ -69,36 +69,24 @@ public static class DependencyInjectionExtensions
     private static void AddServices(this IServiceCollection services, EraClientConfiguration config)
     {
         services
-            .AddHttpClient(
-                AUTHCLIENT_KEY,
-                httpClient =>
-                {
-                    httpClient.DefaultRequestHeaders.Add("User-Agent", AUTHCLIENT_KEY);
-                }
-            )
-            .AddResilienceHandler(
-                RESILIENCE_PIPELINE_CONFIGKEY,
-                builder =>
-                {
-                    builder.AddPipeline(config.ResiliencePipeline);
-                }
-            );
+            .AddHttpClient(AUTHCLIENT_KEY, httpClient =>
+            {
+                httpClient.DefaultRequestHeaders.Add("User-Agent", AUTHCLIENT_KEY);
+            })
+            .AddResilienceHandler(RESILIENCE_PIPELINE_CONFIGKEY, builder =>
+            {
+                builder.AddPipeline(config.ResiliencePipeline);
+            });
 
         services
-            .AddHttpClient(
-                ASBESTCLIENT_KEY,
-                httpClient =>
-                {
-                    httpClient.DefaultRequestHeaders.Add("User-Agent", ASBESTCLIENT_KEY);
-                }
-            )
-            .AddResilienceHandler(
-                RESILIENCE_PIPELINE_CONFIGKEY,
-                builder =>
-                {
-                    builder.AddPipeline(config.ResiliencePipeline);
-                }
-            );
+            .AddHttpClient(ASBESTCLIENT_KEY, httpClient =>
+            {
+                httpClient.DefaultRequestHeaders.Add("User-Agent", ASBESTCLIENT_KEY);
+            })
+            .AddResilienceHandler(RESILIENCE_PIPELINE_CONFIGKEY, builder =>
+            {
+                builder.AddPipeline(config.ResiliencePipeline);
+            });
         services.AddHttpContextAccessor();
         services.AddSingleton(config!);
         services.AddTransient<IAuthenticationClient, AuthenticationClient>();

@@ -89,8 +89,8 @@ public static class AdapterExtensions
     {
         var dict = altinnInstanceSummary.Metadata.ToDict();
 
-        dict["altinnReference"] =
-            altinnInstanceSummary.Metadata.InstanceGuid.ToAltinnReference() ?? "";
+        dict["altinnReference"] = altinnInstanceSummary.Metadata.InstanceGuid.ToAltinnReference()
+            ?? "";
 
         return dict;
     }

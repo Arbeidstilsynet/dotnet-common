@@ -19,6 +19,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 4.1.5
+
+### Changed
+
+- changed(deps): Applied minor and patch updates to dependencies
+
+### Fixed
+
+- Malformed GeoNorge responses still throw `JsonException` with Kiota 2.1.3+, which wraps parse failures in `ApiException`; the search clients would otherwise log them as request failures and return `null`.
+
 ## 4.1.4
 
 ### Fixed

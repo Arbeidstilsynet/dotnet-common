@@ -183,9 +183,8 @@ public class DependencyInjectionTests
         environment.EnvironmentName.Returns("Production");
 
         // Act
-        services.AddEnhetsregisteret(
-            environment,
-            config => config.BrregApiBaseUrlOverwrite = overrideUrl
+        services.AddEnhetsregisteret(environment, config =>
+            config.BrregApiBaseUrlOverwrite = overrideUrl
         );
 
         using var serviceProvider = services.BuildServiceProvider();
@@ -226,9 +225,8 @@ public class DependencyInjectionTests
         environment.EnvironmentName.Returns("Production");
 
         // Act
-        services.AddEnhetsregisteret(
-            environment,
-            config => config.CacheOptions = new CacheOptions(Disabled: cacheDisabled)
+        services.AddEnhetsregisteret(environment, config =>
+            config.CacheOptions = new CacheOptions(Disabled: cacheDisabled)
         );
 
         using var serviceProvider = services.BuildServiceProvider();

@@ -20,8 +20,7 @@ internal static class AltinnSpecificationExtensions
     /// <exception cref="ArgumentException">if the appId cannot be parsed from the AltinnInstance</exception>
     public static AltinnAppSpecification GetSpecification(this AltinnInstance AltinnInstance)
     {
-        var sanitizedAppId =
-            AltinnInstance.AppId.SanitizeAppId()
+        var sanitizedAppId = AltinnInstance.AppId.SanitizeAppId()
             ?? throw new ArgumentException(
                 $"AppId '{AltinnInstance.AppId}' could not be sanitized to a valid format."
             );
@@ -132,8 +131,7 @@ internal static class AltinnSpecificationExtensions
 
         var data = AltinnInstance.Data ?? [];
 
-        var mainData =
-            data.FirstOrDefault(d => d.DataType == appSpec.MainPdfDataTypeId)
+        var mainData = data.FirstOrDefault(d => d.DataType == appSpec.MainPdfDataTypeId)
             ?? throw new AltinnMainDataElementNotFoundException(
                 AltinnInstance,
                 appSpec.MainPdfDataTypeId,

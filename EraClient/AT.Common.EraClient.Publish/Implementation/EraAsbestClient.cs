@@ -58,9 +58,9 @@ internal class EraAsbestClient : IEraAsbestClient
             )
         );
         return await _httpClient.GetFromJsonAsync<List<Model.Asbest.Melding>>(
-                new Uri($"virksomheter/{orgNumber}/meldinger", UriKind.Relative),
-                _defaultJsonSerializerOptions
-            ) ?? [];
+            new Uri($"virksomheter/{orgNumber}/meldinger", UriKind.Relative),
+            _defaultJsonSerializerOptions
+        ) ?? [];
     }
 
     public async Task<SøknadStatusResponse?> GetStatusForExistingSøknad(

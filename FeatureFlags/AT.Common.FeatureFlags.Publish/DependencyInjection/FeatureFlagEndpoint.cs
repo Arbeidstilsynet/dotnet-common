@@ -24,16 +24,13 @@ public static class FeatureFlagEndpoint
     {
         var group = endpoints.MapGroup(pattern).WithTags("FeatureFlags");
 
-        return group.MapPost(
-            "/",
-            (FeatureFlagRequest request, IFeatureFlags featureFlag) =>
+        return group.MapPost("/", (FeatureFlagRequest request, IFeatureFlags featureFlag) =>
+        {
+            return new FeatureFlagResponse
             {
-                return new FeatureFlagResponse
-                {
-                    IsEnabled = featureFlag.IsEnabled(request.FeatureName, request.Context),
-                    FeatureName = request.FeatureName,
-                };
-            }
-        );
+                IsEnabled = featureFlag.IsEnabled(request.FeatureName, request.Context),
+                FeatureName = request.FeatureName,
+            };
+        });
     }
 }

@@ -16,11 +16,11 @@ internal class AltinnAuthenticationClient(AuthenticationApiClient client)
         // This client is what mints Altinn tokens, so its request adapter authenticates
         // anonymously and the external provider's token is supplied per request instead.
         return await client
-                .Exchange[tokenProvider.ToString().ToLowerInvariant()]
-                .GetAsync(
-                    request => request.Headers.Add("Authorization", $"Bearer {tokenProviderToken}"),
-                    cancellationToken
-                )
+            .Exchange[tokenProvider.ToString().ToLowerInvariant()]
+            .GetAsync(
+                request => request.Headers.Add("Authorization", $"Bearer {tokenProviderToken}"),
+                cancellationToken
+            )
             ?? throw new InvalidOperationException("Failed to exchange token with Altinn");
     }
 }

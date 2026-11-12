@@ -23,8 +23,7 @@ public static class ConfigurationExtensions
     /// <exception cref="InvalidOperationException"></exception>
     public static T GetRequired<T>(this IConfiguration configuration)
     {
-        var config =
-            configuration.Get<T>()
+        var config = configuration.Get<T>()
             ?? throw new InvalidOperationException(
                 $"Missing configuration for `{typeof(T).Name}` which is required."
             );

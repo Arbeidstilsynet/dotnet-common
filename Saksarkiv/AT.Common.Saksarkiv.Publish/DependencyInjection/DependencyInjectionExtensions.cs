@@ -30,13 +30,10 @@ public static class DependencyInjectionExtensions
         services.AddSingleton(configuration);
 
         services
-            .AddHttpClient(
-                SaksarkivHttpClientName,
-                client =>
-                {
-                    client.BaseAddress = new Uri(configuration.BaseUrl);
-                }
-            )
+            .AddHttpClient(SaksarkivHttpClientName, client =>
+            {
+                client.BaseAddress = new Uri(configuration.BaseUrl);
+            })
             .AddStandardResilienceHandler(options =>
             {
                 ConfigureDefaultResilience(options);

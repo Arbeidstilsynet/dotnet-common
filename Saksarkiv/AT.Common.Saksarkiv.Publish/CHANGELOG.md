@@ -9,9 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added <!-- for new features. -->
 
-- Added `HealthCheckTimeout` (default 800 ms) to `SaksarkivConfiguration` to bound how long the
-  Saksarkiv health check waits for the upstream ping.
-
 ### Changed <!--  for changes in existing functionality. -->
 
 ### Deprecated <!--  for soon-to-be removed features. -->
@@ -21,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed <!-- for any bug fixes. -->
 
 ### Security <!-- in case of vulnerabilities. -->
+
+## 1.1.4
+
+### Changed
+
+- changed(deps): Applied minor and patch updates to dependencies
 
 ## 1.1.3
 

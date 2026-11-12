@@ -35,9 +35,8 @@ internal sealed class AltinnErrorReportingRequestAdapter(IRequestAdapter inner, 
         CancellationToken cancellationToken = default
     )
         where ModelType : IParsable =>
-        Report(
-            requestInfo,
-            () => inner.SendAsync(requestInfo, factory, errorMapping, cancellationToken)
+        Report(requestInfo, () =>
+            inner.SendAsync(requestInfo, factory, errorMapping, cancellationToken)
         );
 
     public Task<IEnumerable<ModelType>?> SendCollectionAsync<ModelType>(
@@ -47,9 +46,8 @@ internal sealed class AltinnErrorReportingRequestAdapter(IRequestAdapter inner, 
         CancellationToken cancellationToken = default
     )
         where ModelType : IParsable =>
-        Report(
-            requestInfo,
-            () => inner.SendCollectionAsync(requestInfo, factory, errorMapping, cancellationToken)
+        Report(requestInfo, () =>
+            inner.SendCollectionAsync(requestInfo, factory, errorMapping, cancellationToken)
         );
 
     public Task<ModelType?> SendPrimitiveAsync<ModelType>(
@@ -57,9 +55,8 @@ internal sealed class AltinnErrorReportingRequestAdapter(IRequestAdapter inner, 
         Dictionary<string, ParsableFactory<IParsable>>? errorMapping = null,
         CancellationToken cancellationToken = default
     ) =>
-        Report(
-            requestInfo,
-            () => inner.SendPrimitiveAsync<ModelType>(requestInfo, errorMapping, cancellationToken)
+        Report(requestInfo, () =>
+            inner.SendPrimitiveAsync<ModelType>(requestInfo, errorMapping, cancellationToken)
         );
 
     public Task<IEnumerable<ModelType>?> SendPrimitiveCollectionAsync<ModelType>(
@@ -67,29 +64,23 @@ internal sealed class AltinnErrorReportingRequestAdapter(IRequestAdapter inner, 
         Dictionary<string, ParsableFactory<IParsable>>? errorMapping = null,
         CancellationToken cancellationToken = default
     ) =>
-        Report(
-            requestInfo,
-            () =>
-                inner.SendPrimitiveCollectionAsync<ModelType>(
-                    requestInfo,
-                    errorMapping,
-                    cancellationToken
-                )
+        Report(requestInfo, () =>
+            inner.SendPrimitiveCollectionAsync<ModelType>(
+                requestInfo,
+                errorMapping,
+                cancellationToken
+            )
         );
 
     public Task SendNoContentAsync(
         RequestInformation requestInfo,
         Dictionary<string, ParsableFactory<IParsable>>? errorMapping = null,
         CancellationToken cancellationToken = default
-    ) =>
-        Report(
-            requestInfo,
-            async () =>
-            {
-                await inner.SendNoContentAsync(requestInfo, errorMapping, cancellationToken);
-                return true;
-            }
-        );
+    ) => Report(requestInfo, async () =>
+        {
+            await inner.SendNoContentAsync(requestInfo, errorMapping, cancellationToken);
+            return true;
+        });
 
     public Task<T?> ConvertToNativeRequestAsync<T>(
         RequestInformation requestInfo,
