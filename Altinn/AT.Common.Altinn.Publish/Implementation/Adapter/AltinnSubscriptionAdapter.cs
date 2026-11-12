@@ -190,8 +190,7 @@ file static class Extensions
         return new InstanceRequest
         {
             InstanceGuid = instance.GetInstanceGuid(),
-            InstanceOwnerPartyId =
-                instance.InstanceOwner?.PartyId
+            InstanceOwnerPartyId = instance.InstanceOwner?.PartyId
                 ?? throw new AltinnInstanceOwnerPartyIdMissingException(instance),
         };
     }

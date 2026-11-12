@@ -80,8 +80,7 @@ internal static class TestContextReader
         }
 
         var type = instance.GetType();
-        var property =
-            type.GetProperty(name, BindingFlags.Public | BindingFlags.Instance)
+        var property = type.GetProperty(name, BindingFlags.Public | BindingFlags.Instance)
             ?? type.GetInterfaces()
                 .Select(i => i.GetProperty(name))
                 .FirstOrDefault(p => p is not null);

@@ -99,11 +99,10 @@ internal class MaskinportenClient : IMaskinportenClient
             throw new MaskinportenTokenException(response.StatusCode, scopes, errorBody);
         }
 
-        var tokenResponse =
-            await response.Content.ReadFromJsonAsync<MaskinportenTokenResponse>(
-                _jsonSerializerOptions,
-                cancellationToken
-            ) ?? throw new InvalidOperationException("Failed to retrieve Maskinporten token");
+        var tokenResponse = await response.Content.ReadFromJsonAsync<MaskinportenTokenResponse>(
+            _jsonSerializerOptions,
+            cancellationToken
+        ) ?? throw new InvalidOperationException("Failed to retrieve Maskinporten token");
 
         _tokens[cacheKey] = new CachedToken(
             tokenResponse,

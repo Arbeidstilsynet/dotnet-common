@@ -192,10 +192,8 @@ public sealed class WorkflowTests : IDisposable
         var exception = await Should.ThrowAsync<SnapshotMismatchException>(() =>
             Snapshot.VerifyTargets(
                 [
-                    SnapshotTarget.ForBinary(
-                        [2],
-                        "bin",
-                        (_, _) => SnapshotCompareResult.NotEqual("custom reason")
+                    SnapshotTarget.ForBinary([2], "bin", (_, _) =>
+                        SnapshotCompareResult.NotEqual("custom reason")
                     ),
                 ],
                 Settings,

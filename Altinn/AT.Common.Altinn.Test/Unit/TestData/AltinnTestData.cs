@@ -129,8 +129,8 @@ internal static class AltinnTestData
         {
             Id = subscriptionId,
             EndPoint = endPoint ?? new Uri($"https://{Faker.Internet.DomainName()}/callback"),
-            SourceFilter =
-                sourceFilter ?? new Uri($"https://dat.apps.altinn.no/dat/{Faker.Lorem.Word()}-app"),
+            SourceFilter = sourceFilter
+                ?? new Uri($"https://dat.apps.altinn.no/dat/{Faker.Lorem.Word()}-app"),
             TypeFilter = typeFilter ?? "app.instance.process.completed",
             Consumer = consumer ?? $"/org/{Faker.Company.CompanyName().ToLower()}",
         };
@@ -143,8 +143,8 @@ internal static class AltinnTestData
     {
         return new SubscriptionRequestDto
         {
-            CallbackUrl =
-                callbackUrl ?? new Uri($"https://{Faker.Internet.DomainName()}/webhook/altinn"),
+            CallbackUrl = callbackUrl
+                ?? new Uri($"https://{Faker.Internet.DomainName()}/webhook/altinn"),
             AltinnAppId = altinnAppId ?? $"{Faker.Lorem.Word()}-app",
         };
     }

@@ -123,14 +123,14 @@ internal static class AltinnUrlResolver
 
         return new ResolvedAltinnUrls
         {
-            AuthenticationUrl =
-                overrides?.AuthenticationUrl ?? Combine(platformUrl, AuthenticationBasePath),
+            AuthenticationUrl = overrides?.AuthenticationUrl
+                ?? Combine(platformUrl, AuthenticationBasePath),
             StorageUrl = overrides?.StorageUrl ?? Combine(platformUrl, StorageBasePath),
             EventsUrl = overrides?.EventsUrl ?? Combine(platformUrl, EventsBasePath),
-            CorrespondenceUrl =
-                overrides?.CorrespondenceUrl ?? Combine(platformUrl, CorrespondenceBasePath),
-            DialogportenUrl =
-                overrides?.DialogportenUrl ?? Combine(platformUrl, DialogportenBasePath),
+            CorrespondenceUrl = overrides?.CorrespondenceUrl
+                ?? Combine(platformUrl, CorrespondenceBasePath),
+            DialogportenUrl = overrides?.DialogportenUrl
+                ?? Combine(platformUrl, DialogportenBasePath),
             AppBaseUrl = overrides?.AppBaseUrl ?? GetAppBaseUrl(target, orgId),
             MaskinportenUrl = overrides?.MaskinportenUrl ?? GetMaskinportenUrl(target),
         };
