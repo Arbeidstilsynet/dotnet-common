@@ -19,6 +19,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 4.1.5
+
+### Changed
+
+- changed(deps): Applied minor and patch updates to dependencies
+
+### Fixed
+
+- Malformed GeoNorge responses still throw `JsonException` with Kiota 2.1.3+, which wraps parse failures in `ApiException`; the search clients would otherwise log them as request failures and return `null`.
+
+## 4.1.4
+
+### Fixed
+
+- `GeokodingProperties.Lokalid` is now `long?` instead of `int?`. Kartverket matrikkel identifiers exceed `Int32.MaxValue` (e.g. Vestvågøy 40/506 has `lokalid` 6416745304), which made `IPropertySearch.SearchProperties` throw a `JsonException` while deserializing the response.
+  - This is released as a patch because the previous `int?` type could not represent real Kartverket data. Code that reads `Lokalid` into an `int` must be updated and recompiled.
+
+## 4.1.3
+
+- chore: update readme to reference `pnpm` for scripts
+
 ## 4.1.2
 
 ### Changed

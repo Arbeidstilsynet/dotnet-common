@@ -22,7 +22,7 @@ jobs:
 
       - name: Check if package version exists
         id: nuget_version_check
-        uses: Arbeidstilsynet/action-nuget-check-published@e9d27df91e2e0a5c4b6b041dd111127ba02d7b22 # v2
+        uses: Arbeidstilsynet/action-nuget-check-published@ad82979853a0b53fa12e63bb254925bc2692ef76 # v2
         with:
           name: ${{ steps.get_metadata_from_csprojectfile.outputs.name }}
           version: ${{ steps.get_metadata_from_csprojectfile.outputs.version }}
@@ -30,7 +30,7 @@ jobs:
 
       - name: Publish package if not already published
         if: steps.nuget_version_check.outputs.published == 'false'
-        uses: Arbeidstilsynet/action-dotnet-publish@d6a7f116db746d388ef2ca8d52d8f3d66b7cac05 # v3
+        uses: Arbeidstilsynet/action-dotnet-publish@09752923bf6cba15691243ca5eff4401553f0489 # v3
         with:
           working-directory: ${{ inputs.package-path }}
           nuget-username: ${{ vars.NUGET_BOT_USERNAME }}
@@ -68,7 +68,7 @@ jobs:
 
       - name: Create GitHub Release
         if: steps.nuget_version_check.outputs.published == 'false' && steps.prerelease_check.outputs.is_prerelease == 'false'
-        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3
+        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3
         with:
           tag_name: "${{ steps.get_metadata_from_csprojectfile.outputs.name }}@${{ steps.get_metadata_from_csprojectfile.outputs.version }}"
           name: "${{ steps.get_metadata_from_csprojectfile.outputs.name }} v${{ steps.get_metadata_from_csprojectfile.outputs.version }}"

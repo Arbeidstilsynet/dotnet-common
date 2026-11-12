@@ -151,8 +151,7 @@ internal static class Ssim
 
     private static byte[] Luminance(SKBitmap bitmap)
     {
-        using var rgba =
-            bitmap.Copy(SKColorType.Rgba8888)
+        using var rgba = bitmap.Copy(SKColorType.Rgba8888)
             ?? throw new InvalidOperationException("Unsupported PNG.");
         var pixels = rgba.GetPixelSpan();
         var premultiplied = rgba.AlphaType == SKAlphaType.Premul;

@@ -33,8 +33,8 @@ internal static class SnapshotNaming
             ? FormatTypeName(testClass)
             : Path.GetFileNameWithoutExtension(sourceFilePath);
         var methodName = test?.Method?.Name ?? memberName;
-        var parameterNames =
-            test?.Method?.GetParameters().Select(p => p.Name ?? "").ToArray() ?? [];
+        var parameterNames = test?.Method?.GetParameters().Select(p => p.Name ?? "").ToArray()
+            ?? [];
         var parameterValues = settings.Parameters ?? test?.Arguments ?? [];
 
         var name = new StringBuilder();

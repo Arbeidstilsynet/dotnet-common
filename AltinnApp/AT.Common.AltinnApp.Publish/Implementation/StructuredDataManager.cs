@@ -260,11 +260,11 @@ file static class Extensions
     public static DataElement GetRequiredLatestDataElement(this Instance instance, string dataType)
     {
         return instance
-                .Data.Where(d =>
-                    string.Equals(d.DataType, dataType, StringComparison.OrdinalIgnoreCase)
-                )
-                .OrderByDescending(d => d.Created)
-                .FirstOrDefault()
+            .Data.Where(d =>
+                string.Equals(d.DataType, dataType, StringComparison.OrdinalIgnoreCase)
+            )
+            .OrderByDescending(d => d.Created)
+            .FirstOrDefault()
             ?? throw new InvalidOperationException(
                 $"No data element of type '{dataType}' was found on instance {instance.Id} before structured data post-processing."
             );

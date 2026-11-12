@@ -1,3 +1,5 @@
+using System.Runtime.ExceptionServices;
+using System.Text.Json;
 using Arbeidstilsynet.Common.GeoNorge.Adresser;
 using Arbeidstilsynet.Common.GeoNorge.Adresser.Models;
 using Arbeidstilsynet.Common.GeoNorge.Ports;
@@ -21,6 +23,11 @@ internal class AddressSearchClient(AdresserClient client, ILogger<AddressSearchC
         {
             return await client.Sok.GetAsync(config => config.QueryParameters = queryParameters);
         }
+        catch (ApiException e) when (e.InnerException is JsonException parseFailure)
+        {
+            // Kiota wraps parse failures in ApiException; a malformed body must not look like "no results".
+            ExceptionDispatchInfo.Throw(parseFailure);
+        }
         catch (Exception e) when (e is HttpRequestException or ApiException)
         {
             logger.LogWarning(e, "Failed to search addresses for query: {@Query}", queryParameters);
@@ -41,6 +48,11 @@ internal class AddressSearchClient(AdresserClient client, ILogger<AddressSearchC
             return await client.Punktsok.GetAsync(config =>
                 config.QueryParameters = queryParameters
             );
+        }
+        catch (ApiException e) when (e.InnerException is JsonException parseFailure)
+        {
+            // Kiota wraps parse failures in ApiException; a malformed body must not look like "no results".
+            ExceptionDispatchInfo.Throw(parseFailure);
         }
         catch (Exception e) when (e is HttpRequestException or ApiException)
         {

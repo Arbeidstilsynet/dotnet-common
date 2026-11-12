@@ -254,7 +254,7 @@ Node.js is required to prepare temporary copies of the specifications.
 From the `Altinn` directory, force regeneration of every client with:
 
 ```bash
-npm run generate:client
+pnpm run generate:client
 ```
 
 Generation never modifies the committed specifications. It prepares temporary copies under `obj`
@@ -270,7 +270,7 @@ has not yet been released to production and receive a `404`. To check that the a
 still holds, run this from the `Altinn` directory:
 
 ```bash
-npm run check:spec-drift
+pnpm run check:spec-drift
 ```
 
 ## 🤝 Contributing

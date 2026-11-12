@@ -55,8 +55,7 @@ public abstract class FieldsValidator<TDataModel, TField> : IFormDataValidator
                 );
             }
 
-            var fullPath =
-                memberExpr.ToString()
+            var fullPath = memberExpr.ToString()
                 ?? throw new InvalidOperationException(
                     $"Could not determine path for expression '{fieldExpr}'."
                 );

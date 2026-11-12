@@ -322,8 +322,8 @@ internal static class CorrespondenceMappings
                     IsReserved = recipient.IsReserved,
                 }),
             ],
-            OverrideRegisteredContactInformation =
-                source.OverrideRegisteredContactInformation ?? false,
+            OverrideRegisteredContactInformation = source.OverrideRegisteredContactInformation
+                ?? false,
         };
     }
 

@@ -21,15 +21,14 @@ public static class AssemblyExtensions
     )
         where T : class
     {
-        var resourceName =
-            assemblyWithEmbeddedResource
-                .GetManifestResourceNames()
-                .SingleOrDefault(str => str.EndsWith(fileName))
+        var resourceName = assemblyWithEmbeddedResource
+            .GetManifestResourceNames()
+            .SingleOrDefault(str => str.EndsWith(fileName))
             ?? throw new Exception($"Could not find a singular resource: {fileName}");
 
-        await using var stream =
-            assemblyWithEmbeddedResource.GetManifestResourceStream(resourceName)
-            ?? throw new Exception($"Failed to get stream for embedded resource: {fileName}");
+        await using var stream = assemblyWithEmbeddedResource.GetManifestResourceStream(
+            resourceName
+        ) ?? throw new Exception($"Failed to get stream for embedded resource: {fileName}");
 
         using var reader = new StreamReader(stream);
 

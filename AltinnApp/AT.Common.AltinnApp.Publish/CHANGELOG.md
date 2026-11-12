@@ -9,9 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added <!-- for new features. -->
 
-- Add `StructuredDataConfiguration.ExcludedAttachmentDataTypeIds` to exclude additional data types from attachments; the datamodel type is included automatically.
-- Validate that `MainPdfDataTypeId` and `StructuredDataTypeId` are non-blank, distinct, and never excluded from attachments (including via the datamodel type).
-
 ### Changed <!--  for changes in existing functionality. -->
 
 ### Deprecated <!--  for soon-to-be removed features. -->
@@ -28,6 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add `AddUmamiTracking`, `IUmamiConnector`, and `UmamiTrackingConfig` to render the Umami tracker script (restricted to the app hostname, without query strings or URL hashes) in Altinn applications.
 - Report exceptions logged at `Error` level or higher to Umami as server-side `altinn-error` events with `errorType`, `errorLocation`, and `traceId`.
+## 2.12.4
+
+### Changed
+
+- changed(deps): Applied minor and patch updates to dependencies
 
 ## 2.12.3
 

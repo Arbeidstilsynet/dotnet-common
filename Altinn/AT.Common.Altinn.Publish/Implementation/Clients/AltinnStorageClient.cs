@@ -52,11 +52,11 @@ internal class AltinnStorageClient(
     )
     {
         return await client
-                .Instances[request.InstanceRequest.GetInstanceOwnerPartyId()][
-                    request.InstanceRequest.InstanceGuid
-                ]
-                .Data[request.DataId]
-                .GetAsync(cancellationToken: cancellationToken)
+            .Instances[request.InstanceRequest.GetInstanceOwnerPartyId()][
+                request.InstanceRequest.InstanceGuid
+            ]
+            .Data[request.DataId]
+            .GetAsync(cancellationToken: cancellationToken)
             ?? throw new InvalidOperationException("Failed to get instance data");
     }
 
@@ -76,10 +76,10 @@ internal class AltinnStorageClient(
         // The path parameters are irrelevant here: WithUrl replaces the whole URL. Data elements
         // are commonly addressed by the absolute self-link returned on an instance.
         return await client
-                .Instances[0][Guid.Empty]
-                .Data[Guid.Empty]
-                .WithUrl(absoluteUri.ToString())
-                .GetAsync(cancellationToken: cancellationToken)
+            .Instances[0][Guid.Empty]
+            .Data[Guid.Empty]
+            .WithUrl(absoluteUri.ToString())
+            .GetAsync(cancellationToken: cancellationToken)
             ?? throw new InvalidOperationException("Failed to get instance data");
     }
 

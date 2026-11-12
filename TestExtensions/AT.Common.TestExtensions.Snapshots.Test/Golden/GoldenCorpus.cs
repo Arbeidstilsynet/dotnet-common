@@ -553,9 +553,8 @@ public static class GoldenCorpus
             new("TopGuidUnscrubbed", () => Guids.A, GoldenOptions.DontScrubGuids),
             new("TopDateTime", () => new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)),
             new("TopEnum", () => Color.Green),
-            new(
-                "TopEnumList",
-                () => new List<Color> { Color.Red, Color.Green, Color.Hovedentreprenør }
+            new("TopEnumList", () =>
+                new List<Color> { Color.Red, Color.Green, Color.Hovedentreprenør }
             ),
             new("TopStringList", () => new[] { "a", "b,c", "d e" }),
             new("TopEmptyList", () => new List<int>()),
@@ -594,54 +593,42 @@ public static class GoldenCorpus
                 () => new Dictionaries(),
                 all | GoldenOptions.IncludeDefaultValues
             ),
-            new(
-                "Cycle",
-                () =>
-                {
-                    var parent = new Node { Name = "p" };
-                    parent.Children.Add(new Node { Name = "c", Parent = parent });
-                    return parent;
-                }
-            ),
-            new(
-                "PositionalRecord",
-                () => new PositionalRecord("Ola", 30, new Child { Name = "c" })
+            new("Cycle", () =>
+            {
+                var parent = new Node { Name = "p" };
+                parent.Children.Add(new Node { Name = "c", Parent = parent });
+                return parent;
+            }),
+            new("PositionalRecord", () =>
+                new PositionalRecord("Ola", 30, new Child { Name = "c" })
             ),
             new("DerivedRecord", () => new DerivedRecord()),
             new("WithFields", () => new WithFields()),
-            new(
-                "Anonymous",
-                () =>
-                    new
+            new("Anonymous", () => new
+                {
+                    totalPages = 3,
+                    totalResults = 30,
+                    data = new[]
                     {
-                        totalPages = 3,
-                        totalResults = 30,
-                        data = new[]
+                        new
                         {
-                            new
-                            {
-                                Id = Guids.A,
-                                when = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                            },
+                            Id = Guids.A,
+                            when = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc),
                         },
-                    }
-            ),
-            new(
-                "ObjectHolders",
-                () =>
-                    new List<ObjectHolder>
-                    {
-                        new() { Value = 1.0 },
-                        new() { Value = 0.0 },
-                        new() { Value = 3L },
-                        new() { Value = Guids.A },
-                        new() { Value = new DateTimeOffset(2026, 3, 1, 0, 0, 0, TimeSpan.Zero) },
-                        new() { Value = Color.Blue },
-                        new() { Value = new[] { 1, 2 } },
-                        new() { Value = null },
-                        new() { Value = "s" },
-                    }
-            ),
+                    },
+                }),
+            new("ObjectHolders", () => new List<ObjectHolder>
+                {
+                    new() { Value = 1.0 },
+                    new() { Value = 0.0 },
+                    new() { Value = 3L },
+                    new() { Value = Guids.A },
+                    new() { Value = new DateTimeOffset(2026, 3, 1, 0, 0, 0, TimeSpan.Zero) },
+                    new() { Value = Color.Blue },
+                    new() { Value = new[] { 1, 2 } },
+                    new() { Value = null },
+                    new() { Value = "s" },
+                }),
         ];
     }
 }

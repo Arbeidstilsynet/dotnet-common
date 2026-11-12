@@ -17,21 +17,17 @@ public class FieldsValidatorTests
     public async Task ValidateFormData_PassesFieldPathFromMemberExpression()
     {
         // Arrange
-        var sut = new SimpleFieldsValidator(
-            [m => m.Name],
-            (_, path) =>
-                Task.FromResult(
-                    new List<ValidationIssue>
+        var sut = new SimpleFieldsValidator([m => m.Name], (_, path) => Task.FromResult(
+                new List<ValidationIssue>
+                {
+                    new()
                     {
-                        new()
-                        {
-                            Field = path,
-                            Severity = ValidationIssueSeverity.Error,
-                            CustomTextKey = "test",
-                        },
-                    }
-                )
-        );
+                        Field = path,
+                        Severity = ValidationIssueSeverity.Error,
+                        CustomTextKey = "test",
+                    },
+                }
+            ));
 
         // Act
         var issues = await sut.ValidateFormData(
@@ -50,21 +46,17 @@ public class FieldsValidatorTests
     public async Task ValidateFormData_NestedProperty_PathIncludesFullChain()
     {
         // Arrange
-        var sut = new NestedFieldsValidator(
-            [x => x.Inner.Value],
-            (_, path) =>
-                Task.FromResult(
-                    new List<ValidationIssue>
+        var sut = new NestedFieldsValidator([x => x.Inner.Value], (_, path) => Task.FromResult(
+                new List<ValidationIssue>
+                {
+                    new()
                     {
-                        new()
-                        {
-                            Field = path,
-                            Severity = ValidationIssueSeverity.Error,
-                            CustomTextKey = "test",
-                        },
-                    }
-                )
-        );
+                        Field = path,
+                        Severity = ValidationIssueSeverity.Error,
+                        CustomTextKey = "test",
+                    },
+                }
+            ));
 
         // Act
         var issues = await sut.ValidateFormData(
@@ -83,20 +75,18 @@ public class FieldsValidatorTests
     public async Task ValidateFormData_ParameterNameIsStrippedFromPath()
     {
         // Demonstrates that different parameter names produce the same path
-        var sut = new SimpleFieldsValidator(
-            [dataModel => dataModel.Name],
-            (_, path) =>
-                Task.FromResult(
-                    new List<ValidationIssue>
+        var sut = new SimpleFieldsValidator([dataModel => dataModel.Name], (_, path) =>
+            Task.FromResult(
+                new List<ValidationIssue>
+                {
+                    new()
                     {
-                        new()
-                        {
-                            Field = path,
-                            Severity = ValidationIssueSeverity.Error,
-                            CustomTextKey = "test",
-                        },
-                    }
-                )
+                        Field = path,
+                        Severity = ValidationIssueSeverity.Error,
+                        CustomTextKey = "test",
+                    },
+                }
+            )
         );
 
         var issues = await sut.ValidateFormData(
@@ -114,20 +104,18 @@ public class FieldsValidatorTests
     public async Task ValidateFormData_MultipleFields_ValidatesEach()
     {
         // Arrange
-        var sut = new MultiFieldsValidator(
-            [m => m.Name, m => m.Other],
-            (_, path) =>
-                Task.FromResult(
-                    new List<ValidationIssue>
+        var sut = new MultiFieldsValidator([m => m.Name, m => m.Other], (_, path) =>
+            Task.FromResult(
+                new List<ValidationIssue>
+                {
+                    new()
                     {
-                        new()
-                        {
-                            Field = path,
-                            Severity = ValidationIssueSeverity.Error,
-                            CustomTextKey = "err",
-                        },
-                    }
-                )
+                        Field = path,
+                        Severity = ValidationIssueSeverity.Error,
+                        CustomTextKey = "err",
+                    },
+                }
+            )
         );
 
         // Act
@@ -147,9 +135,8 @@ public class FieldsValidatorTests
     [Fact]
     public async Task ValidateFormData_WhenNoIssues_ReturnsEmptyList()
     {
-        var sut = new SimpleFieldsValidator(
-            [m => m.Name],
-            (_, _) => Task.FromResult(new List<ValidationIssue>())
+        var sut = new SimpleFieldsValidator([m => m.Name], (_, _) =>
+            Task.FromResult(new List<ValidationIssue>())
         );
 
         var issues = await sut.ValidateFormData(
@@ -165,21 +152,17 @@ public class FieldsValidatorTests
     [Fact]
     public async Task ValidateFormData_WhenDataIsWrongType_ReturnsEmptyList()
     {
-        var sut = new SimpleFieldsValidator(
-            [m => m.Name],
-            (_, _) =>
-                Task.FromResult(
-                    new List<ValidationIssue>
+        var sut = new SimpleFieldsValidator([m => m.Name], (_, _) => Task.FromResult(
+                new List<ValidationIssue>
+                {
+                    new()
                     {
-                        new()
-                        {
-                            Field = "should-not-appear",
-                            Severity = ValidationIssueSeverity.Error,
-                            CustomTextKey = "err",
-                        },
-                    }
-                )
-        );
+                        Field = "should-not-appear",
+                        Severity = ValidationIssueSeverity.Error,
+                        CustomTextKey = "err",
+                    },
+                }
+            ));
 
         var issues = await sut.ValidateFormData(
             _instance,
@@ -194,21 +177,17 @@ public class FieldsValidatorTests
     [Fact]
     public async Task ValidateFormData_NullNestedProperty_ReturnsDefaultValue()
     {
-        var sut = new NestedFieldsValidator(
-            [x => x.Inner.Value],
-            (value, path) =>
-                Task.FromResult(
-                    new List<ValidationIssue>
+        var sut = new NestedFieldsValidator([x => x.Inner.Value], (value, path) => Task.FromResult(
+                new List<ValidationIssue>
+                {
+                    new()
                     {
-                        new()
-                        {
-                            Field = path,
-                            Severity = ValidationIssueSeverity.Error,
-                            CustomTextKey = value ?? "was-null",
-                        },
-                    }
-                )
-        );
+                        Field = path,
+                        Severity = ValidationIssueSeverity.Error,
+                        CustomTextKey = value ?? "was-null",
+                    },
+                }
+            ));
 
         var issues = await sut.ValidateFormData(
             _instance,
@@ -224,9 +203,8 @@ public class FieldsValidatorTests
     [Fact]
     public void HasRelevantChanges_WhenFieldChanged_ReturnsTrue()
     {
-        var sut = new SimpleFieldsValidator(
-            [m => m.Name],
-            (_, _) => Task.FromResult(new List<ValidationIssue>())
+        var sut = new SimpleFieldsValidator([m => m.Name], (_, _) =>
+            Task.FromResult(new List<ValidationIssue>())
         );
 
         var result = sut.HasRelevantChanges(
@@ -240,9 +218,8 @@ public class FieldsValidatorTests
     [Fact]
     public void HasRelevantChanges_WhenFieldUnchanged_ReturnsFalse()
     {
-        var sut = new SimpleFieldsValidator(
-            [m => m.Name],
-            (_, _) => Task.FromResult(new List<ValidationIssue>())
+        var sut = new SimpleFieldsValidator([m => m.Name], (_, _) =>
+            Task.FromResult(new List<ValidationIssue>())
         );
 
         var result = sut.HasRelevantChanges(
@@ -256,9 +233,8 @@ public class FieldsValidatorTests
     [Fact]
     public void HasRelevantChanges_WhenWrongType_ReturnsFalse()
     {
-        var sut = new SimpleFieldsValidator(
-            [m => m.Name],
-            (_, _) => Task.FromResult(new List<ValidationIssue>())
+        var sut = new SimpleFieldsValidator([m => m.Name], (_, _) =>
+            Task.FromResult(new List<ValidationIssue>())
         );
 
         var result = sut.HasRelevantChanges("not a model", "also not a model");
@@ -270,9 +246,8 @@ public class FieldsValidatorTests
     public void CompileAccessors_NonMemberExpression_Throws()
     {
         // m.Name.Length is a MemberExpression on int, but we need string? — use a method call instead
-        var sut = new MethodCallFieldsValidator(
-            [m => m.Name!.ToUpper()],
-            (_, _) => Task.FromResult(new List<ValidationIssue>())
+        var sut = new MethodCallFieldsValidator([m => m.Name!.ToUpper()], (_, _) =>
+            Task.FromResult(new List<ValidationIssue>())
         );
 
         Should.Throw<InvalidOperationException>(() =>
@@ -283,9 +258,8 @@ public class FieldsValidatorTests
     [Fact]
     public void CompileAccessors_DuplicateField_Throws()
     {
-        var sut = new SimpleFieldsValidator(
-            [m => m.Name, m => m.Name],
-            (_, _) => Task.FromResult(new List<ValidationIssue>())
+        var sut = new SimpleFieldsValidator([m => m.Name, m => m.Name], (_, _) =>
+            Task.FromResult(new List<ValidationIssue>())
         );
 
         Should.Throw<InvalidOperationException>(() =>

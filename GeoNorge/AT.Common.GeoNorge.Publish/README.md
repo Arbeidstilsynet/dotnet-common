@@ -254,7 +254,7 @@ The checked-in `openapi-eiendom.json` is a snapshot of the [official specificati
 
 ```powershell
 dotnet tool restore
-npm run generate:client:eiendom
+pnpm run generate:client:eiendom
 ```
 
 The script generates only `GET /geokoding` into `Generated\Eiendom`, including `kiota-lock.json`. Do not edit generated files manually. Property tests use deterministic mock HTTP responses; live Kartverket checks are optional and not required by CI.
