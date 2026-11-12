@@ -51,9 +51,10 @@ internal sealed partial class UmamiConnector : IUmamiConnector
         var encoder = HtmlEncoder.Default;
         return new HtmlString(
             $"<script defer src=\"{encoder.Encode(config.ScriptUrl)}\" "
+                + $"data-host-url=\"{encoder.Encode(config.CollectorOrigin.ToString())}\" "
                 + $"data-website-id=\"{encoder.Encode(config.WebsiteId)}\" "
                 + $"data-domains=\"{encoder.Encode(config.AppHostname)}\" "
-                + "data-exclude-search=\"true\" data-exclude-hash=\"true\" data-do-not-track=\"true\"></script>"
+                + "data-exclude-search=\"true\" data-exclude-hash=\"true\" data-do-not-track=\"true\" data-errors=\"true\"></script>"
         );
     }
 
