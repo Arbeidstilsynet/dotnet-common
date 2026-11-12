@@ -241,9 +241,9 @@ public class UmamiConnectorTests
         writer
             .ToString()
             .ShouldBe(
-                $"<script defer src=\"https://umami.example.com/public/tracker.js\" data-website-id=\"{PocWebsiteId}\" "
+                $"<script defer src=\"https://umami.example.com/public/tracker.js\" data-host-url=\"https://umami.example.com/\" data-website-id=\"{PocWebsiteId}\" "
                     + "data-domains=\"dat.apps.tt02.altinn.no\" data-exclude-search=\"true\" data-exclude-hash=\"true\" "
-                    + "data-do-not-track=\"true\"></script>"
+                    + "data-do-not-track=\"true\" data-errors=\"true\"></script>"
             );
     }
 
