@@ -63,6 +63,7 @@ public class UmamiConnectorTests
         result.WebsiteId.ShouldBe(PocWebsiteId);
         result.ScriptUrl.ShouldBe("http://localhost:3003/public/tracker.js");
         result.SendUrl.ShouldBe(new Uri("http://localhost:3003/public/api/send"));
+        result.HostUrl.ShouldBe("http://localhost:3003/public");
         result.AppOrigin.ShouldBe(new Uri("http://local.altinn.cloud:8000"));
         result.AppHostname.ShouldBe("local.altinn.cloud");
         result.AppPath.ShouldBe("/dat/forhandsmelding");
@@ -219,6 +220,7 @@ public class UmamiConnectorTests
             result.AppPath.ShouldBe("/dat/forhandsmelding");
             result.AppTitle.ShouldBe("Forhandsmelding");
             result.SendUrl.ShouldBe(new Uri("https://umami.example.com/api/send"));
+            result.HostUrl.ShouldBe("https://umami.example.com");
         }
         finally
         {
@@ -241,7 +243,7 @@ public class UmamiConnectorTests
         writer
             .ToString()
             .ShouldBe(
-                $"<script defer src=\"https://umami.example.com/public/tracker.js\" data-host-url=\"https://umami.example.com/\" data-website-id=\"{PocWebsiteId}\" "
+                $"<script defer src=\"https://umami.example.com/public/tracker.js\" data-host-url=\"https://umami.example.com/public\" data-website-id=\"{PocWebsiteId}\" "
                     + "data-domains=\"dat.apps.tt02.altinn.no\" data-exclude-search=\"true\" data-exclude-hash=\"true\" "
                     + "data-do-not-track=\"true\" data-errors=\"true\"></script>"
             );

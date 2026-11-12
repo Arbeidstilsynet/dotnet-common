@@ -51,7 +51,7 @@ internal sealed partial class UmamiConnector : IUmamiConnector
         var encoder = HtmlEncoder.Default;
         return new HtmlString(
             $"<script defer src=\"{encoder.Encode(config.ScriptUrl)}\" "
-                + $"data-host-url=\"{encoder.Encode(config.CollectorOrigin.ToString())}\" "
+                + $"data-host-url=\"{encoder.Encode(config.HostUrl)}\" "
                 + $"data-website-id=\"{encoder.Encode(config.WebsiteId)}\" "
                 + $"data-domains=\"{encoder.Encode(config.AppHostname)}\" "
                 + "data-exclude-search=\"true\" data-exclude-hash=\"true\" data-do-not-track=\"true\" data-errors=\"true\"></script>"
@@ -291,7 +291,7 @@ internal sealed partial class UmamiConnector : IUmamiConnector
         )
         {
             throw new InvalidOperationException(
-                $"{settingName} must be an exact HTTPS origin without path, query, fragment or credentials"
+                $"{settingName} must be an exact HTTPS origin without path, query, fragment or credentials (configure paths such as /public/tracker.js via {UmamiConfiguration.SectionName}:ScriptPath)"
             );
         }
 

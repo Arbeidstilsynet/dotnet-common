@@ -31,6 +31,13 @@ public sealed record UmamiTrackingConfig(
     public string ScriptUrl => new Uri(CollectorOrigin, ScriptPath).ToString();
 
     /// <summary>
+    /// Gets the Umami host URL used by the tracker (<c>data-host-url</c>): the directory of <see cref="ScriptUrl"/>
+    /// without trailing slash, for example <c>https://umami.example.com/public</c> for <c>/public/tracker.js</c>.
+    /// The tracker sends events to <c>{HostUrl}/api/send</c>.
+    /// </summary>
+    public string HostUrl => new Uri(new Uri(ScriptUrl), ".").ToString().TrimEnd('/');
+
+    /// <summary>
     /// Gets the Umami collection endpoint (<c>api/send</c> relative to <see cref="ScriptUrl"/>).
     /// </summary>
     public Uri SendUrl => new(new Uri(ScriptUrl), "api/send");
