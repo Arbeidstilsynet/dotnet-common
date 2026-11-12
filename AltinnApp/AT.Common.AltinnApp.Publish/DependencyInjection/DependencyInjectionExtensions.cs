@@ -555,14 +555,11 @@ public static class DependencyInjectionExtensions
             ServiceDescriptor.Singleton<ILoggerProvider, UmamiErrorLoggerProvider>()
         );
         services.AddHostedService<UmamiErrorReporter>();
-        services.AddHttpClient(
-            UmamiErrorReporter.HttpClientName,
-            client =>
-            {
-                client.Timeout = TimeSpan.FromSeconds(5);
-                client.DefaultRequestHeaders.UserAgent.ParseAdd(UmamiErrorReporter.UserAgent);
-            }
-        );
+        services.AddHttpClient(UmamiErrorReporter.HttpClientName, client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(5);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(UmamiErrorReporter.UserAgent);
+        });
         return services;
     }
 

@@ -219,11 +219,9 @@ internal static partial class UmamiErrorLocation
         }
 
         var entryAssembly = Assembly.GetEntryAssembly();
-        var selectedFrame =
-            frames.FirstOrDefault(frame =>
-                entryAssembly is not null
-                && frame.GetMethod()!.DeclaringType?.Assembly == entryAssembly
-            )
+        var selectedFrame = frames.FirstOrDefault(frame =>
+            entryAssembly is not null && frame.GetMethod()!.DeclaringType?.Assembly == entryAssembly
+        )
             ?? frames.FirstOrDefault(IsNonFrameworkFrame)
             ?? frames[0];
 
