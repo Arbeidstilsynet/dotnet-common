@@ -6,13 +6,14 @@ using System.Text.RegularExpressions;
 using System.Threading.Channels;
 using Arbeidstilsynet.Common.AltinnApp.Model;
 using Arbeidstilsynet.Common.AltinnApp.Ports;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Arbeidstilsynet.Common.AltinnApp.Implementation;
 
-internal sealed record UmamiErrorEvent(string ErrorType, string? ErrorLocation, string? TraceId);
+internal sealed record UmamiErrorEvent(string ErrorType, string? ErrorLocation, string? InstanceId);
 
 internal sealed class UmamiErrorQueue
 {
@@ -39,10 +40,20 @@ internal sealed class UmamiErrorQueue
 /// Captures exceptions logged at <see cref="LogLevel.Error"/> or higher, including exceptions that Altinn controllers
 /// catch and convert to HTTP 500 responses, and queues them as Umami error events.
 /// </summary>
-internal sealed class UmamiErrorLoggerProvider(UmamiErrorQueue queue) : ILoggerProvider
+internal sealed class UmamiErrorLoggerProvider(
+    UmamiErrorQueue queue,
+    IHttpContextAccessor? httpContextAccessor = null,
+    TimeProvider? timeProvider = null
+) : ILoggerProvider
 {
+    internal static readonly TimeSpan ThrottleWindow = TimeSpan.FromSeconds(10);
+    private const int MaxThrottleEntries = 1000;
+
     private static readonly object Reported = new();
     private readonly ConditionalWeakTable<Exception, object> _reportedExceptions = new();
+    private readonly TimeProvider _timeProvider = timeProvider ?? TimeProvider.System;
+    private readonly Dictionary<(string, string?), DateTimeOffset> _lastReported = [];
+    private readonly object _throttleLock = new();
 
     public ILogger CreateLogger(string categoryName) =>
         IsOwnCategory(categoryName) ? NullLogger.Instance : new UmamiErrorLogger(this);
@@ -57,14 +68,57 @@ internal sealed class UmamiErrorLoggerProvider(UmamiErrorQueue queue) : ILoggerP
             return;
         }
 
-        var traceId = Activity.Current?.TraceId;
-        queue.TryEnqueue(
-            new UmamiErrorEvent(
-                exception.GetType().Name,
-                UmamiErrorLocation.Resolve(exception),
-                traceId is { } id && id != default ? id.ToHexString() : null
+        var errorType = exception.GetType().Name;
+        var errorLocation = UmamiErrorLocation.Resolve(exception);
+
+        // Retried requests throw the same error again; report it once per throttle window.
+        if (IsThrottled((errorType, errorLocation)))
+        {
+            return;
+        }
+
+        queue.TryEnqueue(new UmamiErrorEvent(errorType, errorLocation, ResolveInstanceId()));
+    }
+
+    // Only the instance GUID is sent; the instance owner party ID can identify a person or organisation.
+    private string? ResolveInstanceId() =>
+        httpContextAccessor?.HttpContext?.Request.RouteValues.TryGetValue(
+            "instanceGuid",
+            out var value
+        ) == true
+        && Guid.TryParse(value?.ToString(), out var instanceGuid)
+            ? instanceGuid.ToString()
+            : null;
+
+    private bool IsThrottled((string, string?) key)
+    {
+        var now = _timeProvider.GetUtcNow();
+        lock (_throttleLock)
+        {
+            if (
+                _lastReported.TryGetValue(key, out var lastReported)
+                && now - lastReported < ThrottleWindow
             )
-        );
+            {
+                return true;
+            }
+
+            if (_lastReported.Count >= MaxThrottleEntries)
+            {
+                foreach (
+                    var expired in _lastReported
+                        .Where(entry => now - entry.Value >= ThrottleWindow)
+                        .Select(entry => entry.Key)
+                        .ToList()
+                )
+                {
+                    _lastReported.Remove(expired);
+                }
+            }
+
+            _lastReported[key] = now;
+            return false;
+        }
     }
 
     private static bool IsOwnCategory(string categoryName) =>
@@ -157,9 +211,9 @@ internal sealed class UmamiErrorReporter(
         {
             data["errorLocation"] = errorLocation;
         }
-        if (errorEvent.TraceId is { } traceId)
+        if (errorEvent.InstanceId is { } instanceId)
         {
-            data["traceId"] = traceId;
+            data["instanceId"] = instanceId;
         }
 
         var body = new

@@ -19,12 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
-## 2.13.0-beta2
+## 2.13.0-beta5
 
 ### Added
 
 - Add `AddUmamiTracking`, `IUmamiConnector`, and `UmamiTrackingConfig` to render the Umami tracker script (restricted to the app hostname, without query strings or URL hashes) in Altinn applications.
-- Report exceptions logged at `Error` level or higher to Umami as server-side `altinn-error` events with `errorType`, `errorLocation`, and `traceId`.
+- Report exceptions logged at `Error` level or higher to Umami as server-side `altinn-error` events with `errorType`, `errorLocation`, and `instanceId` (the instance GUID). Repeats of the same error (same `errorType` and `errorLocation`) within 10 seconds are reported once.
 ## 2.12.4
 
 ### Changed

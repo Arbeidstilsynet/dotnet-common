@@ -413,13 +413,15 @@ The tracker is loaded from `<CollectorOrigin>/script.js` by default. If Umami ru
 
 #### Error Events
 
-`AddUmamiTracking` also reports exceptions logged at `Error` level or higher from the backend to Umami as `altinn-error` events. This includes exceptions that Altinn controllers catch and return as HTTP 500 responses. These events aren't tied to a user session. Each event contains only:
+`AddUmamiTracking` also reports exceptions logged at `Error` level or higher from the backend to Umami as `altinn-error` events. This includes exceptions that Altinn controllers catch and return as HTTP 500 responses. These events aren't tied to a user session. Each event contains only the following; `instanceId` is the instance GUID, without the instance owner party ID:
 
-| Property        | Example                                                     |
-| --------------- | ----------------------------------------------------------- |
-| `errorType`     | `NullReferenceException`                                    |
-| `errorLocation` | `MyDataProcessor.ProcessDataWrite (MyDataProcessor.cs:42)`  |
-| `traceId`       | `4bf92f3577b34da6a3ce929d0e0e4736` (when a trace is active) |
+| Property        | Example                                                                      |
+| --------------- | ---------------------------------------------------------------------------- |
+| `errorType`     | `NullReferenceException`                                                     |
+| `errorLocation` | `MyDataProcessor.ProcessDataWrite (MyDataProcessor.cs:42)`                   |
+| `instanceId`    | `f1111111-2222-3333-4444-555555555555` (when the request is for an instance) |
+
+The same error (same `errorType` and `errorLocation`) is reported at most once every 10 seconds, so retried requests that fail the same way don't create duplicate events.
 
 `errorLocation` points to the first stack frame in the app's own code. File and line number are only included when PDB symbols are available at runtime. To always include them, set `<DebugType>embedded</DebugType>` in `App.csproj`.
 

@@ -1,10 +1,10 @@
-using System.Diagnostics;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading.Channels;
 using Arbeidstilsynet.Common.AltinnApp.DependencyInjection;
 using Arbeidstilsynet.Common.AltinnApp.Implementation;
 using Arbeidstilsynet.Common.AltinnApp.Ports;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -253,9 +253,15 @@ public class UmamiConnectorTests
     public void UmamiErrorLoggerProvider_QueuesOnlyErrorsWithExceptionsAndOnlyOncePerException()
     {
         var queue = new UmamiErrorQueue();
-        using var loggerProvider = new UmamiErrorLoggerProvider(queue);
+        var instanceGuid = Guid.Parse("f1111111-2222-3333-4444-555555555555");
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.RouteValues["instanceOwnerPartyId"] = 500002;
+        httpContext.Request.RouteValues["instanceGuid"] = instanceGuid;
+        using var loggerProvider = new UmamiErrorLoggerProvider(
+            queue,
+            new HttpContextAccessor { HttpContext = httpContext }
+        );
         var logger = loggerProvider.CreateLogger("Altinn.App.Api.Controllers.ProcessController");
-        using var activity = new Activity("test-request").Start();
         var exception = Should.Throw<InvalidOperationException>(ThrowFromAsyncMethod);
 
         logger.LogError(exception, "Process next failed.");
@@ -269,8 +275,35 @@ public class UmamiConnectorTests
         errorEvent.ErrorLocation.ShouldStartWith(
             $"{nameof(UmamiConnectorTests)}.{nameof(ThrowFromAsyncMethod)}"
         );
-        errorEvent.TraceId.ShouldBe(activity.TraceId.ToHexString());
+        errorEvent.InstanceId.ShouldBe(instanceGuid.ToString());
         queue.TryDequeue(out _).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void UmamiErrorLoggerProvider_ThrottlesRepeatedErrorsFromTheSameLocation()
+    {
+        var queue = new UmamiErrorQueue();
+        var time = new ManualTimeProvider();
+        using var loggerProvider = new UmamiErrorLoggerProvider(queue, timeProvider: time);
+        var logger = loggerProvider.CreateLogger("Altinn.App.Api.Controllers.ProcessController");
+
+        logger.LogError(Should.Throw<InvalidOperationException>(ThrowFromAsyncMethod), "First");
+        time.Advance(TimeSpan.FromSeconds(2));
+        logger.LogError(Should.Throw<InvalidOperationException>(ThrowFromAsyncMethod), "Retry");
+        logger.LogError(new TimeoutException(), "Different error");
+        time.Advance(UmamiErrorLoggerProvider.ThrottleWindow);
+        logger.LogError(Should.Throw<InvalidOperationException>(ThrowFromAsyncMethod), "Later");
+
+        var reported = new List<string>();
+        while (queue.TryDequeue(out var errorEvent))
+        {
+            reported.Add(errorEvent.ErrorType);
+        }
+        reported.ShouldBe([
+            nameof(InvalidOperationException),
+            nameof(TimeoutException),
+            nameof(InvalidOperationException),
+        ]);
     }
 
     [Fact]
@@ -355,6 +388,15 @@ public class UmamiConnectorTests
             }
         );
         return services;
+    }
+
+    private sealed class ManualTimeProvider : TimeProvider
+    {
+        private DateTimeOffset _now = DateTimeOffset.UnixEpoch;
+
+        public override DateTimeOffset GetUtcNow() => _now;
+
+        public void Advance(TimeSpan by) => _now += by;
     }
 
     private sealed class CapturingHandler : HttpMessageHandler

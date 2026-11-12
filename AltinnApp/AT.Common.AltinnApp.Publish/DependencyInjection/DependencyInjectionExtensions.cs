@@ -551,6 +551,7 @@ public static class DependencyInjectionExtensions
         services.AddSingleton(config);
         services.TryAddSingleton<IUmamiConnector, UmamiConnector>();
         services.TryAddSingleton<UmamiErrorQueue>();
+        services.AddHttpContextAccessor();
         services.TryAddEnumerable(
             ServiceDescriptor.Singleton<ILoggerProvider, UmamiErrorLoggerProvider>()
         );
