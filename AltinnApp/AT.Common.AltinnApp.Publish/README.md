@@ -379,3 +379,52 @@ public void ConfigureServices(IServiceCollection services)
     services.AddTransient<IDataProcessor, AttachmentListProcessor>();
 }
 ```
+
+### Umami Analytics
+
+Register `IUmamiConnector` in `Program.cs`:
+
+```csharp
+services.AddUmamiTracking();
+```
+
+In `App/views/Home/Index.cshtml`, inject `IUmamiConnector` and render the script tag inside `<head>`:
+
+```razor
+@inject Arbeidstilsynet.Common.AltinnApp.Ports.IUmamiConnector UmamiConnector
+...
+@UmamiConnector.RenderScriptTag()
+```
+
+Configure `Umami:CollectorOrigin` and `Umami:WebsiteId` in `App/appsettings.Staging.json` or `App/appsettings.Production.json`:
+
+```json
+{
+  "Umami": {
+    "CollectorOrigin": "https://umami.example.com",
+    "WebsiteId": "86065263-1955-4c5e-8fa9-8ff7ddb1b349"
+  }
+}
+```
+
+`RenderScriptTag()` renders the standard Umami tracker script. It only tracks on the app hostname, and it excludes query strings and URL hashes (which contain Altinn party and instance IDs), so page views are reported as the app path, such as `/dat/forhandsmelding/`. It also enables Umami's browser error tracking (`data-errors`), which reports uncaught JavaScript errors in the **Errors** tab and requires Umami 3.5.0 or later.
+
+The hostname defaults to `dat.apps.altinn.no` in `Production` and `dat.apps.tt02.altinn.no` in other environments. Apps hosted elsewhere must set `Umami:AppOrigin`, for example `"https://myorg.apps.altinn.no"`; otherwise the tracker sends nothing.
+
+The tracker is loaded from `<CollectorOrigin>/script.js` by default. If Umami runs with a custom `TRACKER_SCRIPT_NAME` or `BASE_PATH`, set `Umami:ScriptPath` to the absolute script path, for example `"/public/tracker.js"`; `data-host-url` is set to the script directory, so events are then sent to `/public/api/send`. `CollectorOrigin` must stay a bare origin (no path).
+
+#### Error Events
+
+`AddUmamiTracking` also reports exceptions logged at `Error` level or higher from the backend to Umami as `altinn-error` events. This includes exceptions that Altinn controllers catch and return as HTTP 500 responses. These events aren't tied to a user session. Each event contains only the following; `instanceId` is the instance GUID, without the instance owner party ID:
+
+| Property        | Example                                                                      |
+| --------------- | ---------------------------------------------------------------------------- |
+| `errorType`     | `NullReferenceException`                                                     |
+| `errorLocation` | `MyDataProcessor.ProcessDataWrite (MyDataProcessor.cs:42)`                   |
+| `instanceId`    | `f1111111-2222-3333-4444-555555555555` (when the request is for an instance) |
+
+The same error (same `errorType` and `errorLocation`) is reported at most once every 10 seconds, so retried requests that fail the same way don't create duplicate events.
+
+`errorLocation` points to the first stack frame in the app's own code. File and line number are only included when PDB symbols are available at runtime. To always include them, set `<DebugType>embedded</DebugType>` in `App.csproj`.
+
+The application path is discovered automatically from `config/applicationmetadata.json`. Tracking and error reporting short-circuit by default in `Development` (unless `Umami:EnableInDevelopment=true` or `EnableInDevelopment = true` is configured, e.g. for E2E tests) or when `Umami:WebsiteId` is empty.

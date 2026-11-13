@@ -284,6 +284,25 @@ public class AddressService(ILandskodeLookup landskodeLookup)
 
 ---
 
+## Umami Analytics (`AddUmamiTracking`)
+
+```csharp
+services.AddUmamiTracking();
+```
+
+```razor
+@* App/views/Home/Index.cshtml, inside <head> *@
+@inject Arbeidstilsynet.Common.AltinnApp.Ports.IUmamiConnector UmamiConnector
+@UmamiConnector.RenderScriptTag()
+```
+
+- Configure `Umami:CollectorOrigin` (bare origin) and `Umami:WebsiteId` in `appsettings.Staging.json` / `appsettings.Production.json`. Optional: `Umami:ScriptPath`, `Umami:AppOrigin`, `Umami:AppPath`, `Umami:AppTitle`, `Umami:EnableInDevelopment`.
+- Renders the standard Umami tracker script only; no custom browser script. Query strings and URL hashes (Altinn party/instance IDs) are excluded.
+- Backend exceptions logged at `Error` or higher are sent as `altinn-error` events with only `errorType`, `errorLocation` and `instanceId` (instance GUID, never the party ID), throttled to once per error per 10 seconds.
+- Disabled in `Development` (unless `EnableInDevelopment`) and when `Umami:WebsiteId` is empty.
+
+---
+
 ## Embedded Resource Utilities
 
 Load and deserialise embedded JSON resources from an assembly:
