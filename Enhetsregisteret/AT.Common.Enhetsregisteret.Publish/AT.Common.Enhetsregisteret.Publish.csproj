@@ -21,14 +21,14 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="12.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.15" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.15" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="11.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="11.0.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.2.0" />
     <PackageReference
       Include="Microsoft.Extensions.DependencyInjection.Abstractions"
-      Version="10.0.15"
+      Version="11.0.0"
     />
-    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.11.0" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="11.0.0" />
     <PackageReference Include="Microsoft.Kiota.Bundle" Version="2.1.6" />
   </ItemGroup>
   <ItemGroup>
