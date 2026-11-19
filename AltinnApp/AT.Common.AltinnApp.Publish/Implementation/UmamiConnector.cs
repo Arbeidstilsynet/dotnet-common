@@ -15,6 +15,26 @@ namespace Arbeidstilsynet.Common.AltinnApp.Implementation;
 
 internal sealed partial class UmamiConnector : IUmamiConnector
 {
+    internal const string BeforeSendFunctionName = "atUmamiBeforeSend";
+
+    // Altinn app-frontend uses hash routing (#/instance/{partyId}/{instanceGuid}/{taskId}/{pageKey}). Rewrites
+    // same-origin URLs to path form with numeric and GUID segments masked, so routes are tracked without IDs.
+    // Drops the event (returns null) if anything fails, so unmasked URLs are never sent.
+    private const string BeforeSendScript =
+        "<script>window."
+        + BeforeSendFunctionName
+        + "=function(type,payload){try{"
+        + "var mask=function(value){if(typeof value!=='string'||!value)return value;"
+        + "var url=new URL(value,location.href);url.search='';"
+        + "if(url.origin!==location.origin){url.hash='';return url.toString();}"
+        + "var route=url.hash.replace(/^#\\/?/,'').split('?')[0];"
+        + "return '/'+(url.pathname+'/'+route).split('/').filter(Boolean).map(function(s){"
+        + "return /^\\d+$/.test(s)?':id':/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(s)?':guid':s;"
+        + "}).join('/');};"
+        + "if(type==='error'){payload.url=mask(location.href);}"
+        + "else{payload.url=mask(payload.url);payload.referrer=mask(payload.referrer);}"
+        + "return payload;}catch(e){return null;}};</script>";
+
     private readonly ILogger<UmamiConnector> _logger;
 
     public UmamiTrackingConfig? Config { get; }
@@ -50,11 +70,13 @@ internal sealed partial class UmamiConnector : IUmamiConnector
 
         var encoder = HtmlEncoder.Default;
         return new HtmlString(
-            $"<script defer src=\"{encoder.Encode(config.ScriptUrl)}\" "
+            BeforeSendScript
+                + $"<script defer src=\"{encoder.Encode(config.ScriptUrl)}\" "
                 + $"data-host-url=\"{encoder.Encode(config.HostUrl)}\" "
                 + $"data-website-id=\"{encoder.Encode(config.WebsiteId)}\" "
                 + $"data-domains=\"{encoder.Encode(config.AppHostname)}\" "
-                + "data-exclude-search=\"true\" data-exclude-hash=\"true\" data-do-not-track=\"true\" data-errors=\"true\"></script>"
+                + $"data-before-send=\"{BeforeSendFunctionName}\" "
+                + "data-exclude-search=\"true\" data-do-not-track=\"true\" data-errors=\"true\"></script>"
         );
     }
 

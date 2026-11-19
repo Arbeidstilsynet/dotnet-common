@@ -158,6 +158,43 @@ public sealed record UmamiConfiguration
     public string? AppPath { get; init; }
 
     /// <summary>
+    /// Predicate deciding which logged exceptions are <b>not</b> reported to Umami as <c>altinn-error</c> events.
+    /// Defaults to <see cref="DefaultIgnoreError"/>. To extend the default, combine them, for example
+    /// <c>IgnoreError = ex =&gt; UmamiConfiguration.DefaultIgnoreError(ex) || ex is MyException</c>.
+    /// </summary>
+    public Func<Exception, bool> IgnoreError { get; init; } = DefaultIgnoreError;
+
+    /// <summary>
+    /// Ignores failed calls to Altinn Platform services (<see cref="Altinn.App.Core.Helpers.PlatformHttpException"/>,
+    /// including subclasses) anywhere in the exception chain. These are usually transient and outside the app's control.
+    /// </summary>
+    /// <param name="exception">The logged exception.</param>
+    /// <returns><see langword="true"/> if the exception should not be reported.</returns>
+    public static bool DefaultIgnoreError(Exception exception) =>
+        AnyInChain(exception, ex => ex is Altinn.App.Core.Helpers.PlatformHttpException);
+
+    private static bool AnyInChain(
+        Exception? exception,
+        Func<Exception, bool> predicate,
+        int depth = 0
+    )
+    {
+        if (exception is null || depth > 10)
+        {
+            return false;
+        }
+
+        if (predicate(exception))
+        {
+            return true;
+        }
+
+        return exception is AggregateException aggregate
+            ? aggregate.InnerExceptions.Any(inner => AnyInChain(inner, predicate, depth + 1))
+            : AnyInChain(exception.InnerException, predicate, depth + 1);
+    }
+
+    /// <summary>
     /// Optional override for the application title sent with server-side error events.
     /// When omitted, derived from the application name segment of <see cref="AppPath"/>.
     /// </summary>

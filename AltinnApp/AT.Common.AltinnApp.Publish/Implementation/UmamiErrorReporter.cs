@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading.Channels;
+using Arbeidstilsynet.Common.AltinnApp.DependencyInjection;
 using Arbeidstilsynet.Common.AltinnApp.Model;
 using Arbeidstilsynet.Common.AltinnApp.Ports;
 using Microsoft.AspNetCore.Http;
@@ -43,7 +44,8 @@ internal sealed class UmamiErrorQueue
 internal sealed class UmamiErrorLoggerProvider(
     UmamiErrorQueue queue,
     IHttpContextAccessor? httpContextAccessor = null,
-    TimeProvider? timeProvider = null
+    TimeProvider? timeProvider = null,
+    UmamiConfiguration? options = null
 ) : ILoggerProvider
 {
     internal static readonly TimeSpan ThrottleWindow = TimeSpan.FromSeconds(10);
@@ -64,6 +66,11 @@ internal sealed class UmamiErrorLoggerProvider(
     {
         // The same exception is often logged more than once as it propagates.
         if (!_reportedExceptions.TryAdd(exception, Reported))
+        {
+            return;
+        }
+
+        if ((options?.IgnoreError ?? UmamiConfiguration.DefaultIgnoreError)(exception))
         {
             return;
         }

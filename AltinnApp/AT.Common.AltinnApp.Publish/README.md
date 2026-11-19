@@ -407,7 +407,7 @@ Configure `Umami:CollectorOrigin` and `Umami:WebsiteId` in `App/appsettings.Stag
 }
 ```
 
-`RenderScriptTag()` renders the standard Umami tracker script. It only tracks on the app hostname, and it excludes query strings and URL hashes (which contain Altinn party and instance IDs), so page views are reported as the app path, such as `/dat/forhandsmelding/`. It also enables Umami's browser error tracking (`data-errors`), which reports uncaught JavaScript errors in the **Errors** tab and requires Umami 3.5.0 or later.
+`RenderScriptTag()` renders the standard Umami tracker script. It only tracks on the app hostname and excludes query strings. Altinn app-frontend routes live in the URL hash (`#/instance/{partyId}/{instanceGuid}/...`), so a small inline `data-before-send` hook rewrites each route to a path and masks numeric and GUID segments (party and instance IDs). Page views are reported as, for example, `/dat/forhandsmelding/instance/:id/:guid/Task_1/Side1`. If the hook fails, the event is dropped. It also enables Umami's browser error tracking (`data-errors`), which reports uncaught JavaScript errors in the **Errors** tab and requires Umami 3.5.0 or later.
 
 The hostname defaults to `dat.apps.altinn.no` in `Production` and `dat.apps.tt02.altinn.no` in other environments. Apps hosted elsewhere must set `Umami:AppOrigin`, for example `"https://myorg.apps.altinn.no"`; otherwise the tracker sends nothing.
 
@@ -424,6 +424,15 @@ The tracker is loaded from `<CollectorOrigin>/script.js` by default. If Umami ru
 | `instanceId`    | `f1111111-2222-3333-4444-555555555555` (when the request is for an instance) |
 
 The same error (same `errorType` and `errorLocation`) is reported at most once every 10 seconds, so retried requests that fail the same way don't create duplicate events.
+
+By default, `PlatformHttpException`s (failed calls to Altinn Platform services, which are usually transient) are not reported, including when wrapped in another exception. To change which errors are ignored, set `IgnoreError`:
+
+```csharp
+services.AddUmamiTracking(config => config with
+{
+    IgnoreError = ex => UmamiConfiguration.DefaultIgnoreError(ex) || ex is TaskCanceledException,
+});
+```
 
 `errorLocation` points to the first stack frame in the app's own code. File and line number are only included when PDB symbols are available at runtime. To always include them, set `<DebugType>embedded</DebugType>` in `App.csproj`.
 

@@ -240,13 +240,59 @@ public class UmamiConnectorTests
         using var writer = new StringWriter();
         connector.RenderScriptTag().WriteTo(writer, HtmlEncoder.Default);
 
-        writer
-            .ToString()
-            .ShouldBe(
-                $"<script defer src=\"https://umami.example.com/public/tracker.js\" data-host-url=\"https://umami.example.com/public\" data-website-id=\"{PocWebsiteId}\" "
-                    + "data-domains=\"dat.apps.tt02.altinn.no\" data-exclude-search=\"true\" data-exclude-hash=\"true\" "
-                    + "data-do-not-track=\"true\" data-errors=\"true\"></script>"
-            );
+        var html = writer.ToString();
+        html.ShouldStartWith("<script>window.atUmamiBeforeSend=function(type,payload){");
+        html.ShouldEndWith(
+            $"</script><script defer src=\"https://umami.example.com/public/tracker.js\" data-host-url=\"https://umami.example.com/public\" data-website-id=\"{PocWebsiteId}\" "
+                + "data-domains=\"dat.apps.tt02.altinn.no\" data-before-send=\"atUmamiBeforeSend\" data-exclude-search=\"true\" "
+                + "data-do-not-track=\"true\" data-errors=\"true\"></script>"
+        );
+        html.ShouldNotContain("data-exclude-hash");
+    }
+
+    [Fact]
+    public void UmamiErrorLoggerProvider_IgnoresPlatformHttpExceptionsByDefault()
+    {
+        var queue = new UmamiErrorQueue();
+        using var loggerProvider = new UmamiErrorLoggerProvider(queue);
+        var logger = loggerProvider.CreateLogger("Altinn.App.Api.Controllers.ProcessController");
+        var platformException = new Altinn.App.Core.Helpers.PlatformHttpException(
+            new HttpResponseMessage(System.Net.HttpStatusCode.BadGateway),
+            "Storage unavailable"
+        );
+
+        logger.LogError(platformException, "Direct");
+        logger.LogError(new InvalidOperationException("Wrapped", platformException), "Wrapped");
+        logger.LogError(new AggregateException(new TimeoutException(), platformException), "Agg");
+        logger.LogError(new TimeoutException(), "Reported");
+
+        queue.TryDequeue(out var errorEvent).ShouldBeTrue();
+        errorEvent.ErrorType.ShouldBe(nameof(TimeoutException));
+        queue.TryDequeue(out _).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void UmamiErrorLoggerProvider_UsesConfiguredIgnoreError()
+    {
+        var queue = new UmamiErrorQueue();
+        using var loggerProvider = new UmamiErrorLoggerProvider(
+            queue,
+            options: new UmamiConfiguration { IgnoreError = ex => ex is TimeoutException }
+        );
+        var logger = loggerProvider.CreateLogger("Altinn.App.Api.Controllers.ProcessController");
+
+        logger.LogError(new TimeoutException(), "Ignored");
+        logger.LogError(
+            new Altinn.App.Core.Helpers.PlatformHttpException(
+                new HttpResponseMessage(System.Net.HttpStatusCode.BadGateway),
+                "Reported when the default is replaced"
+            ),
+            "Reported"
+        );
+
+        queue.TryDequeue(out var errorEvent).ShouldBeTrue();
+        errorEvent.ErrorType.ShouldBe("PlatformHttpException");
+        queue.TryDequeue(out _).ShouldBeFalse();
     }
 
     [Fact]
