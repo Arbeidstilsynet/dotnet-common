@@ -240,13 +240,171 @@ public class UmamiConnectorTests
         using var writer = new StringWriter();
         connector.RenderScriptTag().WriteTo(writer, HtmlEncoder.Default);
 
-        writer
-            .ToString()
-            .ShouldBe(
-                $"<script defer src=\"https://umami.example.com/public/tracker.js\" data-host-url=\"https://umami.example.com/public\" data-website-id=\"{PocWebsiteId}\" "
-                    + "data-domains=\"dat.apps.tt02.altinn.no\" data-exclude-search=\"true\" data-exclude-hash=\"true\" "
-                    + "data-do-not-track=\"true\" data-errors=\"true\"></script>"
-            );
+        var html = writer.ToString();
+        html.ShouldBe(
+            $"<script>window.umamiConfig={{websiteId:\"{PocWebsiteId}\",beforeSend:{UmamiConnector.BeforeSendFunction("/dat/forhandsmelding")}}};</script>"
+                + "<script defer src=\"https://umami.example.com/public/tracker.js\" data-host-url=\"https://umami.example.com/public\" "
+                + "data-domains=\"dat.apps.tt02.altinn.no\" data-exclude-search=\"true\" "
+                + "data-do-not-track=\"true\" data-errors=\"true\"></script>"
+        );
+        // The website ID must only be set together with the URL sanitizer, so a blocked inline script disables tracking.
+        html.ShouldNotContain("data-website-id");
+        html.ShouldNotContain("data-exclude-hash");
+    }
+
+    [Fact]
+    public void RenderScriptTag_WithNonce_AddsEncodedNonceToBothScripts()
+    {
+        using var provider = CreateTrackingServices().BuildServiceProvider();
+        var connector = provider.GetRequiredService<IUmamiConnector>();
+
+        using var writer = new StringWriter();
+        connector.RenderScriptTag("abc\"123").WriteTo(writer, HtmlEncoder.Default);
+
+        var html = writer.ToString();
+        html.ShouldStartWith("<script nonce=\"abc&quot;123\">window.umamiConfig=");
+        html.ShouldContain("</script><script nonce=\"abc&quot;123\" defer src=");
+    }
+
+    private const string InstanceRoute =
+        "https://dat.apps.altinn.no/dat/forhandsmelding/#/instance/500002/f1111111-2222-3333-4444-555555555555";
+
+    [Theory]
+    [InlineData(InstanceRoute + "/Task_1/Side1?x=1", "/dat/forhandsmelding/Task_1/Side1")]
+    [InlineData(InstanceRoute + "/Task_1", "/dat/forhandsmelding/Task_1")]
+    [InlineData(
+        InstanceRoute + "/Task_1/Side1/subform/f2222222-2222-3333-4444-555555555555/Underside",
+        "/dat/forhandsmelding/Task_1/Side1"
+    )]
+    [InlineData(InstanceRoute + "/Task_1/S%C3%B8knad", "/dat/forhandsmelding/Task_1/Søknad")]
+    [InlineData(InstanceRoute + "/Task_1/Side%3Cx", "/dat/forhandsmelding/Task_1")]
+    [InlineData("https://dat.apps.altinn.no/dat/forhandsmelding/", "/dat/forhandsmelding")]
+    [InlineData(
+        "https://dat.apps.altinn.no/dat/forhandsmelding/#/party-selection/403",
+        "/dat/forhandsmelding"
+    )]
+    [InlineData(InstanceRoute + "/Task_1/%E0%A4%A", null)]
+    public void BeforeSendFunction_ReportsOnlyAppPathTaskAndPage(string href, string? expected)
+    {
+        var result = RunBeforeSend(href, "event", new { url = href, referrer = "" });
+
+        if (expected is null)
+        {
+            result.ValueKind.ShouldBe(JsonValueKind.Null);
+            return;
+        }
+
+        result.GetProperty("url").GetString().ShouldBe(expected);
+    }
+
+    [Fact]
+    public void BeforeSendFunction_DropsSameOriginReferrersAndSetsErrorUrl()
+    {
+        var internalReferrer = RunBeforeSend(
+            InstanceRoute + "/Task_1/Side2",
+            "event",
+            new
+            {
+                url = "",
+                referrer = "/dat/forhandsmelding/#/instance/500002/f1111111-2222-3333-4444-555555555555/Task_1/Side1",
+            }
+        );
+        var externalReferrer = RunBeforeSend(
+            InstanceRoute + "/Task_1/Side1",
+            "event",
+            new { url = "", referrer = "https://www.altinn.no/" }
+        );
+        var error = RunBeforeSend(
+            InstanceRoute + "/Task_1/Side1",
+            "error",
+            new { url = "/dat/forhandsmelding/" }
+        );
+
+        internalReferrer.GetProperty("referrer").GetString().ShouldBeEmpty();
+        externalReferrer.GetProperty("referrer").GetString().ShouldBe("https://www.altinn.no/");
+        error.GetProperty("url").GetString().ShouldBe("/dat/forhandsmelding/Task_1/Side1");
+    }
+
+    private static JsonElement RunBeforeSend(string href, string type, object payload)
+    {
+        var script =
+            $"globalThis.location=new URL({JsonSerializer.Serialize(href)});"
+            + $"const beforeSend=({UmamiConnector.BeforeSendFunction("/dat/forhandsmelding")});"
+            + $"process.stdout.write(JSON.stringify(beforeSend({JsonSerializer.Serialize(type)},{JsonSerializer.Serialize(payload)})??null));";
+
+        System.Diagnostics.Process process;
+        try
+        {
+            process = System.Diagnostics.Process.Start(
+                new System.Diagnostics.ProcessStartInfo("node", "-")
+                {
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                }
+            )!;
+        }
+        catch (System.ComponentModel.Win32Exception)
+        {
+            Assert.Skip("Node.js is required to run the Umami beforeSend sanitizer tests.");
+            throw;
+        }
+
+        using (process)
+        {
+            process.StandardInput.Write(script);
+            process.StandardInput.Close();
+            var output = process.StandardOutput.ReadToEnd();
+            var error = process.StandardError.ReadToEnd();
+            process.WaitForExit();
+            process.ExitCode.ShouldBe(0, error);
+            return JsonDocument.Parse(output).RootElement.Clone();
+        }
+    }
+
+    [Fact]
+    public void UmamiErrorLoggerProvider_IgnoresPlatformHttpExceptionsByDefault()
+    {
+        var queue = new UmamiErrorQueue();
+        using var loggerProvider = new UmamiErrorLoggerProvider(queue);
+        var logger = loggerProvider.CreateLogger("Altinn.App.Api.Controllers.ProcessController");
+        var platformException = new Altinn.App.Core.Helpers.PlatformHttpException(
+            new HttpResponseMessage(System.Net.HttpStatusCode.BadGateway),
+            "Storage unavailable"
+        );
+
+        logger.LogError(platformException, "Direct");
+        logger.LogError(new InvalidOperationException("Wrapped", platformException), "Wrapped");
+        logger.LogError(new AggregateException(new TimeoutException(), platformException), "Agg");
+        logger.LogError(new TimeoutException(), "Reported");
+
+        queue.TryDequeue(out var errorEvent).ShouldBeTrue();
+        errorEvent.ErrorType.ShouldBe(nameof(TimeoutException));
+        queue.TryDequeue(out _).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void UmamiErrorLoggerProvider_UsesConfiguredIgnoreError()
+    {
+        var queue = new UmamiErrorQueue();
+        using var loggerProvider = new UmamiErrorLoggerProvider(
+            queue,
+            options: new UmamiConfiguration { IgnoreError = ex => ex is TimeoutException }
+        );
+        var logger = loggerProvider.CreateLogger("Altinn.App.Api.Controllers.ProcessController");
+
+        logger.LogError(new TimeoutException(), "Ignored");
+        logger.LogError(
+            new Altinn.App.Core.Helpers.PlatformHttpException(
+                new HttpResponseMessage(System.Net.HttpStatusCode.BadGateway),
+                "Reported when the default is replaced"
+            ),
+            "Reported"
+        );
+
+        queue.TryDequeue(out var errorEvent).ShouldBeTrue();
+        errorEvent.ErrorType.ShouldBe("PlatformHttpException");
+        queue.TryDequeue(out _).ShouldBeFalse();
     }
 
     [Fact]

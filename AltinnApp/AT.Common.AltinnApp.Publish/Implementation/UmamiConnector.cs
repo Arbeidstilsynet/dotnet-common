@@ -15,6 +15,18 @@ namespace Arbeidstilsynet.Common.AltinnApp.Implementation;
 
 internal sealed partial class UmamiConnector : IUmamiConnector
 {
+    // Altinn app-frontend routes live in the URL hash (#/instance/{partyId}/{instanceGuid}/{taskId}/{pageKey}/...).
+    // Only the app path, task and page are reported, so party and instance IDs never reach Umami. Same-origin
+    // referrers are dropped because they would contain the previous route.
+    internal static string BeforeSendFunction(string appPath) =>
+        $$$"""
+            function(type,payload){try{
+            var m=/^#\/instance\/[^/]+\/[^/]+\/([\p{L}\p{N}_-]+)(?:\/([\p{L}\p{N}_-]+))?(?:[/?]|$)/u.exec(decodeURIComponent(location.hash));
+            payload.url={{{JsonSerializer.Serialize(appPath)}}}+(m?'/'+m[1]+(m[2]?'/'+m[2]:''):'');
+            if(typeof payload.referrer==='string'&&payload.referrer.charAt(0)==='/')payload.referrer='';
+            return payload;}catch(e){return null;}}
+            """;
+
     private readonly ILogger<UmamiConnector> _logger;
 
     public UmamiTrackingConfig? Config { get; }
@@ -41,7 +53,9 @@ internal sealed partial class UmamiConnector : IUmamiConnector
         }
     }
 
-    public IHtmlContent RenderScriptTag()
+    public IHtmlContent RenderScriptTag() => RenderScriptTag(nonce: null);
+
+    public IHtmlContent RenderScriptTag(string? nonce)
     {
         if (Config is not { } config)
         {
@@ -49,12 +63,18 @@ internal sealed partial class UmamiConnector : IUmamiConnector
         }
 
         var encoder = HtmlEncoder.Default;
+        var nonceAttribute = string.IsNullOrEmpty(nonce)
+            ? string.Empty
+            : $" nonce=\"{encoder.Encode(nonce)}\"";
+
+        // The website ID is only set together with the URL sanitizer. If a Content Security Policy blocks the
+        // inline script, the tracker has no website ID and sends nothing.
         return new HtmlString(
-            $"<script defer src=\"{encoder.Encode(config.ScriptUrl)}\" "
+            $"<script{nonceAttribute}>window.umamiConfig={{websiteId:{JsonSerializer.Serialize(config.WebsiteId)},beforeSend:{BeforeSendFunction(config.AppPath)}}};</script>"
+                + $"<script{nonceAttribute} defer src=\"{encoder.Encode(config.ScriptUrl)}\" "
                 + $"data-host-url=\"{encoder.Encode(config.HostUrl)}\" "
-                + $"data-website-id=\"{encoder.Encode(config.WebsiteId)}\" "
                 + $"data-domains=\"{encoder.Encode(config.AppHostname)}\" "
-                + "data-exclude-search=\"true\" data-exclude-hash=\"true\" data-do-not-track=\"true\" data-errors=\"true\"></script>"
+                + "data-exclude-search=\"true\" data-do-not-track=\"true\" data-errors=\"true\"></script>"
         );
     }
 
