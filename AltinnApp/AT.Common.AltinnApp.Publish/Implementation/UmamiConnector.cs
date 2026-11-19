@@ -20,12 +20,12 @@ internal sealed partial class UmamiConnector : IUmamiConnector
     // referrers are dropped because they would contain the previous route.
     internal static string BeforeSendFunction(string appPath) =>
         $$$"""
-        function(type,payload){try{
-        var m=/^#\/instance\/[^/]+\/[^/]+\/([\p{L}\p{N}_-]+)(?:\/([\p{L}\p{N}_-]+))?(?:[/?]|$)/u.exec(decodeURIComponent(location.hash));
-        payload.url={{{JsonSerializer.Serialize(appPath)}}}+(m?'/'+m[1]+(m[2]?'/'+m[2]:''):'');
-        if(typeof payload.referrer==='string'&&payload.referrer.charAt(0)==='/')payload.referrer='';
-        return payload;}catch(e){return null;}}
-        """;
+            function(type,payload){try{
+            var m=/^#\/instance\/[^/]+\/[^/]+\/([\p{L}\p{N}_-]+)(?:\/([\p{L}\p{N}_-]+))?(?:[/?]|$)/u.exec(decodeURIComponent(location.hash));
+            payload.url={{{JsonSerializer.Serialize(appPath)}}}+(m?'/'+m[1]+(m[2]?'/'+m[2]:''):'');
+            if(typeof payload.referrer==='string'&&payload.referrer.charAt(0)==='/')payload.referrer='';
+            return payload;}catch(e){return null;}}
+            """;
 
     private readonly ILogger<UmamiConnector> _logger;
 
