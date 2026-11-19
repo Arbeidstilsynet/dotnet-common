@@ -16,9 +16,18 @@ public interface IUmamiConnector
 
     /// <summary>
     /// Renders the standard Umami tracker <c>&lt;script&gt;</c> element (<see cref="UmamiTrackingConfig.ScriptUrl"/>),
-    /// restricted to the application hostname and excluding query strings and URL hashes,
+    /// restricted to the application hostname and excluding query strings, together with an inline
+    /// <c>window.umamiConfig</c> script that masks party and instance IDs in app-frontend routes,
     /// or <see cref="HtmlString.Empty"/> when tracking is disabled.
     /// </summary>
-    /// <returns>An <see cref="IHtmlContent"/> representing the script tag or empty content.</returns>
+    /// <returns>An <see cref="IHtmlContent"/> representing the script tags or empty content.</returns>
     IHtmlContent RenderScriptTag();
+
+    /// <summary>
+    /// Renders the same script tags as <see cref="RenderScriptTag()"/>, with a <c>nonce</c> attribute for apps whose
+    /// Content Security Policy only allows scripts with a nonce.
+    /// </summary>
+    /// <param name="nonce">The Content Security Policy nonce for the current response, or <see langword="null"/> to omit it.</param>
+    /// <returns>An <see cref="IHtmlContent"/> representing the script tags or empty content.</returns>
+    IHtmlContent RenderScriptTag(string? nonce) => RenderScriptTag();
 }

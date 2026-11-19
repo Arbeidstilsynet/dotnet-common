@@ -24,10 +24,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add `UmamiConfiguration.IgnoreError` to choose which exceptions are not reported as `altinn-error` events. By default (`UmamiConfiguration.DefaultIgnoreError`), `PlatformHttpException`s anywhere in the exception chain are ignored, since failed Altinn Platform calls are usually transient and outside the app's control.
+- Add `IUmamiConnector.RenderScriptTag(string? nonce)` to render the Umami scripts with a Content Security Policy nonce.
 
 ### Fixed
 
-- Track page views for each Altinn app-frontend route. The tracker previously excluded the URL hash, which holds the app-frontend route, so only the initial page view was tracked. Routes are now reported as paths, with numeric and GUID segments masked, for example `/dat/forhandsmelding/instance/:id/:guid/Task_1/Side1`.
+- Track page views for each Altinn app-frontend route. The tracker previously excluded the URL hash, which holds the app-frontend route, so only the initial page view was tracked. Routes are now reported as the app path, task and page only, for example `/dat/forhandsmelding/Task_1/Side1`. The website ID is set in the same inline script as the URL sanitizer, so nothing is tracked if a Content Security Policy blocks that script.
 
 ## 2.13.0
 
