@@ -24,8 +24,8 @@
       Include="Microsoft.Extensions.DependencyInjection.Abstractions"
       Version="10.0.15"
     />
-    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.11.0" />
-    <PackageReference Include="Microsoft.Kiota.Bundle" Version="2.1.6" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.11.1" />
+    <PackageReference Include="Microsoft.Kiota.Bundle" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="README.md;openapi-adresser.json;openapi-kommuneinfo.json;openapi-eiendom.json" />
