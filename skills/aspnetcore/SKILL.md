@@ -82,7 +82,7 @@ await app.RunAsync();
 | `ConfigureStandardApi()` | Calls `ConfigureStandardMvc()` + `AddStandardHealthChecks()` — convenience one-liner |
 | `ConfigureStandardMvc()` | Controllers + JSON options (`JsonStringEnumConverter`, `JsonStringUriConverter`, camelCase), `RequestValidationFilter`, `ProblemDetails`. Returns `IMvcBuilder` for further configuration |
 | `AddStandardOpenApi(appName)` | OpenAPI document with title/version + enum-as-string schema transformer |
-| `AddStandardAuth(authConfig)` | JWT Bearer (Entra ID) when `DisableAuth = false`; permissive allow-all policy otherwise |
+| `AddStandardAuth(authConfig)` | JWT Bearer (Entra ID) + optional group → role mapping when `DisableAuth = false`; allow-all policy and handler otherwise |
 | `ConfigureOpenTelemetry(appName)` | ASP.NET Core + HttpClient instrumentation, OTLP export for traces/metrics/logs |
 | `ConfigureCors(origins, credentials, isDev)` | Default CORS policy (any origin in dev if no origins provided) |
 | `ConfigureCors(corsConfiguration, isDev)` | Same as above but accepts a `CorsConfiguration` record with `AllowedOrigins` and `AllowCredentials` properties |
@@ -97,6 +97,7 @@ await app.RunAsync();
 |--------|--------------|
 | `AddStandardApi(authConfig, configureExceptions, disableCors)` | Full pipeline: authentication → exception handler → HTTPS redirection → routing → authorization → controllers → health checks → CORS → Scalar |
 | `AddScalar()` | `GET /openapi/v1.json` + Scalar UI at `/scalar/v1` |
+| `MapUserRoles(pattern = "/roles")` | `GET /roles` → `string[]` of configured roles the user has (all configured roles when auth is disabled) |
 
 ---
 
@@ -157,14 +158,33 @@ public record AuthConfiguration
     public required string TenantId { get; init; }
     public required string ClientId { get; init; }
     public required string Scope { get; init; }
+    public IReadOnlyDictionary<string, IReadOnlyList<Guid>> Roles { get; init; } // optional: role name -> Entra group IDs
 }
 ```
 
 > **Note:** The `DisableAuth` property is bound from the JSON key `DangerousDisableAuth` (via `[ConfigurationKeyName]`). Ensure your `appsettings.json` uses `"DangerousDisableAuth": true` (not `"DisableAuth"`) when you need to disable auth for local development.
 
 - When `DisableAuth = false` (production): JWT Bearer + Entra ID token validation.
-- When `DisableAuth = true`: a permissive "allow all" policy is registered — a warning is logged. **Never use in production.**
+- When `DisableAuth = true`: a permissive "allow all" policy **and** an `IAuthorizationHandler` that succeeds every requirement are registered, so `[Authorize(Roles = ...)]` and named policies also pass — a warning is logged. **Never use in production.**
 - OpenAPI security schemes (`Bearer` + `OAuth2 client_credentials`) are only added when `DisableAuth = false`.
+
+### Group → role mapping (`Roles`)
+
+```jsonc
+"Authentication": {
+  "Roles": {
+    "AsbestLeser": ["<group-guid>", "<group-guid>"],
+    "AsbestSensitiv": ["<group-guid>"]
+  }
+}
+// env: API__Authentication__Roles__AsbestLeser__0=<group-guid>
+```
+
+- When `Roles` is non-empty (and auth is enabled), an `IClaimsTransformation` adds `ClaimTypes.Role` claims for each role where the user has at least one of the groups (`groups` claim, raw or inbound-mapped).
+- Idempotent: roles already on the user (including Entra app roles) are not duplicated. Non-GUID group values are ignored.
+- Use `[Authorize(Roles = "AsbestLeser")]` / `User.IsInRole("AsbestLeser")` — don't hard-code group IDs in policies.
+- `app.MapUserRoles()` exposes `GET /roles` so BFFs can fetch all of the user's roles in one call.
+- **NAIS:** list the groups under `spec.azure.application.claims.groups` (with `allowAllUsers: false`), or they won't be in the token.
 
 ---
 

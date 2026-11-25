@@ -40,4 +40,20 @@ public record AuthConfiguration
     [Required]
     [ConfigurationKeyName("Scope")]
     public required string Scope { get; init; }
+
+    /// <summary>
+    /// Optional mapping from role names to Entra ID group object IDs.
+    /// </summary>
+    /// <remarks>
+    /// When set, <see cref="StartupExtensions.AddStandardAuth"/> maps the <c>groups</c> claims of an authenticated user to
+    /// <see cref="System.Security.Claims.ClaimTypes.Role"/> claims, so that <c>[Authorize(Roles = "...")]</c> and
+    /// <c>User.IsInRole("...")</c> can be used. A user gets a role if they are a member of at least one of its groups.
+    ///
+    /// Example environment variable: <c>API__Authentication__Roles__MyRole__0=&lt;group-guid&gt;</c>.
+    ///
+    /// On NAIS, the groups must also be listed under <c>spec.azure.application.claims.groups</c>, otherwise they are not emitted in the token.
+    /// </remarks>
+    [ConfigurationKeyName("Roles")]
+    public IReadOnlyDictionary<string, IReadOnlyList<Guid>> Roles { get; init; } =
+        new Dictionary<string, IReadOnlyList<Guid>>();
 }
