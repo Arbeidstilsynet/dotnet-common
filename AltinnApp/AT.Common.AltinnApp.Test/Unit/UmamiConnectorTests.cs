@@ -280,9 +280,22 @@ public class UmamiConnectorTests
     [InlineData(InstanceRoute + "/Task_1/Side%3Cx", "/dat/forhandsmelding/Task_1")]
     [InlineData("https://dat.apps.altinn.no/dat/forhandsmelding/", "/dat/forhandsmelding")]
     [InlineData(
-        "https://dat.apps.altinn.no/dat/forhandsmelding/#/party-selection/403",
-        "/dat/forhandsmelding"
+        "https://dat.apps.altinn.no/dat/forhandsmelding/#/Side1",
+        "/dat/forhandsmelding/Side1"
     )]
+    [InlineData(
+        "https://dat.apps.altinn.no/dat/forhandsmelding/#/Side2?x=1",
+        "/dat/forhandsmelding/Side2"
+    )]
+    [InlineData(
+        "https://dat.apps.altinn.no/dat/forhandsmelding/#/party-selection/403",
+        "/dat/forhandsmelding/party-selection"
+    )]
+    [InlineData(
+        "https://dat.apps.altinn.no/dat/forhandsmelding/#/instance-selection",
+        "/dat/forhandsmelding/instance-selection"
+    )]
+    [InlineData(InstanceRoute, "/dat/forhandsmelding")]
     [InlineData(InstanceRoute + "/Task_1/%E0%A4%A", null)]
     public void BeforeSendFunction_ReportsOnlyAppPathTaskAndPage(string href, string? expected)
     {

@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 2.14.1
+
+### Fixed
+
+- Track page views for stateless Altinn apps. Hash routes like `#/Side1` are now reported as `/dat/forhandsmelding/Side1` instead of only the app path. Party and instance selection are reported as `/dat/forhandsmelding/party-selection` and `/dat/forhandsmelding/instance-selection`.
+
 ## 2.14.0
 
 ### Added

@@ -15,13 +15,16 @@ namespace Arbeidstilsynet.Common.AltinnApp.Implementation;
 
 internal sealed partial class UmamiConnector : IUmamiConnector
 {
-    // Altinn app-frontend routes live in the URL hash (#/instance/{partyId}/{instanceGuid}/{taskId}/{pageKey}/...).
-    // Only the app path, task and page are reported, so party and instance IDs never reach Umami. Same-origin
-    // referrers are dropped because they would contain the previous route.
+    // Altinn app-frontend routes live in the URL hash: #/instance/{partyId}/{instanceGuid}/{taskId}/{pageKey}/...
+    // for instances and #/{pageKey} for stateless apps (and #/party-selection/..., #/instance-selection).
+    // Only the app path, task and page (or the first top-level segment) are reported, so party and instance IDs
+    // never reach Umami. Same-origin referrers are dropped because they would contain the previous route.
     internal static string BeforeSendFunction(string appPath) =>
         $$$"""
             function(type,payload){try{
-            var m=/^#\/instance\/[^/]+\/[^/]+\/([\p{L}\p{N}_-]+)(?:\/([\p{L}\p{N}_-]+))?(?:[/?]|$)/u.exec(decodeURIComponent(location.hash));
+            var h=decodeURIComponent(location.hash);
+            var m=/^#\/instance\/[^/]+\/[^/]+\/([\p{L}\p{N}_-]+)(?:\/([\p{L}\p{N}_-]+))?(?:[/?]|$)/u.exec(h)
+            ||/^#\/((?!instance(?:[/?]|$))[\p{L}\p{N}_-]+)(?:[/?]|$)/u.exec(h);
             payload.url={{{JsonSerializer.Serialize(appPath)}}}+(m?'/'+m[1]+(m[2]?'/'+m[2]:''):'');
             if(typeof payload.referrer==='string'&&payload.referrer.charAt(0)==='/')payload.referrer='';
             return payload;}catch(e){return null;}}
