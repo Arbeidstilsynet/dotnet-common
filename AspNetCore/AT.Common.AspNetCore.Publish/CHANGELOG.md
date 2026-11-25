@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- When `DangerousDisableAuth` is true, `AddStandardAuth` also registers an authorization handler that succeeds every requirement, so role-based and named policies succeed in local development and tests, not only the default policy.
+- When `DangerousDisableAuth` is true, `AddStandardAuth` now makes every authorization policy succeed, including role-based, named and scheme-qualified policies and policies whose handlers explicitly fail, so they also pass in local development and tests (previously only the default policy). Authentication is skipped and `HttpContext.User` is not modified.
 
 ## 3.0.5
 

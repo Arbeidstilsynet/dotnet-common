@@ -5,6 +5,7 @@ using Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
@@ -200,8 +201,8 @@ public static partial class StartupExtensions
     /// <param name="authConfiguration"></param>
     /// <returns></returns>
     /// <remarks>
-    /// If <see cref="AuthConfiguration.DisableAuth"/> is true, a permissive authorization policy and an authorization handler that succeeds
-    /// every requirement (including role-based and named policies) are registered, and a warning is logged to alert developers.
+    /// If <see cref="AuthConfiguration.DisableAuth"/> is true, every authorization policy (including role-based, named and
+    /// scheme-qualified policies) succeeds without authenticating, and a warning is logged to alert developers.
     ///
     /// If <see cref="AuthConfiguration.Roles"/> is set, Entra ID <c>groups</c> claims are mapped to role claims.
     /// </remarks>
@@ -535,8 +536,11 @@ public static partial class StartupExtensions
                 .RequireAssertion(_ => true)
                 .Build();
         });
-        services.TryAddEnumerable(
-            ServiceDescriptor.Singleton<IAuthorizationHandler, AllowAllAuthorizationHandler>()
+        services.Replace(
+            ServiceDescriptor.Transient<IAuthorizationEvaluator, AllowAllAuthorizationEvaluator>()
+        );
+        services.Replace(
+            ServiceDescriptor.Transient<IPolicyEvaluator, DisabledAuthPolicyEvaluator>()
         );
 
         return services;

@@ -82,7 +82,7 @@ await app.RunAsync();
 | `ConfigureStandardApi()` | Calls `ConfigureStandardMvc()` + `AddStandardHealthChecks()` — convenience one-liner |
 | `ConfigureStandardMvc()` | Controllers + JSON options (`JsonStringEnumConverter`, `JsonStringUriConverter`, camelCase), `RequestValidationFilter`, `ProblemDetails`. Returns `IMvcBuilder` for further configuration |
 | `AddStandardOpenApi(appName)` | OpenAPI document with title/version + enum-as-string schema transformer |
-| `AddStandardAuth(authConfig)` | JWT Bearer (Entra ID) + optional group → role mapping when `DisableAuth = false`; allow-all policy and handler otherwise |
+| `AddStandardAuth(authConfig)` | JWT Bearer (Entra ID) + optional group → role mapping when `DisableAuth = false`; all policies succeed otherwise |
 | `ConfigureOpenTelemetry(appName)` | ASP.NET Core + HttpClient instrumentation, OTLP export for traces/metrics/logs |
 | `ConfigureCors(origins, credentials, isDev)` | Default CORS policy (any origin in dev if no origins provided) |
 | `ConfigureCors(corsConfiguration, isDev)` | Same as above but accepts a `CorsConfiguration` record with `AllowedOrigins` and `AllowCredentials` properties |
@@ -165,7 +165,7 @@ public record AuthConfiguration
 > **Note:** The `DisableAuth` property is bound from the JSON key `DangerousDisableAuth` (via `[ConfigurationKeyName]`). Ensure your `appsettings.json` uses `"DangerousDisableAuth": true` (not `"DisableAuth"`) when you need to disable auth for local development.
 
 - When `DisableAuth = false` (production): JWT Bearer + Entra ID token validation.
-- When `DisableAuth = true`: a permissive "allow all" policy **and** an `IAuthorizationHandler` that succeeds every requirement are registered, so `[Authorize(Roles = ...)]` and named policies also pass — a warning is logged. **Never use in production.**
+- When `DisableAuth = true`: every authorization policy succeeds (default, `[Authorize(Roles = ...)]`, named, scheme-qualified, even if a handler calls `Fail()`) via a replaced `IAuthorizationEvaluator`/`IPolicyEvaluator`; no authentication runs and `HttpContext.User` is untouched — a warning is logged. **Never use in production.**
 - OpenAPI security schemes (`Bearer` + `OAuth2 client_credentials`) are only added when `DisableAuth = false`.
 
 ### Group → role mapping (`Roles`)

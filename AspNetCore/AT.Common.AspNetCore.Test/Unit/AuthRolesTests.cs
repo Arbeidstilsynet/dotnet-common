@@ -150,6 +150,65 @@ public class AuthRolesTests
     }
 
     [Fact]
+    public async Task AddStandardAuth_DisableAuth_PolicyWithExplicitlyFailingHandlerSucceeds()
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddStandardAuth(CreateConfig(disableAuth: true));
+        services.AddSingleton<IAuthorizationHandler, FailingHandler>();
+        services
+            .AddAuthorizationBuilder()
+            .AddPolicy("Failing", p => p.AddRequirements(new FailingRequirement()));
+        var authorizationService = services
+            .BuildServiceProvider()
+            .GetRequiredService<IAuthorizationService>();
+
+        var result = await authorizationService.AuthorizeAsync(
+            new ClaimsPrincipal(new ClaimsIdentity()),
+            "Failing"
+        );
+
+        result.Succeeded.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task AddStandardAuth_DisableAuth_SchemeQualifiedPolicySucceeds()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddStandardAuth(CreateConfig(disableAuth: true));
+        builder
+            .Services.AddAuthorizationBuilder()
+            .AddPolicy(
+                "Bearer",
+                new AuthorizationPolicyBuilder("Bearer").RequireRole("Leser").Build()
+            );
+        await using var app = builder.Build();
+        app.UseAuthorization();
+        app.MapGet("/protected", () => "ok").RequireAuthorization("Bearer");
+        await app.StartAsync(TestContext.Current.CancellationToken);
+
+        var response = await app.GetTestClient()
+            .GetAsync("/protected", TestContext.Current.CancellationToken);
+
+        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
+    }
+
+    private sealed class FailingRequirement : IAuthorizationRequirement;
+
+    private sealed class FailingHandler : AuthorizationHandler<FailingRequirement>
+    {
+        protected override Task HandleRequirementAsync(
+            AuthorizationHandlerContext context,
+            FailingRequirement requirement
+        )
+        {
+            context.Fail();
+            return Task.CompletedTask;
+        }
+    }
+
+    [Fact]
     public async Task AddStandardAuth_AuthEnabled_RolePolicyRequiresRole()
     {
         var services = new ServiceCollection();
