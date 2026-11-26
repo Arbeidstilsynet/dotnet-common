@@ -168,18 +168,6 @@ public record AuthConfiguration
 - When `DisableAuth = true`: every authorization policy succeeds (default, `[Authorize(Roles = ...)]`, named, scheme-qualified, even if a handler calls `Fail()`) via a replaced `IAuthorizationEvaluator`/`IPolicyEvaluator`; no authentication runs and `HttpContext.User` is untouched — a warning is logged. **Never use in production.**
 - OpenAPI security schemes (`Bearer` + `OAuth2 client_credentials`) are only added when `DisableAuth = false`.
 
-### Group → role mapping (`Roles`)
-
-```jsonc
-"Authentication": {
-  "Roles": {
-    "AsbestLeser": ["<group-guid>", "<group-guid>"],
-    "AsbestSensitiv": ["<group-guid>"]
-  }
-}
-// env: API__Authentication__Roles__AsbestLeser__0=<group-guid>
-```
-
 - When `Roles` is non-empty (and auth is enabled), an `IClaimsTransformation` adds `ClaimTypes.Role` claims for each role where the user has at least one of the groups (`groups` claim, raw or inbound-mapped).
 - Idempotent: roles already on the user (including Entra app roles) are not duplicated. Non-GUID group values are ignored.
 - Use `[Authorize(Roles = "AsbestLeser")]` / `User.IsInRole("AsbestLeser")` — don't hard-code group IDs in policies.
