@@ -430,14 +430,14 @@ public static partial class StartupExtensions
     /// Maps a GET endpoint returning the names of the roles in <see cref="AuthConfiguration.Roles"/> that the current user has, as a JSON string array.
     /// </summary>
     /// <param name="endpoints"></param>
-    /// <param name="pattern">The route pattern. Defaults to "/roles".</param>
+    /// <param name="pattern">The route pattern. Defaults to "/user-roles".</param>
     /// <returns>The <see cref="RouteHandlerBuilder"/> for further configuration.</returns>
     /// <remarks>
     /// Requires <see cref="AddStandardAuth"/>. When <see cref="AuthConfiguration.DisableAuth"/> is true, all configured roles are returned.
     /// </remarks>
     public static RouteHandlerBuilder MapUserRoles(
         this IEndpointRouteBuilder endpoints,
-        string pattern = "/roles"
+        string pattern = "/user-roles"
     )
     {
         return endpoints

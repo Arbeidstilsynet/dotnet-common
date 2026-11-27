@@ -97,7 +97,7 @@ await app.RunAsync();
 |--------|--------------|
 | `AddStandardApi(authConfig, configureExceptions, disableCors)` | Full pipeline: authentication → exception handler → HTTPS redirection → routing → authorization → controllers → health checks → CORS → Scalar |
 | `AddScalar()` | `GET /openapi/v1.json` + Scalar UI at `/scalar/v1` |
-| `MapUserRoles(pattern = "/roles")` | `GET /roles` → `string[]` of configured roles the user has (all configured roles when auth is disabled) |
+| `MapUserRoles(pattern = "/user-roles")` | `GET /user-roles` → `string[]` of configured roles the user has (all configured roles when auth is disabled) |
 
 ---
 
@@ -171,7 +171,7 @@ public record AuthConfiguration
 - When `Roles` is non-empty (and auth is enabled), an `IClaimsTransformation` adds `ClaimTypes.Role` claims for each role where the user has at least one of the groups (`groups` claim, raw or inbound-mapped).
 - Idempotent: roles already on the user (including Entra app roles) are not duplicated. Non-GUID group values are ignored.
 - Use `[Authorize(Roles = "AsbestLeser")]` / `User.IsInRole("AsbestLeser")` — don't hard-code group IDs in policies.
-- `app.MapUserRoles()` exposes `GET /roles` so BFFs can fetch all of the user's roles in one call.
+- `app.MapUserRoles()` exposes `GET /user-roles` so BFFs can fetch all of the user's roles in one call.
 - **NAIS:** list the groups under `spec.azure.application.claims.groups` (with `allowAllUsers: false`), or they won't be in the token.
 
 ---

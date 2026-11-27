@@ -84,9 +84,9 @@ A user gets a role if they are a member of at least one of its groups. Use the r
 services.AddStandardAuth(appSettings.Authentication);
 // ...
 app.AddStandardApi(appSettings.Authentication);
-app.MapUserRoles(); // GET /roles -> ["Leser", ...]
+app.MapUserRoles(); // GET /user-roles -> ["Leser", ...]
 ```
 
 > **NAIS:** the groups must be listed under `spec.azure.application.claims.groups` (with `allowAllUsers: false`), otherwise they are not included in the token.
 
-When `DangerousDisableAuth` is true, all authorization requirements succeed (including role-based and named policies), and `/roles` returns every configured role. Never use this in production.
+When `DangerousDisableAuth` is true, all authorization requirements succeed (including role-based and named policies), and `/user-roles` returns every configured role. Never use this in production.

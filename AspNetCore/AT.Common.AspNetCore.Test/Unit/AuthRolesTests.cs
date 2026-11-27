@@ -279,7 +279,7 @@ public class AuthRolesTests
         await app.StartAsync(TestContext.Current.CancellationToken);
 
         var roles = await app.GetTestClient()
-            .GetFromJsonAsync<string[]>("/roles", TestContext.Current.CancellationToken);
+            .GetFromJsonAsync<string[]>("/user-roles", TestContext.Current.CancellationToken);
 
         roles.ShouldBe(["Leser", "Sensitiv"]);
     }
