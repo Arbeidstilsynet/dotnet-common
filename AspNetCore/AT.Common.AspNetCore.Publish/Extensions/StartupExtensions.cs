@@ -2,8 +2,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Arbeidstilsynet.Common.AspNetCore.Extensions.CrossCutting;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
@@ -199,13 +201,18 @@ public static partial class StartupExtensions
     /// <param name="authConfiguration"></param>
     /// <returns></returns>
     /// <remarks>
-    /// If <see cref="AuthConfiguration.DisableAuth"/> is true, a permissive authorization policy is registered that allows all requests, and a warning is logged to alert developers.
+    /// If <see cref="AuthConfiguration.DisableAuth"/> is true, every authorization policy (including role-based, named and
+    /// scheme-qualified policies) succeeds without authenticating, and a warning is logged to alert developers.
+    ///
+    /// If <see cref="AuthConfiguration.Roles"/> is set, Entra ID <c>groups</c> claims are mapped to role claims.
     /// </remarks>
     public static IServiceCollection AddStandardAuth(
         this IServiceCollection services,
         AuthConfiguration authConfiguration
     )
     {
+        services.TryAddSingleton(new StandardAuthState(authConfiguration));
+
         if (authConfiguration.DisableAuth)
         {
             services.AddAllowAllAuthorization();
@@ -419,6 +426,29 @@ public static partial class StartupExtensions
         return app;
     }
 
+    /// <summary>
+    /// Maps a GET endpoint returning the names of the roles in <see cref="AuthConfiguration.Roles"/> that the current user has, as a JSON string array.
+    /// </summary>
+    /// <param name="endpoints"></param>
+    /// <param name="pattern">The route pattern. Defaults to "/user-roles".</param>
+    /// <returns>The <see cref="RouteHandlerBuilder"/> for further configuration.</returns>
+    /// <remarks>
+    /// Requires <see cref="AddStandardAuth"/>. When <see cref="AuthConfiguration.DisableAuth"/> is true, all configured roles are returned.
+    /// </remarks>
+    public static RouteHandlerBuilder MapUserRoles(
+        this IEndpointRouteBuilder endpoints,
+        string pattern = "/user-roles"
+    )
+    {
+        return endpoints
+            .MapGet(pattern, (HttpContext context) =>
+                context
+                    .RequestServices.GetRequiredService<StandardAuthState>()
+                    .GetRoles(context.User)
+            )
+            .RequireAuthorization();
+    }
+
     internal static string ConvertToOtelServiceName(this string serviceName)
     {
         var serviceNameAsCamelCase = System.Text.Json.JsonNamingPolicy.CamelCase.ConvertName(
@@ -506,6 +536,12 @@ public static partial class StartupExtensions
                 .RequireAssertion(_ => true)
                 .Build();
         });
+        services.Replace(
+            ServiceDescriptor.Transient<IAuthorizationEvaluator, AllowAllAuthorizationEvaluator>()
+        );
+        services.Replace(
+            ServiceDescriptor.Transient<IPolicyEvaluator, DisabledAuthPolicyEvaluator>()
+        );
 
         return services;
 
@@ -536,6 +572,13 @@ public static partial class StartupExtensions
             });
 
         services.AddAuthorization();
+
+        if (authConfiguration.Roles.Count > 0)
+        {
+            services.AddSingleton<IClaimsTransformation>(
+                new GroupRoleClaimsTransformation(authConfiguration)
+            );
+        }
 
         services.AddOpenApi(options =>
         {

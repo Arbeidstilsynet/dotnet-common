@@ -19,6 +19,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security <!-- in case of vulnerabilities. -->
 
+## 3.1.0
+
+### Added
+
+- `AuthConfiguration.Roles`: optional mapping from role names to Entra ID group IDs. When set, `AddStandardAuth` maps the user's `groups` claims to role claims, so `[Authorize(Roles = "...")]` and `User.IsInRole("...")` can be used. Mapping is idempotent and invalid (non-GUID) group values are ignored.
+- `MapUserRoles()`: maps a `GET /user-roles` endpoint returning the configured roles the current user has (all configured roles when auth is disabled).
+
+### Changed
+
+- When `DangerousDisableAuth` is true, `AddStandardAuth` now makes every authorization policy succeed, including role-based, named and scheme-qualified policies and policies whose handlers explicitly fail, so they also pass in local development and tests (previously only the default policy). Authentication is skipped and `HttpContext.User` is not modified.
+
 ## 3.0.5
 
 ### Changed
