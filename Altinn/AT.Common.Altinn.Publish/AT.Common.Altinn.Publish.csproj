@@ -25,8 +25,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.23.0" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.23.0" />
-    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.11.0" />
-    <PackageReference Include="Microsoft.Kiota.Bundle" Version="2.1.6" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.11.1" />
+    <PackageReference Include="Microsoft.Kiota.Bundle" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup>
     <None Update="README.md" Pack="true" PackagePath="\" />
